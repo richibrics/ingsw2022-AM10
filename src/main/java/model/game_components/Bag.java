@@ -8,7 +8,7 @@ import java.util.Collections;
 public class Bag {
     final private ArrayList<StudentDisc> students;
 
-    public Bag(ArrayList<StudentDisc> students) {
+    public Bag() {
         this.students = new ArrayList<>();
     }
 

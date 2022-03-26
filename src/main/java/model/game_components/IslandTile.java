@@ -3,7 +3,6 @@ package model.game_components;
 import model.exceptions.TowerNotSetException;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 public class IslandTile {
     final private int id;
