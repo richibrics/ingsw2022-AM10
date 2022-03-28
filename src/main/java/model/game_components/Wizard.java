@@ -9,7 +9,7 @@ public class Wizard {
 
     public Wizard(int id, ArrayList<AssistantCard> assistantCards) {
         this.id = id;
-        this.assistantCards = assistantCards;
+        this.assistantCards = new ArrayList<>(assistantCards);
     }
 
     /**

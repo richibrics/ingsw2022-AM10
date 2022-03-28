@@ -3,6 +3,7 @@ package model.game_components;
 import model.exceptions.TowerNotSetException;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class IslandTile {
     final private int id;
@@ -27,14 +28,37 @@ public class IslandTile {
     }
 
     /**
-     * Add to the IslandTile all the passed StudentDiscs
+     * Add to the IslandTile the passed StudentDisc
      *
-     * @param   studentsToAdd   ArrayList of StudentDiscs that need to be added to the IslandTile
+     * @param   studentToAdd   StudentDisc that need to be added to the IslandTile
      * @see         StudentDisc
      */
-    public void addStudents(ArrayList<StudentDisc> studentsToAdd)
+    public void addStudent(StudentDisc studentToAdd)
     {
-        this.students.addAll(studentsToAdd);
+        this.students.add(studentToAdd);
+    }
+
+    /**
+     * Remove a StudentDisc from the IslandTile
+     *
+     * @param   studentToRemove StudentDisc to remove from the IslandTile
+     * @throws NoSuchElementException if passed StudentDisc isn't on the IslandTile
+     * @see         StudentDisc
+     */
+    public void removeStudent(StudentDisc studentToRemove) throws NoSuchElementException
+    {
+        if(!this.students.remove(studentToRemove))
+            throw new NoSuchElementException("Requested StudentDisc isn't on the IslandTile");
+    }
+
+    /**
+     * Get all the students on the IslandTile
+     *
+     * @return ArrayList with all the IslandTile StudentDiscs
+     */
+    public ArrayList<StudentDisc> peekStudents()
+    {
+        return new ArrayList<>(this.students);
     }
 
     /**
@@ -85,5 +109,25 @@ public class IslandTile {
     public boolean hasTower()
     {
         return !(this.tower == null);
+    }
+
+    /**
+     * Get information about the IslandTile NoEntry property
+     *
+     * @return noEntry property
+     */
+    public boolean hasNoEntry()
+    {
+        return this.noEntry;
+    }
+
+    /**
+     * Set IslandTile NoEntry property
+     *
+     * @param value new NoEntry value
+     */
+    public void setNoEntry(boolean value)
+    {
+        this.noEntry = value;
     }
 }

@@ -1,5 +1,7 @@
 package model.game_components;
 
+import model.exceptions.IllegalStudentDiscMovementException;
+
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
@@ -24,7 +26,7 @@ public class SchoolBoard {
      */
     public ArrayList<StudentDisc> getEntrance()
     {
-        return new ArrayList<StudentDisc>(this.entrance);
+        return new ArrayList<>(this.entrance);
     }
 
     /**
@@ -74,7 +76,9 @@ public class SchoolBoard {
      */
     public void addStudentToDiningRoom(StudentDisc studentToAdd)
     {
-        this.diningRoom.get(studentToAdd.getColor().getId()).add(studentToAdd);
+        // Get the dining room table of the student color
+        ArrayList<StudentDisc> studentsTable = this.diningRoom.get(studentToAdd.getColor().getId());
+        studentsTable.add(studentsTable.size(), studentToAdd);
     }
 
     /**
@@ -82,10 +86,36 @@ public class SchoolBoard {
      *
      * @param studentToRemove StudentDisc to remove from SchoolBoard entrance
      * @throws NoSuchElementException if the StudentDisc isn't in the SchoolBoard entrance
+     * @see     StudentDisc
      */
     public void removeStudentFromEntrance(StudentDisc studentToRemove) throws NoSuchElementException
     {
         if(!this.entrance.remove(studentToRemove))
             throw new NoSuchElementException("Requested StudentDisc isn't in the entrance for this SchoolBoard");
+    }
+
+    /**
+     * Replace a StudentDisc already in the dining room (that must be in the last position of the table), with another StudentDisc
+     *
+     * @param studentToRemove   StudentDisc that has to be removed from the table
+     * @param studentToAdd      StudentDisc that has to be added to the table
+     * @throws NoSuchElementException if the StudentDisc that has to be removed isn't in the dining room
+     * @throws IllegalStudentDiscMovementException if the StudentDisc isn't in the last position of the table
+     * @see    StudentDisc
+     */
+    public void replaceStudentInDiningRoom(StudentDisc studentToRemove, StudentDisc studentToAdd) throws IllegalStudentDiscMovementException, NoSuchElementException
+    {
+        // Get the dining room table of the student to remove color
+        ArrayList<StudentDisc> studentsTable = this.diningRoom.get(studentToRemove.getColor().getId());
+        // Check if the student is in the table
+        if(!studentsTable.contains(studentToRemove))
+            throw new NoSuchElementException("Requested StudentDisc isn't in the player's dining room");
+        // Check if the student is in the table in a position that isn't the last of the row
+        if(!studentsTable.get(studentsTable.size()-1).equals(studentToRemove))
+            throw new IllegalStudentDiscMovementException();
+        // Now I can remove the StudentDisc from the table
+        studentsTable.remove(studentToRemove);
+        // Insert the new student in the dining room
+        this.addStudentToDiningRoom(studentToAdd);
     }
 }
