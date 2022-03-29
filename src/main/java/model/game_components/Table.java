@@ -83,7 +83,7 @@ public class Table {
 
     /**
      * Add a CharacterCard to the Table
-     *
+     * @param  card CharacterCard to add to Table
      * @see     CharacterCard
      */
     public void addCharacterCard(CharacterCard card) {
