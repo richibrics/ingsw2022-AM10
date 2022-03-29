@@ -28,9 +28,6 @@ public class TestIslandTile {
         islandTile.addStudent(studentDisc2);
         assertEquals(islandTile.peekStudents().size(),2);
         assertEquals(islandTile.peekStudents().get(0),studentDisc);
-        assertDoesNotThrow(()->islandTile.removeStudent(studentDisc));
-        assertEquals(islandTile.peekStudents().size(),1);
-        assertThrows(NoSuchElementException.class,()->islandTile.removeStudent(studentDisc));
     }
 
     @Test
@@ -40,8 +37,11 @@ public class TestIslandTile {
         Tower blackTower = new Tower(TowerColor.BLACK);
         Tower whiteTower = new Tower(TowerColor.WHITE);
         assertThrows(TowerNotSetException.class,() -> islandTile.getTower());
+        assertFalse(islandTile.hasTower());
         assertThrows(TowerNotSetException.class,() -> islandTile.replaceTower(blackTower));
+        assertFalse(islandTile.hasTower());
         islandTile.setTower(blackTower);
+        assertTrue(islandTile.hasTower());
         assertEquals(assertDoesNotThrow(()->islandTile.getTower()),blackTower);
         assertEquals(assertDoesNotThrow(()->islandTile.replaceTower(whiteTower)),blackTower);
         assertEquals(assertDoesNotThrow(()->islandTile.getTower()),whiteTower);

@@ -38,18 +38,6 @@ public class IslandTile {
         this.students.add(studentToAdd);
     }
 
-    /**
-     * Remove a StudentDisc from the IslandTile
-     *
-     * @param   studentToRemove StudentDisc to remove from the IslandTile
-     * @throws NoSuchElementException if passed StudentDisc isn't on the IslandTile
-     * @see         StudentDisc
-     */
-    public void removeStudent(StudentDisc studentToRemove) throws NoSuchElementException
-    {
-        if(!this.students.remove(studentToRemove))
-            throw new NoSuchElementException("Requested StudentDisc isn't on the IslandTile");
-    }
 
     /**
      * Get all the students on the IslandTile
