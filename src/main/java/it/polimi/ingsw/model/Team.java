@@ -15,7 +15,8 @@ public class Team {
     private ArrayList<Tower> towers;
     private ArrayList<ProfessorPawn> professorTable;
 
-    public Team(int id, ArrayList<Player> players) {
+    public Team(int id, ArrayList<Player> players)
+    {
         this.id = id;
         this.players = players;
         this.towers = new ArrayList<Tower>();
@@ -37,9 +38,7 @@ public class Team {
      * @see Player
      */
 
-    public ArrayList<Player> getPlayers() {
-        return this.players;
-    }
+    public ArrayList<Player> getPlayers() { return new ArrayList<Player>(this.players); }
 
     /**
      * Gets the towers that have not already been built by the players in the team.
@@ -47,7 +46,7 @@ public class Team {
      * @see Tower
      */
 
-    public ArrayList<Tower> getTowers() { return this.towers; }
+    public ArrayList<Tower> getTowers() { return new ArrayList<Tower>(this.towers); }
 
     /**
      * Adds a tower to the list of the towers not built by the team.
@@ -65,7 +64,8 @@ public class Team {
      * @see Tower
      */
 
-    public Tower popTower() throws TowerNotSetException {
+    public Tower popTower() throws TowerNotSetException
+    {
         if (this.towers.isEmpty())
             throw new TowerNotSetException("No tower is available");
         return this.towers.remove(0);
@@ -77,9 +77,7 @@ public class Team {
      * @see ProfessorPawn
      */
 
-    public ArrayList<ProfessorPawn> getProfessorTable() {
-        return this.professorTable;
-    }
+    public ArrayList<ProfessorPawn> getProfessorTable() { return new ArrayList<ProfessorPawn>(this.professorTable); }
 
     /**
      * Adds a professor pawn to the list of professor pawns owned by the players in the team.
@@ -99,7 +97,8 @@ public class Team {
      * @throws NoSuchElementException if a professor pawn whose color is equal to {@code color} is not found.
      */
 
-    public ProfessorPawn removeProfessorPawn(PawnColor color) throws NoSuchElementException {
+    public ProfessorPawn removeProfessorPawn(PawnColor color) throws NoSuchElementException
+    {
         int index = -1;
         for (ProfessorPawn pawn : this.professorTable) {
             if (pawn.getColor() == color)

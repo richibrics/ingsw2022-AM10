@@ -18,9 +18,9 @@ class TestTeam {
     static User user1 = new User();
     static User user2 = new User();
     static User user3 = new User();
-    static Player player1 = new Player(user1, 3);
-    static Player player2 = new Player(user2, 4);
-    static Player player3 = new Player(user3, 5);
+    static Player player1 = new Player(user1, 0, 3);
+    static Player player2 = new Player(user2, 1, 4);
+    static Player player3 = new Player(user3, 2, 5);
     static ArrayList<Player> players = null;
 
     @BeforeAll

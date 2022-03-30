@@ -12,16 +12,26 @@ import it.polimi.ingsw.model.game_components.Wizard;
 public class Player {
 
     private User user;
+    private int playerId;
     private int coins;
     private AssistantCard activeAssistantCard;
     private AssistantCard lastPlayedAssistantCard;
     private Wizard wizard;
     private SchoolBoard schoolBoard;
 
-    public Player(User user, int coins) {
+    public Player(User user, int playerId, int coins)
+    {
         this.user = user;
+        this.playerId = playerId;
         this.coins = coins;
     }
+
+    /**
+     * Gets the identifier of the player.
+     * @return the identifier of the player
+     */
+
+    public int getPlayerId() { return this.playerId; }
 
     /**
      * Gets the amount of coins the player has.
@@ -46,7 +56,8 @@ public class Player {
      * @throws NotEnoughCoinException if the player cannot make the purchase.
      */
 
-    private void checkEnoughCoins(int cost) throws NotEnoughCoinException {
+    private void checkEnoughCoins(int cost) throws NotEnoughCoinException
+    {
         if (this.coins - cost < 0)
             throw new NotEnoughCoinException();
     }
@@ -58,7 +69,8 @@ public class Player {
      * @throws NotEnoughCoinException if the player cannot make the purchase.
      */
 
-    public void decrementCoins(int cost) throws NotEnoughCoinException{
+    public void decrementCoins(int cost) throws NotEnoughCoinException
+    {
         this.checkEnoughCoins(cost);
         this.coins -= cost;
     }
@@ -70,7 +82,8 @@ public class Player {
      * @throws AssistantCardNotSetException if no assistant card is available.
      */
 
-    public AssistantCard getActiveAssistantCard() throws AssistantCardNotSetException{
+    public AssistantCard getActiveAssistantCard() throws AssistantCardNotSetException
+    {
         if (this.activeAssistantCard == null)
             throw new AssistantCardNotSetException();
         return this.activeAssistantCard;
@@ -92,7 +105,8 @@ public class Player {
      * @throws AssistantCardNotSetException if no assistant card is available.
      */
 
-    public AssistantCard getLastPlayedAssistantCard() throws AssistantCardNotSetException{
+    public AssistantCard getLastPlayedAssistantCard() throws AssistantCardNotSetException
+    {
         if (this.lastPlayedAssistantCard == null)
             throw new AssistantCardNotSetException();
         return this.lastPlayedAssistantCard;
@@ -113,7 +127,8 @@ public class Player {
      * @throws WizardNotSetException if no wizard is available.
      */
 
-    public Wizard getWizard() throws WizardNotSetException {
+    public Wizard getWizard() throws WizardNotSetException
+    {
         if (this.wizard == null)
             throw new WizardNotSetException();
         return this.wizard;
@@ -134,7 +149,8 @@ public class Player {
      * @throws SchoolBoardNotSetException if no school board is availbale.
      */
 
-    public SchoolBoard getSchoolBoard() throws SchoolBoardNotSetException {
+    public SchoolBoard getSchoolBoard() throws SchoolBoardNotSetException
+    {
         if (this.schoolBoard == null)
             throw new SchoolBoardNotSetException();
         return this.schoolBoard;

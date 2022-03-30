@@ -28,14 +28,21 @@ class TestPlayer {
 
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
+    void getPlayerId(int value) {
+        Player player = new Player(user, value, 5);
+        assertEquals(player.getPlayerId(), value);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0,100,Integer.MAX_VALUE})
     void getCoins(int value) {
-        Player player = new Player(user, value);
+        Player player = new Player(user, 1, value);
         assertEquals(player.getCoins(), value);
     }
 
     @Test
     void incrementCoins() {
-        Player player = new Player(user, 5);
+        Player player = new Player(user, 0, 5);
         player.incrementCoins();
         player.incrementCoins();
         assertEquals(player.getCoins(), 7);
@@ -43,7 +50,7 @@ class TestPlayer {
 
     @Test
     void decrementCoins() {
-        Player player = new Player(user, 5);
+        Player player = new Player(user, 0, 5);
         assertThrows(NotEnoughCoinException.class, () -> player.decrementCoins(6));
         assertDoesNotThrow(() -> player.decrementCoins(3));
         assertEquals(player.getCoins(), 2);
@@ -51,7 +58,7 @@ class TestPlayer {
 
     @Test
     void ActiveAssistantCard() {
-        Player player = new Player(user, 5);
+        Player player = new Player(user, 0, 5);
         assertThrows(AssistantCardNotSetException.class, () -> player.getActiveAssistantCard());
         AssistantCard assistantCard1 = new AssistantCard(1, 5, 2);
         player.setActiveAssistantCard(assistantCard1);
@@ -64,7 +71,7 @@ class TestPlayer {
 
     @Test
     void LastPlayedAssistantCard() {
-        Player player = new Player(user, 5);
+        Player player = new Player(user, 0, 5);
         assertThrows(AssistantCardNotSetException.class, () -> player.getLastPlayedAssistantCard());
         AssistantCard assistantCard = new AssistantCard(1, 5, 2);
         player.setLastPlayedAssistantCard(assistantCard);
@@ -76,7 +83,7 @@ class TestPlayer {
 
     @Test
     void Wizard() {
-        Player player = new Player(user, 5);
+        Player player = new Player(user, 0,5);
         assertThrows(WizardNotSetException.class, () -> player.getWizard());
         ArrayList<AssistantCard> assistantCards = new ArrayList<>();
         for (int i = 0; i < 12; i++)
@@ -89,7 +96,7 @@ class TestPlayer {
 
     @Test
     void SchoolBoard() {
-        Player player = new Player(user, 5);
+        Player player = new Player(user, 0, 5);
         assertThrows(SchoolBoardNotSetException.class, () -> player.getSchoolBoard());
         SchoolBoard schoolBoard1 = new SchoolBoard();
         player.setSchoolBoard(schoolBoard1);
