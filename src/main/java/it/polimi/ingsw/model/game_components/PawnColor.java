@@ -23,4 +23,6 @@ public enum PawnColor {
     {
         return id;
     }
+
+    public boolean equals(PawnColor color) { return this.getId() == color.getId(); }
 }
