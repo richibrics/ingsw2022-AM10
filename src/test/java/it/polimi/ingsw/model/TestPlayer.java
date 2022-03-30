@@ -22,8 +22,8 @@ class TestPlayer {
     static User user = null;
 
     @BeforeAll
-    static void init() {
-        User user = new User();
+    static void beforeAll() {
+        User user = new User("test",2);
     }
 
     @ParameterizedTest

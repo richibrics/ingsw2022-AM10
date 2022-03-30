@@ -18,7 +18,7 @@ public class Team {
     public Team(int id, ArrayList<Player> players)
     {
         this.id = id;
-        this.players = players;
+        this.players = new ArrayList<>(players);
         this.towers = new ArrayList<Tower>();
         this.professorTable = new ArrayList<ProfessorPawn>();
     }
