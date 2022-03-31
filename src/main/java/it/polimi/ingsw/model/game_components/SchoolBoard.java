@@ -84,14 +84,22 @@ public class SchoolBoard {
     /**
      * Remove the StudentDisc from the SchoolBoard entrance
      *
-     * @param studentToRemove StudentDisc to remove from SchoolBoard entrance
+     * @param studentId the identifier of the StudentDisc to remove from SchoolBoard entrance
      * @throws NoSuchElementException if the StudentDisc isn't in the SchoolBoard entrance
      * @see     StudentDisc
      */
-    public void removeStudentFromEntrance(StudentDisc studentToRemove) throws NoSuchElementException
+    public StudentDisc removeStudentFromEntrance(int studentId) throws NoSuchElementException
     {
-        if(!this.entrance.remove(studentToRemove))
+        int index = -1;
+        for (StudentDisc student : this.entrance) {
+            if (student.getId() == studentId)
+                index = this.entrance.indexOf((student));
+        }
+
+        if (index == -1)
             throw new NoSuchElementException("Requested StudentDisc isn't in the entrance for this SchoolBoard");
+
+        return this.entrance.remove(index);
     }
 
     /**

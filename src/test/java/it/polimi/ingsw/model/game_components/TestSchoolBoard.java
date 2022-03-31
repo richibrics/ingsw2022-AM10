@@ -30,9 +30,9 @@ public class TestSchoolBoard {
         schoolBoard.addStudentsToEntrance(studentsToAdd);
 
         assertEquals(value, schoolBoard.getEntrance().size());
-        assertDoesNotThrow(()->schoolBoard.removeStudentFromEntrance(studentsToAdd.get(0)));
+        assertDoesNotThrow(()->schoolBoard.removeStudentFromEntrance(studentsToAdd.get(0).getId()));
         assertEquals(value-1, schoolBoard.getEntrance().size());
-        assertThrows(NoSuchElementException.class, ()->schoolBoard.removeStudentFromEntrance(studentsToAdd.get(0)));
+        assertThrows(NoSuchElementException.class, ()->schoolBoard.removeStudentFromEntrance(studentsToAdd.get(0).getId()));
     }
 
     @ParameterizedTest

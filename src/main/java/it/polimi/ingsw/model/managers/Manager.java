@@ -4,5 +4,9 @@ import it.polimi.ingsw.controller.GameEngine;
 
 public abstract class Manager {
 
-    GameEngine gameEngine;
+    private GameEngine gameEngine;
+
+    public Manager(GameEngine gameEngine) { this.gameEngine = gameEngine; }
+
+    public GameEngine getGameEngine() { return this.gameEngine; }
 }
