@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.game_components.Tower;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class IslandManager extends Manager {
     public IslandManager(GameEngine gameEngine) {
@@ -56,13 +57,14 @@ public class IslandManager extends Manager {
     }
 
     /**
-     * Merge the NoEntry tile to both the group if only one has it, set back a NoEntry tile if both have it
+     * Merge the NoEntry tile to both the groups of IslandTiles if only one has it; set back a NoEntry tile if both have it
      * (privately tested).
      * This operation is run before island merge because if the groups are still separated I can
      * manage the case with both groups with NoEntry and set the NoEntry tile back to the available tiles.
      *
      * @param firstGroupId the index in the island tiles matrix of the first arrayList with the islands I am merging
      * @param secondGroupId the index in the island tiles matrix of the second arrayList with the islands I am merging
+     * @throws  TableNotSetException if the Table is not set in the GameEngine
      */
     private void spreadNoEntryTilesInMergingIslandGroups(int firstGroupId, int secondGroupId) throws TableNotSetException {
         Table table = this.getGameEngine().getTable();
@@ -71,7 +73,7 @@ public class IslandManager extends Manager {
         // if noEntry in left group, check if also in right group
         if(islandFirstGroup.hasNoEntry() && islandSecondGroup.hasNoEntry())
         {
-            // Both have new entry so I only have to set back a NoEntry
+            // Both have new entry, so I only have to set back a NoEntry
             table.increaseAvailableNoEntryTiles();
             return;
         }
@@ -89,8 +91,28 @@ public class IslandManager extends Manager {
             {
                 islandTile.setNoEntry(true);
             }
-            return;
         }
+    }
 
+    /**
+     * Returns the IslandTile instance the matches {@code islandId}
+     *
+     * @param islandId the id of the IslandTile to return
+     * @return the IslandTile instance that matches {@code islandId}
+     * @throws TableNotSetException if Table is not set in the GameEngine
+     * @throws NoSuchElementException if doesn't exist an IslandTile with {@code islandId}
+     * @see IslandTile
+     */
+    public IslandTile getIslandTileById(int islandId) throws TableNotSetException, NoSuchElementException {
+        Table table = this.getGameEngine().getTable();
+        for(ArrayList<IslandTile> islandGroup: table.getIslandTiles())
+        {
+            for(IslandTile islandTile: islandGroup)
+            {
+                if(islandTile.getId()==islandId)
+                    return islandTile;
+            }
+        }
+        throw new NoSuchElementException("Requested IslandTile could not be found");
     }
 }

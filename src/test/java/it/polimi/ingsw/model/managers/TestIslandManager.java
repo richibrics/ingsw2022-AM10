@@ -3,15 +3,21 @@ package it.polimi.ingsw.model.managers;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.game_components.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class IslandManagerTest {
+class TestIslandManager {
 
-
+    /**
+     * Test unifyPossibleIslands asking to unify when there's nothing to unify and when I also have to unify more
+     * that a group at once.
+     */
     @Test
     void unifyPossibleIslands() {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
@@ -124,6 +130,10 @@ class IslandManagerTest {
          */
     }
 
+    /**
+     * Test a sub-feature of unifyPossibleIslands which is the ability to spread the NoEntry tiles to two IslandTiles groups
+     * that are going to be merged
+     */
     @Test
     public void unifyPossibleIslandsWithNoEntry()
     {
@@ -179,6 +189,35 @@ class IslandManagerTest {
         assertTrue(table.getIslandTiles().get(0).get(2).hasNoEntry());
         assertTrue(table.getIslandTiles().get(0).get(3).hasNoEntry());
         assertEquals(5, table.getAvailableNoEntryTiles()); // Check here NoEntry tile becomes available
+    }
+
+    /**
+     * Test getIslandTileById adding an IslandTile to the table and searching for it; also test that a NoSuchElementException
+     * is thrown if I ask for a non-existing IslandTile
+     */
+    @Test
+    void getIslandTileById() {
+        // Setup
+        ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
+        matrix.add(new ArrayList<>());
+        matrix.add(new ArrayList<>());
+        matrix.add(new ArrayList<>());
+        matrix.add(new ArrayList<>());
+
+        IslandTile islandTile = new IslandTile(1);
+        // Add an island that I will search later
+        matrix.get(1).add(islandTile);
+
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setTable(table);
+        IslandManager islandManager = new IslandManager(gameEngine);
+
+        // Test starts
+        // Test with IslandTile I have just added
+        assertEquals(islandTile, assertDoesNotThrow(()->islandManager.getIslandTileById(1)));
+        // Test with a non-existing IslandTile
+        assertThrows(NoSuchElementException.class, ()->islandManager.getIslandTileById(2));
 
     }
 }
