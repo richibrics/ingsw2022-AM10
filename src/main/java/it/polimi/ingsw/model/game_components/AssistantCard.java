@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.game_components;
 public class AssistantCard {
     final private int id;
     final private int cardValue;
-    final private int movements;
+    private int movements;
 
     public AssistantCard(int id, int cardValue, int movements) {
         this.id = id;
@@ -37,4 +37,10 @@ public class AssistantCard {
     public int getMovements() {
         return movements;
     }
+
+    /**
+     * Increments by {@code increment} the number of movements of Mother Nature allowed by the card.
+     * @param increment the number of movements to add to the current number of movements
+     */
+    public void incrementMovements(int increment) { this.movements += increment; }
 }

@@ -9,6 +9,8 @@ import it.polimi.ingsw.model.game_components.AssistantCard;
 import it.polimi.ingsw.model.game_components.SchoolBoard;
 import it.polimi.ingsw.model.game_components.Wizard;
 
+import java.util.NoSuchElementException;
+
 public class Player {
 
     private User user;
@@ -76,6 +78,28 @@ public class Player {
     }
 
     /**
+     * Gets the wizard selected by the player if available, otherwise throws a WizardNotSetException.
+     * @return the wizard selected by the player.
+     * @throws WizardNotSetException if no wizard is available.
+     */
+
+    public Wizard getWizard() throws WizardNotSetException
+    {
+        if (this.wizard == null)
+            throw new WizardNotSetException();
+        return this.wizard;
+    }
+
+    /**
+     * Sets the wizard selected by the player.
+     * @param wizard the wizard selected by the player.
+     */
+
+    public void setWizard(Wizard wizard) {
+        this.wizard = wizard;
+    }
+
+    /**
      * Gets the active assistant card, which is the assistant card played by the player in the current round.
      * If no assistant card is available, throws AssistantCardNotSetException.
      * @return the assistant card played by the player in the current round.
@@ -90,12 +114,38 @@ public class Player {
     }
 
     /**
-     * Sets the assistant card played by the player in the current round.
-     * @param card the card the player has played in the current round.
+     * Sets the assistant card played by the player in the current round and removes it from the list of
+     * assistant cards contained in the player's wizard. Throws NoSuchElementException if the required card
+     * could not be found.
+     * @param assistantCardId the identifier of the card the player has played in the current round
+     * @throws NoSuchElementException if the required assistant card could not be found
      */
 
-    public void setActiveAssistantCard(AssistantCard card) {
-        this.activeAssistantCard = card;
+    public void setActiveAssistantCard(int assistantCardId) throws NoSuchElementException
+    {
+        AssistantCard assistantCard = null;
+        for (AssistantCard assistant : this.wizard.getAssistantCards())
+            if (assistant.getId() == assistantCardId) {
+                assistantCard = assistant;
+                this.wizard.removeAssistantCard(assistant);
+            }
+
+        if (assistantCard == null)
+            throw new NoSuchElementException("The assistant card could not be found");
+
+        this.activeAssistantCard = assistantCard;
+    }
+
+    /**
+     * Returns the active assistant card and sets the active assistant card to null.
+     * @return the active assistant card
+     */
+
+    public AssistantCard popActiveAssistantCard()
+    {
+        AssistantCard assistantCard = this.activeAssistantCard;
+        this.activeAssistantCard = null;
+        return assistantCard;
     }
 
     /**
@@ -121,27 +171,7 @@ public class Player {
         this.lastPlayedAssistantCard = card;
     }
 
-    /**
-     * Gets the wizard selected by the player if available, otherwise throws a WizardNotSetException.
-     * @return the wizard selected by the player.
-     * @throws WizardNotSetException if no wizard is available.
-     */
 
-    public Wizard getWizard() throws WizardNotSetException
-    {
-        if (this.wizard == null)
-            throw new WizardNotSetException();
-        return this.wizard;
-    }
-
-    /**
-     * Sets the wizard selected by the player.
-     * @param wizard the wizard selected by the player.
-     */
-
-    public void setWizard(Wizard wizard) {
-        this.wizard = wizard;
-    }
 
     /**
      * Gets the school board of the player. If no school board is present, throws SchoolBoardNotSetException.

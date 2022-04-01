@@ -57,15 +57,36 @@ class TestPlayer {
     }
 
     @Test
+    void Wizard() {
+        Player player = new Player(user, 0,5);
+        assertThrows(WizardNotSetException.class, () -> player.getWizard());
+        ArrayList<AssistantCard> assistantCards = new ArrayList<>();
+        for (int i = 0; i < 12; i++)
+            assistantCards.add(new AssistantCard(i,i,12-i));
+        Wizard wizard = new Wizard(1, assistantCards);
+        player.setWizard(wizard);
+        assertEquals(assertDoesNotThrow(() -> player.getWizard()), wizard);
+    }
+
+    @Test
     void ActiveAssistantCard() {
+
+        ArrayList<AssistantCard> assistantCards = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            assistantCards.add(new AssistantCard(i, i, 12 - i));
+        }
+        Wizard wizard = new Wizard(1, assistantCards);
+
         Player player = new Player(user, 0, 5);
+        player.setWizard(wizard);
         assertThrows(AssistantCardNotSetException.class, () -> player.getActiveAssistantCard());
-        AssistantCard assistantCard1 = new AssistantCard(1, 5, 2);
-        player.setActiveAssistantCard(assistantCard1);
-        assertEquals(assertDoesNotThrow(() -> player.getActiveAssistantCard()), assistantCard1);
-        AssistantCard assistantCard2 = new AssistantCard(2, 4, 2);
-        player.setActiveAssistantCard(assistantCard2);
-        assertEquals(assertDoesNotThrow(() -> player.getActiveAssistantCard()), assistantCard2);
+        player.setActiveAssistantCard(2);
+        assertEquals(assertDoesNotThrow(() -> player.getActiveAssistantCard().getId()), 2);
+        for (AssistantCard assistantCard : assertDoesNotThrow(() -> player.getWizard().getAssistantCards()))
+            assertNotEquals(assistantCard.getId(), 2);
+
+        assertEquals(player.popActiveAssistantCard().getId(), 2);
+        assertThrows(AssistantCardNotSetException.class, () -> player.getActiveAssistantCard());
     }
 
 
@@ -80,19 +101,6 @@ class TestPlayer {
         player.setLastPlayedAssistantCard(assistantCard2);
         assertEquals(assertDoesNotThrow(() -> player.getLastPlayedAssistantCard()), assistantCard2);
     }
-
-    @Test
-    void Wizard() {
-        Player player = new Player(user, 0,5);
-        assertThrows(WizardNotSetException.class, () -> player.getWizard());
-        ArrayList<AssistantCard> assistantCards = new ArrayList<>();
-        for (int i = 0; i < 12; i++)
-            assistantCards.add(new AssistantCard(i,i,12-i));
-        Wizard wizard = new Wizard(1, assistantCards);
-        player.setWizard(wizard);
-        assertEquals(assertDoesNotThrow(() -> player.getWizard()), wizard);
-    }
-
 
     @Test
     void SchoolBoard() {
