@@ -64,33 +64,6 @@ public class SchoolPawnManager extends Manager {
     }
 
     /**
-     * Returns the school board of the player with {@code playerId}. Throws SchoolBoardNotSetException if the school board
-     * has not been set, NoSuchElementException if the required school board could not be found.
-     * @param playerId the identifier of the player
-     * @return the school board of the player with {@code playerId}
-     * @throws SchoolBoardNotSetException if the school board has not been set
-     * @throws NoSuchElementException if the required school board could not be found
-     * @see Player
-     * @see SchoolBoard
-     */
-
-    private SchoolBoard takeSchoolBoardByPlayerId (int playerId) throws  SchoolBoardNotSetException, NoSuchElementException
-    {
-        SchoolBoard schoolBoard = null;
-        for (Team team : this.getGameEngine().getTeams()) {
-            for (Player player : team.getPlayers()) {
-                if (player.getPlayerId() == playerId)
-                    schoolBoard = player.getSchoolBoard();
-            }
-        }
-
-        if (schoolBoard == null)
-            throw new NoSuchElementException("The school board of the player is not available");
-
-        return schoolBoard;
-    }
-
-    /**
      * Moves the required student disc from the Entrance to the Dining Room of the school board of the player identified by
      * {@code playerId}. Throws SchoolBoardNotSetException if the school board of the player has not been set, NoSuchElementException
      * if the student disc could not be found in the entrance of the school board.
@@ -105,7 +78,7 @@ public class SchoolPawnManager extends Manager {
 
     public void moveStudentFromEntranceToDiningRoom(int playerId, int studentId) throws  SchoolBoardNotSetException, NoSuchElementException
     {
-        SchoolBoard schoolBoard = this.takeSchoolBoardByPlayerId(playerId);
+        SchoolBoard schoolBoard = CommonManager.takeSchoolBoardByPlayerId(this.getGameEngine(), playerId);
         schoolBoard.addStudentToDiningRoom(schoolBoard.removeStudentFromEntrance(studentId));
     }
 
@@ -130,19 +103,8 @@ public class SchoolPawnManager extends Manager {
 
     public void moveStudentFromEntranceToIsland(int playerId, int studentId, int islandId) throws SchoolBoardNotSetException, NoSuchElementException, TableNotSetException
     {
-        SchoolBoard schoolBoard = this.takeSchoolBoardByPlayerId(playerId);
-        IslandTile islandTile = null;
-        for (ArrayList<IslandTile> islandGroup : this.getGameEngine().getTable().getIslandTiles()) {
-            for (IslandTile island : islandGroup) {
-                if (island.getId() == islandId)
-                    islandTile = island;
-            }
-        }
-
-        if (islandTile == null)
-            throw new NoSuchElementException("The required island tile could not be found");
-
-        islandTile.addStudent(schoolBoard.removeStudentFromEntrance(studentId));
+        SchoolBoard schoolBoard = CommonManager.takeSchoolBoardByPlayerId(this.getGameEngine(), playerId);
+        CommonManager.takeIslandTileById(this.getGameEngine(), islandId).addStudent(schoolBoard.removeStudentFromEntrance(studentId));
     }
 
     /**
@@ -172,7 +134,7 @@ public class SchoolPawnManager extends Manager {
         if (cloud == null)
             throw  new NoSuchElementException("The required cloud tile could not be found");
 
-        this.takeSchoolBoardByPlayerId(playerId).addStudentsToEntrance(cloud.popStudents());
+        CommonManager.takeSchoolBoardByPlayerId(this.getGameEngine(), playerId).addStudentsToEntrance(cloud.popStudents());
     }
 
     /**
