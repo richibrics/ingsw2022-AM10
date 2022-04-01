@@ -6,9 +6,9 @@ import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.game_components.Tower;
+import it.polimi.ingsw.model.game_components.TowerColor;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 public class IslandManager extends Manager {
     public IslandManager(GameEngine gameEngine) {
@@ -57,7 +57,7 @@ public class IslandManager extends Manager {
     }
 
     /**
-     * Merge the NoEntry tile to both the groups of IslandTiles if only one has it; set back a NoEntry tile if both have it
+     * Merges the NoEntry tile to both the groups of IslandTiles if only one has it; set back a NoEntry tile if both have it
      * (privately tested).
      * This operation is run before island merge because if the groups are still separated I can
      * manage the case with both groups with NoEntry and set the NoEntry tile back to the available tiles.
@@ -94,25 +94,65 @@ public class IslandManager extends Manager {
         }
     }
 
+
     /**
-     * Returns the IslandTile instance the matches {@code islandId}
-     *
-     * @param islandId the id of the IslandTile to return
-     * @return the IslandTile instance that matches {@code islandId}
-     * @throws TableNotSetException if Table is not set in the GameEngine
-     * @throws NoSuchElementException if doesn't exist an IslandTile with {@code islandId}
-     * @see IslandTile
+     * Returns the id of the Island where there's MotherNature.
+     * @return MotherNature's IslandTile id
+     * @throws TableNotSetException if Table is not set in GameEngine
      */
-    public IslandTile getIslandTileById(int islandId) throws TableNotSetException, NoSuchElementException {
-        Table table = this.getGameEngine().getTable();
-        for(ArrayList<IslandTile> islandGroup: table.getIslandTiles())
-        {
-            for(IslandTile islandTile: islandGroup)
-            {
-                if(islandTile.getId()==islandId)
-                    return islandTile;
-            }
-        }
-        throw new NoSuchElementException("Requested IslandTile could not be found");
+    public int getMotherNatureIslandId() throws TableNotSetException {
+        return this.getGameEngine().getTable().getMotherNature().getIslandTile().getId();
+    }
+
+    /**
+     * Returns true if IslandTile whose id is {@code islandId} has the NoEntry tile.
+     *
+     * @param islandId  the id of the island to search
+     * @return true if NoEntry tile is present
+     * @throws TableNotSetException if Table is not set in GameEngine
+     */
+    public boolean islandTileHasNoEntry(int islandId) throws TableNotSetException {
+        return CommonManager.takeIslandTileById(this.getGameEngine(),islandId).hasNoEntry();
+    }
+
+    /**
+     * Sets noEntry value for the IslandId whose id is the same of {@code islandId}.
+     *
+     * @param islandId  the id of the island to search
+     * @param value new value for NoEntry in the IslandTile
+     * @throws TableNotSetException if Table is not set in GameEngine
+     */
+    public void setIslandTileNoEntry(int islandId, boolean value) throws TableNotSetException {
+        CommonManager.takeIslandTileById(this.getGameEngine(),islandId).setNoEntry(value);
+    }
+
+    /**
+     * Returns the number of IslandTile groups.
+     * @return  the number of IslandTile groups
+     * @throws TableNotSetException if Table is not set in GameEngine
+     */
+    public int getIslandGroupsNumber() throws TableNotSetException {
+        return this.getGameEngine().getTable().getIslandTiles().size();
+    }
+
+    /**
+     * Gets the color of the IslandTile with {@code islandId}.
+     * @param islandId the id of the IslandTile to search
+     * @return the color of the Tower on the IslandTile
+     * @throws TableNotSetException if Table is not set in GameEngine
+     * @throws TowerNotSetException if there isn't a tower on the IslandTile (check with {@link IslandManager#islandTileHasTower(int)})
+     */
+    public TowerColor getIslandTowerColor(int islandId) throws TableNotSetException, TowerNotSetException {
+        return CommonManager.takeIslandTileById(this.getGameEngine(),islandId).getTower().getColor();
+    }
+
+    /**
+     * Returns true if there's a Tower on the IslandTile
+     * @param islandId the id of the IslandTile to search
+     * @return true if there's a Tower on the IslandTile
+     * @throws TableNotSetException if Table is not set in GameEngine
+     */
+    public boolean islandTileHasTower(int islandId) throws TableNotSetException {
+        return CommonManager.takeIslandTileById(getGameEngine(),islandId).hasTower();
     }
 }

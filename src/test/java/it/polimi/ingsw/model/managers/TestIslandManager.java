@@ -1,14 +1,12 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -189,35 +187,134 @@ class TestIslandManager {
         assertTrue(table.getIslandTiles().get(0).get(2).hasNoEntry());
         assertTrue(table.getIslandTiles().get(0).get(3).hasNoEntry());
         assertEquals(5, table.getAvailableNoEntryTiles()); // Check here NoEntry tile becomes available
+
     }
 
-    /**
-     * Test getIslandTileById adding an IslandTile to the table and searching for it; also test that a NoSuchElementException
-     * is thrown if I ask for a non-existing IslandTile
-     */
     @Test
-    void getIslandTileById() {
-        // Setup
+    /**
+     * Test getMotherNatureIslandId: check if the returned Island tile id is the same of the Island tile where MotherNature is
+     */
+    void getMotherNatureIslandId() {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
         matrix.add(new ArrayList<>());
         matrix.add(new ArrayList<>());
         matrix.add(new ArrayList<>());
         matrix.add(new ArrayList<>());
+        matrix.get(0).add(new IslandTile(0));
+        matrix.get(1).add(new IslandTile(1));
+        matrix.get(2).add(new IslandTile(2));
+        matrix.get(3).add(new IslandTile(3));
+        MotherNature motherNature = new MotherNature(matrix.get(2).get(0));
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),motherNature,matrix,new HashMap<>());
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setTable(table);
+        IslandManager islandManager = new IslandManager(gameEngine);
 
-        IslandTile islandTile = new IslandTile(1);
-        // Add an island that I will search later
-        matrix.get(1).add(islandTile);
+        assertEquals(2,assertDoesNotThrow(()->islandManager.getMotherNatureIslandId()));
+    }
 
+    /**
+     * Test islandTileHasNoEntry: set directly the property on the IslandTile and assert with islandHasNoEntry the value.
+     */
+    @Test
+    void islandTileHasNoEntry() {
+        ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
+        matrix.add(new ArrayList<>());
+        matrix.get(0).add(new IslandTile(0));
+        Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new HashMap<>());
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setTable(table);
+        IslandManager islandManager = new IslandManager(gameEngine);
+
+        assertFalse(assertDoesNotThrow(() ->
+                islandManager.islandTileHasNoEntry(0)));
+        assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).setNoEntry(true));
+        assertTrue(assertDoesNotThrow(() ->
+                islandManager.islandTileHasNoEntry(0)));
+        assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).setNoEntry(false));
+        assertFalse(assertDoesNotThrow(() ->
+                islandManager.islandTileHasNoEntry(0)));
+    }
+
+    /**
+     * Test setIslandTileNoEntry: set IslandTile NoEntry status to both true and false and check the result is correct
+     */
+    @Test
+    void setIslandTileNoEntry() {
+        ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
+        matrix.add(new ArrayList<>());
+        matrix.get(0).add(new IslandTile(0));
+        Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new HashMap<>());
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setTable(table);
+        IslandManager islandManager = new IslandManager(gameEngine);
+
+        assertDoesNotThrow(() -> islandManager.setIslandTileNoEntry(0, true));
+        assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).hasNoEntry()));
+        assertDoesNotThrow(() -> islandManager.setIslandTileNoEntry(0, false));
+        assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).hasNoEntry()));
+    }
+
+    /**
+     * Test getIslandGroupsNumber: insert 4 IslandTiles, set 2 of them with the same Tower color, unify, check I have only 3 groups now
+     */
+    @Test
+    void getIslandGroupsNumber()
+    {
+        ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
+        matrix.add(new ArrayList<>());
+        matrix.add(new ArrayList<>());
+        matrix.add(new ArrayList<>());
+        matrix.add(new ArrayList<>());
+        matrix.get(0).add(new IslandTile(0));
+        matrix.get(1).add(new IslandTile(1));
+        matrix.get(2).add(new IslandTile(2));
+        matrix.get(3).add(new IslandTile(3));
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
         IslandManager islandManager = new IslandManager(gameEngine);
 
-        // Test starts
-        // Test with IslandTile I have just added
-        assertEquals(islandTile, assertDoesNotThrow(()->islandManager.getIslandTileById(1)));
-        // Test with a non-existing IslandTile
-        assertThrows(NoSuchElementException.class, ()->islandManager.getIslandTileById(2));
+        assertEquals(4, assertDoesNotThrow(()->islandManager.getIslandGroupsNumber()));
+        assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 0).setTower(new Tower(TowerColor.BLACK)));
+        assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 1).setTower(new Tower(TowerColor.BLACK)));
+        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertEquals(3, assertDoesNotThrow(()->islandManager.getIslandGroupsNumber()));
+    }
 
+    /**
+     * Test getIslandTowerColor: test at first where there is not a Tower (assertThrows) then set a tower and check that it gets the new tower color.
+     */
+    @Test
+    void getIslandTowerColor() {
+        ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
+        matrix.add(new ArrayList<>());
+        matrix.get(0).add(new IslandTile(0));
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setTable(table);
+        IslandManager islandManager = new IslandManager(gameEngine);
+
+        assertThrows(TowerNotSetException.class, ()-> islandManager.getIslandTowerColor(0));
+        assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine,0).setTower(new Tower(TowerColor.BLACK)));
+        assertDoesNotThrow(()-> islandManager.getIslandTowerColor(0));;
+    }
+
+    /**
+     * Test getIslandTowerColor: test at first where there is not a Tower (assertFalse) then set a tower and assertTrue.
+     */
+    @Test
+    void islandTileHasTower() {
+        ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
+        matrix.add(new ArrayList<>());
+        matrix.get(0).add(new IslandTile(0));
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setTable(table);
+        IslandManager islandManager = new IslandManager(gameEngine);
+
+        assertFalse(assertDoesNotThrow(()-> islandManager.islandTileHasTower(0)));
+        assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine,0).setTower(new Tower(TowerColor.BLACK)));
+        assertTrue(assertDoesNotThrow(()-> islandManager.islandTileHasTower(0)));
     }
 }
