@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.game_components;
 
+import it.polimi.ingsw.model.exceptions.TowerAlreadySetException;
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,8 @@ public class TestIslandTile {
         assertFalse(islandTile.hasTower());
         assertThrows(TowerNotSetException.class,() -> islandTile.replaceTower(blackTower));
         assertFalse(islandTile.hasTower());
-        islandTile.setTower(blackTower);
+        assertDoesNotThrow(()->islandTile.setTower(blackTower));
+        assertThrows(TowerAlreadySetException.class,()->islandTile.setTower(blackTower));
         assertTrue(islandTile.hasTower());
         assertEquals(assertDoesNotThrow(()->islandTile.getTower()),blackTower);
         assertEquals(assertDoesNotThrow(()->islandTile.replaceTower(whiteTower)),blackTower);

@@ -66,4 +66,41 @@ public class CommonManager {
 
         return islandTile;
     }
+
+    /**
+     * Returns the Team id where the Player with {@code playerId} belongs.
+     * @param gameEngine the game engine
+     * @param playerId the id of the required player
+     * @return the required team id
+     * @throws NoSuchElementException if the required player id could not be found
+     */
+    public static int takeTeamIdByPlayerId (GameEngine gameEngine, int playerId) throws NoSuchElementException {
+        for(Team team: gameEngine.getTeams())
+        {
+            for(Player player: team.getPlayers())
+            {
+                if(player.getPlayerId()==playerId)
+                    return team.getId();
+            }
+        }
+        throw new NoSuchElementException("The required player could not be found in any team");
+    }
+
+
+    /**
+     * Returns the Team with {@code teamId}.
+     * @param gameEngine the game engine
+     * @param teamId the id of the required team
+     * @return the required team
+     * @throws NoSuchElementException if the required team could not be found
+     */
+    public static Team takeTeamById (GameEngine gameEngine, int teamId) throws NoSuchElementException {
+        for(Team team: gameEngine.getTeams())
+        {
+            if(team.getId()==teamId)
+                return team;
+        }
+        throw new NoSuchElementException("The required team could not be found");
+    }
+
 }

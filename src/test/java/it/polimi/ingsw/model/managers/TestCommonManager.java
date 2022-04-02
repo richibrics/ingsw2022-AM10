@@ -100,4 +100,14 @@ class TestCommonManager {
         assertEquals(assertDoesNotThrow(() -> gameEngine.getTable().getIslandTiles().get(4).get(0)), islandTile);
         assertThrows(NoSuchElementException.class, () -> CommonManager.takeIslandTileById(gameEngine, 15));
     }
+
+    @Test
+    void takeTeamIdByPlayerId() {
+        assertEquals(gameEngine.getTeams().get(0).getId(), CommonManager.takeTeamIdByPlayerId(gameEngine,gameEngine.getTeams().get(0).getPlayers().get(0).getPlayerId()));
+    }
+
+    @Test
+    void takeTeamById() {
+        assertEquals(gameEngine.getTeams().get(1),CommonManager.takeTeamById(gameEngine,2));
+    }
 }

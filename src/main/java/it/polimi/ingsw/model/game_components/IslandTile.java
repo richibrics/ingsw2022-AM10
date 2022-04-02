@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.game_components;
 
+import it.polimi.ingsw.model.exceptions.TowerAlreadySetException;
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 
 import java.util.ArrayList;
@@ -54,8 +55,9 @@ public class IslandTile {
      * @param   tower   Tower to set in the island
      * @see         Tower
      */
-    public void setTower(Tower tower)
-    {
+    public void setTower(Tower tower) throws TowerAlreadySetException {
+        if(this.tower != null)
+            throw new TowerAlreadySetException();
         this.tower = tower;
     }
 
@@ -71,7 +73,7 @@ public class IslandTile {
         if(this.tower == null)
             throw new TowerNotSetException();
         Tower currentTower = this.tower;
-        this.setTower(towerToSet);
+        this.tower = towerToSet;
         return currentTower;
     }
 
