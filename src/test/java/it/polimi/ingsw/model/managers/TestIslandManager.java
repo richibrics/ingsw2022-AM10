@@ -39,8 +39,8 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Check anything has changed
         assertEquals(4,table.getIslandTiles().size());
         // Now I set the first Island to White influence
@@ -54,7 +54,7 @@ class TestIslandManager {
          * island(3, free)
          *
          */
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Check anything has changed
         assertEquals(4,table.getIslandTiles().size());
 
@@ -70,7 +70,7 @@ class TestIslandManager {
          *
          */
         // Unify
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Check we have lost a group
         assertEquals(3,table.getIslandTiles().size());
         // Check group 0 now has 2 island tiles (and the other still 1)
@@ -86,7 +86,7 @@ class TestIslandManager {
          *
          */
 
-        // Now I set the island 3 to Black, nothing should happened so I use the previous tests
+        // Now I set the island 3 to Black, nothing should happen, so I use the previous tests
         table.getIslandTiles().get(2).get(0).setTower(new Tower(TowerColor.BLACK));
         /*
          *
@@ -96,7 +96,7 @@ class TestIslandManager {
          * island(3, BLACK)
          *
          */
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Check we have lost a group
         assertEquals(3,table.getIslandTiles().size());
         // Check group 0 now has 2 island tiles (and the other still 1)
@@ -115,7 +115,7 @@ class TestIslandManager {
          * island(3, BLACK)
          *
          */
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Check we have lost a group
         assertEquals(1,table.getIslandTiles().size());
         // Check group 0 now has 2 island tiles (and the other still 1)
@@ -147,11 +147,10 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
         table.getIslandTiles().get(0).get(0).setNoEntry(true);
         table.getIslandTiles().get(2).get(0).setNoEntry(true);
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Should have 4 groups and NoEntry only on the 0,2 islands
         assertEquals(4, table.getIslandTiles().size());
         assertTrue(table.getIslandTiles().get(0).get(0).hasNoEntry());
@@ -164,7 +163,7 @@ class TestIslandManager {
         table.getIslandTiles().get(1).get(0).setTower(new Tower(TowerColor.BLACK));
         table.getIslandTiles().get(2).get(0).setTower(new Tower(TowerColor.WHITE));
         table.getIslandTiles().get(3).get(0).setTower(new Tower(TowerColor.WHITE));
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Now I have 2 groups (0,1 black and 2,3 white)
         assertEquals(2, table.getIslandTiles().size());
         // Check everybody with NoEntry
@@ -177,7 +176,7 @@ class TestIslandManager {
         assertEquals(4, table.getAvailableNoEntryTiles()); // Check current
         table.getIslandTiles().get(1).get(0).setTower(new Tower(TowerColor.BLACK));
         table.getIslandTiles().get(1).get(1).setTower(new Tower(TowerColor.BLACK));
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
 
         // Final check: I should have only one group with all the islands which have the NoEntry tile.
         // The noEntry tiles available must become 4+1 = 5
@@ -208,9 +207,8 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),motherNature,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
-        assertEquals(2,assertDoesNotThrow(()->islandManager.getMotherNatureIslandId()));
+        assertEquals(2,assertDoesNotThrow(()->gameEngine.getIslandManager().getMotherNatureIslandId()));
     }
 
     /**
@@ -224,16 +222,15 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
         assertFalse(assertDoesNotThrow(() ->
-                islandManager.islandTileHasNoEntry(0)));
+                gameEngine.getIslandManager().islandTileHasNoEntry(0)));
         assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).setNoEntry(true));
         assertTrue(assertDoesNotThrow(() ->
-                islandManager.islandTileHasNoEntry(0)));
+                gameEngine.getIslandManager().islandTileHasNoEntry(0)));
         assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).setNoEntry(false));
         assertFalse(assertDoesNotThrow(() ->
-                islandManager.islandTileHasNoEntry(0)));
+                gameEngine.getIslandManager().islandTileHasNoEntry(0)));
     }
 
     /**
@@ -247,11 +244,10 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
-        assertDoesNotThrow(() -> islandManager.setIslandTileNoEntry(0, true));
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().setIslandTileNoEntry(0, true));
         assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).hasNoEntry()));
-        assertDoesNotThrow(() -> islandManager.setIslandTileNoEntry(0, false));
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().setIslandTileNoEntry(0, false));
         assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).hasNoEntry()));
     }
 
@@ -273,13 +269,12 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
-        assertEquals(4, assertDoesNotThrow(()->islandManager.getIslandGroupsNumber()));
+        assertEquals(4, assertDoesNotThrow(()->gameEngine.getIslandManager().getIslandGroupsNumber()));
         assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 0).setTower(new Tower(TowerColor.BLACK)));
         assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 1).setTower(new Tower(TowerColor.BLACK)));
-        assertDoesNotThrow(()->islandManager.unifyPossibleIslands());
-        assertEquals(3, assertDoesNotThrow(()->islandManager.getIslandGroupsNumber()));
+        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
+        assertEquals(3, assertDoesNotThrow(()->gameEngine.getIslandManager().getIslandGroupsNumber()));
     }
 
     /**
@@ -293,11 +288,10 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
-        assertThrows(TowerNotSetException.class, ()-> islandManager.getIslandTowerColor(0));
+        assertThrows(TowerNotSetException.class, ()-> gameEngine.getIslandManager().getIslandTowerColor(0));
         assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine,0).setTower(new Tower(TowerColor.BLACK)));
-        assertDoesNotThrow(()-> islandManager.getIslandTowerColor(0));;
+        assertDoesNotThrow(()-> gameEngine.getIslandManager().getIslandTowerColor(0));;
     }
 
     /**
@@ -311,10 +305,9 @@ class TestIslandManager {
         Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
-        IslandManager islandManager = new IslandManager(gameEngine);
 
-        assertFalse(assertDoesNotThrow(()-> islandManager.islandTileHasTower(0)));
+        assertFalse(assertDoesNotThrow(()-> gameEngine.getIslandManager().islandTileHasTower(0)));
         assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine,0).setTower(new Tower(TowerColor.BLACK)));
-        assertTrue(assertDoesNotThrow(()-> islandManager.islandTileHasTower(0)));
+        assertTrue(assertDoesNotThrow(()-> gameEngine.getIslandManager().islandTileHasTower(0)));
     }
 }

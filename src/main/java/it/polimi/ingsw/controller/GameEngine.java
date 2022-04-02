@@ -3,7 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.Table;
-import it.polimi.ingsw.model.managers.Manager;
+import it.polimi.ingsw.model.managers.*;
 
 import java.util.ArrayList;
 
@@ -12,14 +12,20 @@ public class GameEngine {
 
     private Table table;
     private ArrayList<Team> teams;
-    private Manager actionManager;
-    private Manager schoolPawnManager;
-    private Manager assistantManager;
-    private Manager islandManager;
-    private Manager characterManager;
+    private ActionManager actionManager; // Still not implemented
+    private SchoolPawnManager schoolPawnManager;
+    private AssistantManager assistantManager;
+    private IslandManager islandManager;
+    private Manager characterManager; // Change this type when implemented CharacterManager
 
     public GameEngine(ArrayList<Team> teams) {
         // Instantiate here the managers
+        // this.actionManager = new ActionManager();
+        this.schoolPawnManager = new SchoolPawnManager(this);
+        this.assistantManager = new AssistantManager(this);
+        this.islandManager = new IslandManager(this);
+        // this.characterManager = new CharacterManager(this);
+
         this.teams = new ArrayList<>(teams);
     }
 
@@ -74,9 +80,9 @@ public class GameEngine {
      * Returns the ActionManager
      *
      * @return the ActionManager
-     * @see Manager
+     * @see ActionManager
      */
-    public Manager getActionManager()
+    public ActionManager getActionManager()
     {
         return this.actionManager;
     }
@@ -85,9 +91,9 @@ public class GameEngine {
      * Returns the SchoolPawnManager
      *
      * @return the SchoolPawnManager
-     * @see Manager
+     * @see SchoolPawnManager
      */
-    public Manager getSchoolPawnManager()
+    public SchoolPawnManager getSchoolPawnManager()
     {
         return this.schoolPawnManager;
     }
@@ -96,9 +102,9 @@ public class GameEngine {
      * Returns the AssistantManager
      *
      * @return the AssistantManager
-     * @see Manager
+     * @see AssistantManager
      */
-    public Manager getAssistantManager()
+    public AssistantManager getAssistantManager()
     {
         return this.assistantManager;
     }
@@ -107,9 +113,9 @@ public class GameEngine {
      * Returns the IslandManager
      *
      * @return the IslandManager
-     * @see Manager
+     * @see IslandManager
      */
-    public Manager getIslandManager()
+    public IslandManager getIslandManager()
     {
         return this.islandManager;
     }
@@ -123,7 +129,7 @@ public class GameEngine {
     public Manager getCharacterManager()
     {
         return this.characterManager;
-    }
+    } // Change return type when this manager has been implemented
 
     /**
      * Asks the ActionManager to run the {@code actionId} demanded by {@code playerId} with {@code options}.

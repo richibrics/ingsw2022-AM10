@@ -54,29 +54,38 @@ class TestGameEngine {
         assertEquals(4, gameEngine.getNumberOfPlayers());
     }
 
-    /* Valid tests only when Manager will be instantiated in the constructor
-    @Test
-    void getActionManager() {
-        GameEngine gameEngine = new GameEngine(this.teams);
-        assertNotNull(gameEngine.getActionManager());
-    }
-
+    /**
+     * Test Manager instantiated correctly so not null
+     */
     @Test
     void getSchoolPawnManager() {
         GameEngine gameEngine = new GameEngine(this.teams);
         assertNotNull(gameEngine.getSchoolPawnManager());
     }
 
+    /**
+     * Test Manager instantiated correctly so not null
+     */
     @Test
     void getAssistantManager() {
         GameEngine gameEngine = new GameEngine(this.teams);
         assertNotNull(gameEngine.getAssistantManager());
     }
 
+    /**
+     * Test Manager instantiated correctly so not null
+     */
     @Test
     void getIslandManager() {
         GameEngine gameEngine = new GameEngine(this.teams);
         assertNotNull(gameEngine.getIslandManager());
+    }
+
+    /* Valid test only when Manager will be instantiated in the constructor
+    @Test
+    void getActionManager() {
+        GameEngine gameEngine = new GameEngine(this.teams);
+        assertNotNull(gameEngine.getActionManager());
     }
 
     @Test
