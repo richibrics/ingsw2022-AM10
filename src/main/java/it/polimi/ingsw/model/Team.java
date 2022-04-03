@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.model.game_components.ProfessorPawn;
 import it.polimi.ingsw.model.game_components.Tower;
+import it.polimi.ingsw.model.game_components.TowerColor;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -14,6 +15,7 @@ public class Team {
     private ArrayList<Player> players;
     private ArrayList<Tower> towers;
     private ArrayList<ProfessorPawn> professorTable;
+    private TowerColor towerColor;
 
     public Team(int id, ArrayList<Player> players)
     {
@@ -21,6 +23,17 @@ public class Team {
         this.players = new ArrayList<>(players);
         this.towers = new ArrayList<Tower>();
         this.professorTable = new ArrayList<ProfessorPawn>();
+    }
+
+    /**
+     * Returns the TowerColor of the Team.
+     * @return the TowerColor of the Team
+     * @throws TowerNotSetException if any Tower had been added to the Team
+     */
+    public TowerColor getTeamTowersColor() throws TowerNotSetException {
+        if(towerColor==null)
+            throw new TowerNotSetException("Team needs at least one Tower assignment to define its TowerColor");
+        return towerColor;
     }
 
     /**
@@ -50,11 +63,16 @@ public class Team {
 
     /**
      * Adds a tower to the list of the towers not built by the team.
+     * Additionally, if the Team hasn't a TowerColor, defines it using the Color of the new Tower.
      * @param tower the tower to add.
      * @see Tower
      * */
 
-    public void addTower(Tower tower) { this.towers.add(tower); }
+    public void addTower(Tower tower) {
+        this.towers.add(tower);
+        if(this.towerColor==null)
+            this.towerColor = tower.getColor();
+    }
 
     /**
      * Removes a tower from the list of towers that have not been built by the team. If no tower is in the list of towers,

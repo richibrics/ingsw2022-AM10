@@ -5,8 +5,10 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
+import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.SchoolBoard;
+import it.polimi.ingsw.model.game_components.TowerColor;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -103,4 +105,20 @@ public class CommonManager {
         throw new NoSuchElementException("The required team could not be found");
     }
 
+    /**
+     * Returns the id of the Team that has tower color equal to {@code color}.
+     * @param gameEngine the game engine
+     * @param color the color of the towers of the required team
+     * @return the required team id
+     * @throws NoSuchElementException if the required team could not be found
+     * @throws TowerNotSetException if any Tower had been added to the Team
+     */
+    public static int takeTeamIdByTowerColor (GameEngine gameEngine, TowerColor color) throws TowerNotSetException {
+        for(Team team: gameEngine.getTeams())
+        {
+            if(team.getTeamTowersColor()==color)
+                return team.getId();
+        }
+        throw new NoSuchElementException("The required team could not be found");
+    }
 }

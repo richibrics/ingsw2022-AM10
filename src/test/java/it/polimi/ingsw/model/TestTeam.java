@@ -80,4 +80,13 @@ class TestTeam {
         assertFalse(team.getProfessorTable().contains(pawn3));
     }
 
+    @Test
+    void getTeamTowersColor()
+    {
+        Team team = new Team(1,new ArrayList<>());
+        assertThrows(TowerNotSetException.class, ()->team.getTeamTowersColor());
+        team.addTower(new Tower(TowerColor.BLACK));
+        assertEquals(TowerColor.BLACK, assertDoesNotThrow(()->team.getTeamTowersColor()));
+    }
+
 }

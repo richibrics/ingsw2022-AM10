@@ -209,4 +209,21 @@ class TestSchoolPawnManager {
         assertEquals(assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getProfessorTable().size()), 2);
         assertEquals(assertDoesNotThrow(() -> gameEngine.getTeams().get(1).getProfessorTable().size()), 1);
     }
+
+    /**
+     * Test getIslandStudents: add some students on an island tile and check that SchoolPawnManager.getIslandStudents returns
+     * the same Students
+     */
+    @Test
+    public void getIslandStudents() {
+        IslandTile islandTile = assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 1));
+        ArrayList<StudentDisc> students = new ArrayList<>();
+        students.add(new StudentDisc(10, PawnColor.BLUE));
+        students.add(new StudentDisc(11, PawnColor.PINK));
+        for(StudentDisc studentDisc: students)
+        {
+            islandTile.addStudent(studentDisc);
+        }
+        assertEquals(students, assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().getIslandStudents(1)));
+    }
 }

@@ -164,4 +164,15 @@ public class SchoolPawnManager extends Manager {
 
         receivingTeam.addProfessorPawn(losingTeam.removeProfessorPawn(color));
     }
+
+    /**
+     * Returns the StudentDiscs on the IslandTile whose id is {@code islandId}.
+     * @param islandId the id of the Island where the Students have to be grabbed
+     * @return  ArrayList with StudentDisc present on the Island
+     * @throws TableNotSetException if Table is not set in GameEngine
+     * @throws NoSuchElementException if the required island tile could not be found
+     */
+    public ArrayList<StudentDisc> getIslandStudents(int islandId) throws TableNotSetException, NoSuchElementException {
+        return new ArrayList<>(CommonManager.takeIslandTileById(this.getGameEngine(), islandId).peekStudents());
+    }
 }

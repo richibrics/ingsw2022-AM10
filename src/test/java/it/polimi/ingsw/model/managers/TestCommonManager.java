@@ -28,6 +28,7 @@ class TestCommonManager {
         ArrayList<Player> players1 = new ArrayList<Player>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
+        team1.addTower(new Tower(TowerColor.WHITE));
 
         User user2 = new User("2", 2);
         Player player2 = new Player(user2, 2, 3);
@@ -109,5 +110,10 @@ class TestCommonManager {
     @Test
     void takeTeamById() {
         assertEquals(gameEngine.getTeams().get(1),CommonManager.takeTeamById(gameEngine,2));
+    }
+
+    @Test
+    void takeTeamIdByTowerColor() {
+        assertEquals(1, assertDoesNotThrow(()->CommonManager.takeTeamIdByTowerColor(gameEngine, TowerColor.WHITE)));
     }
 }
