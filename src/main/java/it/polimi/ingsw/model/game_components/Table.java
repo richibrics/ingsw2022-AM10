@@ -11,20 +11,29 @@ public class Table {
     final private MotherNature motherNature;
     final private ArrayList<ArrayList<IslandTile>> islandTiles;
     final private Map<Integer, CharacterCard> activeCharacterCards;
+    private int availableNoEntryTiles;
 
     public Table(ArrayList<SchoolBoard> schoolBoards, Bag bag, ArrayList<CloudTile> cloudTiles, MotherNature motherNature, ArrayList<ArrayList<IslandTile>> islandTiles, Map<Integer, CharacterCard> activeCharacterCards) {
-        this.schoolBoards = schoolBoards;
+        this.schoolBoards = new ArrayList<>(schoolBoards);
         this.bag = bag;
-        this.cloudTiles = cloudTiles;
+        this.cloudTiles = new ArrayList<>(cloudTiles);
         this.motherNature = motherNature;
-        this.islandTiles = islandTiles;
-        this.activeCharacterCards = activeCharacterCards;
+        // Copy the island groups received
+        this.islandTiles = new ArrayList<>();
+        for(ArrayList<IslandTile> group: islandTiles)
+        {
+            this.islandTiles.add(new ArrayList<>(group));
+        }
+        // End of island groups copy
+        this.activeCharacterCards = new HashMap<>(activeCharacterCards);
+        this.availableNoEntryTiles = 4;
     }
+
 
     /**
      * Returns the ArrayList of match SchoolBoards
      *
-     * @return  ArrayList of Schoolboards
+     * @return  ArrayList of SchoolBoards
      * @see     SchoolBoard
      */
     public ArrayList<SchoolBoard> getSchoolBoards() {
@@ -90,5 +99,20 @@ public class Table {
         this.activeCharacterCards.put(card.getId(), card);
     }
 
+    /**
+     * Returns the number of NoEntry tiles available to be set to IslandTile groups.
+     * @return the number of NoEntry tiles
+     */
+    public int getAvailableNoEntryTiles() { return this.availableNoEntryTiles; }
+
+    /**
+     * Increases the number of available NoEntry tiles by 1.
+     */
+    public void increaseAvailableNoEntryTiles() { this.availableNoEntryTiles += 1; }
+
+    /**
+     * Decreases the number of available NoEntry tiles by 1.
+     */
+    public void decreaseAvailableNoEntryTiles() { this.availableNoEntryTiles -= 1; }
 
 }

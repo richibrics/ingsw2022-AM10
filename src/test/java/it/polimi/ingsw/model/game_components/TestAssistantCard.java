@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.game_components;
 
 import it.polimi.ingsw.model.game_components.AssistantCard;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -16,5 +17,13 @@ public class TestAssistantCard {
         assertEquals(assistantCard.getId(),value+1);
         assertEquals(assistantCard.getCardValue(),value/2);
         assertEquals(assistantCard.getMovements(),value);
+    }
+
+    @Test
+    public void incrementMovements()
+    {
+        AssistantCard assistantCard = new AssistantCard(1,2,4);
+        assistantCard.incrementMovements(3);
+        assertEquals(assistantCard.getMovements(), 7);
     }
 }

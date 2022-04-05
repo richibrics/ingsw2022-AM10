@@ -9,6 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestProfessorPawn {
 
+    /**
+     * Creates a ProfessorPawn and checks if the get returns the correct color.
+     *
+     */
     @ParameterizedTest
     @EnumSource(PawnColor.class)
     public void testGetColor(PawnColor color)

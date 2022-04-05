@@ -12,6 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCloudTile {
 
+    /**
+     * Creates a CloudTile and checks if it returns the correct id
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
     public void testGetId(int value)
@@ -20,6 +25,12 @@ public class TestCloudTile {
         assertEquals(cloudTile.getId(),value);
     }
 
+    /**
+     * Creates a CloudTile and an ArrayList of StudentDisc made by students that will be added to the CloudTile.
+     * Then it checks if the CloudTile has the same students added.
+     * Then it pops the students and checks if it returns the correct students leaving the CloudTile empty.
+     * At the end it checks if the CloudTile is correctly empty.
+     */
     @ParameterizedTest
     @ValueSource(ints = {0,100})
     public void testStudents(int value)
@@ -30,19 +41,9 @@ public class TestCloudTile {
             studentsToAdd.add(new StudentDisc(i, PawnColor.BLUE));
         }
         cloudTile.addStudents(studentsToAdd);
-        assertTrue(arrayListElementsMatch(studentsToAdd,cloudTile.peekStudents()));
-        assertTrue(arrayListElementsMatch(cloudTile.popStudents(),studentsToAdd));
+        assertTrue(studentsToAdd.equals(cloudTile.peekStudents()));
+        assertTrue(studentsToAdd.equals(cloudTile.popStudents()));
         assertEquals(0,cloudTile.peekStudents().size());
     }
 
-    public boolean arrayListElementsMatch(ArrayList<StudentDisc> list1, ArrayList<StudentDisc> list2)
-    {
-        if(list1.size()!=list2.size())
-            return false;
-        for (int i = 0; i < list1.size(); i++) {
-            if(!list1.get(i).equals(list2.get(i)))
-                return false;
-        }
-        return true;
-    }
 }

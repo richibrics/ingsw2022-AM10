@@ -10,6 +10,12 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class TestWizard {
+
+    /**
+     * Creates a Wizard and checks if it returns the correct id of Wizard.
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
     public void testGetId(int value)
@@ -18,6 +24,15 @@ public class TestWizard {
         assertEquals(wizard.getId(),value);
     }
 
+    /**
+     * Creates an ArrayList of AssistantCard to populate with new AssistantCard.
+     * Then it creates a Wizard made by the ArrayList of AssistantCard and checks if the number of AssistantCard is correct.
+     * After that it creates another AssistantCard and throws the NoSuchElementException if this AssistantCard does not exist in this wizard.
+     * At the end every AssistantCard is removed one by one from the Wizard, and it checks if the Wizard has the same number
+     * of AssistantCard as well as the remaining ones.
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {0,1,10})
     public void testAssistantCards(int value)
