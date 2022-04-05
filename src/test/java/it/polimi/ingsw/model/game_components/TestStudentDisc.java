@@ -10,6 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestStudentDisc {
 
+    /**
+     * Creates a StudentDisc and checks if it returns the correct id and the correct color.
+     *
+     * @param color
+     */
     @ParameterizedTest
     @EnumSource(PawnColor.class)
     public void testGetColor(PawnColor color)
@@ -19,6 +24,11 @@ public class TestStudentDisc {
         assertEquals(studentDisc.getColor().getId(), color.getId());
     }
 
+    /**
+     * Creates a StudentDisc and checks if it returns the correct id of StudentDisc.
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 900000, Integer.MAX_VALUE})
     public void testGetId(int value)

@@ -7,6 +7,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMotherNature {
 
+    /**
+     * Creates two different IslandTile and set MotherNature on the first one.
+     * Then it checks if MotherNature is correctly on it.
+     * Then MotherNature changes its IslandTile and goes to the second one.
+     * At the end checks if MotherNature has changed correctly the IslandTile, switching the first with the second one.
+     */
     @Test
     public void testIslandTile()
     {

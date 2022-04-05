@@ -10,6 +10,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestIslandTile {
+
+    /**
+     * Creates an IslandTiles and it checks if it returns the correct id
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
     public void testGetId(int value)
@@ -18,18 +24,26 @@ public class TestIslandTile {
         assertEquals(islandTile.getId(),value);
     }
 
+    /**
+     * Creates an IslandTile and two different StudentDisc.
+     * Then it adds the two StudentDisc to the IslandTile and checks if the IslandTile size is correctly 2.
+     * At the end checks if the IslandTile peeks the correct StudentDisc.
+     */
     @Test
     public void testStudent()
     {
         IslandTile islandTile = new IslandTile(0);
         StudentDisc studentDisc = new StudentDisc(1, PawnColor.BLUE);
-        StudentDisc studentDisc2 = new StudentDisc(2,PawnColor.BLUE);
+        StudentDisc studentDisc2 = new StudentDisc(2, PawnColor.BLUE);
         islandTile.addStudent(studentDisc);
         islandTile.addStudent(studentDisc2);
         assertEquals(islandTile.peekStudents().size(),2);
         assertEquals(islandTile.peekStudents().get(0),studentDisc);
     }
 
+    /**
+     * Creates an IslandTile and
+     */
     @Test
     public void testTower()
     {
@@ -48,6 +62,10 @@ public class TestIslandTile {
         assertEquals(assertDoesNotThrow(()->islandTile.getTower()),whiteTower);
     }
 
+    /**
+     * Creates an IslandTile.
+     * Then checks if the IslandTile has a NoEntry property (before and after setting the NoEntry property).
+     */
     @Test
     public void testNoEntry()
     {

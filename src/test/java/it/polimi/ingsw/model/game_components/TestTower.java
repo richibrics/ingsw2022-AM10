@@ -7,6 +7,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestTower {
+
+    /**
+     * Creates a Tower and verifies if it returns the correct Tower color.
+     *
+     * @param color
+     */
     @ParameterizedTest
     @EnumSource(TowerColor.class)
     public void testGetColor(TowerColor color)

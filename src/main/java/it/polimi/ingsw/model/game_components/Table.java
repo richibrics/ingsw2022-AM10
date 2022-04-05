@@ -33,7 +33,7 @@ public class Table {
     /**
      * Returns the ArrayList of match SchoolBoards
      *
-     * @return  ArrayList of Schoolboards
+     * @return  ArrayList of SchoolBoards
      * @see     SchoolBoard
      */
     public ArrayList<SchoolBoard> getSchoolBoards() {

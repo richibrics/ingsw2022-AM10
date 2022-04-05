@@ -13,6 +13,12 @@ import java.util.LinkedHashSet;
 
 public class TestBag {
 
+    /**
+     * Creates a bag and an ArrayList of students to push in it.
+     * Then it verifies if the number of students in the bag is correct.
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {10, 100, 200})
     public void testPushStudentsAndGetNumberOfStudents(int value)
@@ -25,7 +31,13 @@ public class TestBag {
         bag.pushStudents(students);
         assertEquals(value, bag.getNumberOfStudents());
     }
-
+    /**
+     * Creates a bag and an ArrayList of StudentDisc for the students to push in the new bag.
+     * Then it creates another ArrayList of StudentDisc for the bag drawnStudents.
+     * At the end it verifies if the number of drawnStudents is correct and if there are some duplicates in the bag.
+     *
+     * @param value
+     */
     @ParameterizedTest
     @ValueSource(ints = {0, 10, 100, 200})
     public void testDrawStudents(int value)
@@ -45,6 +57,11 @@ public class TestBag {
         assertEquals(0, bag.getNumberOfStudents());
     }
 
+    /**
+     * Creates a bag and it verifies if it is possible to draw students from it.
+     * If it is not possible the EmptyBagException is thrown.
+     *
+     */
     @Test
     public void TestEmptyBagException()
     {
@@ -64,6 +81,11 @@ public class TestBag {
         assertEquals(bag.getNumberOfStudents(),1);
     }
 
+    /**
+     * Creates two bag and it places the same students in these bags.
+     * Then it draws them and if the draw order from the first
+     * to the last StudentDisc is exactly the same, there is no randomness.
+     */
     @Test
     public void TestRandomness()
     {
