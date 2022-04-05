@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.Table;
@@ -12,6 +13,7 @@ public class GameEngine {
 
     private Table table;
     private ArrayList<Team> teams;
+    private Round round;
     private ActionManager actionManager; // Still not implemented
     private SchoolPawnManager schoolPawnManager;
     private AssistantManager assistantManager;
@@ -27,6 +29,7 @@ public class GameEngine {
         // this.characterManager = new CharacterManager(this);
 
         this.teams = new ArrayList<>(teams);
+        this.round = new Round(teams.stream().flatMap(team -> team.getPlayers().stream()).toList().size());
     }
 
     /**
@@ -75,6 +78,14 @@ public class GameEngine {
         }
         return count;
     }
+
+    /**
+     * Gets the round.
+     * @return the round
+     * @see Round
+     */
+
+    public Round getRound() { return this.round; }
 
     /**
      * Returns the ActionManager

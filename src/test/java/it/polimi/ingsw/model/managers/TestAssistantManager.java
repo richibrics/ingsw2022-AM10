@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestAssistantManager {
 
-    static GameEngine gameEngine = null;
-    static AssistantManager assistantManager = null;
+    static GameEngine gameEngine;
+    static AssistantManager assistantManager;
 
     @BeforeEach
     void setUp()
@@ -75,9 +75,11 @@ class TestAssistantManager {
 
         MotherNature motherNature = new MotherNature(islands.get(6).get(0));
 
+        ArrayList<ProfessorPawn> professorPawns = new ArrayList<>();
+
         Map<Integer, CharacterCard> characterCards = new HashMap<>();
 
-        Table table = new Table(schoolBoards, bag, clouds, motherNature, islands, characterCards);
+        Table table = new Table(schoolBoards, bag, clouds, motherNature, islands, professorPawns, characterCards);
 
         gameEngine.setTable(table);
 

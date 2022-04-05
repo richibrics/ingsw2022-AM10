@@ -40,7 +40,7 @@ class TestIslandManager {
          * island(3, free)
          *
          */
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null, matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -148,7 +148,7 @@ class TestIslandManager {
         matrix.get(1).add(new IslandTile(1));
         matrix.get(2).add(new IslandTile(2));
         matrix.get(3).add(new IslandTile(3));
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -213,7 +213,7 @@ class TestIslandManager {
         matrix.get(2).add(new IslandTile(2));
         matrix.get(3).add(new IslandTile(3));
         MotherNature motherNature = new MotherNature(matrix.get(2).get(0));
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),motherNature,matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),motherNature,matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -228,7 +228,7 @@ class TestIslandManager {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
         matrix.add(new ArrayList<>());
         matrix.get(0).add(new IslandTile(0));
-        Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new HashMap<>());
+        Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -250,7 +250,7 @@ class TestIslandManager {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
         matrix.add(new ArrayList<>());
         matrix.get(0).add(new IslandTile(0));
-        Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new HashMap<>());
+        Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -275,7 +275,7 @@ class TestIslandManager {
         matrix.get(1).add(new IslandTile(1));
         matrix.get(2).add(new IslandTile(2));
         matrix.get(3).add(new IslandTile(3));
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -294,7 +294,7 @@ class TestIslandManager {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
         matrix.add(new ArrayList<>());
         matrix.get(0).add(new IslandTile(0));
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -311,7 +311,7 @@ class TestIslandManager {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
         matrix.add(new ArrayList<>());
         matrix.get(0).add(new IslandTile(0));
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),null,matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
@@ -387,7 +387,7 @@ class TestIslandManager {
         playersTeam1.get(0).setSchoolBoard(schoolboards.get(0));
         playersTeam2.get(0).setSchoolBoard(schoolboards.get(1));
 
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),new MotherNature(matrix.get(0).get(0)),matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),new MotherNature(matrix.get(0).get(0)),matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(teams);
         gameEngine.setTable(table);
 
@@ -478,7 +478,7 @@ class TestIslandManager {
 
         // 2 Teams: p1,p2 and p3,p4
 
-        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),new MotherNature(matrix.get(2).get(0)),matrix,new HashMap<>());
+        Table table = new Table(new ArrayList<>(),new Bag(),new ArrayList<>(),new MotherNature(matrix.get(2).get(0)),matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(teams);
         gameEngine.setTable(table);
 

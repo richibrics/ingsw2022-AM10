@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.game_components;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class Table {
     final private ArrayList<SchoolBoard> schoolBoards;
@@ -10,10 +11,11 @@ public class Table {
     final private ArrayList<CloudTile> cloudTiles;
     final private MotherNature motherNature;
     final private ArrayList<ArrayList<IslandTile>> islandTiles;
+    final private ArrayList<ProfessorPawn> availableProfessorPawns;
     final private Map<Integer, CharacterCard> activeCharacterCards;
     private int availableNoEntryTiles;
 
-    public Table(ArrayList<SchoolBoard> schoolBoards, Bag bag, ArrayList<CloudTile> cloudTiles, MotherNature motherNature, ArrayList<ArrayList<IslandTile>> islandTiles, Map<Integer, CharacterCard> activeCharacterCards) {
+    public Table(ArrayList<SchoolBoard> schoolBoards, Bag bag, ArrayList<CloudTile> cloudTiles, MotherNature motherNature, ArrayList<ArrayList<IslandTile>> islandTiles, ArrayList<ProfessorPawn> availableProfessorPawns, Map<Integer, CharacterCard> activeCharacterCards) {
         this.schoolBoards = new ArrayList<>(schoolBoards);
         this.bag = bag;
         this.cloudTiles = new ArrayList<>(cloudTiles);
@@ -25,6 +27,7 @@ public class Table {
             this.islandTiles.add(new ArrayList<>(group));
         }
         // End of island groups copy
+        this.availableProfessorPawns = availableProfessorPawns;
         this.activeCharacterCards = new HashMap<>(activeCharacterCards);
         this.availableNoEntryTiles = 4;
     }
@@ -81,6 +84,34 @@ public class Table {
     }
 
     /**
+     * Gets a copy of the list of available professor pawns.
+     * @return the list of available professor pawns
+     */
+
+    public ArrayList<ProfessorPawn> getAvailableProfessorPawns() {
+        return new ArrayList<>(this.availableProfessorPawns);
+    }
+
+    /**
+     * Pops the requested professor pawn from the list of available professor pawns.
+     * @param color the color of the requested professor pawn
+     * @return the required professor pawn
+     * @throws NoSuchElementException if the professor pawn could not be found
+     */
+
+    public ProfessorPawn popProfessorPawn (PawnColor color) throws NoSuchElementException{
+        ProfessorPawn professorPawn = null;
+        for (ProfessorPawn pawn : this.availableProfessorPawns)
+            if (pawn.getColor() == color) {
+                professorPawn = pawn;
+                this.availableProfessorPawns.remove(pawn);
+            }
+        if (professorPawn == null)
+            throw new NoSuchElementException("Professor pawn not found");
+        return professorPawn;
+    }
+
+    /**
      * Returns the Table CharacterCards
      *
      * @return  The CharacterCards on the Table
@@ -88,15 +119,6 @@ public class Table {
      */
     public Map<Integer, CharacterCard> getCharacterCards() {
         return new HashMap<Integer, CharacterCard>(this.activeCharacterCards);
-    }
-
-    /**
-     * Add a CharacterCard to the Table
-     * @param  card CharacterCard to add to Table
-     * @see     CharacterCard
-     */
-    public void addCharacterCard(CharacterCard card) {
-        this.activeCharacterCards.put(card.getId(), card);
     }
 
     /**
@@ -114,5 +136,4 @@ public class Table {
      * Decreases the number of available NoEntry tiles by 1.
      */
     public void decreaseAvailableNoEntryTiles() { this.availableNoEntryTiles -= 1; }
-
 }

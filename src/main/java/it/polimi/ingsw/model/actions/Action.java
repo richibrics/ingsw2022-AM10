@@ -4,7 +4,7 @@ import it.polimi.ingsw.controller.GameEngine;
 
 public abstract class Action {
 
-    private int id;
+    private final int id;
     private int playerId;
     private String options;
     private GameEngine gameEngine;
@@ -19,7 +19,7 @@ public abstract class Action {
      * Implements the behaviour of the action.
      */
 
-    public abstract void act();
+    public abstract void act() throws Exception;
 
     /**
      * Returns the identifier of the Action class.

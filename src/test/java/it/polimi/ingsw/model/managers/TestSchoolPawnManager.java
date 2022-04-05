@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestSchoolPawnManager {
 
-    static GameEngine gameEngine = null;
-    static SchoolPawnManager schoolPawnManager = null;
+    static GameEngine gameEngine;
+    static SchoolPawnManager schoolPawnManager;
 
     @BeforeEach
     void setUp()
@@ -80,9 +80,11 @@ class TestSchoolPawnManager {
 
         MotherNature motherNature = new MotherNature(islands.get(6).get(0));
 
+        ArrayList<ProfessorPawn> professorPawns = new ArrayList<>();
+
         Map<Integer, CharacterCard> characterCards = new HashMap<>();
 
-        Table table = new Table(schoolBoards, bag, clouds, motherNature, islands, characterCards);
+        Table table = new Table(schoolBoards, bag, clouds, motherNature, islands, professorPawns, characterCards);
 
         gameEngine.setTable(table);
 
