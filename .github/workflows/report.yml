@@ -3,7 +3,6 @@ on:
   schedule:
     - cron: '00 02,18 * * *'
     - cron: '00 10 * * 2'
-    - cron: '40 11 * * 2'
 
 jobs:
   build:
