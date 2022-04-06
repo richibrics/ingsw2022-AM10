@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestTeam {
 
-    static User user1 = new User("test1",2);
-    static User user2 = new User("test2",2);
-    static User user3 = new User("test3",2);
-    static Player player1 = new Player(user1, 0, 3);
-    static Player player2 = new Player(user2, 1, 4);
-    static Player player3 = new Player(user3, 2, 5);
-    static ArrayList<Player> players = null;
+    static ArrayList<Player> players;
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void beforeEach() {
+        User user1 = new User("test1",2);
+        User user2 = new User("test2",2);
+        User user3 = new User("test3",2);
+        Player player1 = new Player(user1, 0, 3);
+        Player player2 = new Player(user2, 1, 4);
+        Player player3 = new Player(user3, 2, 5);
         players = new ArrayList<>();
         players.add(player1);
         players.add(player2);
