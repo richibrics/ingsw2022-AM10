@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,9 +89,17 @@ class TestSetUpTwoAndFourPlayersAction {
     @RepeatedTest(12)
     void act() {
         assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
+
+        // Check if the method has created 12 island tiles
         assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getIslandTiles().size()), 12);
+
+        //Check if mother nature has an identifier between 1 and 12
         int motherNatureIslandId = assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getMotherNature().getIslandTile().getId());
         assertTrue(motherNatureIslandId <= 12 && motherNatureIslandId >= 1);
+
+        /* Check if there is a student disc on each island with an id different from the ids of the island with mother nature and the island opposite
+        to that with mother nature */
+
         for (ArrayList<IslandTile> islandGroup : assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getIslandTiles()))
             for (IslandTile islandTile : islandGroup) {
                 if (islandTile.getId() != motherNatureIslandId && islandTile.getId() != ((motherNatureIslandId + 6) % 12 == 0 ? 12 : (motherNatureIslandId + 6) % 12))
@@ -97,21 +107,39 @@ class TestSetUpTwoAndFourPlayersAction {
                 else
                     assertEquals(islandTile.peekStudents().size(), 0);
             }
+
+        // Check if the method has created 2 cloud tiles
         assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getCloudTiles().size()), 2);
+
+        // Check if the method has created 2 school boards
         assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getSchoolBoards().size()), 2);
+
+        // Check if each school board has 7 student discs in the entrance
         for (SchoolBoard schoolBoard : assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getSchoolBoards()))
             assertEquals(schoolBoard.getEntrance().size(), 7);
+
+        // Check if the method has created 3 different character cards
+        assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getCharacterCards().size()), 3);
+        int studentsForCharacter = 0;
+        ArrayList<CharacterCard> cards = new ArrayList<>();
+        for (CharacterCard characterCard : assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getCharacterCards().values())) {
+            for (CharacterCard card : cards)
+                assertNotEquals(characterCard.getId(), card.getId());
+            studentsForCharacter += characterCard.getStorageCapacity();
+            cards.add(characterCard);
+        }
+
+        // Check if the method has created 5 professor pawn, one for each color
         assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getAvailableProfessorPawns().size()), 5);
         for (PawnColor color : PawnColor.values())
             assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getAvailableProfessorPawns().stream().filter(professorPawn -> professorPawn.getColor() == color).collect(Collectors.toList()).size()), 1);
+
+        // Check if each team has 8 towers
         for (Team team : setUpTwoAndFourPlayersAction.getGameEngine().getTeams())
             assertEquals(team.getTowers().size(), 8);
-        assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getBag().getNumberOfStudents()), 130 - 24);
-    }
 
-    //TODO character cards not available
-    @Test
-    void drawCharacters() {
+        // Check the number of students left in the bag
+        assertEquals(assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.getGameEngine().getTable().getBag().getNumberOfStudents()), 130 - 24 - studentsForCharacter);
     }
 
     @Test
@@ -167,6 +195,23 @@ class TestSetUpTwoAndFourPlayersAction {
         MotherNature motherNature = setUpTwoAndFourPlayersAction.placeMotherNature(islandGroups);
         assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.drawFromBagAndPutOnIsland(bag, studentDiscs, islandGroups, 7));
     }
+
+    @Test
+    void drawCharacters() {
+        ArrayList<StudentDisc> studentDiscs = setUpTwoAndFourPlayersAction.generateStudentDiscs();
+        Bag bag = new Bag();
+        setUpTwoAndFourPlayersAction.putRemainingStudentsInBag(bag, studentDiscs);
+        Map<Integer, CharacterCard> characterCards = new HashMap<>();
+        assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.drawCharacters(characterCards, bag));
+        assertEquals(characterCards.size(), 3);
+        ArrayList<CharacterCard> cards = new ArrayList<>();
+        for (CharacterCard characterCard : characterCards.values()) {
+            for (CharacterCard card : cards)
+                assertNotEquals(characterCard.getId(), card.getId());
+            cards.add(characterCard);
+        }
+    }
+
 
     @Test
     void setUpCloudTiles() {
