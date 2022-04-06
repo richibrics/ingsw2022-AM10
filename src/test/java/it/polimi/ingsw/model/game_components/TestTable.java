@@ -81,7 +81,7 @@ class TestTable {
         Map<Integer, CharacterCard> characterCards = new HashMap<>();
         ArrayList<CloudTile> cloudTiles = new ArrayList<>();
         ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
-        Table table = new Table(schoolBoards, null, cloudTiles, null, islandTiles, characterCards);
+        Table table = new Table(schoolBoards, null, cloudTiles, null, islandTiles, new ArrayList<>(), characterCards);
         assertEquals(4, table.getAvailableNoEntryTiles());
     }
 
@@ -91,7 +91,7 @@ class TestTable {
         Map<Integer, CharacterCard> characterCards = new HashMap<>();
         ArrayList<CloudTile> cloudTiles = new ArrayList<>();
         ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
-        Table table = new Table(schoolBoards, null, cloudTiles, null, islandTiles, characterCards);
+        Table table = new Table(schoolBoards, null, cloudTiles, null, islandTiles, new ArrayList<>(), characterCards);
         table.decreaseAvailableNoEntryTiles();
         assertEquals(3, table.getAvailableNoEntryTiles());
         table.decreaseAvailableNoEntryTiles();
