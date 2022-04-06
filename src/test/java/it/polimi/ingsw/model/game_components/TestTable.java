@@ -76,6 +76,33 @@ class TestTable {
     }
 
     @Test
+    void getAvailableNoEntryTiles() {
+        ArrayList<ArrayList<IslandTile>> islandTiles= new ArrayList<ArrayList<IslandTile>>();
+        Map<Integer, CharacterCard> characterCards = new HashMap<>();
+        ArrayList<CloudTile> cloudTiles = new ArrayList<>();
+        ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
+        Table table = new Table(schoolBoards, null, cloudTiles, null, islandTiles, characterCards);
+        assertEquals(4, table.getAvailableNoEntryTiles());
+    }
+
+    @Test
+    void decreaseandincreaseAvailableNoEntryTiles() {
+        ArrayList<ArrayList<IslandTile>> islandTiles= new ArrayList<ArrayList<IslandTile>>();
+        Map<Integer, CharacterCard> characterCards = new HashMap<>();
+        ArrayList<CloudTile> cloudTiles = new ArrayList<>();
+        ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
+        Table table = new Table(schoolBoards, null, cloudTiles, null, islandTiles, characterCards);
+        table.decreaseAvailableNoEntryTiles();
+        assertEquals(3, table.getAvailableNoEntryTiles());
+        table.decreaseAvailableNoEntryTiles();
+        table.decreaseAvailableNoEntryTiles();
+        assertEquals(1, table.getAvailableNoEntryTiles());
+        table.increaseAvailableNoEntryTiles();
+        table.increaseAvailableNoEntryTiles();
+        table.increaseAvailableNoEntryTiles();
+        assertEquals(4, table.getAvailableNoEntryTiles());
+    }
+      
     void getAvailableProfessorPawns() {
         for (PawnColor color : PawnColor.values()) {
             ProfessorPawn professorPawn = new ProfessorPawn(color);
@@ -103,21 +130,6 @@ class TestTable {
 
     @Test
     void getCharacterCard() {
-
-    }
-
-    @Test
-    void getAvailableNoEntryTile() {
-
-    }
-
-    @Test
-    void increaseAvailableNoEntryTile() {
-
-    }
-
-    @Test
-    void decreaseAvailableNoEntryTiles() {
 
     }
 }

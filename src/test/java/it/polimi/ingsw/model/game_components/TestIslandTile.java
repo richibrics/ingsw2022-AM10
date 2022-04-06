@@ -14,7 +14,7 @@ public class TestIslandTile {
     /**
      * Creates an IslandTiles and it checks if it returns the correct id
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
@@ -42,7 +42,11 @@ public class TestIslandTile {
     }
 
     /**
-     * Creates an IslandTile and
+     * Creates an IslandTile and two different Towers (one black and one white).
+     * At the beginning it checks if the IslandTile is correctly empty and in this case it throws the TowerNotSetException.
+     * Then it sets the Tower on the IslandTile and it verifies if it returns the correct Tower.
+     * Next it checks if it is possible to replace the Tower with the other.
+     * At the end it verifies if it returns the last Tower.
      */
     @Test
     public void testTower()

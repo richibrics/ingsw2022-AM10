@@ -12,6 +12,7 @@ public class TestProfessorPawn {
     /**
      * Creates a ProfessorPawn and checks if the get returns the correct color.
      *
+     * @param color to test.
      */
     @ParameterizedTest
     @EnumSource(PawnColor.class)

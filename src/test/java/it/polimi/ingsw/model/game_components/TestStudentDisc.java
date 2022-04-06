@@ -13,7 +13,7 @@ public class TestStudentDisc {
     /**
      * Creates a StudentDisc and checks if it returns the correct id and the correct color.
      *
-     * @param color
+     * @param color to test.
      */
     @ParameterizedTest
     @EnumSource(PawnColor.class)
@@ -27,7 +27,7 @@ public class TestStudentDisc {
     /**
      * Creates a StudentDisc and checks if it returns the correct id of StudentDisc.
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 900000, Integer.MAX_VALUE})

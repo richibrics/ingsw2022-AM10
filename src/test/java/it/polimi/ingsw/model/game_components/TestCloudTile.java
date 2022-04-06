@@ -15,7 +15,7 @@ public class TestCloudTile {
     /**
      * Creates a CloudTile and checks if it returns the correct id
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
@@ -30,6 +30,8 @@ public class TestCloudTile {
      * Then it checks if the CloudTile has the same students added.
      * Then it pops the students and checks if it returns the correct students leaving the CloudTile empty.
      * At the end it checks if the CloudTile is correctly empty.
+     *
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {0,100})

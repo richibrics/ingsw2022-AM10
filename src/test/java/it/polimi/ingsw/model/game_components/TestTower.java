@@ -11,7 +11,7 @@ public class TestTower {
     /**
      * Creates a Tower and verifies if it returns the correct Tower color.
      *
-     * @param color
+     * @param color to test.
      */
     @ParameterizedTest
     @EnumSource(TowerColor.class)

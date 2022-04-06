@@ -14,7 +14,7 @@ public class TestWizard {
     /**
      * Creates a Wizard and checks if it returns the correct id of Wizard.
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
@@ -31,7 +31,7 @@ public class TestWizard {
      * At the end every AssistantCard is removed one by one from the Wizard, and it checks if the Wizard has the same number
      * of AssistantCard as well as the remaining ones.
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {0,1,10})
