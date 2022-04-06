@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
+import it.polimi.ingsw.model.game_components.CharacterCard;
 import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.managers.*;
 
@@ -18,7 +19,7 @@ public class GameEngine {
     private SchoolPawnManager schoolPawnManager;
     private AssistantManager assistantManager;
     private IslandManager islandManager;
-    private Manager characterManager; // Change this type when implemented CharacterManager
+    private CharacterManager characterManager; // Change this type when implemented CharacterManager
 
     public GameEngine(ArrayList<Team> teams) {
         // Instantiate here the managers
@@ -26,7 +27,7 @@ public class GameEngine {
         this.schoolPawnManager = new SchoolPawnManager(this);
         this.assistantManager = new AssistantManager(this);
         this.islandManager = new IslandManager(this);
-        // this.characterManager = new CharacterManager(this);
+        this.characterManager = new CharacterManager(this);
 
         this.teams = new ArrayList<>(teams);
         this.round = new Round(teams.stream().flatMap(team -> team.getPlayers().stream()).toList().size());
@@ -135,12 +136,12 @@ public class GameEngine {
      * Returns the CharacterManager
      *
      * @return the CharacterManager
-     * @see Manager
+     * @see CharacterManager
      */
-    public Manager getCharacterManager()
+    public CharacterManager getCharacterManager()
     {
         return this.characterManager;
-    } // Change return type when this manager has been implemented
+    }
 
     /**
      * Asks the ActionManager to run the {@code actionId} demanded by {@code playerId} with {@code options}.
