@@ -72,8 +72,8 @@ class TestSetUpTwoAndFourPlayersAction {
             assertEquals(integer, index);
             index++;
         }
-        assertEquals(setUpTwoAndFourPlayersAction.getGameEngine().getRound().getPossibleActions().size(), 1);
-        assertEquals(setUpTwoAndFourPlayersAction.getGameEngine().getRound().getPossibleActions().get(0), 1);
+        assertEquals(1, setUpTwoAndFourPlayersAction.getGameEngine().getRound().getPossibleActions().size());
+        assertEquals(0, setUpTwoAndFourPlayersAction.getGameEngine().getRound().getPossibleActions().get(0));
     }
 
     @Test
