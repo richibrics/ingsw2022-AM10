@@ -81,6 +81,15 @@ class TestGameEngine {
         assertNotNull(gameEngine.getIslandManager());
     }
 
+    /**
+     * Test Manager instantiated correctly so not null
+     */
+    @Test
+    void getCharacterManager() {
+        GameEngine gameEngine = new GameEngine(this.teams);
+        assertNotNull(gameEngine.getCharacterManager());
+    }
+
     /* Valid test only when Manager will be instantiated in the constructor
     @Test
     void getActionManager() {
@@ -88,10 +97,5 @@ class TestGameEngine {
         assertNotNull(gameEngine.getActionManager());
     }
 
-    @Test
-    void getCharacterManager() {
-        GameEngine gameEngine = new GameEngine(this.teams);
-        assertNotNull(gameEngine.getCharacterManager());
-    }
     */
 }
