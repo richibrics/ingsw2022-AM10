@@ -131,6 +131,10 @@ public abstract class SetUp extends Action {
      */
 
     protected void drawFromBagAndPutOnIsland(Bag bag, ArrayList<StudentDisc> studentDiscs, ArrayList<ArrayList<IslandTile>> islandGroups, int indexOfMotherNatureIsland) throws EmptyBagException {
+        // Takes 2 StudentDiscs from each color (I have all the students ordered by color in studentDiscs)
+        // StudentDiscs position by color: I have 26 students of each color, so when I take 2 students of one color,
+        // the students of the next color are available from index {24 * color.getId} (26-2).
+
         ArrayList<StudentDisc> students = new ArrayList<>();
         for (PawnColor color : PawnColor.values())
             for (int i = color.getId() * 24; i < color.getId() * 24 + 2; i++)
@@ -222,7 +226,7 @@ public abstract class SetUp extends Action {
         Collections.shuffle(orderOfPlay);
         round.setOrderOfPlay(orderOfPlay);
         ArrayList<Integer> possibleActions = new ArrayList<>();
-        possibleActions.add(1);
+        possibleActions.add(0); // Action for the Player: OnSelectionOfWizardAction
         round.setPossibleActions(possibleActions);
     }
 }
