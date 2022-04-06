@@ -16,6 +16,16 @@ import java.util.NoSuchElementException;
 
 public class TestSchoolBoard {
 
+    /**
+     * Creates a SchoolBoard and checks if the entrance is correctly empty.
+     * Then it creates an ArrayList of StudentDisc for the studentsToAdd to the SchoolBoard Entrance.
+     * Next it verifies if the Entrance has the same number of students added before.
+     * At the end it checks if it is possible to remove the students from the Entrance.
+     * In this case it decreases the number of students in the SchoolBoard Entrance.
+     * If it is not possible, it throws the NoSuchElementException.
+     *
+     * @param value to test.
+     */
     @ParameterizedTest
     @ValueSource(ints = {1,10})
     public void testEntrance(int value)
@@ -35,6 +45,15 @@ public class TestSchoolBoard {
         assertThrows(NoSuchElementException.class, ()->schoolBoard.removeStudentFromEntrance(studentsToAdd.get(0).getId()));
     }
 
+    /**
+     * Creates a SchoolBoard and check if its DiningRoom is correctly empty.
+     * Then it creates a StudentDisc to add to the SchoolBoard DiningRoom.
+     * Next it checks if the student is correctly set in the DiningRoom by a color comparison.
+     * Then it creates another StudentDisc to add to the DiningRoom and checks if it has the correct number of students.
+     * At the end it verifies if the last student is correctly set in the DiningRoom.
+     *
+     * @param color color to test.
+     */
     @ParameterizedTest
     @EnumSource(PawnColor.class)
     public void testDiningRoom(PawnColor color)
@@ -71,6 +90,21 @@ public class TestSchoolBoard {
         assertEquals(studentDisc2, schoolBoard.getDiningRoomColor(color).get(schoolBoard.getDiningRoomColor(color).size()-1));
     }
 
+    /**
+     * Creates a SchoolBoard and four StudentDisc (the firsts two are added to the SchoolBoard DiningRoom).
+     * Next it checks if the DiningRoom BLUE table has correctly the two students added before.
+     * Then it tries to remove the first StudentDisc.
+     * However, it is not the last student of the blue table, so it throws the IllegalStudentDiscMovementException.
+     * Next it checks if the DiningRoom is not change.
+     * Then it replaces the last BLUE student with the third StudentDisc, which is BLUE.
+     * After that it checks if the DiningRoom BLUE table has correctly two students.
+     * Then it tries to replace the second StudentDisc with the fourth one.
+     * However they are not in the DiningRoom so it throws the NoSuchElementException and verifies if the DiningRoom is not changed.
+     * After that it replaces the third StudentDisc with the fourth one.
+     * Next it checks if the DiningRoom is correctly updated and verifies if the fourth StudentDisc is in the DiningRoom
+     * while the third one is outside the DiningRoom.
+     * At the end it checks if the DiningRoom final state is correct and gets the DiningRoom BLUE and GREEN tables.
+     */
     @Test
     public void testReplaceStudentInDiningRoom()
     {

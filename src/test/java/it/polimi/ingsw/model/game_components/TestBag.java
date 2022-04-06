@@ -17,7 +17,7 @@ public class TestBag {
      * Creates a bag and an ArrayList of students to push in it.
      * Then it verifies if the number of students in the bag is correct.
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {10, 100, 200})
@@ -36,7 +36,7 @@ public class TestBag {
      * Then it creates another ArrayList of StudentDisc for the bag drawnStudents.
      * At the end it verifies if the number of drawnStudents is correct and if there are some duplicates in the bag.
      *
-     * @param value
+     * @param value to test.
      */
     @ParameterizedTest
     @ValueSource(ints = {0, 10, 100, 200})
@@ -60,7 +60,6 @@ public class TestBag {
     /**
      * Creates a bag and it verifies if it is possible to draw students from it.
      * If it is not possible the EmptyBagException is thrown.
-     *
      */
     @Test
     public void TestEmptyBagException()

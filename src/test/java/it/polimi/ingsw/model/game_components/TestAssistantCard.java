@@ -9,6 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestAssistantCard {
 
+    /**
+     * Creates an AssistantCard and checks if its parameters are correct.
+     *
+     * @param value to test.
+     */
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE-2})
     public void testGet(int value)
@@ -19,6 +24,9 @@ public class TestAssistantCard {
         assertEquals(assistantCard.getMovements(),value);
     }
 
+    /**
+     * Creates an AssistantCard with its parameters and checks if its movements are increased.
+     */
     @Test
     public void incrementMovements()
     {
