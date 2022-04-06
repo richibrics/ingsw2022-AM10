@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.managers;
 
+import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.game_components.Bag;
 import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.CharacterCard;
@@ -22,7 +23,8 @@ class TestCharacterManager {
      */
     @Test
     void pickThreeCharacters() {
-        ArrayList<Character> characters = CharacterManager.pickThreeCharacters();
+        CharacterManager characterManager = new CharacterManager(new GameEngine(new ArrayList<>()));
+        ArrayList<Character> characters = characterManager.pickThreeCharacters();
         assertEquals(3, characters.size());
         assertNotEquals(characters.get(0), characters.get(1));
         assertNotEquals(characters.get(0), characters.get(2));
@@ -36,6 +38,7 @@ class TestCharacterManager {
     @ParameterizedTest
     @EnumSource(value = Character.class)
     void setupCardStorage(Character character) {
+        CharacterManager characterManager = new CharacterManager(new GameEngine(new ArrayList<>()));
         Bag bag = new Bag();
         ArrayList<StudentDisc> studentDiscs = new ArrayList<>();
         studentDiscs.add(new StudentDisc(1, PawnColor.BLUE));
@@ -51,14 +54,14 @@ class TestCharacterManager {
         bag.pushStudents(studentDiscs);
 
         CharacterCard characterCard = new CharacterCard(character);
-        assertDoesNotThrow(()->CharacterManager.setupCardStorage(characterCard, bag));
+        assertDoesNotThrow(()->characterManager.setupCardStorage(characterCard, bag));
         assertEquals(characterCard.getStorageCapacity(), characterCard.getStudentsStorage().size());
 
         // Check exceptions and refill: removes 1 student and refill the storage
         if(characterCard.getStorageCapacity()!=0) {
             assertDoesNotThrow(()->characterCard.removeStudentFromStorage(characterCard.getStudentsStorage().get(0).getId())); // Remove one
             assertEquals(characterCard.getStorageCapacity()-1, characterCard.getStudentsStorage().size()); // Removed ok
-            assertDoesNotThrow(()->CharacterManager.setupCardStorage(characterCard, bag));
+            assertDoesNotThrow(()->characterManager.setupCardStorage(characterCard, bag));
             assertEquals(characterCard.getStorageCapacity(), characterCard.getStudentsStorage().size()); // Refill ok
         }
     }

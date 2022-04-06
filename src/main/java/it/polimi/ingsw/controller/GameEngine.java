@@ -15,15 +15,14 @@ public class GameEngine {
     private Table table;
     private ArrayList<Team> teams;
     private Round round;
-    private ActionManager actionManager; // Still not implemented
+    private ActionManager actionManager;
     private SchoolPawnManager schoolPawnManager;
     private AssistantManager assistantManager;
     private IslandManager islandManager;
-    private CharacterManager characterManager; // Change this type when implemented CharacterManager
+    private CharacterManager characterManager;
 
     public GameEngine(ArrayList<Team> teams) {
-        // Instantiate here the managers
-        // this.actionManager = new ActionManager();
+        this.actionManager = new ActionManager(this);
         this.schoolPawnManager = new SchoolPawnManager(this);
         this.assistantManager = new AssistantManager(this);
         this.islandManager = new IslandManager(this);

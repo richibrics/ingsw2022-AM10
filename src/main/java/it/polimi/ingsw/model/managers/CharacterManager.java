@@ -19,8 +19,6 @@ import java.util.*;
  * Pass a CharacterCard to {@link CharacterManager#setupCardStorage(CharacterCard, Bag)} to insert in the CharacterCard the correct number of StudentDisc.
  * Then you can use the factory method {@link CharacterManager#generateAction(CharacterCard)} to set the correct
  * Action for the passed CharacterCard.
- * These methods used during Card creation are static because you cannot use the GameEngine during a Card setup, as the
- * Table (and the GameEngine) are not fully ready.
  *
  * Normal use method {@link CharacterManager#selectCharacterCard(int, String)} is called by the Action that is called
  * when a CharacterCard is selected.
@@ -40,7 +38,7 @@ public class CharacterManager extends Manager {
      * @return three different Character
      * @see Character
      */
-    public static ArrayList<Character> pickThreeCharacters() {
+    public ArrayList<Character> pickThreeCharacters() {
         ArrayList<Integer> idPool = new ArrayList<>();
         ArrayList<Character> cards = new ArrayList<>();
         for (int i = 1; i <= 12; i++) {
@@ -67,7 +65,7 @@ public class CharacterManager extends Manager {
      * @throws EmptyBagException if there aren't other Students in the Bag
      * @throws CharacterStudentsStorageFull if you're trying to add other students to a full storage
      */
-    public static void setupCardStorage(CharacterCard characterCard, Bag bag) throws EmptyBagException, CharacterStudentsStorageFull {
+    public void setupCardStorage(CharacterCard characterCard, Bag bag) throws EmptyBagException, CharacterStudentsStorageFull {
         // In this method I don't get the Bag through the Table because this method is called during setup when
         // Table is not ready yet.
         ArrayList<StudentDisc> drawnStudents = bag.drawStudents(characterCard.getStorageCapacity()-characterCard.getStudentsStorage().size());
@@ -80,7 +78,7 @@ public class CharacterManager extends Manager {
      * @param characterCard the CharacterCard that receives the Action
      * @throws NoSuchElementException if {@code characterCard} is unknown and the method doesn't know which Action is needed
      */
-    public static void generateAction(CharacterCard characterCard) throws NoSuchElementException {
+    public void generateAction(CharacterCard characterCard) throws NoSuchElementException {
         // Change when Cards actions are ready
         if (characterCard.getId() == Character.FRIAR.getId())
             characterCard.setAction(null);

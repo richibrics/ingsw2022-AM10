@@ -35,8 +35,6 @@ class TestGameEngine {
         table = new Table(new ArrayList<>(), new Bag(),new ArrayList<>(),new MotherNature(new IslandTile(0)),new ArrayList<>(), new ArrayList<>(), new HashMap<Integer,CharacterCard>());
     }
 
-
-
     @Test
     void setTable() {
         GameEngine gameEngine = new GameEngine(this.teams);
@@ -108,14 +106,14 @@ class TestGameEngine {
         assertNotNull(gameEngine.getCharacterManager());
     }
 
-    /* Valid test only when Manager will be instantiated in the constructor
+    /**
+     * Test Manager instantiated correctly so not null
+     */
     @Test
     void getActionManager() {
         GameEngine gameEngine = new GameEngine(this.teams);
         assertNotNull(gameEngine.getActionManager());
     }
-
-    */
 
     @Test
     void resumeGame() {
