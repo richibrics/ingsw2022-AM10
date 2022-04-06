@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestPlayer {
 
-    static User user = null;
+    static User user;
 
     @BeforeAll
     static void beforeAll() {
-        User user = new User("test",2);
+        user = new User("test",2);
     }
 
     @ParameterizedTest

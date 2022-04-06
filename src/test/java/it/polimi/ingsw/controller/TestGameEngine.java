@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.*;
@@ -31,15 +32,23 @@ class TestGameEngine {
         teams.add(team1);
         teams.add(team2);
 
-        table = new Table(new ArrayList<>(), new Bag(),new ArrayList<>(),new MotherNature(new IslandTile(0)),new ArrayList<>(),new HashMap<Integer,CharacterCard>());
+        table = new Table(new ArrayList<>(), new Bag(),new ArrayList<>(),new MotherNature(new IslandTile(0)),new ArrayList<>(), new ArrayList<>(), new HashMap<Integer,CharacterCard>());
     }
 
     @Test
-    void getsetTable() {
+    void setTable() {
         GameEngine gameEngine = new GameEngine(this.teams);
         assertThrows(TableNotSetException.class, ()->gameEngine.getTable());
         gameEngine.setTable(table);
         assertEquals(table, assertDoesNotThrow(()->gameEngine.getTable()));
+    }
+
+    @Test
+    void getTable() {
+        GameEngine gameEngine = new GameEngine(this.teams);
+        assertThrows(TableNotSetException.class, ()->gameEngine.getTable());
+        gameEngine.setTable(table);
+        assertEquals(assertDoesNotThrow(()->gameEngine.getTable()), table);
     }
 
     @Test
@@ -52,6 +61,13 @@ class TestGameEngine {
     void getNumberOfPlayers() {
         GameEngine gameEngine = new GameEngine(this.teams);
         assertEquals(4, gameEngine.getNumberOfPlayers());
+    }
+
+    @Test
+    void getRound() {
+        GameEngine gameEngine = new GameEngine(this.teams);
+        assertInstanceOf(Round.class, gameEngine.getRound());
+        assertEquals(teams.stream().flatMap(team -> team.getPlayers().stream()).toList().size(), 4);
     }
 
     /**
@@ -81,7 +97,18 @@ class TestGameEngine {
         assertNotNull(gameEngine.getIslandManager());
     }
 
-    /* Valid test only when Manager will be instantiated in the constructor
+    /**
+     * Test Manager instantiated correctly so not null
+     */
+    @Test
+    void getCharacterManager() {
+        GameEngine gameEngine = new GameEngine(this.teams);
+        assertNotNull(gameEngine.getCharacterManager());
+    }
+
+    /**
+     * Test Manager instantiated correctly so not null
+     */
     @Test
     void getActionManager() {
         GameEngine gameEngine = new GameEngine(this.teams);
@@ -89,9 +116,12 @@ class TestGameEngine {
     }
 
     @Test
-    void getCharacterManager() {
-        GameEngine gameEngine = new GameEngine(this.teams);
-        assertNotNull(gameEngine.getCharacterManager());
+    void resumeGame() {
+
     }
-    */
+
+    @Test
+    void startGame() {
+
+    }
 }

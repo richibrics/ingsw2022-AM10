@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestCommonManager {
 
-    static GameEngine gameEngine = null;
+    static GameEngine gameEngine;
 
     @BeforeEach
     void setUp()
@@ -81,9 +81,11 @@ class TestCommonManager {
 
         MotherNature motherNature = new MotherNature(islands.get(6).get(0));
 
+        ArrayList<ProfessorPawn> professorPawns = new ArrayList<>();
+
         Map<Integer, CharacterCard> characterCards = new HashMap<>();
 
-        Table table = new Table(schoolBoards, bag, clouds, motherNature, islands, characterCards);
+        Table table = new Table(schoolBoards, bag, clouds, motherNature, islands, professorPawns, characterCards);
 
         gameEngine.setTable(table);
     }
