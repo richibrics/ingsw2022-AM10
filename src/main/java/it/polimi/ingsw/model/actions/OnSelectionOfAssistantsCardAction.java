@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.game_components.AssistantCard;
 import it.polimi.ingsw.model.game_components.Wizard;
 
 public abstract class OnSelectionOfAssistantsCardAction extends Action{
-    public OnSelectionOfWizardAction(GameEngine gameEngine) {
+    public OnSelectionOfAssistantsCardAction(GameEngine gameEngine) {
         super(2, gameEngine);
     }
 

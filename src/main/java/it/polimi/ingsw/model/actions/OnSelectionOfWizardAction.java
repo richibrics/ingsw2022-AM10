@@ -1,15 +1,17 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.game_components.Bag;
+import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.*;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public abstract class OnSelectionOfWizardAction extends Action{
+public class OnSelectionOfWizardAction extends Action{
 
     public OnSelectionOfWizardAction(GameEngine gameEngine) {
         super(0, gameEngine);
@@ -26,12 +28,9 @@ public abstract class OnSelectionOfWizardAction extends Action{
     }
 
     public void act() throws Exception {
-        Bag bag = new Bag();
-        ArrayList<CloudTile> cloudTiles = new ArrayList<>();
-        ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
-        ArrayList<ProfessorPawn> professorPawns = new ArrayList<>();
-        Map<Integer, CharacterCard> characterCards = new HashMap<>();
-        }
+        int chosenWizardId = 1; // This will be taken from the message options
+        this.getGameEngine().getAssistantManager().setWizard(this.getPlayerId(), chosenWizardId);
+    }
 
     @Override
     void modifyRound() {
