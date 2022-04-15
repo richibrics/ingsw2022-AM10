@@ -11,7 +11,7 @@ public abstract class DrawFromBagToCloudThreePlayersAction extends DrawFromBagTo
     }
 
     @Override
-    void fromBagToCloud(Bag bag) throws EmptyBagException, TableNotSetException{
+    void fromBagToCloud() throws EmptyBagException, TableNotSetException{
         if (getGameEngine().getNumberOfPlayers()==3)
             for (int i=0; i<3; i++) {
             this.getGameEngine().getSchoolPawnManager().moveStudentsFromBagToCloud(4, i);
