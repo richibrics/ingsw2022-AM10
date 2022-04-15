@@ -16,27 +16,6 @@ public class AssistantManager extends Manager {
     public AssistantManager(GameEngine gameEngine) { super(gameEngine); }
 
     /**
-     * Returns the player with {@code playerId} if possible, otherwise throws NoSuchElementException
-     * @param playerId the identifier of the required player
-     * @return the required player with {@code playerId}
-     * @throws NoSuchElementException if the player could not be found
-     * @see Player
-     */
-
-    private Player getPlayerById (int playerId) throws NoSuchElementException {
-        Player playerTarget = null;
-        for (Team team : this.getGameEngine().getTeams())
-            for (Player player : team.getPlayers())
-                if (player.getPlayerId() == playerId)
-                    playerTarget = player;
-
-        if (playerTarget == null)
-            throw  new NoSuchElementException("The player could not be found");
-
-        return playerTarget;
-    }
-
-    /**
      * Creates all the assistant cards for the wizard with {@code wizardId}.
      * @param wizardId the identifier of the wizard
      * @return the assistant cards for the wizard with {@code wizardId}
@@ -62,7 +41,7 @@ public class AssistantManager extends Manager {
 
     public void setWizard(int playerId, int wizardId) throws NoSuchElementException {
         Wizard wizard = new Wizard(wizardId, this.createAssistantCards(wizardId));
-        this.getPlayerById(playerId).setWizard(wizard);
+        CommonManager.takePlayerById(this.getGameEngine(), playerId).setWizard(wizard);
     }
 
     /**
@@ -73,7 +52,7 @@ public class AssistantManager extends Manager {
      */
 
     public void setAssistantCard(int playerId, int assistantId) throws NoSuchElementException {
-        this.getPlayerById(playerId).setActiveAssistantCard(assistantId);
+        CommonManager.takePlayerById(this.getGameEngine(), playerId).setActiveAssistantCard(assistantId);
     }
 
     /**
@@ -85,7 +64,7 @@ public class AssistantManager extends Manager {
      */
 
     public int getValueOfAssistantCardInHand (int playerId) throws NoSuchElementException, AssistantCardNotSetException {
-        return this.getPlayerById(playerId).getActiveAssistantCard().getCardValue();
+        return CommonManager.takePlayerById(this.getGameEngine(), playerId).getActiveAssistantCard().getCardValue();
     }
 
     /**
@@ -97,7 +76,7 @@ public class AssistantManager extends Manager {
      */
 
     public int getMovementsOfAssistantCardInHand (int playerId) throws NoSuchElementException, AssistantCardNotSetException {
-        return this.getPlayerById(playerId).getActiveAssistantCard().getMovements();
+        return CommonManager.takePlayerById(this.getGameEngine(), playerId).getActiveAssistantCard().getMovements();
     }
 
     /**
@@ -109,7 +88,7 @@ public class AssistantManager extends Manager {
      */
 
     public int getValueOfLastPlayedAssistantCard (int playerId) throws NoSuchElementException, AssistantCardNotSetException {
-        return  this.getPlayerById(playerId).getLastPlayedAssistantCard().getCardValue();
+        return CommonManager.takePlayerById(this.getGameEngine(), playerId).getLastPlayedAssistantCard().getCardValue();
     }
 
     /**
@@ -121,7 +100,7 @@ public class AssistantManager extends Manager {
      */
 
     public void incrementMovementsOfAssistantCardInHand (int playerId, int extraMovements) throws NoSuchElementException, AssistantCardNotSetException {
-        this.getPlayerById(playerId).getActiveAssistantCard().incrementMovements(extraMovements);
+        CommonManager.takePlayerById(this.getGameEngine(), playerId).getActiveAssistantCard().incrementMovements(extraMovements);
     }
 
     /**
@@ -132,7 +111,7 @@ public class AssistantManager extends Manager {
      */
 
     public void moveAssistantCardInHandToLastPlayed (int playerId) throws NoSuchElementException {
-        this.getPlayerById(playerId).setLastPlayedAssistantCard(this.getPlayerById(playerId).popActiveAssistantCard());
+        CommonManager.takePlayerById(this.getGameEngine(), playerId).setLastPlayedAssistantCard(CommonManager.takePlayerById(this.getGameEngine(), playerId).popActiveAssistantCard());
     }
 
     /*

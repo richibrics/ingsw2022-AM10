@@ -121,4 +121,22 @@ public class CommonManager {
         }
         throw new NoSuchElementException("The required team could not be found");
     }
+
+    /**
+     * Returns the Player with {@code playerId}.
+     * @param gameEngine the game engine
+     * @param playerId the id of the required player
+     * @return the required player
+     * @throws NoSuchElementException if the required player could not be found
+     * @see Player
+     */
+    public static Player takePlayerById(GameEngine gameEngine, int playerId) throws NoSuchElementException {
+        for (Team team: gameEngine.getTeams()) {
+            for (Player player: team.getPlayers()) {
+                if (player.getPlayerId() == playerId)
+                    return player;
+            }
+        }
+        throw new NoSuchElementException("The required player could not be found");
+    }
 }
