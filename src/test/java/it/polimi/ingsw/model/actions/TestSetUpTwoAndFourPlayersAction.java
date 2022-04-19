@@ -53,11 +53,6 @@ class TestSetUpTwoAndFourPlayersAction {
 
     //TODO
     @Test
-    void setPlayerId() {
-    }
-
-    //TODO
-    @Test
     void setOptions() {
     }
 

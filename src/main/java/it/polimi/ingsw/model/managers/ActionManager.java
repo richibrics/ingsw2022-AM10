@@ -36,6 +36,8 @@ public class ActionManager extends Manager {
         else if (this.getGameEngine().getNumberOfPlayers() == 3)
             setUp = new SetUpThreePlayersAction(this.getGameEngine());
 
+        if (setUp == null) throw new NullPointerException();
+
         setUp.act();
     }
 

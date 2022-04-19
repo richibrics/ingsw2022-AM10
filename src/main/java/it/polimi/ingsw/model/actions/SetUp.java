@@ -20,11 +20,6 @@ public abstract class SetUp extends Action {
     }
 
     //TODO
-    public void setPlayerId(int playerId) {
-
-    }
-
-    //TODO
     public void setOptions(String options) {
 
     }

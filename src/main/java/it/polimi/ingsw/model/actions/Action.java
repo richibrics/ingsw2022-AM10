@@ -42,7 +42,9 @@ public abstract class Action {
      * @param playerId the id of the player performing the action
      */
 
-    public abstract void setPlayerId(int playerId);
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
 
     /**
      * Gets the options.
