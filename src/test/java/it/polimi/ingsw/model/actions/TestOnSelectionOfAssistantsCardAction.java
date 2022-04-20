@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.actions;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
@@ -95,6 +96,7 @@ class TestOnSelectionOfAssistantsCardAction {
      * Set 3 different card and call modifyRound 3 times (for three players), check round works correctly and then that the order is built.
      * Then (when player 3 only has one card) select the same card of another player and check that the
      * new order keeps track of the previous order when more than one player plays the same card.
+     * Check also next actions are correct
      */
     @Test
     void modifyRound() {
@@ -162,5 +164,10 @@ class TestOnSelectionOfAssistantsCardAction {
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));
         assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(1)));
         assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(2)));
+
+        // Check next actions
+        assertEquals(2, gameEngine.getRound().getPossibleActions().size());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ID_ON_SELECTION_OF_CHARACTER_CARD));
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ID_MOVE_STUDENTS_FROM_ENTRANCE));
     }
 }

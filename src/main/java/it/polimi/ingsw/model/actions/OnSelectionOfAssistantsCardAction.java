@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.actions;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 
@@ -14,7 +15,7 @@ public class OnSelectionOfAssistantsCardAction extends Action {
     private Integer chosenAssistantId;
 
     public OnSelectionOfAssistantsCardAction(GameEngine gameEngine) {
-        super(2, gameEngine);
+        super(ModelConstants.ACTION_ID_ON_SELECTION_OF_ASSISTANTS_CARD, gameEngine);
     }
 
     @Override
@@ -78,6 +79,12 @@ public class OnSelectionOfAssistantsCardAction extends Action {
             // order by value and add into the new order
             orderMap.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEachOrdered(tuple -> newOrderOfPlay.add(tuple.getKey()));
             this.getGameEngine().getRound().setOrderOfPlay(newOrderOfPlay);
+
+            // Set next actions for the first player of the round
+            ArrayList<Integer> nextActions = new ArrayList<>();
+            nextActions.add(ModelConstants.ACTION_ID_ON_SELECTION_OF_CHARACTER_CARD);
+            nextActions.add(ModelConstants.ACTION_ID_MOVE_STUDENTS_FROM_ENTRANCE);
+            this.getGameEngine().getRound().setPossibleActions(nextActions);
         }
     }
 }
