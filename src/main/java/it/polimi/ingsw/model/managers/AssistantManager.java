@@ -179,4 +179,18 @@ public class AssistantManager extends Manager {
         }
         return false;
     }
+
+    /**
+     * @param wizardId the id of the wizard to test
+     * @return true if {@code wizardId} hasn't been chosen by anyone and is still selectable
+     * @throws WizardNotSetException this exception can't be thrown because hasWizard already checks for the wizard presence
+     */
+    public boolean isWizardAvailableToBeChosen(int wizardId) throws WizardNotSetException {
+        for (Team team: this.getGameEngine().getTeams())
+            for (Player player: team.getPlayers())
+                if (player.hasWizard())
+                    if (player.getWizard().getId() == wizardId)
+                        return false;
+        return true;
+    }
 }

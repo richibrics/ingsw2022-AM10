@@ -179,4 +179,14 @@ class TestAssistantManager {
         assertEquals(1, results.size());
         assertTrue(results.contains(assistantManager.getCardValueById(1)));
     }
+
+    /**
+     * Ask for a wizard when nobody has one, and he must be free, then set a wizard to a player and check it's not available
+     */
+    @Test
+    void isWizardAvailableToBeChosen() {
+        assertTrue(assertDoesNotThrow(()->assistantManager.isWizardAvailableToBeChosen(1)));
+        assertDoesNotThrow(()->assistantManager.setWizard(1,1));
+        assertFalse(assertDoesNotThrow(()->assistantManager.isWizardAvailableToBeChosen(1)));
+    }
 }
