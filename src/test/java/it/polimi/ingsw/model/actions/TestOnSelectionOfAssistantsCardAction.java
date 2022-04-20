@@ -67,11 +67,11 @@ class TestOnSelectionOfAssistantsCardAction {
         assertThrows(WrongMessageContentException.class, () -> onSelectionOfAssistantsCardAction.setOptions(options));
 
         // Parse error
-        options.put("assistant","a");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT,"a");
         assertThrows(WrongMessageContentException.class, () -> onSelectionOfAssistantsCardAction.setOptions(options));
 
         // OK
-        options.put("assistant","12");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT,"12");
         assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
     }
 
@@ -80,7 +80,7 @@ class TestOnSelectionOfAssistantsCardAction {
         HashMap<String, String> options = new HashMap<>();
 
         // Player 1 acts
-        options.put("assistant", "2");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "2");
         onSelectionOfAssistantsCardAction.setPlayerId(1);
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
@@ -106,7 +106,7 @@ class TestOnSelectionOfAssistantsCardAction {
         HashMap<String, String> options = new HashMap<>();
 
         // Player 1
-        options.put("assistant", "2"); // value = 2
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "2"); // value = 2
         onSelectionOfAssistantsCardAction.setPlayerId(1);
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
@@ -116,7 +116,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
         // Player 2
-        options.put("assistant", "11"); // value = 1
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "11"); // value = 1
         onSelectionOfAssistantsCardAction.setPlayerId(2);
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
@@ -126,7 +126,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
         // Player 3
-        options.put("assistant", "23"); // value = 3
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "23"); // value = 3
         onSelectionOfAssistantsCardAction.setPlayerId(3);
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
@@ -151,7 +151,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,30));
 
         // Now he has only card value = 1: play it, get the new order and check it
-        options.put("assistant", "21"); // value = 1 - same card of player 2!
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "21"); // value = 1 - same card of player 2!
         onSelectionOfAssistantsCardAction.setPlayerId(3);
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
@@ -167,7 +167,7 @@ class TestOnSelectionOfAssistantsCardAction {
 
         // Check next actions
         assertEquals(2, gameEngine.getRound().getPossibleActions().size());
-        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ID_ON_SELECTION_OF_CHARACTER_CARD));
-        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ID_MOVE_STUDENTS_FROM_ENTRANCE));
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
     }
 }

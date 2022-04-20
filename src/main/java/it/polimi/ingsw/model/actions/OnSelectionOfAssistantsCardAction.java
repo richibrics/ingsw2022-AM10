@@ -10,20 +10,18 @@ import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import java.util.*;
 
 public class OnSelectionOfAssistantsCardAction extends Action {
-
-    static final String OPTIONS_ASSISTANT_ID_KEY = "assistant";
     private Integer chosenAssistantId;
 
     public OnSelectionOfAssistantsCardAction(GameEngine gameEngine) {
-        super(ModelConstants.ACTION_ID_ON_SELECTION_OF_ASSISTANTS_CARD, gameEngine);
+        super(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID, gameEngine);
     }
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
-        if (!options.containsKey(OPTIONS_ASSISTANT_ID_KEY))
+        if (!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT))
             throw new WrongMessageContentException("ActionMessage doesn't contain the assistant id");
         try {
-            this.chosenAssistantId = Integer.parseInt(options.get(OPTIONS_ASSISTANT_ID_KEY));
+            this.chosenAssistantId = Integer.parseInt(options.get(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT));
         } catch (NumberFormatException e) {
             throw new WrongMessageContentException("Error while parsing Assistant id from the ActionMessage");
         }
@@ -82,8 +80,8 @@ public class OnSelectionOfAssistantsCardAction extends Action {
 
             // Set next actions for the first player of the round
             ArrayList<Integer> nextActions = new ArrayList<>();
-            nextActions.add(ModelConstants.ACTION_ID_ON_SELECTION_OF_CHARACTER_CARD);
-            nextActions.add(ModelConstants.ACTION_ID_MOVE_STUDENTS_FROM_ENTRANCE);
+            nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
+            nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
             this.getGameEngine().getRound().setPossibleActions(nextActions);
         }
     }
