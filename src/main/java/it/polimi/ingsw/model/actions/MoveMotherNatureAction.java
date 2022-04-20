@@ -4,7 +4,7 @@ import it.polimi.ingsw.controller.GameEngine;
 
 import java.util.Map;
 
-public abstract class MoveMotherNatureAction extends Action {
+public class MoveMotherNatureAction extends Action {
     public MoveMotherNatureAction(GameEngine gameEngine) {
         super(5, gameEngine);
     }
@@ -12,6 +12,15 @@ public abstract class MoveMotherNatureAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
+
+    }
+
+    /**
+     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * and the order of play.
+     */
+    @Override
+    public void modifyRound() throws Exception {
 
     }
 

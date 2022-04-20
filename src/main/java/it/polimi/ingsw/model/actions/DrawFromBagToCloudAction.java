@@ -24,4 +24,9 @@ public abstract class DrawFromBagToCloudAction extends Action {
 
     abstract void fromBagToCloud() throws EmptyBagException, TableNotSetException;
 
+    @Override
+    public void modifyRound() throws Exception {
+
+    }
+
 }

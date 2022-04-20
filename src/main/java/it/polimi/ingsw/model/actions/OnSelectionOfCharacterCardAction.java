@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.game_components.CharacterCard;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class OnSelectionOfCharacterCardAction extends Action {
+public class OnSelectionOfCharacterCardAction extends Action {
     public OnSelectionOfCharacterCardAction(GameEngine gameEngine) {
         super(3, gameEngine);
     }
@@ -14,6 +14,15 @@ public abstract class OnSelectionOfCharacterCardAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
+
+    }
+
+    /**
+     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * and the order of play.
+     */
+    @Override
+    public void modifyRound() throws Exception {
 
     }
 

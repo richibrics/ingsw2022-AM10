@@ -73,5 +73,5 @@ public abstract class Action {
      * and the order of play.
      */
 
-    abstract void modifyRound() throws Exception;
+    public abstract void modifyRound() throws Exception;
 }

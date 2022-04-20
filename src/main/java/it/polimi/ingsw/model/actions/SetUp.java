@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.game_components.Character;
-import it.polimi.ingsw.model.managers.CharacterManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -216,7 +215,7 @@ public abstract class SetUp extends Action {
      * Modifies the round by setting the order of play and the actions that the first player can perform.
      */
 
-    void modifyRound() throws Exception {
+    public void modifyRound() throws Exception {
         Round round = this.getGameEngine().getRound();
         ArrayList<Integer> orderOfPlay = this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).map(player -> player.getPlayerId()).collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(orderOfPlay);

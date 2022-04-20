@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.Bag;
 
-public abstract class DrawFromBagToCloudThreePlayersAction extends DrawFromBagToCloudAction {
+public class DrawFromBagToCloudThreePlayersAction extends DrawFromBagToCloudAction {
     public DrawFromBagToCloudThreePlayersAction(GameEngine gameEngine) {
         super(gameEngine);
     }
@@ -17,4 +17,5 @@ public abstract class DrawFromBagToCloudThreePlayersAction extends DrawFromBagTo
                 this.getGameEngine().getSchoolPawnManager().moveStudentsFromBagToCloud(4, i);
             }
     }
+
 }
