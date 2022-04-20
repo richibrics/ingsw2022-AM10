@@ -10,12 +10,15 @@ import it.polimi.ingsw.model.game_components.TowerColor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
+public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction {
 
-    public CalculateInfluenceAction(GameEngine gameEngine) {super(gameEngine); }
+    public CalculateInfluenceAction(GameEngine gameEngine) {
+        super(gameEngine);
+    }
 
     /**
      * Gets the island group with the mother nature pawn.
+     *
      * @return the island group
      * @throws Exception if the table has not been set
      */
@@ -28,7 +31,8 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
 
     /**
      * Calculates the influence that each team has on {@code islandGroup}.
-     * @param influences the map with teamId - influence
+     *
+     * @param influences  the map with teamId - influence
      * @param islandGroup the island group
      * @throws Exception if something bad happens
      */
@@ -50,8 +54,9 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
 
     /**
      * Checks if it is necessary to change the towers on the island group with the mother nature pawn.
+     *
      * @param influences the map with teamId - influence
-     * @param color the color of the towers placed on the island group with the mother nature pawn
+     * @param color      the color of the towers placed on the island group with the mother nature pawn
      * @return true if the towers must be changed, false otherwise
      * @throws Exception if something bad happens
      */
@@ -74,6 +79,7 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
 
     /**
      * Gets the team with the highest influence.
+     *
      * @param influences the map with teamId - influences
      * @return the Team with the highest influence
      */
@@ -85,6 +91,7 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
 
     /**
      * Gets the team that has lost control over the island group with the mother nature pawn.
+     *
      * @param color the color of the towers currently placed on the islands of the group
      * @return the team that has lost control over the island group
      * @throws Exception if something bad happens
@@ -105,6 +112,7 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
     /**
      * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
      * changes are needed and makes the required changes to the island group.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -143,7 +151,7 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
     }
 
     @Override
-    public void setOptions(Map<String,String> options) throws Exception {
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 }

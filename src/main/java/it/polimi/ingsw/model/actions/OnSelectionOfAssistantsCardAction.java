@@ -6,13 +6,13 @@ import it.polimi.ingsw.model.game_components.Wizard;
 
 import java.util.Map;
 
-public abstract class OnSelectionOfAssistantsCardAction extends Action{
+public abstract class OnSelectionOfAssistantsCardAction extends Action {
     public OnSelectionOfAssistantsCardAction(GameEngine gameEngine) {
         super(2, gameEngine);
     }
 
 
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

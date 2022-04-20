@@ -11,10 +11,11 @@ import java.util.Arrays;
 
 public class SetUpTwoAndFourPlayersAction extends SetUp {
 
-    public SetUpTwoAndFourPlayersAction(GameEngine gameEngine) { super(gameEngine); }
+    public SetUpTwoAndFourPlayersAction(GameEngine gameEngine) {
+        super(gameEngine);
+    }
 
-    protected void setUpTowers()
-    {
+    protected void setUpTowers() {
         int index = 0;
         for (Team team : this.getGameEngine().getTeams()) {
             for (int i = 1; i <= 8; i++)
@@ -23,8 +24,7 @@ public class SetUpTwoAndFourPlayersAction extends SetUp {
         }
     }
 
-    protected void drawStudentsAndPlaceOnEntrance(Bag bag) throws SchoolBoardNotSetException, EmptyBagException
-    {
+    protected void drawStudentsAndPlaceOnEntrance(Bag bag) throws SchoolBoardNotSetException, EmptyBagException {
         for (Team team : this.getGameEngine().getTeams())
             for (Player player : team.getPlayers())
                 player.getSchoolBoard().addStudentsToEntrance(bag.drawStudents(7));

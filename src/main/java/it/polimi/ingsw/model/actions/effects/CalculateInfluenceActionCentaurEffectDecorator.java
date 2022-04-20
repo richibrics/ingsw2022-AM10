@@ -9,12 +9,15 @@ import java.util.Map;
 
 public class CalculateInfluenceActionCentaurEffectDecorator extends CalculateInfluenceDecorator {
 
-    public CalculateInfluenceActionCentaurEffectDecorator(GameEngine gameEngine) { super(gameEngine); }
+    public CalculateInfluenceActionCentaurEffectDecorator(GameEngine gameEngine) {
+        super(gameEngine);
+    }
 
     /**
      * Calculates the influence that each team has on {@code islandGroup}. When resolving the conquering on
      * {@code islandGroup}, towers do not count towards influence.
-     * @param influences the map with teamId - influence
+     *
+     * @param influences  the map with teamId - influence
      * @param islandGroup the island group
      * @throws Exception if something bad happens
      */
@@ -32,6 +35,7 @@ public class CalculateInfluenceActionCentaurEffectDecorator extends CalculateInf
     /**
      * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
      * changes are needed and makes the required changes to the island group.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -41,7 +45,7 @@ public class CalculateInfluenceActionCentaurEffectDecorator extends CalculateInf
     }
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 }

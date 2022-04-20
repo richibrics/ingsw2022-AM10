@@ -9,12 +9,15 @@ import java.util.Map;
 
 public class CalculateInfluenceActionKnightEffectDecorator extends CalculateInfluenceDecorator {
 
-    public CalculateInfluenceActionKnightEffectDecorator(GameEngine gameEngine) { super(gameEngine); }
+    public CalculateInfluenceActionKnightEffectDecorator(GameEngine gameEngine) {
+        super(gameEngine);
+    }
 
     /**
      * Calculates the influence that each team has on {@code islandGroup}. Increments by 2 the influence of the team with
      * the player {@code this.playerId}.
-     * @param influences the map with teamId - influence
+     *
+     * @param influences  the map with teamId - influence
      * @param islandGroup the island group
      * @throws Exception if something bad happens
      */
@@ -28,6 +31,7 @@ public class CalculateInfluenceActionKnightEffectDecorator extends CalculateInfl
     /**
      * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
      * changes are needed and makes the required changes to the island group.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -38,7 +42,7 @@ public class CalculateInfluenceActionKnightEffectDecorator extends CalculateInfl
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 }

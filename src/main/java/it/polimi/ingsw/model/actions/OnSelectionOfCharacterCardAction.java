@@ -6,14 +6,14 @@ import it.polimi.ingsw.model.game_components.CharacterCard;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class OnSelectionOfCharacterCardAction extends Action{
+public abstract class OnSelectionOfCharacterCardAction extends Action {
     public OnSelectionOfCharacterCardAction(GameEngine gameEngine) {
-        super(3,gameEngine);
+        super(3, gameEngine);
     }
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

@@ -6,14 +6,14 @@ import it.polimi.ingsw.model.exceptions.TableNotSetException;
 
 import java.util.Map;
 
-public abstract class DrawFromBagToCloudAction extends Action{
+public abstract class DrawFromBagToCloudAction extends Action {
 
     public DrawFromBagToCloudAction(GameEngine gameEngine) {
-        super (1,gameEngine);
-        }
+        super(1, gameEngine);
+    }
 
 
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

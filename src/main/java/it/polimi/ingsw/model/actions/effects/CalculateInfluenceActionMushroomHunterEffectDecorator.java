@@ -13,12 +13,15 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
 
     private PawnColor color;
 
-    public CalculateInfluenceActionMushroomHunterEffectDecorator(GameEngine gameEngine) { super(gameEngine); }
+    public CalculateInfluenceActionMushroomHunterEffectDecorator(GameEngine gameEngine) {
+        super(gameEngine);
+    }
 
     /**
      * Calculates the influence that each team has on {@code islandGroup}. During the influence calculation, the color
      * {@code this.color} adds no influence.
-     * @param influences the map with teamId - influence
+     *
+     * @param influences  the map with teamId - influence
      * @param islandGroup the island group
      * @throws Exception if something bad happens
      */
@@ -34,7 +37,7 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
                 teamWithProfessor = team;
 
         /* Decrement influence of team with required professor pawn by the number of students on islandGroup that have
-        * the same color of the professor pawn */
+         * the same color of the professor pawn */
         if (teamWithProfessor != null) {
             int influenceDecrement = 0;
             for (IslandTile islandTile : islandGroup)
@@ -48,6 +51,7 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
     /**
      * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
      * changes are needed and makes the required changes to the island group.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -57,7 +61,7 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
     }
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 }

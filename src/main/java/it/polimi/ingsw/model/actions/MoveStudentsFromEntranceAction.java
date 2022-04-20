@@ -10,16 +10,16 @@ import it.polimi.ingsw.model.game_components.StudentDisc;
 import java.util.ArrayList;
 import java.util.Map;
 
-public abstract class MoveStudentsFromEntranceAction extends Action{
+public abstract class MoveStudentsFromEntranceAction extends Action {
 
     private int countMovedStudents;
 
     public MoveStudentsFromEntranceAction(GameEngine gameEngine) {
-        super(4,gameEngine);
+        super(4, gameEngine);
     }
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 
@@ -32,10 +32,10 @@ public abstract class MoveStudentsFromEntranceAction extends Action{
         this.moveStudentFromEntranceToIsland();
     }
 
-    protected void moveStudentFromEntranceToDiningRoom(){
+    protected void moveStudentFromEntranceToDiningRoom() {
     }
 
-    public void moveStudentFromEntranceToIsland(){
+    public void moveStudentFromEntranceToIsland() {
     }
 
     @Override

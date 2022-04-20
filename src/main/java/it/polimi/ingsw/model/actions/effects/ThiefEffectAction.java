@@ -12,7 +12,7 @@ public abstract class ThiefEffectAction extends Action {
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

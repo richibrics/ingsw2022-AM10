@@ -4,14 +4,14 @@ import it.polimi.ingsw.controller.GameEngine;
 
 import java.util.Map;
 
-public abstract class MoveMotherNatureAction extends Action{
+public abstract class MoveMotherNatureAction extends Action {
     public MoveMotherNatureAction(GameEngine gameEngine) {
         super(5, gameEngine);
     }
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

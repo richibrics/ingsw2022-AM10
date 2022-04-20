@@ -6,13 +6,13 @@ import it.polimi.ingsw.model.actions.Action;
 import java.util.Map;
 
 public abstract class MailmanEffectAction extends Action {
-    public MailmanEffectAction(GameEngine gameEngine){
-        super(10,gameEngine);
+    public MailmanEffectAction(GameEngine gameEngine) {
+        super(10, gameEngine);
     }
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

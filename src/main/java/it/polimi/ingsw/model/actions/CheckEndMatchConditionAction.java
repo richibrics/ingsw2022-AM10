@@ -4,13 +4,13 @@ import it.polimi.ingsw.controller.GameEngine;
 
 import java.util.Map;
 
-public abstract class CheckEndMatchConditionAction extends Action{
+public abstract class CheckEndMatchConditionAction extends Action {
     public CheckEndMatchConditionAction(GameEngine gameEngine) {
         super(9, gameEngine);
     }
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

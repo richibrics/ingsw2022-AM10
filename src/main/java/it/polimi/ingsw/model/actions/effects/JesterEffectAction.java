@@ -6,13 +6,13 @@ import it.polimi.ingsw.model.actions.Action;
 import java.util.Map;
 
 public abstract class JesterEffectAction extends Action {
-    public JesterEffectAction(GameEngine gameEngine){
+    public JesterEffectAction(GameEngine gameEngine) {
         super(13, gameEngine);
     }
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

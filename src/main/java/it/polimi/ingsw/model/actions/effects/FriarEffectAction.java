@@ -7,12 +7,12 @@ import java.util.Map;
 
 public abstract class FriarEffectAction extends Action {
     public FriarEffectAction(GameEngine gameEngine) {
-        super(12,gameEngine);
+        super(12, gameEngine);
     }
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 

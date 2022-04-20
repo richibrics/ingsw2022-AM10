@@ -20,7 +20,7 @@ public abstract class SetUp extends Action {
     }
 
     //TODO
-    public void setOptions(Map<String, String > options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 
@@ -47,8 +47,9 @@ public abstract class SetUp extends Action {
     /**
      * Draws three character cards and puts them in {@code characterCards}. The student discs required by some character cards
      * are taken from {@code bag}.
+     *
      * @param characterCards the list of the newly created character cards
-     * @param bag the bag
+     * @param bag            the bag
      * @throws Exception if one of the methods of CharacterManager throws an exception
      * @see CharacterCard
      * @see Bag
@@ -215,7 +216,7 @@ public abstract class SetUp extends Action {
      * Modifies the round by setting the order of play and the actions that the first player can perform.
      */
 
-    void modifyRound() throws Exception{
+    void modifyRound() throws Exception {
         Round round = this.getGameEngine().getRound();
         ArrayList<Integer> orderOfPlay = this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).map(player -> player.getPlayerId()).collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(orderOfPlay);

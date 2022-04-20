@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class OnSelectionOfWizardAction extends Action{
+public class OnSelectionOfWizardAction extends Action {
 
     public OnSelectionOfWizardAction(GameEngine gameEngine) {
         super(0, gameEngine);
@@ -19,7 +19,7 @@ public class OnSelectionOfWizardAction extends Action{
 
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception{
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 
