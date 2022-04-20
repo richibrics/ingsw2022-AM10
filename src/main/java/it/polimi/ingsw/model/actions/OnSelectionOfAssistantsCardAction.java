@@ -16,6 +16,11 @@ public class OnSelectionOfAssistantsCardAction extends Action {
         super(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID, gameEngine);
     }
 
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     *
+     * @param options additional information for act method
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT))
@@ -27,6 +32,10 @@ public class OnSelectionOfAssistantsCardAction extends Action {
         }
     }
 
+    /**
+     * Sets the player card if that card is available.
+     * @throws Exception if something bad happens
+     **/
     @Override
     public void act() throws Exception {
         // TODO moveAssistantCardInHandToLastPlayed should be called before the start of this round, not here
@@ -47,8 +56,10 @@ public class OnSelectionOfAssistantsCardAction extends Action {
 
 
     /**
-     * if not all the players have done the selection, set as next action the selection for the next player.
-     * Else if everybody did it, pass to the next Action
+     * Modify the round for the next Players actions.
+     * If not all the players have done the selection, set as next action the selection for the next player.
+     * Else if everybody did it, pass to the next Action.
+     * @throws Exception if something bad happens
      */
     @Override
     public void modifyRound() throws Exception {

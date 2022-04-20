@@ -75,6 +75,10 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
     }
 
+    /**
+     * Test correct behaviour (card set when it can be set and not when it cannot be set (already used))
+     * If everything is alright, then the option is set correctly in the attribute.
+     */
     @Test
     void act() {
         HashMap<String, String> options = new HashMap<>();
