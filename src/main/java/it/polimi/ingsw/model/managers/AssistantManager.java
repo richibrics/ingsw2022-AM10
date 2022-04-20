@@ -4,12 +4,14 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
+import it.polimi.ingsw.model.exceptions.WizardNotSetException;
 import it.polimi.ingsw.model.game_components.AssistantCard;
 import it.polimi.ingsw.model.game_components.Wizard;
 
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class AssistantManager extends Manager {
 
@@ -121,4 +123,60 @@ public class AssistantManager extends Manager {
 
     }
     */
+
+
+    /**
+     * Takes the id of the assistant card and retrieves the card value (useful to check if the card is selectable)
+     * @param assistantCardId the id of the assistant card
+     * @return the value of the assistant card
+     */
+    public int getCardValueById(int assistantCardId) {
+        return ((assistantCardId-1)%10)+1;
+    }
+
+    /**
+     * Returns a list of card values that the player can play in this round, considering the cards already played by the
+     * other players.
+     * MANDATORY: to work it's necessary that the players that in this round haven't already chosen an assistant card, have
+     * it as null (this player too) - using moveAssistantCardInHandToLastPlayed it's okay.
+     * @param playerId the id of the player
+     * @return a list with the values of the assistant cards that can be played by {@code playerId}
+     * @throws WizardNotSetException if the player hasn't set a wizard yet
+     * @throws NoSuchElementException if the player could not be found
+     */
+    public ArrayList<Integer> getPlayableAssistantCardValues (int playerId) throws WizardNotSetException, NoSuchElementException {
+        // Look at my cards and at the active cards of the other players: if all my cards are active in the other players,
+        // I can return all my cards because the player can play all his cards; otherwise I will return only the cards
+        // that aren't active in the other players' hands
+
+        // See if all the player's cards are active on the table (this means I can play them indistinctly)
+        boolean playerHasOnlyActiveCards = true;
+        for (AssistantCard assistantCard: CommonManager.takePlayerById(this.getGameEngine(), playerId).getWizard().getAssistantCards()) {
+            if(this.isAssistantCardValueActiveOnTable(assistantCard.getCardValue()) == false) // My card is not active for any other player
+                playerHasOnlyActiveCards = false; // then I have at least one card not used from somebody else I can play
+        }
+
+        if(playerHasOnlyActiveCards) // returns all the cards because them are all used in the current round from the other players
+            return (ArrayList<Integer>) CommonManager.takePlayerById(this.getGameEngine(), playerId).getWizard().getAssistantCards().stream().map((assistantCard)->assistantCard.getCardValue()).collect(Collectors.toList());
+        else // returns only the cards that aren't on the table in this turn
+            return (ArrayList<Integer>) CommonManager.takePlayerById(this.getGameEngine(), playerId).getWizard().getAssistantCards().stream().map((assistantCard)->assistantCard.getCardValue()).filter((cardValue)->!isAssistantCardValueActiveOnTable(cardValue)).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns true if there's a card on the table with {@code cardValue}; false otherwise
+     * @param cardValue the value of the card to check
+     * @return true if there's a card on the table with {@code cardValue}; false otherwise
+     */
+    private boolean isAssistantCardValueActiveOnTable (int cardValue) {
+        for (int i = 1; i <= this.getGameEngine().getNumberOfPlayers(); i++) {
+            try {
+                if (CommonManager.takePlayerById(this.getGameEngine(), i).getActiveAssistantCard().getCardValue() == cardValue) {
+                    return true;
+                }
+            } catch (AssistantCardNotSetException e) {
+                // I am here because the player I'm iterating on hasn't a card, good
+            }
+        }
+        return false;
+    }
 }
