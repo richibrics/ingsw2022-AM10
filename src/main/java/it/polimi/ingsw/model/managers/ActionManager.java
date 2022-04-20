@@ -1,17 +1,27 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.*;
 
 import java.util.Map;
 
 public class ActionManager extends Manager {
 
-    private Action[] actions = new Action[10];
+    private Action[] actions = new Action[ModelConstants.NUMBER_OF_STANDARD_ACTIONS];
     //TODO observers
 
     public ActionManager(GameEngine gameEngine) {
         super(gameEngine);
+    }
+
+    /**
+     * Gets the list of actions
+     * @return
+     */
+
+    public Action[] getActions() {
+        return this.actions;
     }
 
     /**
@@ -49,9 +59,21 @@ public class ActionManager extends Manager {
      * Generates all the standard actions.
      */
 
-    //TODO
-    private void generateArrayOfActions() {
 
+    private void generateArrayOfActions() {
+        this.actions[ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID] = new OnSelectionOfWizardAction(this.getGameEngine());
+        if (this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 2 || this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 4)
+            this.actions[ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID] = new DrawFromBagToCloudTwoFourPlayersAction(this.getGameEngine());
+        else if (this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 3)
+            this.actions[ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID] = new DrawFromBagToCloudThreePlayersAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID] = new OnSelectionOfAssistantsCardAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID] = new OnSelectionOfCharacterCardAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID] = new MoveStudentsFromEntranceAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID] = new MoveMotherNatureAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID] = new FromCloudTileToEntranceAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = new CalculateInfluenceAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_ASSIGN_PROFESSORS_ID] = new AssignProfessorsAction(this.getGameEngine());
+        this.actions[ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID] = new CheckEndMatchConditionAction(this.getGameEngine());
     }
 
     /**

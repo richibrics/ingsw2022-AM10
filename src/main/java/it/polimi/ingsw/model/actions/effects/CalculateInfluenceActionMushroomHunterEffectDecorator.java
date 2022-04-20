@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.PawnColor;
@@ -48,20 +49,19 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
         }
     }
 
-    /**
-     * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
-     * changes are needed and makes the required changes to the island group.
-     *
-     * @throws Exception if something bad happens
-     */
 
-    @Override
-    public void act() throws Exception {
-        this.getCalculateInfluenceAction().act();
-    }
+    /**
+     * Sets the color that adds no influence
+     * @param options additional information for act method
+     * @throws Exception if key 'color' is not present or the color is invalid
+     */
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
 
+        if(!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR))
+            throw new Exception("Key color is required");
+
+        this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR));
     }
 }

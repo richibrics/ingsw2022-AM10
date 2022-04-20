@@ -28,19 +28,6 @@ public class CalculateInfluenceActionKnightEffectDecorator extends CalculateInfl
         influences.put(CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), this.getPlayerId()), influences.get(CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), this.getPlayerId())) + 2);
     }
 
-    /**
-     * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
-     * changes are needed and makes the required changes to the island group.
-     *
-     * @throws Exception if something bad happens
-     */
-
-    @Override
-    public void act() throws Exception {
-        this.getCalculateInfluenceAction().act();
-    }
-
-
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
 

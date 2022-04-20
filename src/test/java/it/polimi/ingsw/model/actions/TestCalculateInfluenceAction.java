@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -73,7 +74,7 @@ class TestCalculateInfluenceAction {
         assertEquals(influence2, influences.get(2));
     }
 
-    @Test
+    @RepeatedTest(20)
     void act() {
         ArrayList<StudentDisc> studentDiscs = assertDoesNotThrow(() -> gameEngine.getTable().getBag().drawStudents(18));
         for (StudentDisc studentDisc : studentDiscs)
@@ -109,18 +110,30 @@ class TestCalculateInfluenceAction {
         int newMotherNatureIslandId = islandTiles.get(0).get(0).getId();
         motherNature.modifyIsland(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId)));
         ArrayList<StudentDisc> students = new ArrayList<>();
-        if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.RED)) {
+
+        if (newMotherNatureIslandId != (motherNatureIslandId + 6) % 12) {
+            if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.RED)) {
+                students.add(new StudentDisc(1, PawnColor.RED));
+                students.add(new StudentDisc(2, PawnColor.RED));
+                students.add(new StudentDisc(4, PawnColor.PINK));
+                students.add(new StudentDisc(5, PawnColor.PINK));
+                students.add(new StudentDisc(6, PawnColor.PINK));
+            } else if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.PINK)) {
+                students.add(new StudentDisc(1, PawnColor.RED));
+                students.add(new StudentDisc(2, PawnColor.RED));
+                students.add(new StudentDisc(3, PawnColor.RED));
+                students.add(new StudentDisc(5, PawnColor.PINK));
+                students.add(new StudentDisc(6, PawnColor.PINK));
+            }
+        }
+        else {
+            students.add(new StudentDisc(1, PawnColor.RED));
             students.add(new StudentDisc(1, PawnColor.RED));
             students.add(new StudentDisc(2, PawnColor.RED));
             students.add(new StudentDisc(4, PawnColor.PINK));
             students.add(new StudentDisc(5, PawnColor.PINK));
             students.add(new StudentDisc(6, PawnColor.PINK));
-        } else if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.PINK))
-            students.add(new StudentDisc(1, PawnColor.RED));
-        students.add(new StudentDisc(2, PawnColor.RED));
-        students.add(new StudentDisc(3, PawnColor.RED));
-        students.add(new StudentDisc(5, PawnColor.PINK));
-        students.add(new StudentDisc(6, PawnColor.PINK));
+        }
 
         for (StudentDisc studentDisc : students)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
@@ -151,6 +164,13 @@ class TestCalculateInfluenceAction {
 
         assertDoesNotThrow(() -> calculateInfluenceAction.act());
         assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).getTower().getColor()), assertDoesNotThrow(() -> CommonManager.takeTeamById(gameEngine, 1).getTeamTowersColor()));
+    }
+
+    @Test
+    void modifyRound() {
+        assertDoesNotThrow(()->calculateInfluenceAction.modifyRound());
+        assertEquals(gameEngine.getRound().getPossibleActions().get(0), 3);
+        assertEquals(gameEngine.getRound().getPossibleActions().get(1), 6);
     }
 
     @Test

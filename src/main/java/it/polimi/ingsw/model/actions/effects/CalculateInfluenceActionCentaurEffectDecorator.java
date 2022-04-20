@@ -32,18 +32,6 @@ public class CalculateInfluenceActionCentaurEffectDecorator extends CalculateInf
                         influences.put(team.getId(), influences.get(team.getId()) - 1);
     }
 
-    /**
-     * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
-     * changes are needed and makes the required changes to the island group.
-     *
-     * @throws Exception if something bad happens
-     */
-
-    @Override
-    public void act() throws Exception {
-        this.getCalculateInfluenceAction().act();
-    }
-
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
 

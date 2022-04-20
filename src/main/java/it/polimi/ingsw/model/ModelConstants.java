@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 public class ModelConstants {
     public static int ACTION_SETUP_ID = -1;
+    public static int NUMBER_OF_STANDARD_ACTIONS = 10;
     public static int ACTION_ON_SELECTION_OF_WIZARD_ID = 0;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_ID = 1;
     public static int ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID = 2;
@@ -22,4 +23,5 @@ public class ModelConstants {
     public static int ACTION_HERBALIST_ID_ID = 17;
     public static String ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT = "assistant";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD = "wizard";
+    public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR = "color";
 }

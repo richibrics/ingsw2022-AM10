@@ -93,14 +93,6 @@ class TestCalculateInfluenceActionKnightEffectDecorator {
         assertEquals(influence2, influences.get(2));
     }
 
-    /**
-     * Tested in TestCalculateInfluenceAction.
-     */
-
-    @Test
-    void act() {
-    }
-
     @Test
     void setOptions() {
     }

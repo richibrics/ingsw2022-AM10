@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public abstract class SetUp extends Action {
 
     public SetUp(GameEngine gameEngine) {
-        super(-1, gameEngine);
+        super(ModelConstants.ACTION_SETUP_ID, gameEngine);
     }
 
     //TODO
