@@ -2,11 +2,12 @@ package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
 
+import java.util.Map;
+
 public abstract class Action {
 
     private final int id;
     private int playerId;
-    private String options;
     private GameEngine gameEngine;
 
     public Action(int id, GameEngine gameEngine)
@@ -47,17 +48,10 @@ public abstract class Action {
     }
 
     /**
-     * Gets the options.
-     * @return a string of options
-     */
-
-    public String getOptions() { return this.options; }
-
-    /**
      * Sets the options. Options represents additional information used by the act method.
      * @param options additional information for act method
      */
-    public abstract void setOptions(String options);
+    public abstract void setOptions(Map<String, String> options) throws Exception;
 
     /**
      * Gets the game engine.
@@ -71,5 +65,5 @@ public abstract class Action {
      * and the order of play.
      */
 
-    abstract void modifyRound();
+    abstract void modifyRound() throws Exception;
 }

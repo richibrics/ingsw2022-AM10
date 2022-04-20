@@ -4,18 +4,16 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 
+import java.util.Map;
+
 public abstract class DrawFromBagToCloudAction extends Action{
 
     public DrawFromBagToCloudAction(GameEngine gameEngine) {
         super (1,gameEngine);
         }
 
-    public void setPlayerId(int playerId) {
 
-    }
-
-
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 

@@ -17,13 +17,9 @@ public class OnSelectionOfWizardAction extends Action{
         super(0, gameEngine);
     }
 
-    @Override
-    public void setPlayerId(int playerId) {
-
-    }
 
     @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 
@@ -33,7 +29,7 @@ public class OnSelectionOfWizardAction extends Action{
     }
 
     @Override
-    void modifyRound() {
+    void modifyRound() throws Exception {
 
     }
 

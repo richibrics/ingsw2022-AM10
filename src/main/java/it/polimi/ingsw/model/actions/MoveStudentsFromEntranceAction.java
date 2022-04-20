@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.game_components.SchoolBoard;
 import it.polimi.ingsw.model.game_components.StudentDisc;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public abstract class MoveStudentsFromEntranceAction extends Action{
 
@@ -18,12 +19,7 @@ public abstract class MoveStudentsFromEntranceAction extends Action{
     }
 
     @Override
-    public void setPlayerId(int playerId) {
-
-    }
-
-    @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 
@@ -43,7 +39,7 @@ public abstract class MoveStudentsFromEntranceAction extends Action{
     }
 
     @Override
-    void modifyRound() {
+    void modifyRound() throws Exception {
 
     }
 }

@@ -143,12 +143,7 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction{
     }
 
     @Override
-    public void setOptions(String options) {
-
-    }
-
-    @Override
-    public void setPlayerId(int playerId) {
+    public void setOptions(Map<String,String> options) throws Exception {
 
     }
 }

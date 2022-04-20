@@ -57,7 +57,7 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
     }
 
     @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 }

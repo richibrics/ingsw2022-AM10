@@ -38,7 +38,7 @@ public class CalculateInfluenceActionKnightEffectDecorator extends CalculateInfl
 
 
     @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 }

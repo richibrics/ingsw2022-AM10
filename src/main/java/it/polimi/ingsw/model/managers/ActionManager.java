@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.managers;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.actions.*;
 
+import java.util.Map;
+
 public class ActionManager extends Manager {
 
     private Action[] actions = new Action[10];
@@ -59,7 +61,7 @@ public class ActionManager extends Manager {
      * @throws Exception if the action executed throws an exception
      */
 
-    public void executeAction(int actionId, int playerId, String options) throws Exception
+    public void executeAction(int actionId, int playerId, Map<String, String> options) throws Exception
     {
         actions[actionId].setPlayerId(playerId);
         actions[actionId].setOptions(options);

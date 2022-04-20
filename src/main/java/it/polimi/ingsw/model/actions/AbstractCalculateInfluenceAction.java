@@ -15,7 +15,7 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
     public abstract void calculateInfluences(Map<Integer, Integer> influences, ArrayList<IslandTile> islandGroup) throws Exception;
 
     @Override
-    void modifyRound() {
+    void modifyRound() throws Exception{
 
     }
 }

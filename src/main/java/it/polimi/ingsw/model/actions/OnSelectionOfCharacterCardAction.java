@@ -11,13 +11,9 @@ public abstract class OnSelectionOfCharacterCardAction extends Action{
         super(3,gameEngine);
     }
 
-    @Override
-    public void setPlayerId(int playerId) {
-
-    }
 
     @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 

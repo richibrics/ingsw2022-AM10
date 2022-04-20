@@ -41,7 +41,7 @@ public class CalculateInfluenceActionCentaurEffectDecorator extends CalculateInf
     }
 
     @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 }

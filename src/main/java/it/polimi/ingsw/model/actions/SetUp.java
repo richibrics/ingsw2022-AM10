@@ -20,7 +20,7 @@ public abstract class SetUp extends Action {
     }
 
     //TODO
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String > options) throws Exception{
 
     }
 
@@ -215,7 +215,7 @@ public abstract class SetUp extends Action {
      * Modifies the round by setting the order of play and the actions that the first player can perform.
      */
 
-    void modifyRound() {
+    void modifyRound() throws Exception{
         Round round = this.getGameEngine().getRound();
         ArrayList<Integer> orderOfPlay = this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).map(player -> player.getPlayerId()).collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(orderOfPlay);

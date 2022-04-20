@@ -3,18 +3,16 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.actions.Action;
 
+import java.util.Map;
+
 public abstract class FriarEffectAction extends Action {
     public FriarEffectAction(GameEngine gameEngine) {
         super(12,gameEngine);
     }
 
-    @Override
-    public void setPlayerId(int playerId) {
-
-    }
 
     @Override
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception{
 
     }
 
