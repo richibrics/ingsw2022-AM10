@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-public class Constants {
+public class ModelConstants {
     public static int ACTION_ID_SETUP = -1;
     public static int ACTION_ID_ON_SELECTION_OF_WIZARD = 0;
     public static int ACTION_ID_DRAW_FROM_BAG_TO_CLOUD = 1;
