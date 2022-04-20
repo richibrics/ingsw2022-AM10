@@ -1,8 +1,6 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
-import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
-import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.SchoolBoard;
 import it.polimi.ingsw.model.game_components.StudentDisc;
@@ -10,7 +8,7 @@ import it.polimi.ingsw.model.game_components.StudentDisc;
 import java.util.ArrayList;
 import java.util.Map;
 
-public abstract class MoveStudentsFromEntranceAction extends Action {
+public class MoveStudentsFromEntranceAction extends Action {
 
     private int countMovedStudents;
 
@@ -39,7 +37,7 @@ public abstract class MoveStudentsFromEntranceAction extends Action {
     }
 
     @Override
-    void modifyRound() throws Exception {
+    public void modifyRound() throws Exception {
 
     }
 }

@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 
 
-public abstract class DrawFromBagToCloudTwoFourPlayersAction extends DrawFromBagToCloudAction {
+public class DrawFromBagToCloudTwoFourPlayersAction extends DrawFromBagToCloudAction {
     public DrawFromBagToCloudTwoFourPlayersAction(GameEngine gameEngine) {
         super(gameEngine);
     }

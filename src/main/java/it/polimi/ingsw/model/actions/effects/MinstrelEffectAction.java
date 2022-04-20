@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.actions.Action;
 
 import java.util.Map;
 
-public abstract class MinstrelEffectAction extends Action {
+public class MinstrelEffectAction extends Action {
     public MinstrelEffectAction(GameEngine gameEngine) {
         super(14, gameEngine);
     }
@@ -13,6 +13,15 @@ public abstract class MinstrelEffectAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
+
+    }
+
+    /**
+     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * and the order of play.
+     */
+    @Override
+    public void modifyRound() throws Exception {
 
     }
 

@@ -5,7 +5,6 @@ import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
-import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.*;
 
@@ -19,7 +18,7 @@ public class OnSelectionOfAssistantsCardAction extends Action {
     }
 
     @Override
-    public void setOptions(Map<String,String> options) throws Exception {
+    public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(OPTIONS_ASSISTANT_ID_KEY))
             throw new WrongMessageContentException("ActionMessage doesn't contain the assistant id");
         try {
@@ -36,11 +35,10 @@ public class OnSelectionOfAssistantsCardAction extends Action {
             // Check legal choose: previous players should not have the same assistant card value unless this
             // player has only that choose
             ArrayList<Integer> playableCards = this.getGameEngine().getAssistantManager().getPlayableAssistantCardValues(this.getPlayerId());
-            if(playableCards.contains(this.getGameEngine().getAssistantManager().getCardValueById(this.chosenAssistantId))) {
+            if (playableCards.contains(this.getGameEngine().getAssistantManager().getCardValueById(this.chosenAssistantId))) {
                 // Okay now I can set his assistant card
                 this.getGameEngine().getAssistantManager().setAssistantCard(this.getPlayerId(), this.chosenAssistantId);
-            }
-            else {
+            } else {
                 throw new IllegalGameActionException("Requested AssistantCard can't be played");
             }
         } catch (NoSuchElementException e) {
@@ -54,14 +52,13 @@ public class OnSelectionOfAssistantsCardAction extends Action {
      * Else if everybody did it, pass to the next Action
      */
     @Override
-    void modifyRound() throws Exception {
-        if(this.getGameEngine().getRound().playerTurnEnded()) { // There's someone else next
+    public void modifyRound() throws Exception {
+        if (this.getGameEngine().getRound().playerTurnEnded()) { // There's someone else next
             // Set that the next player has to select the assistant
             ArrayList<Integer> nextActions = new ArrayList<>();
             nextActions.add(this.getId());
             this.getGameEngine().getRound().setPossibleActions(nextActions);
-        }
-        else {
+        } else {
             // Everyone selected the AssistantCard, so now I order the characters turns using the assistant card value.
             ArrayList<Integer> oldOrderOfPlay = this.getGameEngine().getRound().getOrderOfPlay();
             Map<Integer, Float> orderMap = new HashMap<>();

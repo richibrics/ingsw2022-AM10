@@ -1,15 +1,8 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Round;
-import it.polimi.ingsw.model.game_components.*;
-import it.polimi.ingsw.model.game_components.Bag;
-import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class OnSelectionOfWizardAction extends Action {
 
@@ -29,7 +22,7 @@ public class OnSelectionOfWizardAction extends Action {
     }
 
     @Override
-    void modifyRound() throws Exception {
+    public void modifyRound() throws Exception {
 
     }
 
