@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestCalculateInfluenceActionMushroomHunterEffectDecorator {
+class TestCalculateInfluenceActionMushroomHunterEffect {
 
     static GameEngine gameEngine;
-    static CalculateInfluenceActionMushroomHunterEffectDecorator calculateInfluenceActionMushroomHunterEffectDecorator;
+    static CalculateInfluenceActionMushroomHunterEffect calculateInfluenceActionMushroomHunterEffect;
     static SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction;
     static CalculateInfluenceAction calculateInfluenceAction;
 
@@ -51,9 +51,8 @@ class TestCalculateInfluenceActionMushroomHunterEffectDecorator {
         teams.add(team1);
         teams.add(team2);
         gameEngine = new GameEngine(teams);
-        calculateInfluenceActionMushroomHunterEffectDecorator = new CalculateInfluenceActionMushroomHunterEffectDecorator(gameEngine);
         calculateInfluenceAction = new CalculateInfluenceAction(gameEngine);
-        calculateInfluenceActionMushroomHunterEffectDecorator.setActionToDecorate(calculateInfluenceAction);
+        calculateInfluenceActionMushroomHunterEffect = new CalculateInfluenceActionMushroomHunterEffect(gameEngine, calculateInfluenceAction);
         setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
         assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
     }
@@ -100,11 +99,16 @@ class TestCalculateInfluenceActionMushroomHunterEffectDecorator {
         Map<Integer, Integer> influences = new HashMap<>();
         Map<String, String> options = new HashMap<>();
         options.put("hello", "red");
-        assertThrows(Exception.class, () -> calculateInfluenceActionMushroomHunterEffectDecorator.setOptions(options));
+        assertThrows(Exception.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
         options.put("color", "red");
-        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffectDecorator.setOptions(options));
-        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffectDecorator.calculateInfluences(influences, islandGroups.get(0)));
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.calculateInfluences(influences, islandGroups.get(0)));
         assertEquals(influence1, influences.get(1));
         assertEquals(influence2, influences.get(2));
+    }
+
+    @Test
+    void setOptions() {
+
     }
 }

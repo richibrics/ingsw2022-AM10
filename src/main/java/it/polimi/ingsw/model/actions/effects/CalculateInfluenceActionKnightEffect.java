@@ -1,21 +1,25 @@
-package it.polimi.ingsw.model.actions;
+package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.ProfessorPawn;
+import it.polimi.ingsw.model.managers.CommonManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction {
+public class CalculateInfluenceActionKnightEffect extends CalculateInfluenceActionEffect {
 
-    public CalculateInfluenceAction(GameEngine gameEngine) {
-        super(gameEngine);
+    public CalculateInfluenceActionKnightEffect(GameEngine gameEngine, AbstractCalculateInfluenceAction calculateInfluenceAction) {
+        super(gameEngine, calculateInfluenceAction);
     }
 
     /**
-     * Calculates the influence that each team has on {@code islandGroup}.
+     * Calculates the influence that each team has on {@code islandGroup}. Increments by 2 the influence of the team with
+     * the player {@code this.playerId}.
      *
      * @param influences  the map with teamId - influence
      * @param islandGroup the island group
@@ -25,7 +29,11 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction {
     @Override
     public void calculateInfluences(Map<Integer, Integer> influences, ArrayList<IslandTile> islandGroup) throws Exception {
         for (Team team : this.getGameEngine().getTeams()) {
-            influences.put(team.getId(), 0);
+            if (CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), this.getPlayerId()) == team.getId())
+                influences.put(team.getId(), 2);
+            else
+                influences.put(team.getId(), 0);
+
             for (ProfessorPawn professorPawn : team.getProfessorTable())
                 for (IslandTile islandTile : islandGroup)
                     influences.put(team.getId(), influences.get(team.getId()) + islandTile.peekStudents().stream().filter(student -> student.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));

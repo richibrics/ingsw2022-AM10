@@ -3,19 +3,21 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.PawnColor;
-import it.polimi.ingsw.model.game_components.StudentDisc;
+import it.polimi.ingsw.model.game_components.ProfessorPawn;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class CalculateInfluenceActionMushroomHunterEffectDecorator extends CalculateInfluenceDecorator {
+public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInfluenceActionEffect {
 
     private PawnColor color;
 
-    public CalculateInfluenceActionMushroomHunterEffectDecorator(GameEngine gameEngine) {
-        super(gameEngine);
+    public CalculateInfluenceActionMushroomHunterEffect(GameEngine gameEngine, AbstractCalculateInfluenceAction calculateInfluenceAction) {
+        super(gameEngine, calculateInfluenceAction);
     }
 
     /**
@@ -29,26 +31,21 @@ public class CalculateInfluenceActionMushroomHunterEffectDecorator extends Calcu
 
     @Override
     public void calculateInfluences(Map<Integer, Integer> influences, ArrayList<IslandTile> islandGroup) throws Exception {
-        this.getCalculateInfluenceAction().calculateInfluences(influences, islandGroup);
-
-        /* Find team with professor pawn of the required color */
-        Team teamWithProfessor = null;
-        for (Team team : this.getGameEngine().getTeams())
-            if (team.getProfessorTable().stream().filter(professorPawn -> professorPawn.getColor().equals(this.color)).count() == 1)
-                teamWithProfessor = team;
-
-        /* Decrement influence of team with required professor pawn by the number of students on islandGroup that have
-         * the same color of the professor pawn */
-        if (teamWithProfessor != null) {
-            int influenceDecrement = 0;
+        for (Team team : this.getGameEngine().getTeams()) {
+            influences.put(team.getId(), 0);
+            for (ProfessorPawn professorPawn : team.getProfessorTable())
+                if (!professorPawn.getColor().equals(this.color))
+                    for (IslandTile islandTile : islandGroup)
+                        influences.put(team.getId(), influences.get(team.getId()) + islandTile.peekStudents()
+                                .stream()
+                                .filter(student -> student.getColor().equals(professorPawn.getColor()))
+                                .collect(Collectors.reducing(0, e -> 1, Integer::sum)));
             for (IslandTile islandTile : islandGroup)
-                for (StudentDisc studentDisc : islandTile.peekStudents())
-                    if (studentDisc.getColor().equals(this.color))
-                        influenceDecrement++;
-            influences.put(teamWithProfessor.getId(), influences.get(teamWithProfessor.getId()) - influenceDecrement);
+                if (islandTile.hasTower())
+                    if (islandTile.getTower().getColor().equals(team.getTeamTowersColor()))
+                        influences.put(team.getId(), influences.get(team.getId()) + 1);
         }
     }
-
 
     /**
      * Sets the color that adds no influence

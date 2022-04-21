@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestCalculateInfluenceActionCentaurEffectDecorator {
+class TestCalculateInfluenceActionCentaurEffect {
 
     static GameEngine gameEngine;
-    static CalculateInfluenceActionCentaurEffectDecorator calculateInfluenceActionCentaurEffectDecorator;
+    static CalculateInfluenceActionCentaurEffect calculateInfluenceActionCentaurEffect;
     static SetUpThreePlayersAction setUpThreePlayersAction;
     static CalculateInfluenceAction calculateInfluenceAction;
 
@@ -48,21 +48,20 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
-        calculateInfluenceActionCentaurEffectDecorator = new CalculateInfluenceActionCentaurEffectDecorator(gameEngine);
         calculateInfluenceAction = new CalculateInfluenceAction(gameEngine);
+        calculateInfluenceActionCentaurEffect = new CalculateInfluenceActionCentaurEffect(gameEngine, calculateInfluenceAction);
+
         setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
         assertDoesNotThrow(()->setUpThreePlayersAction.act());
     }
 
     @Test
-    void TestCalculateInfluenceAction() {
-        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
-        assertEquals(calculateInfluenceActionCentaurEffectDecorator.getCalculateInfluenceAction(), calculateInfluenceAction);
+    void getCalculateInfluenceAction() {
+        assertEquals(calculateInfluenceActionCentaurEffect.getCalculateInfluenceAction(), calculateInfluenceAction);
     }
 
     @Test
     void calculateInfluences() {
-        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         ArrayList<StudentDisc> studentDiscs = assertDoesNotThrow(() -> gameEngine.getTable().getBag().drawStudents(10));
         for (StudentDisc studentDisc : studentDiscs)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
@@ -106,7 +105,7 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
 
         Map<Integer, Integer> influences = new HashMap<>();
 
-        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffectDecorator.calculateInfluences(influences, islandGroups.get(0)));
+        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffect.calculateInfluences(influences, islandGroups.get(0)));
         assertEquals(influence1, influences.get(1));
         assertEquals(influence2, influences.get(2));
         assertEquals(influence3, influences.get(3));
@@ -114,7 +113,6 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
 
     @RepeatedTest(10)
     void act() {
-        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         int motherNatureIslandId = assertDoesNotThrow(() -> gameEngine.getIslandManager().getMotherNatureIslandId());
         assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).setTower(gameEngine.getTeams().get(0).popTower()));
 
@@ -133,15 +131,14 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
         gameEngine.getTeams().get(1).addProfessorPawn(yellowProfessor);
         gameEngine.getTeams().get(0).addProfessorPawn(redProfessor);
 
-        assertDoesNotThrow(() -> calculateInfluenceActionCentaurEffectDecorator.act());
-        assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).getTower().getColor()), assertDoesNotThrow(()->CommonManager.takeTeamById(gameEngine, 1).getTeamTowersColor()));
+        assertDoesNotThrow(() -> calculateInfluenceActionCentaurEffect.act());
+        assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).getTower().getColor()), assertDoesNotThrow(()->CommonManager.takeTeamById(gameEngine, 2).getTeamTowersColor()));
     }
 
     @Test
     void modifyRound() {
-        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
-        gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionCentaurEffectDecorator;
-        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffectDecorator.modifyRound());
+        gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionCentaurEffect;
+        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffect.modifyRound());
         assertEquals(gameEngine.getRound().getPossibleActions().get(0), 3);
         assertEquals(gameEngine.getRound().getPossibleActions().get(1), 6);
         assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID], calculateInfluenceAction);

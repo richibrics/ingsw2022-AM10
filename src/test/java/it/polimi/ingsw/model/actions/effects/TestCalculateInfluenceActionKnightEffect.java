@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestCalculateInfluenceActionKnightEffectDecorator {
+class TestCalculateInfluenceActionKnightEffect {
 
     static GameEngine gameEngine;
-    static CalculateInfluenceActionKnightEffectDecorator calculateInfluenceActionKnightEffectDecorator;
+    static CalculateInfluenceActionKnightEffect calculateInfluenceActionKnightEffect;
     static CalculateInfluenceAction calculateInfluenceAction;
     static SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction;
 
@@ -41,15 +41,14 @@ class TestCalculateInfluenceActionKnightEffectDecorator {
         teams.add(team1);
         teams.add(team2);
         gameEngine = new GameEngine(teams);
-        calculateInfluenceActionKnightEffectDecorator = new CalculateInfluenceActionKnightEffectDecorator(gameEngine);
         calculateInfluenceAction = new CalculateInfluenceAction(gameEngine);
+        calculateInfluenceActionKnightEffect = new CalculateInfluenceActionKnightEffect(gameEngine, calculateInfluenceAction);
         setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
         assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
     }
 
     @Test
     void calculateInfluences() {
-        calculateInfluenceActionKnightEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         ArrayList<StudentDisc> studentDiscs = assertDoesNotThrow(() -> gameEngine.getTable().getBag().drawStudents(15));
         for (StudentDisc studentDisc : studentDiscs)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
@@ -87,8 +86,8 @@ class TestCalculateInfluenceActionKnightEffectDecorator {
 
         Map<Integer, Integer> influences = new HashMap<>();
 
-        calculateInfluenceActionKnightEffectDecorator.setPlayerId(1);
-        assertDoesNotThrow(()->calculateInfluenceActionKnightEffectDecorator.calculateInfluences(influences, islandGroups.get(0)));
+        calculateInfluenceActionKnightEffect.setPlayerId(1);
+        assertDoesNotThrow(()->calculateInfluenceActionKnightEffect.calculateInfluences(influences, islandGroups.get(0)));
         assertEquals(influence1, influences.get(1));
         assertEquals(influence2, influences.get(2));
     }
