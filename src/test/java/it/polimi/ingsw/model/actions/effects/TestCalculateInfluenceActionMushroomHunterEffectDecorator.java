@@ -53,7 +53,7 @@ class TestCalculateInfluenceActionMushroomHunterEffectDecorator {
         gameEngine = new GameEngine(teams);
         calculateInfluenceActionMushroomHunterEffectDecorator = new CalculateInfluenceActionMushroomHunterEffectDecorator(gameEngine);
         calculateInfluenceAction = new CalculateInfluenceAction(gameEngine);
-        calculateInfluenceActionMushroomHunterEffectDecorator.setCalculateInfluenceAction(calculateInfluenceAction);
+        calculateInfluenceActionMushroomHunterEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
         assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
     }

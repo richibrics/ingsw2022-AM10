@@ -3,8 +3,9 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
+import it.polimi.ingsw.model.actions.Action;
 
-public abstract class CalculateInfluenceDecorator extends AbstractCalculateInfluenceAction {
+public abstract class CalculateInfluenceDecorator extends AbstractCalculateInfluenceAction implements ActionDecorator {
 
     private AbstractCalculateInfluenceAction calculateInfluenceAction;
 
@@ -14,11 +15,11 @@ public abstract class CalculateInfluenceDecorator extends AbstractCalculateInflu
 
     /**
      * Sets the instance of type {@code AbstractCalculateInfluenceAction}.
-     * @param calculateInfluenceAction the instance of the class {@code AbstractCalculateInfluenceAction}
+     * @param actionToDecorate the instance of the class {@code AbstractCalculateInfluenceAction}
      */
 
-    public void setCalculateInfluenceAction(AbstractCalculateInfluenceAction calculateInfluenceAction) {
-        this.calculateInfluenceAction = calculateInfluenceAction;
+    public void setActionToDecorate(Action actionToDecorate) {
+        this.calculateInfluenceAction = (AbstractCalculateInfluenceAction) actionToDecorate;
     }
 
     /**

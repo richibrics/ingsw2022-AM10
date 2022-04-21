@@ -56,13 +56,13 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
 
     @Test
     void TestCalculateInfluenceAction() {
-        calculateInfluenceActionCentaurEffectDecorator.setCalculateInfluenceAction(calculateInfluenceAction);
+        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         assertEquals(calculateInfluenceActionCentaurEffectDecorator.getCalculateInfluenceAction(), calculateInfluenceAction);
     }
 
     @Test
     void calculateInfluences() {
-        calculateInfluenceActionCentaurEffectDecorator.setCalculateInfluenceAction(calculateInfluenceAction);
+        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         ArrayList<StudentDisc> studentDiscs = assertDoesNotThrow(() -> gameEngine.getTable().getBag().drawStudents(10));
         for (StudentDisc studentDisc : studentDiscs)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
@@ -114,7 +114,7 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
 
     @RepeatedTest(10)
     void act() {
-        calculateInfluenceActionCentaurEffectDecorator.setCalculateInfluenceAction(calculateInfluenceAction);
+        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         int motherNatureIslandId = assertDoesNotThrow(() -> gameEngine.getIslandManager().getMotherNatureIslandId());
         assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).setTower(gameEngine.getTeams().get(0).popTower()));
 
@@ -139,7 +139,7 @@ class TestCalculateInfluenceActionCentaurEffectDecorator {
 
     @Test
     void modifyRound() {
-        calculateInfluenceActionCentaurEffectDecorator.setCalculateInfluenceAction(calculateInfluenceAction);
+        calculateInfluenceActionCentaurEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionCentaurEffectDecorator;
         assertDoesNotThrow(()->calculateInfluenceActionCentaurEffectDecorator.modifyRound());
         assertEquals(gameEngine.getRound().getPossibleActions().get(0), 3);

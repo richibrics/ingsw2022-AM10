@@ -49,7 +49,7 @@ class TestCalculateInfluenceActionKnightEffectDecorator {
 
     @Test
     void calculateInfluences() {
-        calculateInfluenceActionKnightEffectDecorator.setCalculateInfluenceAction(calculateInfluenceAction);
+        calculateInfluenceActionKnightEffectDecorator.setActionToDecorate(calculateInfluenceAction);
         ArrayList<StudentDisc> studentDiscs = assertDoesNotThrow(() -> gameEngine.getTable().getBag().drawStudents(15));
         for (StudentDisc studentDisc : studentDiscs)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
