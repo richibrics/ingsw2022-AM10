@@ -136,9 +136,9 @@ class TestCalculateInfluenceActionCentaurEffect {
     }
 
     @Test
-    void modifyRound() {
+    void modifyRoundAndActionList() {
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionCentaurEffect;
-        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffect.modifyRound());
+        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffect.modifyRoundAndActionList());
         assertEquals(gameEngine.getRound().getPossibleActions().get(0), 3);
         assertEquals(gameEngine.getRound().getPossibleActions().get(1), 6);
         assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID], calculateInfluenceAction);

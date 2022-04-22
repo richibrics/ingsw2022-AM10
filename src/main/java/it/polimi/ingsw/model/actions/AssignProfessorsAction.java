@@ -32,11 +32,11 @@ public class AssignProfessorsAction extends AbstractAssignProfessorAction {
 
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
-     * and the order of play. In this case this method is empty because it does not modify the round.
-     *
+     * and the order of play, and the Action List in the Action Manager. In this case this method is empty
+     * because it does not modify the round and the action list.
      * @throws Exception if something bad happens
      */
 
     @Override
-    public void modifyRound() throws Exception { }
+    public void modifyRoundAndActionList() throws Exception { }
 }

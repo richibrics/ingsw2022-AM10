@@ -167,8 +167,8 @@ class TestCalculateInfluenceAction {
     }
 
     @Test
-    void modifyRound() {
-        assertDoesNotThrow(()->calculateInfluenceAction.modifyRound());
+    void modifyRoundAndActionList() {
+        assertDoesNotThrow(()->calculateInfluenceAction.modifyRoundAndActionList());
         assertEquals(gameEngine.getRound().getPossibleActions().get(0), 3);
         assertEquals(gameEngine.getRound().getPossibleActions().get(1), 6);
     }

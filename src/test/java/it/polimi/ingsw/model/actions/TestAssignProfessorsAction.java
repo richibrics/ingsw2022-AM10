@@ -145,5 +145,5 @@ class TestAssignProfessorsAction {
      */
 
     @Test
-    void modifyRound() { }
+    void modifyRoundAndActionList() { }
 }

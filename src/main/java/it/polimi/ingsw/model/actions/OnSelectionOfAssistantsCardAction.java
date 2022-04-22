@@ -54,15 +54,15 @@ public class OnSelectionOfAssistantsCardAction extends Action {
         }
     }
 
-
     /**
-     * Modify the round for the next Players actions.
-     * If not all the players have done the selection, set as next action the selection for the next player.
+     * Modifies the round for the next Players actions.
+     * If none of the players have done the selection, set as next action the selection for the next player.
      * Else if everybody did it, pass to the next Action.
      * @throws Exception if something bad happens
      */
+
     @Override
-    public void modifyRound() throws Exception {
+    public void modifyRoundAndActionList() throws Exception {
         if (this.getGameEngine().getRound().playerTurnEnded()) { // There's someone else next
             // Set that the next player has to select the assistant
             ArrayList<Integer> nextActions = new ArrayList<>();

@@ -97,13 +97,13 @@ class TestOnSelectionOfAssistantsCardAction {
     }
 
     /**
-     * Set 3 different card and call modifyRound 3 times (for three players), check round works correctly and then that the order is built.
+     * Set 3 different card and call modifyRoundAndActionListAndActionList 3 times (for three players), check round works correctly and then that the order is built.
      * Then (when player 3 only has one card) select the same card of another player and check that the
      * new order keeps track of the previous order when more than one player plays the same card.
      * Check also next actions are correct
      */
     @Test
-    void modifyRound() {
+    void modifyRoundAndActionList() {
         assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
         // Set the assistant cards
@@ -115,7 +115,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
 
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRound());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         // Check round is going forward
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
@@ -125,7 +125,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
 
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRound());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         // Check round is going forward
         assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
@@ -136,7 +136,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
 
         // This will make the new order
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRound());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
 
         // Check new order (order made by id of assistant cards set above)
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));
@@ -160,9 +160,9 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
 
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRound());
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRound());
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRound()); // This generates the new order
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList()); // This generates the new order
 
         // Check the order
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));

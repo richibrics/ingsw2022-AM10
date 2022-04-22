@@ -49,8 +49,8 @@ class TestSetUpTwoAndFourPlayersAction {
     }
 
     @Test
-    void modifyRound() throws Exception{
-        setUpTwoAndFourPlayersAction.modifyRound();
+    void modifyRoundAndActionList() throws Exception{
+        setUpTwoAndFourPlayersAction.modifyRoundAndActionList();
         ArrayList<Integer> orderOfPlay = setUpTwoAndFourPlayersAction.getGameEngine().getRound().getOrderOfPlay();
         assertEquals(orderOfPlay.size(), 2);
         Collections.sort(orderOfPlay);

@@ -213,10 +213,12 @@ public abstract class SetUp extends Action {
     protected abstract void drawStudentsAndPlaceOnEntrance(Bag bag) throws SchoolBoardNotSetException, EmptyBagException;
 
     /**
-     * Modifies the round by setting the order of play and the actions that the first player can perform.
+     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * and the order of play, and the Action List in the Action Manager.
+     * @throws Exception if something bad happens
      */
 
-    public void modifyRound() throws Exception {
+    public void modifyRoundAndActionList() throws Exception {
         Round round = this.getGameEngine().getRound();
         ArrayList<Integer> orderOfPlay = this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).map(player -> player.getPlayerId()).collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(orderOfPlay);

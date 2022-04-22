@@ -153,9 +153,9 @@ class TestAssignProfessorActionCook {
     }
 
     @Test
-    void modifyRound() {
+    void modifyRoundAndActionList() {
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_ASSIGN_PROFESSORS_ID] = assignProfessorActionCookEffect;
-        assertDoesNotThrow(()->assignProfessorActionCookEffect.modifyRound());
+        assertDoesNotThrow(()->assignProfessorActionCookEffect.modifyRoundAndActionList());
         assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_ASSIGN_PROFESSORS_ID], assignProfessorsAction);
     }
 }

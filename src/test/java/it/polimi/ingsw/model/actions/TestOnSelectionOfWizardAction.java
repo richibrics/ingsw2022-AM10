@@ -95,26 +95,26 @@ class TestOnSelectionOfWizardAction {
     }
 
     /**
-     * Call modifyRound 3 times (for three players), check round works correctly and then
+     * Call modifyRoundAndActionListAndActionList 3 times (for three players), check round works correctly and then
      * that the order (same as before) is built.
      * Check also next action is correct.
      */
     @Test
-    void modifyRound() {
+    void modifyRoundAndActionList() {
         assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRound());
+        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
 
         // Check round is going forward
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRound());
+        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
 
         // Check round is going forward
         assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
         // This will make the new order
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRound());
+        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
 
         // Check new order is the same as before
         assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));
