@@ -43,6 +43,8 @@ class TestOnSelectionOfWizardAction {
         teams.add(team3);
         gameEngine = new GameEngine(teams);
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
+        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+
         onSelectionOfWizardAction = new OnSelectionOfWizardAction(gameEngine);
 
         ArrayList<Integer> order = new ArrayList<>();

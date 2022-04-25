@@ -2,10 +2,12 @@ package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +45,8 @@ class TestOnSelectionOfAssistantsCardAction {
         teams.add(team3);
         gameEngine = new GameEngine(teams);
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
+        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+
         onSelectionOfAssistantsCardAction = new OnSelectionOfAssistantsCardAction(gameEngine);
 
         gameEngine.getAssistantManager().setWizard(1,1);
@@ -57,7 +61,7 @@ class TestOnSelectionOfAssistantsCardAction {
     }
 
     /**
-     * Test only exception throw or not
+     * Tests only exception throw or not
      */
     @Test
     void setOptions() {
@@ -76,7 +80,7 @@ class TestOnSelectionOfAssistantsCardAction {
     }
 
     /**
-     * Test correct behaviour (card set when it can be set and not when it cannot be set (already used))
+     * Tests correct behaviour (card set when it can be set and not when it cannot be set (already used))
      * If everything is alright, then the option is set correctly in the attribute.
      */
     @Test
@@ -173,5 +177,38 @@ class TestOnSelectionOfAssistantsCardAction {
         assertEquals(2, gameEngine.getRound().getPossibleActions().size());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+
+        // Now we place in the round step where one player remains to end the turn: I unset
+        // the card for the first player and call the modifyRoundAndActionListAndActionList:
+        // now not all the cards are set but them must be set in this step ! (I am touching directly
+        // the game to break it and check the exception is thrown)
+
+        // Create new round
+        gameEngine.getRound().setOrderOfPlay(gameEngine.getRound().getOrderOfPlay());
+        // Ensure everybody has the card
+        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getActiveAssistantCard());
+        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 2).getActiveAssistantCard());
+        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 3).getActiveAssistantCard());
+        // Send the round state forward to when only one player remains
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        // Now if I call the modifyRAAL it makes the new order: I break it removing the card from one player
+        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 2).popActiveAssistantCard());
+        // Check that the Action recognize an unknown game state
+        assertThrows(IllegalGameStateException.class, ()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+    }
+
+    @Test
+    void actWithWrongCardNumber() {
+        HashMap<String, String> options = new HashMap<>();
+
+        // Player 1 acts with card 20: ERROR
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "20");
+        onSelectionOfAssistantsCardAction.setPlayerId(1);
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, ()->onSelectionOfAssistantsCardAction.act());
+
+        // Check not okay
+        assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine,1).getActiveAssistantCard().getId());
     }
 }
