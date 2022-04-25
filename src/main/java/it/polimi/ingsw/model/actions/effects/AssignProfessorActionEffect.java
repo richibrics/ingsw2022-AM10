@@ -15,6 +15,7 @@ public abstract class AssignProfessorActionEffect extends AbstractAssignProfesso
 
     /**
      * Gets the assign professor action.
+     *
      * @return the assign professor action
      */
 
@@ -42,6 +43,7 @@ public abstract class AssignProfessorActionEffect extends AbstractAssignProfesso
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 

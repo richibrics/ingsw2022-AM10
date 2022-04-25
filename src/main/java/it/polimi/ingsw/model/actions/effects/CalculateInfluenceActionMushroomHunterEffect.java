@@ -49,6 +49,7 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
 
     /**
      * Sets the color that adds no influence
+     *
      * @param options additional information for act method
      * @throws Exception if key 'color' is not present or the color is invalid
      */
@@ -56,7 +57,7 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
 
-        if(!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR))
+        if (!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR))
             throw new Exception("Key color is required");
 
         this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR));

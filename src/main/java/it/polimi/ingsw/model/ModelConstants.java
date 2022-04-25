@@ -20,7 +20,7 @@ public class ModelConstants {
     public static int ACTION_MINSTREL_ID = 14;
     public static int ACTION_LADY_ID = 15;
     public static int ACTION_THIEF_ID = 16;
-    public static int ACTION_HERBALIST_ID_ID = 17;
+    public static int ACTION_HERBALIST_ID = 17;
     public static String ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT = "assistant";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD = "wizard";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR = "color";

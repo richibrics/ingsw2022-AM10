@@ -1,13 +1,14 @@
 package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
 
 import java.util.Map;
 
 public class MailmanEffectAction extends Action {
     public MailmanEffectAction(GameEngine gameEngine) {
-        super(10, gameEngine);
+        super(ModelConstants.ACTION_MAILMAN_ID, gameEngine);
     }
 
 
@@ -19,6 +20,7 @@ public class MailmanEffectAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -29,6 +31,8 @@ public class MailmanEffectAction extends Action {
 
     @Override
     public void act() throws Exception {
-
+        this.getGameEngine().getRound().getCurrentPlayer();
+        if (getPlayerId() == getGameEngine().getRound().getCurrentPlayer())
+            this.getGameEngine().getAssistantManager().incrementMovementsOfAssistantCardInHand(getGameEngine().getRound().getCurrentPlayer(), 2);
     }
 }

@@ -18,6 +18,7 @@ public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect
      * Gets the id of the player with the highest number of students of a certain color in the dining room. In case of a draw,
      * if one of the players with the highest number of students of the required color is {@code this.playerId}, returns the id
      * of the team with the player {@code this.playerId}.
+     *
      * @param studentsOfPlayer the map with playerId - number of students of the required color in the dining room
      * @return the id of the team with the player with the highest number of students of a certain color in the dining room
      */
@@ -33,9 +34,10 @@ public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect
 
     /**
      * Checks if the professor  of color {@code color} has to be moved to a different team.
-     * @param color the color of the professor pawn
-     * @param winningTeam the team with the player that has the highest number of students of color {@code color} in the
-     *                    dining room
+     *
+     * @param color            the color of the professor pawn
+     * @param winningTeam      the team with the player that has the highest number of students of color {@code color} in the
+     *                         dining room
      * @param studentsOfPlayer the map with playerId - number of students of color {@code color} in the dining room
      * @return true if the professor  of color {@code color} has to be moved to a different team, false otherwise
      */
@@ -45,9 +47,9 @@ public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect
         if (winningTeam.getProfessorTable()
                 .stream()
                 .filter(professorPawn -> professorPawn.getColor().equals(color)).count() == 0
-                    && (studentsOfPlayer.values().stream().filter(value -> value == studentsOfPlayer.get(winningTeam.getId())).count() == 1
-                        || (winningTeam.getPlayers().contains(CommonManager.takePlayerById(this.getGameEngine(), this.getPlayerId()))
-                                && studentsOfPlayer.get(winningTeam.getId()) != 0)))
+                && (studentsOfPlayer.values().stream().filter(value -> value == studentsOfPlayer.get(winningTeam.getId())).count() == 1
+                || (winningTeam.getPlayers().contains(CommonManager.takePlayerById(this.getGameEngine(), this.getPlayerId()))
+                && studentsOfPlayer.get(winningTeam.getId()) != 0)))
             return true;
         else
             return false;
