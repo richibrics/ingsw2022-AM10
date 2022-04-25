@@ -27,8 +27,7 @@ public class IslandManager extends Manager {
     public void unifyPossibleIslands() throws TableNotSetException {
         Table table = this.getGameEngine().getTable();
         ArrayList<ArrayList<IslandTile>> islandTiles = table.getIslandTiles();
-        if(islandTiles.size() > 1)
-        {
+        if (islandTiles.size() > 1) {
             for (int groupId = 0; groupId < islandTiles.size() - 1; groupId++) {
                 IslandTile islandLeftGroup = islandTiles.get(groupId).get(0);
                 IslandTile islandRightGroup = islandTiles.get(groupId + 1).get(0);
@@ -39,7 +38,7 @@ public class IslandManager extends Manager {
                         if (towerLeftGroup.getColor().equals(towerRightGroup.getColor())) {
                             // Unify possible
                             // Manage noEntry before merging
-                            this.spreadNoEntryTilesInMergingIslandGroups(groupId,groupId + 1);
+                            this.spreadNoEntryTilesInMergingIslandGroups(groupId, groupId + 1);
                             // Merge
                             islandTiles.get(groupId).addAll(islandTiles.get(groupId + 1));
                             // Clear right group
@@ -63,41 +62,36 @@ public class IslandManager extends Manager {
      * This operation is run before island merge because if the groups are still separated I can
      * manage the case with both groups with NoEntry and set the NoEntry tile back to the available tiles.
      *
-     * @param firstGroupId the index in the island tiles matrix of the first arrayList with the islands I am merging
+     * @param firstGroupId  the index in the island tiles matrix of the first arrayList with the islands I am merging
      * @param secondGroupId the index in the island tiles matrix of the second arrayList with the islands I am merging
-     * @throws  TableNotSetException if the Table is not set in the GameEngine
+     * @throws TableNotSetException if the Table is not set in the GameEngine
      */
     private void spreadNoEntryTilesInMergingIslandGroups(int firstGroupId, int secondGroupId) throws TableNotSetException {
         Table table = this.getGameEngine().getTable();
         IslandTile islandFirstGroup = table.getIslandTiles().get(firstGroupId).get(0);
         IslandTile islandSecondGroup = table.getIslandTiles().get(secondGroupId).get(0);
         // if noEntry in left group, check if also in right group
-        if(islandFirstGroup.hasNoEntry() && islandSecondGroup.hasNoEntry())
-        {
+        if (islandFirstGroup.hasNoEntry() && islandSecondGroup.hasNoEntry()) {
             // Both have new entry, so I only have to set back a NoEntry
             table.increaseAvailableNoEntryTiles();
             return;
         }
 
-        if(islandFirstGroup.hasNoEntry() && !islandSecondGroup.hasNoEntry()){
-            for(IslandTile islandTile: table.getIslandTiles().get(secondGroupId))
-            {
-                islandTile.setNoEntry(true);
-            }
+        if (islandFirstGroup.hasNoEntry() && !islandSecondGroup.hasNoEntry()) {
+            this.setIslandGroupNoEntryByIslandId(table.getIslandTiles().get(secondGroupId).get(0).getId(), true);
             return;
         }
 
-        if(!islandFirstGroup.hasNoEntry() && islandSecondGroup.hasNoEntry()){
-            for(IslandTile islandTile: table.getIslandTiles().get(firstGroupId))
-            {
-                islandTile.setNoEntry(true);
-            }
+        if (!islandFirstGroup.hasNoEntry() && islandSecondGroup.hasNoEntry()) {
+            this.setIslandGroupNoEntryByIslandId(table.getIslandTiles().get(firstGroupId).get(0).getId(), true);
+            return;
         }
     }
 
 
     /**
      * Returns the id of the Island where there's MotherNature.
+     *
      * @return MotherNature's IslandTile id
      * @throws TableNotSetException if Table is not set in GameEngine
      */
@@ -108,28 +102,37 @@ public class IslandManager extends Manager {
     /**
      * Returns true if IslandTile whose id is {@code islandId} has the NoEntry tile.
      *
-     * @param islandId  the id of the island to search
+     * @param islandId the id of the island to search
      * @return true if NoEntry tile is present
      * @throws TableNotSetException if Table is not set in GameEngine
      */
     public boolean islandTileHasNoEntry(int islandId) throws TableNotSetException {
-        return CommonManager.takeIslandTileById(this.getGameEngine(),islandId).hasNoEntry();
+        return CommonManager.takeIslandTileById(this.getGameEngine(), islandId).hasNoEntry();
     }
 
     /**
-     * Sets noEntry value for the IslandId whose id is the same of {@code islandId}.
+     * Sets noEntry value for the group of IslandTiles where there's and Island whose id is the same of {@code islandId}.
      *
-     * @param islandId  the id of the island to search
-     * @param value new value for NoEntry in the IslandTile
+     * @param islandId the id of the island to search
+     * @param value    new value for NoEntry in the IslandTile
      * @throws TableNotSetException if Table is not set in GameEngine
      */
-    public void setIslandTileNoEntry(int islandId, boolean value) throws TableNotSetException {
-        CommonManager.takeIslandTileById(this.getGameEngine(),islandId).setNoEntry(value);
+    public void setIslandGroupNoEntryByIslandId(int islandId, boolean value) throws TableNotSetException {
+        // Get the group of this island tile
+        ArrayList<IslandTile> receivingGroup = this.getGameEngine().getTable().getIslandTiles().get(
+                this.getIslandGroupNumberFromIslandTileId(islandId)
+        );
+
+        // Set the no entry value to all the islands
+        for (IslandTile islandTile : receivingGroup) {
+            islandTile.setNoEntry(value);
+        }
     }
 
     /**
      * Returns the number of IslandTile groups.
-     * @return  the number of IslandTile groups
+     *
+     * @return the number of IslandTile groups
      * @throws TableNotSetException if Table is not set in GameEngine
      */
     public int getIslandGroupsNumber() throws TableNotSetException {
@@ -138,31 +141,34 @@ public class IslandManager extends Manager {
 
     /**
      * Gets the color of the IslandTile with {@code islandId}.
+     *
      * @param islandId the id of the IslandTile to search
      * @return the color of the Tower on the IslandTile
      * @throws TableNotSetException if Table is not set in GameEngine
      * @throws TowerNotSetException if there isn't a tower on the IslandTile (check with {@link IslandManager#islandTileHasTower(int)})
      */
     public TowerColor getIslandTowerColor(int islandId) throws TableNotSetException, TowerNotSetException {
-        return CommonManager.takeIslandTileById(this.getGameEngine(),islandId).getTower().getColor();
+        return CommonManager.takeIslandTileById(this.getGameEngine(), islandId).getTower().getColor();
     }
 
     /**
      * Returns true if there's a Tower on the IslandTile.
+     *
      * @param islandId the id of the IslandTile to search
      * @return true if there's a Tower on the IslandTile
      * @throws TableNotSetException if Table is not set in GameEngine
      */
     public boolean islandTileHasTower(int islandId) throws TableNotSetException {
-        return CommonManager.takeIslandTileById(getGameEngine(),islandId).hasTower();
+        return CommonManager.takeIslandTileById(getGameEngine(), islandId).hasTower();
     }
 
     /**
      * Returns an ArrayList of IslandTiles id where MotherNature can be placed by the Player whose id is {@code playerId}.
+     *
      * @param playerId the id of the Player that wants to move MotherNature
      * @return an ArrayList of IslandTiles id where MotherNature can be placed
      * @throws AssistantCardNotSetException if the Player whose id is {@code playerId} hasn't an AssistantCard in hand which determines the MotherNature movements number.
-     * @throws TableNotSetException if Table is not set in GameEngine
+     * @throws TableNotSetException         if Table is not set in GameEngine
      */
     public ArrayList<Integer> getAvailableIslandTilesForMotherNature(int playerId) throws AssistantCardNotSetException, TableNotSetException {
         ArrayList<Integer> destinationsSet = new ArrayList<>();
@@ -170,7 +176,7 @@ public class IslandManager extends Manager {
         int movements = this.getGameEngine().getAssistantManager().getMovementsOfAssistantCardInHand(playerId);
 
         // Normalize movements: avoid double scan a group (movements number too high)
-        if(movements>table.getIslandTiles().size())
+        if (movements > table.getIslandTiles().size())
             movements = table.getIslandTiles().size();
 
         int motherNaturesIslandId = this.getMotherNatureIslandId();
@@ -179,13 +185,12 @@ public class IslandManager extends Manager {
         int motherNaturesGroupNumber = this.getIslandGroupNumberFromIslandTileId(motherNaturesIslandId);
 
         // I have to scan all the groups of island with max distance = movements from [motherNaturesIslandId]'s group
-        for(int i=1; i<=movements;i++) // scan groups
+        for (int i = 1; i <= movements; i++) // scan groups
         {
-            int groupNumber = (motherNaturesGroupNumber+i) % table.getIslandTiles().size();
+            int groupNumber = (motherNaturesGroupNumber + i) % table.getIslandTiles().size();
             ArrayList<IslandTile> group = table.getIslandTiles().get(groupNumber);
             // add the ids of all the IslandTiles of this group and add to the results set
-            for(IslandTile islandTile: group)
-            {
+            for (IslandTile islandTile : group) {
                 destinationsSet.add(islandTile.getId());
             }
         }
@@ -197,16 +202,17 @@ public class IslandManager extends Manager {
      * ArrayList of IslandTiles) of the ArrayList of IslandTiles (a group of IslandTiles) that contains it.
      * This method helps getAvailableIslandTilesForMotherNature to avoid islandTiles of the same group of the Island where mother
      * nature is to be available for next mother nature step.
+     *
      * @param islandId the id of the IslandTile to search
      * @return index of the IslandTile group
-     * @throws TableNotSetException if Table is not set in GameEngine
+     * @throws TableNotSetException   if Table is not set in GameEngine
      * @throws NoSuchElementException if no group contains an IslandTile with {@code islandId}
      */
     private int getIslandGroupNumberFromIslandTileId(int islandId) throws TableNotSetException, NoSuchElementException {
         Table table = this.getGameEngine().getTable();
         IslandTile targetIslandTile = CommonManager.takeIslandTileById(this.getGameEngine(), islandId);
         for (int groupNumber = 0; groupNumber < table.getIslandTiles().size(); groupNumber++) {
-            if(table.getIslandTiles().get(groupNumber).contains(targetIslandTile))
+            if (table.getIslandTiles().get(groupNumber).contains(targetIslandTile))
                 return groupNumber;
         }
         throw new NoSuchElementException("Required IslandTile can't be found in any group");
@@ -220,22 +226,21 @@ public class IslandManager extends Manager {
      *
      * @param playerId the id of the Player whose Team moves the Tower on the IslandTile
      * @param islandId the id of the destination IslandTile from the Tower
-     * @throws NoSuchElementException if requested Player o Island could not be found
-     * @throws TowerNotSetException if the Team where the Player belongs hasn't Towers to move
-     * @throws TableNotSetException if Table is not set in GameEngine
+     * @throws NoSuchElementException   if requested Player o Island could not be found
+     * @throws TowerNotSetException     if the Team where the Player belongs hasn't Towers to move
+     * @throws TableNotSetException     if Table is not set in GameEngine
      * @throws TowerAlreadySetException if there's already a Tower with the color of the Tower to move on that IslandTile
      */
     public void moveTowerFromPlayerSchoolBoardToIsland(int playerId, int islandId) throws NoSuchElementException, TowerNotSetException, TableNotSetException, TowerAlreadySetException {
         int teamId = CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), playerId);
-        Tower newTower = CommonManager.takeTeamById(getGameEngine(),teamId).popTower();
+        Tower newTower = CommonManager.takeTeamById(getGameEngine(), teamId).popTower();
 
         // Now I can place the new tower on the island
         IslandTile islandTile = CommonManager.takeIslandTileById(this.getGameEngine(), islandId);
 
         // Check if the island already contains a tower
-        if(islandTile.hasTower())
-        {
-            if(islandTile.getTower().getColor() == newTower.getColor())
+        if (islandTile.hasTower()) {
+            if (islandTile.getTower().getColor() == newTower.getColor())
                 throw new TowerAlreadySetException("You're trying to replace a Tower which is of the same color of the new one");
             // Return the tower to the team it belongs to and then set the new tower
             try {
@@ -247,9 +252,7 @@ public class IslandManager extends Manager {
             } catch (TowerNotSetException e) {
                 // I will never reach this because I checked it
             }
-        }
-        else
-        {
+        } else {
             // set the tower
             try {
                 islandTile.setTower(newTower);
@@ -262,18 +265,19 @@ public class IslandManager extends Manager {
     /**
      * Moves MotherNature safely to the requested IslandTile (safely because I check if the Player who asked it has
      * enough movements - defined by AssistantCard - to place MotherNature there).
+     *
      * @param playerId the id of the Player that asked to move MotherNature
      * @param islandId the id of the IslandTile where MotherNature has to be placed
      * @throws AssistantCardNotSetException if the Player whose id is {@code playerId} hasn't an AssistantCard in hand which determines the MotherNature movements number.
-     * @throws TableNotSetException if Table is not set in GameEngine
-     * @throws IllegalArgumentException if MotherNature can't reach the requested IslandTile
+     * @throws TableNotSetException         if Table is not set in GameEngine
+     * @throws IllegalArgumentException     if MotherNature can't reach the requested IslandTile
      */
     public void moveMotherNature(int playerId, int islandId) throws IllegalArgumentException, AssistantCardNotSetException, TableNotSetException {
         // At first check if it's possible else throw an exception
-        if(!this.getAvailableIslandTilesForMotherNature(playerId).contains(islandId))
+        if (!this.getAvailableIslandTilesForMotherNature(playerId).contains(islandId))
             throw new IllegalArgumentException("MotherNature can't be moved on the requested IslandTile");
         // If I can move MotherNature there, move it
         MotherNature motherNature = this.getGameEngine().getTable().getMotherNature();
-        motherNature.modifyIsland(CommonManager.takeIslandTileById(this.getGameEngine(),islandId));
+        motherNature.modifyIsland(CommonManager.takeIslandTileById(this.getGameEngine(), islandId));
     }
 }

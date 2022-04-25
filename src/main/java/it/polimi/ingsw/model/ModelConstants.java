@@ -24,4 +24,8 @@ public class ModelConstants {
     public static String ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT = "assistant";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD = "wizard";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR = "color";
+    public static String ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER = "character";
+    public static String ACTION_HERBALIST_OPTIONS_KEY_ISLAND = "island";
+
+    public static int ISLAND_TILES_NUMBER = 12;
 }

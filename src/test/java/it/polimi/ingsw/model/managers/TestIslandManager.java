@@ -243,21 +243,26 @@ class TestIslandManager {
     }
 
     /**
-     * Test setIslandTileNoEntry: set IslandTile NoEntry status to both true and false and check the result is correct
+     * Test setIslandGroupNoEntryByIslandId: set IslandTile NoEntry status to both true and false and check the result is correct
      */
     @Test
-    void setIslandTileNoEntry() {
+    void setIslandGroupNoEntryByIslandId() {
         ArrayList<ArrayList<IslandTile>> matrix = new ArrayList<>();
         matrix.add(new ArrayList<>());
         matrix.get(0).add(new IslandTile(0));
+        matrix.get(0).add(new IslandTile(1));
         Table table = new Table(new ArrayList<>(), new Bag(), new ArrayList<>(), null, matrix, new ArrayList<>(), new HashMap<>());
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         gameEngine.setTable(table);
 
-        assertDoesNotThrow(() -> gameEngine.getIslandManager().setIslandTileNoEntry(0, true));
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().setIslandGroupNoEntryByIslandId(0, true));
+        // check on the entire group
         assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).hasNoEntry()));
-        assertDoesNotThrow(() -> gameEngine.getIslandManager().setIslandTileNoEntry(0, false));
+        assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1).hasNoEntry()));
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().setIslandGroupNoEntryByIslandId(0, false));
+        // check on the entire group
         assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 0).hasNoEntry()));
+        assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1).hasNoEntry()));
     }
 
     /**
