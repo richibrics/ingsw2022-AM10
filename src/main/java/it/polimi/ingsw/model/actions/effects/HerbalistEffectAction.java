@@ -5,14 +5,8 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
-import it.polimi.ingsw.model.game_components.Character;
-import it.polimi.ingsw.model.game_components.CharacterCard;
-import it.polimi.ingsw.model.game_components.IslandTile;
-import it.polimi.ingsw.model.game_components.Table;
-import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
 import it.polimi.ingsw.model.managers.CommonManager;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class HerbalistEffectAction extends Action {
@@ -38,7 +32,7 @@ public class HerbalistEffectAction extends Action {
             throw new WrongMessageContentException("Error while parsing Island id from the ActionMessage");
         }
 
-        if (this.chosenIslandId<1 || this.chosenIslandId>ModelConstants.ISLAND_TILES_NUMBER)
+        if (this.chosenIslandId < 1 || this.chosenIslandId > ModelConstants.ISLAND_TILES_NUMBER)
             throw new WrongMessageContentException("Island id not in [1,12]");
     }
 
@@ -51,13 +45,14 @@ public class HerbalistEffectAction extends Action {
      */
 
     @Override
-    public void modifyRoundAndActionList() throws Exception { }
+    public void modifyRoundAndActionList() throws Exception {
+    }
 
     @Override
     public void act() throws Exception {
         // Check I have available no entry tiles
         if (this.getGameEngine().getTable().getAvailableNoEntryTiles() <= 0)
-            throw new IllegalGameActionException("No entry tiles available");
+            throw new IllegalGameActionException("Zero no entry tiles available");
 
         // Check island hasn't got entry tiles
         if (CommonManager.takeIslandTileById(this.getGameEngine(), this.chosenIslandId).hasNoEntry())

@@ -1,17 +1,24 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
-import it.polimi.ingsw.model.game_components.Bag;
+import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
+import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
+import it.polimi.ingsw.model.actions.effects.*;
+import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.game_components.Character;
-import it.polimi.ingsw.model.game_components.CharacterCard;
-import it.polimi.ingsw.model.game_components.PawnColor;
-import it.polimi.ingsw.model.game_components.StudentDisc;
-import org.junit.jupiter.api.RepeatedTest;
+import it.polimi.ingsw.model.game_components.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,31 +61,156 @@ class TestCharacterManager {
         bag.pushStudents(studentDiscs);
 
         CharacterCard characterCard = new CharacterCard(character);
-        assertDoesNotThrow(()->characterManager.setupCardStorage(characterCard, bag));
+        assertDoesNotThrow(() -> characterManager.setupCardStorage(characterCard, bag));
         assertEquals(characterCard.getStorageCapacity(), characterCard.getStudentsStorage().size());
 
         // Check exceptions and refill: removes 1 student and refill the storage
-        if(characterCard.getStorageCapacity()!=0) {
-            assertDoesNotThrow(()->characterCard.removeStudentFromStorage(characterCard.getStudentsStorage().get(0).getId())); // Remove one
-            assertEquals(characterCard.getStorageCapacity()-1, characterCard.getStudentsStorage().size()); // Removed ok
-            assertDoesNotThrow(()->characterManager.setupCardStorage(characterCard, bag));
+        if (characterCard.getStorageCapacity() != 0) {
+            assertDoesNotThrow(() -> characterCard.removeStudentFromStorage(characterCard.getStudentsStorage().get(0).getId())); // Remove one
+            assertEquals(characterCard.getStorageCapacity() - 1, characterCard.getStudentsStorage().size()); // Removed ok
+            assertDoesNotThrow(() -> characterManager.setupCardStorage(characterCard, bag));
             assertEquals(characterCard.getStorageCapacity(), characterCard.getStudentsStorage().size()); // Refill ok
         }
     }
+
 
     /**
      * Tests that the correct Action is set for the requested CharacterCard.
      */
     @Test
     void generateAction() {
-        // To do when Actions are implemented
+        CharacterManager characterManager = new CharacterManager(new GameEngine(new ArrayList<>()));
+
+        CharacterCard characterCard1 = new CharacterCard(Character.FRIAR);
+        characterManager.generateAction(characterCard1);
+        assertEquals(assertDoesNotThrow(() -> characterCard1.getAction().getClass()), FriarEffectAction.class);
+
+        CharacterCard characterCard2 = new CharacterCard(Character.COOK);
+        characterManager.generateAction(characterCard2);
+        assertEquals(assertDoesNotThrow(() -> characterCard2.getAction().getClass()), AssignProfessorActionCookEffect.class);
+
+        CharacterCard characterCard3 = new CharacterCard(Character.AMBASSADOR);
+        characterManager.generateAction(characterCard3);
+        assertEquals(assertDoesNotThrow(() -> characterCard3.getAction().getClass()), AmbassadorEffectAction.class);
+
+        CharacterCard characterCard4 = new CharacterCard(Character.MAILMAN);
+        characterManager.generateAction(characterCard4);
+        assertEquals(assertDoesNotThrow(() -> characterCard4.getAction().getClass()), MailmanEffectAction.class);
+
+        CharacterCard characterCard5 = new CharacterCard(Character.HERBALIST);
+        characterManager.generateAction(characterCard5);
+        assertEquals(assertDoesNotThrow(() -> characterCard5.getAction().getClass()), HerbalistEffectAction.class);
+
+        CharacterCard characterCard6 = new CharacterCard(Character.CENTAUR);
+        characterManager.generateAction(characterCard6);
+        assertEquals(assertDoesNotThrow(() -> characterCard6.getAction().getClass()), CalculateInfluenceActionCentaurEffect.class);
+
+        CharacterCard characterCard7 = new CharacterCard(Character.THIEF);
+        characterManager.generateAction(characterCard7);
+        assertEquals(assertDoesNotThrow(() -> characterCard7.getAction().getClass()), ThiefEffectAction.class);
+
+        CharacterCard characterCard8 = new CharacterCard(Character.JESTER);
+        characterManager.generateAction(characterCard8);
+        assertEquals(assertDoesNotThrow(() -> characterCard8.getAction().getClass()), JesterEffectAction.class);
+
+        CharacterCard characterCard9 = new CharacterCard(Character.MUSHROOM_HUNTER);
+        characterManager.generateAction(characterCard9);
+        assertEquals(assertDoesNotThrow(() -> characterCard9.getAction().getClass()), CalculateInfluenceActionMushroomHunterEffect.class);
+
+        CharacterCard characterCard10 = new CharacterCard(Character.MINSTREL);
+        characterManager.generateAction(characterCard10);
+        assertEquals(assertDoesNotThrow(() -> characterCard10.getAction().getClass()), MinstrelEffectAction.class);
+
+        CharacterCard characterCard11 = new CharacterCard(Character.LADY);
+        characterManager.generateAction(characterCard11);
+        assertEquals(assertDoesNotThrow(() -> characterCard11.getAction().getClass()), LadyEffectAction.class);
+
+        CharacterCard characterCard12 = new CharacterCard(Character.KNIGHT);
+        characterManager.generateAction(characterCard12);
+        assertEquals(assertDoesNotThrow(() -> characterCard12.getAction().getClass()), CalculateInfluenceActionKnightEffect.class);
     }
+
 
     /**
      * Tests that the CharacterCard action is run or is inserted in the ActionManager actions map.
+     * The first test is performed with Herbalist (directly run)
      */
     @Test
     void selectCharacterCard() {
-        // To do when Action manager and Actions are implemented
+        GameEngine gameEngine = setupGameForSelectCharacterCard();
+        // Test the herbalist, which is an active card in this match
+        HashMap<String, String> options = new HashMap<>();
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "1");
+        // check island state before run
+        assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1).hasNoEntry()));
+        assertDoesNotThrow(() -> gameEngine.getCharacterManager().selectCharacterCard(Character.HERBALIST.getId(), 1, options));
+        // check action runs okay
+        assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1).hasNoEntry()));
+
+        // check throw from action with wrong options
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "a");
+        assertThrows(WrongMessageContentException.class, () -> gameEngine.getCharacterManager().selectCharacterCard(Character.HERBALIST.getId(), 1, options));
+
+        // check throw caused by non-existing card
+        assertThrows(NoSuchElementException.class, () -> gameEngine.getCharacterManager().selectCharacterCard(-5, 1, options));
+
+        // check throw caused by other generic exceptions: pass null as options
+        assertThrows(RuntimeException.class, () -> gameEngine.getCharacterManager().selectCharacterCard(Character.HERBALIST.getId(), 1, null));
+
+        // check throw for errors in act/modifyRoundAndActionList
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "1");
+
+        // IllegalGameActionException when recalling the set no entry tile on the same island group
+        assertThrows(IllegalGameActionException.class, () -> gameEngine.getCharacterManager().selectCharacterCard(Character.HERBALIST.getId(), 1, options));
+
+        // Now I test with the second card I have: Knight, which is the effect for CalculateInfluence,
+        // so I check if it's set in the correct position (test before and after)
+        assertEquals(CalculateInfluenceAction.class, gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID].getClass());
+        assertDoesNotThrow(() -> gameEngine.getCharacterManager().selectCharacterCard(Character.KNIGHT.getId(), 1, options));
+        assertEquals(CalculateInfluenceActionKnightEffect.class, gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID].getClass());
+    }
+
+    private GameEngine setupGameForSelectCharacterCard() {
+        User user1 = new User("1", 3);
+        User user2 = new User("2", 3);
+        User user3 = new User("3", 3);
+        Player player1 = new Player(user1, 1, 3);
+        Player player2 = new Player(user2, 2, 3);
+        Player player3 = new Player(user3, 3, 3);
+        ArrayList<Player> players1 = new ArrayList<>();
+        players1.add(player1);
+        Team team1 = new Team(1, players1);
+        ArrayList<Player> players2 = new ArrayList<>();
+        players2.add(player2);
+        Team team2 = new Team(2, players2);
+        ArrayList<Player> players3 = new ArrayList<>();
+        players3.add(player3);
+        Team team3 = new Team(3, players3);
+        ArrayList<Team> teams = new ArrayList<>();
+        teams.add(team1);
+        teams.add(team2);
+        teams.add(team3);
+        GameEngine gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
+
+        // Run the setup with a customized method to test the cards I want
+        SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine) {
+            @Override
+            protected void drawCharacters(Map<Integer, CharacterCard> characterCards, Bag bag) throws Exception {
+                ArrayList<Character> characters = new ArrayList<>();
+                characters.add(Character.HERBALIST);
+                characters.add(Character.KNIGHT);
+                for (Character character : characters) {
+                    characterCards.put(character.getId(), new CharacterCard(character));
+                }
+                for (CharacterCard characterCard : characterCards.values()) {
+                    this.getGameEngine().getCharacterManager().generateAction(characterCard);
+                    this.getGameEngine().getCharacterManager().setupCardStorage(characterCard, bag);
+                }
+            }
+        };
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
+
+        return gameEngine;
     }
 }

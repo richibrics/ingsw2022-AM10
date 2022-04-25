@@ -11,7 +11,7 @@ public class ModelConstants {
     public static int ACTION_MOVE_MOTHER_NATURE_ID = 5;
     public static int ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID = 6;
     public static int ACTION_CALCULATE_INFLUENCE_ID = 7;
-    public static int ACTION_ASSIGN_PROFESSORS_ID = 7;
+    public static int ACTION_ASSIGN_PROFESSORS_ID = 8;
     public static int ACTION_CHECK_END_MATCH_CONDITION_ID = 9;
     public static int ACTION_MAILMAN_ID = 10;
     public static int ACTION_AMBASSADOR_ID = 11;
