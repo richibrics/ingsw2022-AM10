@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
+import it.polimi.ingsw.model.actions.Action;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.ProfessorPawn;
 import it.polimi.ingsw.model.managers.CommonManager;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class CalculateInfluenceActionKnightEffect extends CalculateInfluenceActionEffect {
 
-    public CalculateInfluenceActionKnightEffect(GameEngine gameEngine, AbstractCalculateInfluenceAction calculateInfluenceAction) {
+    public CalculateInfluenceActionKnightEffect(GameEngine gameEngine, Action calculateInfluenceAction) {
         super(gameEngine, calculateInfluenceAction);
     }
 

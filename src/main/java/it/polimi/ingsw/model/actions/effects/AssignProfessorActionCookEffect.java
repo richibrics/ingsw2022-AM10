@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.actions.AbstractAssignProfessorAction;
+import it.polimi.ingsw.model.actions.Action;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.model.managers.CommonManager;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect {
 
-    public AssignProfessorActionCookEffect(GameEngine gameEngine, AbstractAssignProfessorAction assignProfessorAction) {
+    public AssignProfessorActionCookEffect(GameEngine gameEngine, Action assignProfessorAction) {
         super(gameEngine, assignProfessorAction);
     }
 
@@ -44,14 +44,11 @@ public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect
 
     @Override
     public boolean checkMoveProfessorCondition(PawnColor color, Team winningTeam, Map<Integer, Long> studentsOfPlayer) {
-        if (winningTeam.getProfessorTable()
+        return winningTeam.getProfessorTable()
                 .stream()
                 .filter(professorPawn -> professorPawn.getColor().equals(color)).count() == 0
                 && (studentsOfPlayer.values().stream().filter(value -> value == studentsOfPlayer.get(winningTeam.getId())).count() == 1
                 || (winningTeam.getPlayers().contains(CommonManager.takePlayerById(this.getGameEngine(), this.getPlayerId()))
-                && studentsOfPlayer.get(winningTeam.getId()) != 0)))
-            return true;
-        else
-            return false;
+                && studentsOfPlayer.get(winningTeam.getId()) != 0));
     }
 }

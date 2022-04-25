@@ -3,12 +3,13 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
+import it.polimi.ingsw.model.actions.Action;
 
 public abstract class CalculateInfluenceActionEffect extends AbstractCalculateInfluenceAction {
 
-    private AbstractCalculateInfluenceAction calculateInfluenceAction;
+    private final Action calculateInfluenceAction;
 
-    public CalculateInfluenceActionEffect(GameEngine gameEngine, AbstractCalculateInfluenceAction calculateInfluenceAction) {
+    public CalculateInfluenceActionEffect(GameEngine gameEngine, Action calculateInfluenceAction) {
         super(gameEngine);
         this.calculateInfluenceAction = calculateInfluenceAction;
     }
@@ -19,7 +20,7 @@ public abstract class CalculateInfluenceActionEffect extends AbstractCalculateIn
      * @return the instance of the class {@code AbstractCalculateInfluenceAction}
      */
 
-    public AbstractCalculateInfluenceAction getCalculateInfluenceAction() {
+    public Action getCalculateInfluenceAction() {
         return this.calculateInfluenceAction;
     }
 

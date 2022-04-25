@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
+import it.polimi.ingsw.model.actions.Action;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.model.game_components.ProfessorPawn;
@@ -16,7 +16,7 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
 
     private PawnColor color;
 
-    public CalculateInfluenceActionMushroomHunterEffect(GameEngine gameEngine, AbstractCalculateInfluenceAction calculateInfluenceAction) {
+    public CalculateInfluenceActionMushroomHunterEffect(GameEngine gameEngine, Action calculateInfluenceAction) {
         super(gameEngine, calculateInfluenceAction);
     }
 

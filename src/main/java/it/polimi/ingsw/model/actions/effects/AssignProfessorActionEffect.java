@@ -3,12 +3,13 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.AbstractAssignProfessorAction;
+import it.polimi.ingsw.model.actions.Action;
 
 public abstract class AssignProfessorActionEffect extends AbstractAssignProfessorAction {
 
-    private AbstractAssignProfessorAction assignProfessorAction;
+    private final Action assignProfessorAction;
 
-    public AssignProfessorActionEffect(GameEngine gameEngine, AbstractAssignProfessorAction assignProfessorAction) {
+    public AssignProfessorActionEffect(GameEngine gameEngine, Action assignProfessorAction) {
         super(gameEngine);
         this.assignProfessorAction = assignProfessorAction;
     }
@@ -19,7 +20,7 @@ public abstract class AssignProfessorActionEffect extends AbstractAssignProfesso
      * @return the assign professor action
      */
 
-    public AbstractAssignProfessorAction getAssignProfessorAction() {
+    public Action getAssignProfessorAction() {
         return this.assignProfessorAction;
     }
 
