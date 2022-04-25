@@ -28,6 +28,7 @@ public class ModelConstants {
     public static String ACTION_HERBALIST_OPTIONS_KEY_ISLAND = "island";
     public static String ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT = "student";
     public static String ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION = "position";
+    public static String ACTION_MOVE_MOTHER_NATURE_OPTIONS_KEY_ISLAND = "island";
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM = -1;
 
     public static int ISLAND_TILES_NUMBER = 12;

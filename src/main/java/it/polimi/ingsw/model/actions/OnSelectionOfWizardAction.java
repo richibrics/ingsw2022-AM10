@@ -13,7 +13,7 @@ public class OnSelectionOfWizardAction extends Action {
     private Integer chosenWizardId;
 
     public OnSelectionOfWizardAction(GameEngine gameEngine) {
-        super(0, gameEngine);
+        super(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID, gameEngine);
     }
 
     /**
