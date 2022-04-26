@@ -92,5 +92,15 @@ class TestRound {
         assertFalse(round.playerTurnEnded()); // false cause the round should be ended
         // Check shifted correctly: now that round ended, the order should be the same as at Round start
         assertEquals(order, round.getOrderOfPlay());
+
+        // Now be sure that the round restarts with the same order with no new order is set
+        assertTrue(round.playerTurnEnded());
+        assertNotEquals(order, round.getOrderOfPlay());
+        assertTrue(round.playerTurnEnded());
+        assertNotEquals(order, round.getOrderOfPlay());
+        assertTrue(round.playerTurnEnded());
+        assertNotEquals(order, round.getOrderOfPlay());
+        assertFalse(round.playerTurnEnded());
+        assertEquals(order, round.getOrderOfPlay());
     }
 }
