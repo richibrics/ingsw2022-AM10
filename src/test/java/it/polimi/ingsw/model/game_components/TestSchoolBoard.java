@@ -104,6 +104,7 @@ public class TestSchoolBoard {
      * Next it checks if the DiningRoom is correctly updated and verifies if the fourth StudentDisc is in the DiningRoom
      * while the third one is outside the DiningRoom.
      * At the end it checks if the DiningRoom final state is correct and gets the DiningRoom BLUE and GREEN tables.
+     * Also tests {@link SchoolBoard#removeStudentFromDiningRoom(StudentDisc)}
      */
     @Test
     public void testReplaceStudentInDiningRoom()

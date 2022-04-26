@@ -46,6 +46,7 @@ public class ModelConstants {
     public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1 = "student_storage1";
     public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2 = "student_storage2";
     public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3 = "student_storage3";
+    public static String ACTION_THIEF_OPTIONS_KEY_COLOR = "color";
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM = -1;
     public static int ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND = -1;
 
@@ -67,5 +68,4 @@ public class ModelConstants {
     public static int FOUR_PLAYERS = 4;
 
     public static int NO_PLAYER = -1;
-
 }
