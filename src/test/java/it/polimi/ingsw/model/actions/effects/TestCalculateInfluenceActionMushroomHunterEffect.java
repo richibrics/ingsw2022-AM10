@@ -2,6 +2,8 @@ package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
@@ -109,6 +111,18 @@ class TestCalculateInfluenceActionMushroomHunterEffect {
 
     @Test
     void setOptions() {
+        HashMap<String, String> options = new HashMap<>();
+        // No id
+        assertThrows(WrongMessageContentException.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
 
+        // Value error
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "a");
+        assertThrows(WrongMessageContentException.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+
+        // OK
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR,"red");
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR,"YeLLoW");
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
     }
 }

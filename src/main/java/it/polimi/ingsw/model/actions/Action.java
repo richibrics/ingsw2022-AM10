@@ -17,13 +17,13 @@ public abstract class Action {
 
     /**
      * Implements the behaviour of the action.
+     * @throws Exception if something bad happens
      */
 
     public abstract void act() throws Exception;
 
     /**
      * Returns the identifier of the Action class.
-     *
      * @return the id of the Action class.
      */
 
@@ -33,7 +33,6 @@ public abstract class Action {
 
     /**
      * Gets the playerId of the player performing the action.
-     *
      * @return the playerId of the player performing the action
      */
 
@@ -43,7 +42,6 @@ public abstract class Action {
 
     /**
      * Sets the playerId, which indicates the player performing the action.
-     *
      * @param playerId the id of the player performing the action
      */
 
@@ -53,14 +51,14 @@ public abstract class Action {
 
     /**
      * Sets the options. Options represents additional information used by the act method.
-     *
      * @param options additional information for act method
+     * @throws Exception if the required key is not provided
      */
+
     public abstract void setOptions(Map<String, String> options) throws Exception;
 
     /**
      * Gets the game engine.
-     *
      * @return the game engine
      */
 

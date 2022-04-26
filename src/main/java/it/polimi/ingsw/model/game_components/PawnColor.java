@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.game_components;
 
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+
 import java.util.Locale;
 
 public enum PawnColor {
@@ -39,10 +41,10 @@ public enum PawnColor {
      * Gets a string and converts it to a PawnColor.
      * @param color the name of the color
      * @return the color corresponding to {@code color}
-     * @throws Exception if {@code color} is invalid
+     * @throws WrongMessageContentException if {@code color} is invalid
      */
 
-    public static PawnColor convertStringToPawnColor (String color) throws  Exception {
+    public static PawnColor convertStringToPawnColor (String color) throws  WrongMessageContentException {
 
         PawnColor returnColor = null;
 
@@ -50,7 +52,7 @@ public enum PawnColor {
             case "YELLOW":
                 returnColor = PawnColor.YELLOW;
                 break;
-            case "BLUE" :
+            case "BLUE":
                 returnColor = PawnColor.BLUE;
                 break;
             case "GREEN":
@@ -62,12 +64,12 @@ public enum PawnColor {
             case "PINK":
                 returnColor = PawnColor.PINK;
                 break;
-        }
+            }
 
-        if (returnColor == null)
-            throw new Exception("Invalid string");
+            if (returnColor == null)
+                throw new WrongMessageContentException("Error while converting the color");
 
-        else
-            return returnColor;
+            else
+                return returnColor;
     }
 }

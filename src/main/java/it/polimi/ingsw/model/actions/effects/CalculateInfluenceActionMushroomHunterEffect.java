@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.Action;
@@ -58,7 +59,7 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
     public void setOptions(Map<String, String> options) throws Exception {
 
         if (!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR))
-            throw new Exception("Key color is required");
+            throw new WrongMessageContentException("A required key is not provided");
 
         this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR));
     }

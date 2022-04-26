@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.game_components;
 
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +25,6 @@ class TestPawnColor {
     @Test
     void convertStringToPawnColor() {
         assertEquals(PawnColor.BLUE, assertDoesNotThrow(()->PawnColor.convertStringToPawnColor("bLUe")));
-        assertThrows(Exception.class, ()->PawnColor.convertStringToPawnColor("Hello"));
+        assertThrows(WrongMessageContentException.class, ()->PawnColor.convertStringToPawnColor("Hello"));
     }
 }

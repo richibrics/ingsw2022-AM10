@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.actions;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.game_components.TowerColor;
@@ -124,14 +125,28 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
             if (flag == false) {
                 islandGroup.get(0).setTower(team.popTower());
                 this.getGameEngine().getIslandManager().unifyPossibleIslands();
+                /* Find the winner if a team has no towers left or there are only 3 groups of islands */
+                if (team.getTowers().size() == 0 || this.getGameEngine().getTable().getIslandTiles().size() == 3)
+                    this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+
             }
 
             /* Second situation: towers on the islands */
             else {
                 Team losingTeam = this.getLosingTeam(color);
-                for (IslandTile islandTile : islandGroup)
+                for (IslandTile islandTile : islandGroup) {
                     if (islandTile.hasTower())
-                        losingTeam.addTower(islandTile.replaceTower(team.popTower()));
+                        try {
+                            losingTeam.addTower(islandTile.replaceTower(team.popTower()));
+                        } catch (TowerNotSetException towerNotSetException) {
+                            /* If the team has no towers left it wins */
+                            this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+                        }
+                }
+                this.getGameEngine().getIslandManager().unifyPossibleIslands();
+                /* Find the winner if there are only 3 groups of islands */
+                if (this.getGameEngine().getTable().getIslandTiles().size() == ModelConstants.MIN_NUMBER_OF_ISLAND_GROUPS)
+                    this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
             }
         }
     }
@@ -145,8 +160,8 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
     @Override
     public void modifyRoundAndActionList() throws Exception {
         ArrayList<Integer> possibleActions = new ArrayList<>();
-        possibleActions.add(3);
-        possibleActions.add(6);
+        possibleActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
+        possibleActions.add(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID);
         this.getGameEngine().getRound().setPossibleActions(possibleActions);
     }
 }
