@@ -3,7 +3,6 @@ package it.polimi.ingsw.model.actions.effects;
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
-import it.polimi.ingsw.model.game_components.IslandTile;
 
 import java.util.Map;
 

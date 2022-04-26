@@ -31,8 +31,6 @@ public class MailmanEffectAction extends Action {
 
     @Override
     public void act() throws Exception {
-        this.getGameEngine().getRound().getCurrentPlayer();
-        if (getPlayerId() == getGameEngine().getRound().getCurrentPlayer())
-            this.getGameEngine().getAssistantManager().incrementMovementsOfAssistantCardInHand(getGameEngine().getRound().getCurrentPlayer(), 2);
+        this.getGameEngine().getAssistantManager().incrementMovementsOfAssistantCardInHand(getPlayerId(), 2);
     }
 }

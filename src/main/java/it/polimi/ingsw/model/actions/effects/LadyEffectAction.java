@@ -1,17 +1,21 @@
 package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
+import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
-import it.polimi.ingsw.model.exceptions.IllegalStudentDiscMovementException;
-import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.game_components.Character;
+import it.polimi.ingsw.model.game_components.CharacterCard;
+import it.polimi.ingsw.model.game_components.StudentDisc;
+import it.polimi.ingsw.model.managers.CommonManager;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class LadyEffectAction extends Action {
+    private Integer studentToMove;
+
     public LadyEffectAction(GameEngine gameEngine) {
         super(ModelConstants.ACTION_LADY_ID, gameEngine);
     }
@@ -19,7 +23,13 @@ public class LadyEffectAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
-
+        if (!options.containsKey(ModelConstants.ACTION_LADY_OPTIONS_KEY_STUDENT))
+            throw new WrongMessageContentException("ActionMessage doesn't contain the student id");
+        try {
+            this.studentToMove = Integer.parseInt(options.get(ModelConstants.ACTION_LADY_OPTIONS_KEY_STUDENT));
+        } catch (NumberFormatException e) {
+            throw new WrongMessageContentException("Error while parsing student id from the ActionMessage");
+        }
     }
 
     /**
@@ -36,26 +46,22 @@ public class LadyEffectAction extends Action {
 
     @Override
     public void act() throws Exception {
-        ArrayList<StudentDisc> studentDiscs = new ArrayList<>();
-        ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
-        this.moveStudentFromCardToDiningRoom(studentDiscs, schoolBoards);
-    }
-
-    private void moveStudentFromCardToDiningRoom(ArrayList<StudentDisc> studentDiscs, ArrayList<SchoolBoard> schoolBoards) throws Exception {
-        Bag bag = new Bag();
-        ArrayList<StudentDisc> studentToSwitch = new ArrayList<>();
-        CharacterCard characterCard = new CharacterCard(Character.LADY);
-        for (int i = 0; i < 4; i++) {
-            if (studentDiscs.get(0).getId() == characterCard.removeStudentFromStorage(i).getId()) {
-                characterCard.removeStudentFromStorage(i);
-                StudentDisc student = characterCard.removeStudentFromStorage(i);
-                studentToSwitch.add(student);
-                if (studentToSwitch.size() > 1) {
-                    throw new IllegalStudentDiscMovementException("You can only move one StudentDisc");
-                } else schoolBoards.get(getId()).addStudentToDiningRoom(student);
+        CharacterCard characterCard = this.getGameEngine().getTable().getCharacterCards().get(Character.LADY.getId());
+        StudentDisc studentInStorage = null;
+        for (StudentDisc studentDisc : characterCard.getStudentsStorage()) {
+            if (studentDisc.getId() == this.studentToMove) {
+                studentInStorage = studentDisc;
             }
         }
-        this.getGameEngine().getCharacterManager().setupCardStorage(characterCard, bag);
+        if (studentInStorage == null) {
+            throw new IllegalGameActionException("The student requested isn't in card storage");
+        }
+        characterCard.removeStudentFromStorage(this.studentToMove);
+        CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).addStudentToDiningRoom(studentInStorage);
+        try {
+            this.getGameEngine().getCharacterManager().setupCardStorage(characterCard, getGameEngine().getTable().getBag());
+        } catch (EmptyBagException e) {
+            // the bag is empty, but the game can go on until the end of the round
+        }
     }
-
 }

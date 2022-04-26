@@ -29,6 +29,19 @@ public class ModelConstants {
     public static String ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT = "student";
     public static String ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION = "position";
     public static String ACTION_MOVE_MOTHER_NATURE_OPTIONS_KEY_ISLAND = "island";
+    public static String ACTION_FRIAR_OPTIONS_KEY_STUDENT = "student";
+    public static String ACTION_FRIAR_OPTIONS_KEY_ISLAND = "island";
+    public static String ACTION_LADY_OPTIONS_KEY_STUDENT = "student";
+    public static String ACTION_MINSTREL_OPTIONS_KEY_STUDENTINENTRANCE1 = "student_entrance1";
+    public static String ACTION_MINSTREL_OPTIONS_KEY_STUDENTINENTRANCE2 = "student_entrance2";
+    public static String ACTION_MINSTREL_OPTIONS_KEY_STUDENTINDININGROOM1 = "student_diningroom1";
+    public static String ACTION_MINSTREL_OPTIONS_KEY_STUDENTINDININGROOM2 = "student_diningroom2";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE1 = "student_entrance1";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE2 = "student_entrance2";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE3 = "student_entrance3";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE1 = "student_storage1";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE2 = "student_storage2";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE3 = "student_storage3";
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM = -1;
 
     public static int ISLAND_TILES_NUMBER = 12;
