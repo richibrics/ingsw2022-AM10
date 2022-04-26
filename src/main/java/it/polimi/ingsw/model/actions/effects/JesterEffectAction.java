@@ -29,31 +29,31 @@ public class JesterEffectAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
-        if (!options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE1))
+        if (!options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE1))
             throw new WrongMessageContentException("ActionMessage doesn't contain the student id in the entrance");
         try {
-            this.studentId1 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE1));
+            this.studentId1 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE1));
         } catch (NumberFormatException e) {
             throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
         }
-        if (!options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE1))
+        if (!options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1))
             throw new WrongMessageContentException("ActionMessage doesn't contain the student id in the storage");
         try {
-            this.studentInStorageId1 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE1));
+            this.studentInStorageId1 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1));
         } catch (NumberFormatException e) {
             throw new WrongMessageContentException("Error while parsing student id in the storage from the ActionMessage");
         }
 
 
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE2))
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2))
             try {
-                this.studentId2 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE2));
+                this.studentId2 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
             }
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE2))
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2))
             try {
-                this.studentInStorageId2 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE2));
+                this.studentInStorageId2 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the storage from the ActionMessage");
             }
@@ -61,15 +61,15 @@ public class JesterEffectAction extends Action {
             throw new WrongMessageContentException("studentId2 or studentInStorage2 is null");
 
 
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE3))
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3))
             try {
-                this.studentId3 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTENTRANCE3));
+                this.studentId3 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
             }
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE3))
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3))
             try {
-                this.studentInStorageId3 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENTSTORAGE3));
+                this.studentInStorageId3 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the storage from the ActionMessage");
             }

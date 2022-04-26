@@ -26,32 +26,32 @@ public class MinstrelEffectAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
-        if (!options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINDININGROOM1))
+        if (!options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM1))
             throw new WrongMessageContentException("ActionMessage doesn't contain the student id in the diningRoom");
         try {
-            this.studentInDiningRoom1Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINDININGROOM1));
+            this.studentInDiningRoom1Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM1));
         } catch (NumberFormatException e) {
             throw new WrongMessageContentException("Error while parsing student id in the diningRoom from the ActionMessage");
         }
-        if (!options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINENTRANCE1))
+        if (!options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_ENTRANCE1))
             throw new WrongMessageContentException("ActionMessage doesn't contain the student id in the entrance");
         try {
-            this.studentInEntrance1Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINENTRANCE1));
+            this.studentInEntrance1Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_ENTRANCE1));
         } catch (NumberFormatException e) {
             throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
         }
 
 
-        if (options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINDININGROOM2)) {
+        if (options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM2)) {
             try {
-                this.studentInDiningRoom2Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINDININGROOM2));
+                this.studentInDiningRoom2Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM2));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the diningRoom from the ActionMessage");
             }
         }
-        if (options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINENTRANCE2)) {
+        if (options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_ENTRANCE2)) {
             try {
-                this.studentInEntrance2Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENTINENTRANCE2));
+                this.studentInEntrance2Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_ENTRANCE2));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
             }
