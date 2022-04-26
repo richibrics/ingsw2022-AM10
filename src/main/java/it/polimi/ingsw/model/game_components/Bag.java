@@ -35,10 +35,8 @@ public class Bag {
         return this.students.size();
     }
 
-    private StudentDisc drawStudent() throws EmptyBagException {
+    private StudentDisc drawStudent() {
         // I make two separated "draw" methods so if I change the random draw mode I can edit only this method
-        if(this.students.isEmpty())
-            throw new EmptyBagException();
         return this.students.remove(0);
     }
 

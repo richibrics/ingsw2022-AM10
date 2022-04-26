@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.game_components;
 
+import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.actions.effects.FriarEffectAction;
 import it.polimi.ingsw.model.exceptions.ActionNotSetException;
 import it.polimi.ingsw.model.exceptions.CharacterStudentsStorageFull;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,15 +114,15 @@ class TestCharacterCard {
     }
 
     /**
-     * Set an Action and check it's not null
+     * Set an Action and check it's not null and that it's the same I wanted to set
      */
     @Test
     void setgetAction() {
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
         CharacterCard characterCard = new CharacterCard(Character.FRIAR);
-        characterCard.setAction(null);
         assertThrows(ActionNotSetException.class,()->characterCard.getAction());
-        characterCard.setAction(null); // CHANGE ONLY THIS WITH A REAL CLASS
-        // assertDoesNotThrow(()->characterCard.getAction()); UNCOMMENT THIS
+        characterCard.setAction(new FriarEffectAction(gameEngine));
+        assertEquals(FriarEffectAction.class, assertDoesNotThrow(()->characterCard.getAction()).getClass());
     }
 
     /**

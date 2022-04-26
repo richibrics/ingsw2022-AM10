@@ -45,8 +45,8 @@ class TestSetUpThreePlayersAction {
     }
 
     @Test
-    void modifyRound() {
-        setUpThreePlayersAction.modifyRound();
+    void modifyRoundAndActionList() throws Exception{
+        setUpThreePlayersAction.modifyRoundAndActionList();
         ArrayList<Integer> orderOfPlay = setUpThreePlayersAction.getGameEngine().getRound().getOrderOfPlay();
         assertEquals(orderOfPlay.size(),3);
         Collections.sort(orderOfPlay);

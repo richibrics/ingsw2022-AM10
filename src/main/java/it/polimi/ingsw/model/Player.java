@@ -100,6 +100,13 @@ public class Player {
     }
 
     /**
+     * @return true if the Player has a Wizard; otherwise false
+     */
+    public boolean hasWizard() {
+        return this.wizard != null;
+    }
+
+    /**
      * Gets the active assistant card, which is the assistant card played by the player in the current round.
      * If no assistant card is available, throws AssistantCardNotSetException.
      * @return the assistant card played by the player in the current round.

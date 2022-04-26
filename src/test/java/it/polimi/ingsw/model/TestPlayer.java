@@ -59,6 +59,7 @@ class TestPlayer {
     @Test
     void Wizard() {
         Player player = new Player(user, 0,5);
+        assertFalse(player.hasWizard());
         assertThrows(WizardNotSetException.class, () -> player.getWizard());
         ArrayList<AssistantCard> assistantCards = new ArrayList<>();
         for (int i = 0; i < 12; i++)
@@ -66,6 +67,7 @@ class TestPlayer {
         Wizard wizard = new Wizard(1, assistantCards);
         player.setWizard(wizard);
         assertEquals(assertDoesNotThrow(() -> player.getWizard()), wizard);
+        assertTrue(player.hasWizard());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
@@ -8,7 +9,6 @@ import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.game_components.Character;
-import it.polimi.ingsw.model.managers.CharacterManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,16 +16,11 @@ import java.util.stream.Collectors;
 public abstract class SetUp extends Action {
 
     public SetUp(GameEngine gameEngine) {
-        super(-1, gameEngine);
+        super(ModelConstants.ACTION_SETUP_ID, gameEngine);
     }
 
     //TODO
-    public void setPlayerId(int playerId) {
-
-    }
-
-    //TODO
-    public void setOptions(String options) {
+    public void setOptions(Map<String, String> options) throws Exception {
 
     }
 
@@ -52,8 +47,9 @@ public abstract class SetUp extends Action {
     /**
      * Draws three character cards and puts them in {@code characterCards}. The student discs required by some character cards
      * are taken from {@code bag}.
+     *
      * @param characterCards the list of the newly created character cards
-     * @param bag the bag
+     * @param bag            the bag
      * @throws Exception if one of the methods of CharacterManager throws an exception
      * @see CharacterCard
      * @see Bag
@@ -217,10 +213,12 @@ public abstract class SetUp extends Action {
     protected abstract void drawStudentsAndPlaceOnEntrance(Bag bag) throws SchoolBoardNotSetException, EmptyBagException;
 
     /**
-     * Modifies the round by setting the order of play and the actions that the first player can perform.
+     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * and the order of play, and the Action List in the Action Manager.
+     * @throws Exception if something bad happens
      */
 
-    void modifyRound() {
+    public void modifyRoundAndActionList() throws Exception {
         Round round = this.getGameEngine().getRound();
         ArrayList<Integer> orderOfPlay = this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).map(player -> player.getPlayerId()).collect(Collectors.toCollection(ArrayList::new));
         Collections.shuffle(orderOfPlay);

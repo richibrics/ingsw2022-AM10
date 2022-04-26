@@ -104,10 +104,13 @@ public class Table {
         for (ProfessorPawn pawn : this.availableProfessorPawns)
             if (pawn.getColor() == color) {
                 professorPawn = pawn;
-                this.availableProfessorPawns.remove(pawn);
+                break;
             }
+
         if (professorPawn == null)
             throw new NoSuchElementException("Professor pawn not found");
+
+        this.availableProfessorPawns.remove(professorPawn);
         return professorPawn;
     }
 

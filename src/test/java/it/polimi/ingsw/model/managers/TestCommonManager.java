@@ -118,4 +118,12 @@ class TestCommonManager {
     void takeTeamIdByTowerColor() {
         assertEquals(1, assertDoesNotThrow(()->CommonManager.takeTeamIdByTowerColor(gameEngine, TowerColor.WHITE)));
     }
+
+    /**
+     * Tests if the Player asked to the CommonManager is the one present in the second team, as added in setUp
+     */
+    @Test
+    void takePlayerById() {
+        assertEquals(gameEngine.getTeams().get(1).getPlayers().get(0), assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine,2)));
+    }
 }

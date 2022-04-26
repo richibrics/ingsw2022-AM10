@@ -41,20 +41,7 @@ class TestSetUpTwoAndFourPlayersAction {
         setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
     }
 
-    //TODO
-    @Test
-    void getPlayerId() {
-    }
 
-    //TODO
-    @Test
-    void getOptions() {
-    }
-
-    //TODO
-    @Test
-    void setPlayerId() {
-    }
 
     //TODO
     @Test
@@ -62,8 +49,8 @@ class TestSetUpTwoAndFourPlayersAction {
     }
 
     @Test
-    void modifyRound() {
-        setUpTwoAndFourPlayersAction.modifyRound();
+    void modifyRoundAndActionList() throws Exception{
+        setUpTwoAndFourPlayersAction.modifyRoundAndActionList();
         ArrayList<Integer> orderOfPlay = setUpTwoAndFourPlayersAction.getGameEngine().getRound().getOrderOfPlay();
         assertEquals(orderOfPlay.size(), 2);
         Collections.sort(orderOfPlay);

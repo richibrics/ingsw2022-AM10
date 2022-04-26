@@ -1,16 +1,21 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
-import it.polimi.ingsw.model.exceptions.CharacterStudentsStorageFull;
-import it.polimi.ingsw.model.exceptions.EmptyBagException;
-import it.polimi.ingsw.model.exceptions.TableNotSetException;
+import it.polimi.ingsw.model.actions.effects.*;
+import it.polimi.ingsw.model.exceptions.*;
 import it.polimi.ingsw.model.game_components.Bag;
 import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.CharacterCard;
 import it.polimi.ingsw.model.game_components.StudentDisc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Contains methods to manage CharacterCard creation and use.
@@ -19,8 +24,8 @@ import java.util.*;
  * Pass a CharacterCard to {@link CharacterManager#setupCardStorage(CharacterCard, Bag)} to insert in the CharacterCard the correct number of StudentDisc.
  * Then you can use the factory method {@link CharacterManager#generateAction(CharacterCard)} to set the correct
  * Action for the passed CharacterCard.
- *
- * Normal use method {@link CharacterManager#selectCharacterCard(int, String)} is called by the Action that is called
+ * <p>
+ * Normal use method {@link CharacterManager#selectCharacterCard(int, int, Map)} is called by the Action that is called
  * when a CharacterCard is selected.
  */
 public class CharacterManager extends Manager {
@@ -35,6 +40,7 @@ public class CharacterManager extends Manager {
 
     /**
      * Random draws three different Character from the enumeration and returns them in an ArrayList.
+     *
      * @return three different Character
      * @see Character
      */
@@ -50,7 +56,7 @@ public class CharacterManager extends Manager {
 
         // Pick 3 elements
         for (int i = 0; i < 3; i++) {
-            cards.add(Character.values()[idPool.get(i)-1]);
+            cards.add(Character.values()[idPool.get(i) - 1]);
         }
         return cards;
     }
@@ -60,71 +66,121 @@ public class CharacterManager extends Manager {
      * and is different for each Character.
      * If the CharacterCard already has Students, this method only fills the storage to match the exact number of
      * students that need to be inside.
+     *
      * @param characterCard the CharacterCard that will receive the Students drawn from the Bag
-     * @param bag the bag from where the Students will be drawn
-     * @throws EmptyBagException if there aren't other Students in the Bag
+     * @param bag           the bag from where the Students will be drawn
+     * @throws EmptyBagException            if there aren't other Students in the Bag
      * @throws CharacterStudentsStorageFull if you're trying to add other students to a full storage
      */
     public void setupCardStorage(CharacterCard characterCard, Bag bag) throws EmptyBagException, CharacterStudentsStorageFull {
         // In this method I don't get the Bag through the Table because this method is called during setup when
         // Table is not ready yet.
-        ArrayList<StudentDisc> drawnStudents = bag.drawStudents(characterCard.getStorageCapacity()-characterCard.getStudentsStorage().size());
-        for (StudentDisc studentDisc: drawnStudents)
+        ArrayList<StudentDisc> drawnStudents = bag.drawStudents(characterCard.getStorageCapacity() - characterCard.getStudentsStorage().size());
+        for (StudentDisc studentDisc : drawnStudents)
             characterCard.addStudentToStorage(studentDisc);
     }
 
     /**
      * Creates an Effect Action that matches the CharacterCard passed and sets it in the Card.
+     *
      * @param characterCard the CharacterCard that receives the Action
      * @throws NoSuchElementException if {@code characterCard} is unknown and the method doesn't know which Action is needed
      */
     public void generateAction(CharacterCard characterCard) throws NoSuchElementException {
-        // Change when Cards actions are ready
+        // The decorators also need the original action, so I grab it from the action manager
         if (characterCard.getId() == Character.FRIAR.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new FriarEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.COOK.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new AssignProfessorActionCookEffect(this.getGameEngine(), this.getGameEngine().getActionManager().getActions()[ModelConstants.ACTION_ASSIGN_PROFESSORS_ID]));
         else if (characterCard.getId() == Character.AMBASSADOR.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new AmbassadorEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.MAILMAN.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new MailmanEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.HERBALIST.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new HerbalistEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.CENTAUR.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new CalculateInfluenceActionCentaurEffect(this.getGameEngine(), this.getGameEngine().getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID]));
         else if (characterCard.getId() == Character.THIEF.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new ThiefEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.JESTER.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new JesterEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.MUSHROOM_HUNTER.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new CalculateInfluenceActionMushroomHunterEffect(this.getGameEngine(), this.getGameEngine().getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID]));
         else if (characterCard.getId() == Character.MINSTREL.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new MinstrelEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.LADY.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new LadyEffectAction(this.getGameEngine()));
         else if (characterCard.getId() == Character.KNIGHT.getId())
-            characterCard.setAction(null);
+            characterCard.setAction(new CalculateInfluenceActionKnightEffect(this.getGameEngine(), this.getGameEngine().getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID]));
         else
             throw new NoSuchElementException("Unknown CharacterCard id, can't assign an Action to it.");
     }
 
     /**
      * Gets from the table the Card with {@code cardId}, and then from the Card, it takes the Action.
-     * With this action it checks its id: if his id is between 0 and the number of actions in the action manager actions
-     * map, then this action is a decorator, and it is placed in the actions map in the action manager.
-     * Otherwise, if its id is higher, I run this action.
-     * If the action is run directly, set the Card (to {@code cardInUse}) that is associated with that to allow the Action use the Card storage
+     * With this action it checks its id: if its id is contained in the list of the id of the actions in the action manager,
+     * then this action is a decorator, and it is placed in the actions list in the action manager.
+     * Otherwise, I run this action.
+     * If the action is run directly, save the Card (to {@code cardInUse} attribute) that is associated with that to allow the Action use the Card storage
      * and set that value to null when the Action has ended.
      *
-     * @param cardId the id of the requested CharacterCard
+     * @param cardId  the id of the requested CharacterCard
      * @param options the options of the CharacterCard invocation
-     * @throws NoSuchElementException if there isn't a CharacterCard in the Table that matches {@code cardId}
+     * @throws NoSuchElementException       if there isn't a CharacterCard in the Table that matches {@code cardId}
+     * @throws TableNotSetException         if table is not set in GameEngine
+     * @throws ActionNotSetException        if Action is not set in the CharacterCard
+     * @throws WrongMessageContentException if there's an exception relative to options map
+     * @throws RuntimeException             if there's an Exception during Action run
      */
-    public void selectCharacterCard(int cardId, String options) throws NoSuchElementException, TableNotSetException {
+    public void selectCharacterCard(int cardId, int playerId, Map<String, String> options) throws NoSuchElementException, TableNotSetException, ActionNotSetException, WrongMessageContentException, RuntimeException, IllegalGameActionException, IllegalGameStateException {
         Map<Integer, CharacterCard> cards = this.getGameEngine().getTable().getCharacterCards();
-        if(!cards.containsKey(cardId))
+        if (!cards.containsKey(cardId))
             throw new NoSuchElementException("The requested CharacterCard is not present in the Table.");
         CharacterCard card = cards.get(cardId);
-        // Implement with ActionManager (remember also to manage cardInUse)
+        // (remember also to manage cardInUse)
+
+        // Set options and player id to the action
+        try {
+            card.getAction().setOptions(options);
+        } catch (WrongMessageContentException e) {
+            throw new WrongMessageContentException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage()); // To avoid throw general Exception from here
+        }
+        card.getAction().setPlayerId(playerId);
+
+        if (isActionADecorator(card.getAction())) {
+            // Have to replace the original action in the action manager with this subclass
+            this.getGameEngine().getActionManager().getActions()[card.getAction().getId()] = card.getAction();
+        } else {
+            // Can run the action
+            this.cardInUse = card;
+            try {
+                card.getAction().act();
+                card.getAction().modifyRoundAndActionList();
+            } catch (IllegalGameActionException e) {
+                throw new IllegalGameActionException(e.getMessage());
+            } catch (IllegalGameStateException e) {
+                throw new IllegalGameStateException(e.getMessage());
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage()); // To avoid throw general Exception from here
+            }
+            this.cardInUse = null;
+        }
+    }
+
+    /**
+     * Check if Character card action is a decorator or not.
+     *
+     * @param characterAction the character's action which id is going to be searched
+     * @return true if {@code characterAction} is a decorator of an Action contained in the Actions list in the ActionManager;
+     * false otherwise
+     */
+    private boolean isActionADecorator(Action characterAction) {
+        for (int i = 0; i < ModelConstants.NUMBER_OF_STANDARD_ACTIONS; i++) {
+            if (this.getGameEngine().getActionManager().getActions()[i].getId() == characterAction.getId())
+                return true;
+        }
+        return false;
     }
 }

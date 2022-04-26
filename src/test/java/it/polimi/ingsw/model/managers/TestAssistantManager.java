@@ -132,4 +132,61 @@ class TestAssistantManager {
         assertThrows(AssistantCardNotSetException.class, ()->assistantManager.getValueOfAssistantCardInHand(1));
         assertEquals(assertDoesNotThrow(()->assistantManager.getValueOfLastPlayedAssistantCard(1)), 5);
     }
+
+    /**
+     * Ensures that the card value is correctly calculated by the card id
+     */
+    @Test
+    void getCardValueById() {
+        assertEquals(1,assistantManager.getCardValueById(1));
+        assertEquals(5,assistantManager.getCardValueById(5));
+        assertEquals(9,assistantManager.getCardValueById(9));
+        assertEquals(10,assistantManager.getCardValueById(10));
+        assertEquals(5,assistantManager.getCardValueById(15));
+        assertEquals(9,assistantManager.getCardValueById(19));
+        assertEquals(10,assistantManager.getCardValueById(20));
+        assertEquals(6,assistantManager.getCardValueById(26));
+        assertEquals(5,assistantManager.getCardValueById(35));
+    }
+
+    /**
+     * Ensures that the correct cards are returned for a player: use a card and check it can't be used again;
+     * check that the played card can't be played from the second player unless it's the only one he has.
+     */
+    @Test
+    void getPlayableAssistantCardValues() {
+        assistantManager.setWizard(1,1);
+        ArrayList<Integer> results = assertDoesNotThrow(()->assistantManager.getPlayableAssistantCardValues(1));
+        assertEquals(10, results.size());
+        assertTrue(results.contains(assistantManager.getCardValueById(1)));
+        assistantManager.setAssistantCard(1, 1);
+        results = assertDoesNotThrow(()->assistantManager.getPlayableAssistantCardValues(1));
+        assertEquals(9, results.size());
+        assertFalse(results.contains(assistantManager.getCardValueById(1)));
+
+        // Now get cards for player 2 and check he can't play the card with getCardValueById(1)
+        assistantManager.setWizard(2,2);
+        results = assertDoesNotThrow(()->assistantManager.getPlayableAssistantCardValues(2));
+        assertEquals(9, results.size());
+        assertFalse(results.contains(assistantManager.getCardValueById(1)));
+
+        // Now leave only card with value = 1 to player 2 and check he can play that card
+        for (int cardValue = 2; cardValue <= 10; cardValue++) {
+            assistantManager.setAssistantCard(2, 10+cardValue);
+        }
+
+        results = assertDoesNotThrow(()->assistantManager.getPlayableAssistantCardValues(2));
+        assertEquals(1, results.size());
+        assertTrue(results.contains(assistantManager.getCardValueById(1)));
+    }
+
+    /**
+     * Ask for a wizard when nobody has one, and he must be free, then set a wizard to a player and check it's not available
+     */
+    @Test
+    void isWizardAvailableToBeChosen() {
+        assertTrue(assertDoesNotThrow(()->assistantManager.isWizardAvailableToBeChosen(1)));
+        assertDoesNotThrow(()->assistantManager.setWizard(1,1));
+        assertFalse(assertDoesNotThrow(()->assistantManager.isWizardAvailableToBeChosen(1)));
+    }
 }
