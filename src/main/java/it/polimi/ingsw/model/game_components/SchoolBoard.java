@@ -113,6 +113,19 @@ public class SchoolBoard {
      */
     public void replaceStudentInDiningRoom(StudentDisc studentToRemove, StudentDisc studentToAdd) throws IllegalStudentDiscMovementException, NoSuchElementException
     {
+        this.removeStudentFromDiningRoom(studentToRemove);
+        // Insert the new student in the dining room
+        this.addStudentToDiningRoom(studentToAdd);
+    }
+
+    /**
+     * Removes a student from the dining room (that must be in the last position of the table)
+     * @param studentToRemove StudentDisc that has to be removed from the table
+     * @throws NoSuchElementException if the StudentDisc that has to be removed isn't in the dining room
+     * @throws IllegalStudentDiscMovementException if the StudentDisc isn't in the last position of the table
+     * @see    StudentDisc
+     */
+    public void removeStudentFromDiningRoom(StudentDisc studentToRemove) throws IllegalStudentDiscMovementException, NoSuchElementException {
         // Get the dining room table of the student to remove color
         ArrayList<StudentDisc> studentsTable = this.diningRoom.get(studentToRemove.getColor().getId());
         // Check if the student is in the table
@@ -123,7 +136,5 @@ public class SchoolBoard {
             throw new IllegalStudentDiscMovementException();
         // Now I can remove the StudentDisc from the table
         studentsTable.remove(studentToRemove);
-        // Insert the new student in the dining room
-        this.addStudentToDiningRoom(studentToAdd);
     }
 }
