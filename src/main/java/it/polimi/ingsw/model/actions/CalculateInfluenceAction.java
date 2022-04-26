@@ -35,9 +35,4 @@ public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction {
                         influences.put(team.getId(), influences.get(team.getId()) + 1);
         }
     }
-
-    @Override
-    public void setOptions(Map<String, String> options) throws Exception {
-
-    }
 }

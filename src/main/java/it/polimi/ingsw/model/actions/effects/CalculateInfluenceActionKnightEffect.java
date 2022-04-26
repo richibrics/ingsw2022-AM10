@@ -43,9 +43,4 @@ public class CalculateInfluenceActionKnightEffect extends CalculateInfluenceActi
                         influences.put(team.getId(), influences.get(team.getId()) + 1);
         }
     }
-
-    @Override
-    public void setOptions(Map<String, String> options) throws Exception {
-
-    }
 }

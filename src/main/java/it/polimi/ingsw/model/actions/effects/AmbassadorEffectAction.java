@@ -4,12 +4,14 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
-import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AmbassadorEffectAction extends Action {
-    private Integer islandId;
+
+    private String islandId;
+
     public AmbassadorEffectAction(GameEngine gameEngine) {
         super(ModelConstants.ACTION_AMBASSADOR_ID, gameEngine);
     }
@@ -18,15 +20,9 @@ public class AmbassadorEffectAction extends Action {
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND))
-            throw new WrongMessageContentException("ActionMessage doesn't contain the island id");
-        try {
-            this.islandId = Integer.parseInt(options.get(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND));
-        } catch (NumberFormatException e) {
-            throw new WrongMessageContentException("Error while parsing Island id from the ActionMessage");
-        }
-
-        if (this.islandId < 1 || this.islandId > ModelConstants.ISLAND_TILES_NUMBER)
-            throw new WrongMessageContentException("Island id not in [1,12]");
+            throw new WrongMessageContentException("ActionMessage doesn't contain the key " + ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND);
+        else
+            this.islandId = options.get(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND);
     }
 
     /**
@@ -38,10 +34,17 @@ public class AmbassadorEffectAction extends Action {
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-
     }
+
+    /**
+     * Calculates the influence on the island specified in options.
+     * @throws Exception if something bad happens
+     */
 
     @Override
     public void act() throws Exception {
+        Map<String, String> options = new HashMap<>();
+        options.put(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND, this.islandId);
+        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options);
     }
 }

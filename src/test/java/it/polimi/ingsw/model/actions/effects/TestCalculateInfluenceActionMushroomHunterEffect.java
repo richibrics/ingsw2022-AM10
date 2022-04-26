@@ -100,8 +100,6 @@ class TestCalculateInfluenceActionMushroomHunterEffect {
 
         Map<Integer, Integer> influences = new HashMap<>();
         Map<String, String> options = new HashMap<>();
-        options.put("hello", "red");
-        assertThrows(Exception.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
         options.put("color", "red");
         assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
         assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.calculateInfluences(influences, islandGroups.get(0)));
@@ -112,17 +110,36 @@ class TestCalculateInfluenceActionMushroomHunterEffect {
     @Test
     void setOptions() {
         HashMap<String, String> options = new HashMap<>();
-        // No id
-        assertThrows(WrongMessageContentException.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
-
-        // Value error
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "a");
-        assertThrows(WrongMessageContentException.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
-
-        // OK
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR,"red");
+        // No required keys
+        options.put("hello", "hi");
         assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR,"YeLLoW");
+
+        // invalid islandId
+        options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, "-2");
+        assertThrows(WrongMessageContentException.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+
+        // valid islandId
+        options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, "3");
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+
+        // invalid color
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "hello");
+        assertThrows(WrongMessageContentException.class, () -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+
+        // valid color
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "red");
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "YeLLoW");
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+
+        // valid color and invalid islandId
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "pINK");
+        options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, "-2");
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
+
+        // valid color and islandId
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR, "GrEEn");
+        options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, "-1");
         assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
     }
 }

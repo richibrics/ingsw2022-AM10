@@ -24,6 +24,7 @@ public class ModelConstants {
     public static String ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT = "assistant";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD = "wizard";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR = "color";
+    public static String ACTION_CALCULATE_INFLUENCE_MUSHROOM_HUNTER_OPTIONS_KEY_COLOR = "color";
     public static String ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER = "character";
     public static String ACTION_HERBALIST_OPTIONS_KEY_ISLAND = "island";
     public static String ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT = "student";
@@ -32,6 +33,8 @@ public class ModelConstants {
     public static String ACTION_FRIAR_OPTIONS_KEY_STUDENT = "student";
     public static String ACTION_FRIAR_OPTIONS_KEY_ISLAND = "island";
     public static String ACTION_LADY_OPTIONS_KEY_STUDENT = "student";
+    public static String ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND = "island";
+    public static String ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND = "island";
     public static String ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_KEY_CLOUD_ID = "cloudId";
     public static String ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_ENTRANCE1 = "student_entrance1";
     public static String ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_ENTRANCE2 = "student_entrance2";
@@ -42,11 +45,13 @@ public class ModelConstants {
     public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3 = "student_entrance3";
     public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1 = "student_storage1";
     public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2 = "student_storage2";
-    public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3 = "student_storage3";public static String ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND = "island";
+    public static String ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3 = "student_storage3";
     public static String ACTION_THIEF_OPTIONS_KEY_COLOR = "color";
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM = -1;
+    public static int ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND = -1;
 
     public static int ISLAND_TILES_NUMBER = 12;
+    public static int MIN_ID_OF_ISLAND = 1;
     public static int NUMBER_OF_MOVEMENTS_FROM_ENTRANCE = 3;
     public static int MIN_NUMBER_OF_ISLAND_GROUPS = 3;
     public static int MAX_NUMBER_OF_TOWERS = 8;
@@ -63,5 +68,4 @@ public class ModelConstants {
     public static int FOUR_PLAYERS = 4;
 
     public static int NO_PLAYER = -1;
-
 }

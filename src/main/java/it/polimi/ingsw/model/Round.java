@@ -89,6 +89,7 @@ public class Round {
      * Shifts the order of play to prepare the next player to be picked.
      * Check if all the players of the round have played; if yes, return false to let outside know the round has ended
      * and a new Player order is required.
+     * If after this player, the round ended, the round restarts with the same order.
      * @return false if after the current player there's nobody that has to play next
      */
     public boolean playerTurnEnded() {
@@ -118,8 +119,10 @@ public class Round {
      * @return true if all the players have played in this Round
      */
     private boolean hasRoundEnded() {
-        if(this.roundTurnsStatus > this.playersNumber)
+        if(this.roundTurnsStatus > this.playersNumber) {
+            this.roundTurnsStatus = 1; // Restart the round with the same order
             return true;
+        }
         return false;
     }
 }
