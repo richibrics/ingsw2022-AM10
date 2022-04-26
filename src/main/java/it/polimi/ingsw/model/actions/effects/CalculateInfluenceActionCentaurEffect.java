@@ -37,8 +37,4 @@ public class CalculateInfluenceActionCentaurEffect extends CalculateInfluenceAct
                             .collect(Collectors.reducing(0, e -> 1, Integer::sum)));
         }
     }
-
-    @Override
-    public void setOptions(Map<String, String> options) throws Exception {
-    }
 }

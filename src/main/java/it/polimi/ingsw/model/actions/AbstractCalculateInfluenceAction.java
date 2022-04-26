@@ -1,16 +1,20 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.game_components.TowerColor;
+import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.*;
 
 public abstract class AbstractCalculateInfluenceAction extends Action {
+
+    private int islandId = -1;
 
     public AbstractCalculateInfluenceAction(GameEngine gameEngine) {
         super(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, gameEngine);
@@ -97,8 +101,9 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
     }
 
     /**
-     * Calculates the influence that each team has on the island group containing the mother nature pawn, checks if
-     * changes are needed and makes the required changes to the island group.
+     * Calculates the influence that each team has on the island group containing the mother nature pawn or on the requested
+     * island group; checks if changes are needed and makes the required changes to the island group. If the islands in the
+     * island group containing the mother nature pawn have no entry tiles this method does not calculate the influence.
      *
      * @throws Exception if something bad happens
      */
@@ -106,54 +111,79 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
     @Override
     public void act() throws Exception {
         Map<Integer, Integer> influences = new HashMap<>();
-        ArrayList<IslandTile> islandGroup = this.getGroupWithMotherNature();
-        this.calculateInfluences(influences, islandGroup);
 
-        TowerColor color = null;
-        boolean flag = false;
-        for (IslandTile islandTile : islandGroup)
-            if (islandTile.hasTower()) {
-                color = islandTile.getTower().getColor();
-                flag = true;
-            }
+        /* Get the island group containing the island tile with mother nature or the island tile of the ambassador effect */
+        ArrayList<IslandTile> islandGroup = null;
+        IslandTile targetIsland = null;
 
-        if (this.changeNeeded(influences, color)) {
-            /* Get team with the highest influence */
-            Team team = this.getTeamWithHighestInfluence(influences);
-
-            /* First situation: no towers on the islands */
-            if (flag == false) {
-                islandGroup.get(0).setTower(team.popTower());
-                this.getGameEngine().getIslandManager().unifyPossibleIslands();
-                /* Find the winner if a team has no towers left or there are only 3 groups of islands */
-                if (team.getTowers().size() == 0 || this.getGameEngine().getTable().getIslandTiles().size() == 3)
-                    this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
-
-            }
-
-            /* Second situation: towers on the islands */
-            else {
-                Team losingTeam = this.getLosingTeam(color);
-                for (IslandTile islandTile : islandGroup) {
-                    if (islandTile.hasTower())
-                        try {
-                            losingTeam.addTower(islandTile.replaceTower(team.popTower()));
-                        } catch (TowerNotSetException towerNotSetException) {
-                            /* If the team has no towers left it wins */
-                            this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
-                        }
+        if (this.islandId != -1) {
+            targetIsland = CommonManager.takeIslandTileById(this.getGameEngine(), this.islandId);
+            for (ArrayList<IslandTile> islandTiles : this.getGameEngine().getTable().getIslandTiles())
+                if (islandTiles.contains(targetIsland)) {
+                    islandGroup = islandTiles;
+                    break;
                 }
-                this.getGameEngine().getIslandManager().unifyPossibleIslands();
-                /* Find the winner if there are only 3 groups of islands */
-                if (this.getGameEngine().getTable().getIslandTiles().size() == ModelConstants.MIN_NUMBER_OF_ISLAND_GROUPS)
-                    this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+        }
+        else {
+            targetIsland = this.getGameEngine().getTable().getMotherNature().getIslandTile();
+            islandGroup = this.getGroupWithMotherNature();
+        }
+
+        /* Calculate influence if there are no no-entry tiles on the islands or this.islandId != -1  */
+        if (!islandGroup.get(0).hasNoEntry() ||  this.islandId != -1) {
+            this.calculateInfluences(influences, islandGroup);
+
+            TowerColor color = null;
+            boolean flag = false;
+            for (IslandTile islandTile : islandGroup)
+                if (islandTile.hasTower()) {
+                    color = islandTile.getTower().getColor();
+                    flag = true;
+                }
+
+            if (this.changeNeeded(influences, color)) {
+                /* Get team with the highest influence */
+                Team team = this.getTeamWithHighestInfluence(influences);
+
+                /* First situation: no towers on the islands */
+                if (flag == false) {
+                    islandGroup.get(0).setTower(team.popTower());
+                    this.getGameEngine().getIslandManager().unifyPossibleIslands();
+                    /* Find the winner if a team has no towers left or there are only 3 groups of islands */
+                    if (team.getTowers().size() == 0 || this.getGameEngine().getTable().getIslandTiles().size() == 3)
+                        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+
+                }
+
+                /* Second situation: towers on the islands */
+                else {
+                    Team losingTeam = this.getLosingTeam(color);
+                    for (IslandTile islandTile : islandGroup) {
+                        if (islandTile.hasTower())
+                            try {
+                                losingTeam.addTower(islandTile.replaceTower(team.popTower()));
+                            } catch (TowerNotSetException towerNotSetException) {
+                                /* If the team has no towers left it wins */
+                                this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+                            }
+                    }
+                    this.getGameEngine().getIslandManager().unifyPossibleIslands();
+                    /* Find the winner if there are only 3 groups of islands */
+                    if (this.getGameEngine().getTable().getIslandTiles().size() == ModelConstants.MIN_NUMBER_OF_ISLAND_GROUPS)
+                        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+                }
             }
         }
+
+        /* Remove the entry tiles from the island tiles of the group */
+        if (targetIsland.hasNoEntry() && this.islandId == -1)
+            this.getGameEngine().getIslandManager().setIslandGroupNoEntryByIslandId(islandGroup.get(0).getId(), false);
     }
 
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -163,5 +193,27 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
         possibleActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
         possibleActions.add(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID);
         this.getGameEngine().getRound().setPossibleActions(possibleActions);
+    }
+
+    /**
+     * Sets the islandId.
+     *
+     * @param options additional information for act method
+     * @throws Exception if key 'color' is not present or the color is invalid
+     */
+
+    @Override
+    public void setOptions(Map<String, String> options) throws Exception {
+        if (!options.containsKey(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND))
+            this.islandId = ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND;
+        else {
+            try {
+                this.islandId = Integer.parseInt(options.get(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND));
+                if ((this.islandId < ModelConstants.MIN_ID_OF_ISLAND || this.islandId > ModelConstants.ISLAND_TILES_NUMBER) && this.islandId != ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND)
+                    throw new WrongMessageContentException();
+            } catch (NumberFormatException | WrongMessageContentException exception) {
+                throw new WrongMessageContentException("Error while parsing " + ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND + " from the ActionMessage");
+            }
+        }
     }
 }

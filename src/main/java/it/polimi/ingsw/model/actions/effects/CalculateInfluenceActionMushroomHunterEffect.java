@@ -57,10 +57,22 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
-
-        if (!options.containsKey(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR))
-            throw new WrongMessageContentException("A required key is not provided");
-
-        this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR));
+        /* If color is not in options search for islandId and throw WrongMessageContentException if islandId is not
+        * in options */
+        if (!options.containsKey(ModelConstants.ACTION_CALCULATE_INFLUENCE_MUSHROOM_HUNTER_OPTIONS_KEY_COLOR)) {
+            try {
+                super.setOptions(options);
+            } catch (WrongMessageContentException e) {
+                throw new WrongMessageContentException("Invalid key");
+            }
+        }
+        /* If color is in options search for islandId and do not throw WrongMessageContentException if islandId is not
+         * in options */
+        else {
+            this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_CALCULATE_INFLUENCE_MUSHROOM_HUNTER_OPTIONS_KEY_COLOR));
+            try {
+                super.setOptions(options);
+            } catch (WrongMessageContentException e) { }
+        }
     }
 }
