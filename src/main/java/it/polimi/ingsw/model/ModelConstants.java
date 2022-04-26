@@ -52,4 +52,15 @@ public class ModelConstants {
     public static int NUMBER_OF_TOWERS_TWO_FOUR_PLAYERS = 8;
     public static int NUMBER_OF_TOWERS_THREE_PLAYERS = 6;
     public static int MAX_NUMBER_OF_STUDENTS_IN_BAG = 126;
+
+    public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_TWO_PLAYERS_STUDENTS_NUMBER = 3;
+    public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_THREE_PLAYERS_STUDENTS_NUMBER = 4;
+    public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_FOUR_PLAYERS_STUDENTS_NUMBER = 3;
+
+    public static int TWO_PLAYERS = 2;
+    public static int THREE_PLAYERS = 3;
+    public static int FOUR_PLAYERS = 4;
+
+    public static int NO_PLAYER = -1;
+
 }
