@@ -209,7 +209,7 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
         else {
             try {
                 this.islandId = Integer.parseInt(options.get(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND));
-                if ((this.islandId < ModelConstants.MIN_ID_OF_ISLAND || this.islandId > ModelConstants.ISLAND_TILES_NUMBER) && this.islandId != ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND)
+                if ((this.islandId < ModelConstants.MIN_ID_OF_ISLAND || this.islandId > ModelConstants.NUMBER_OF_ISLAND_TILES) && this.islandId != ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND)
                     throw new WrongMessageContentException();
             } catch (NumberFormatException | WrongMessageContentException exception) {
                 throw new WrongMessageContentException("Error while parsing " + ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND + " from the ActionMessage");

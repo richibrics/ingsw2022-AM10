@@ -127,7 +127,7 @@ class TestCalculateInfluenceAction {
 
         /* Create array of students */
         ArrayList<StudentDisc> students = new ArrayList<>();
-        if (newMotherNatureIslandId != (motherNatureIslandId + ModelConstants.ISLAND_TILES_NUMBER/2) % ModelConstants.ISLAND_TILES_NUMBER) {
+        if (newMotherNatureIslandId != (motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES) {
             /* The island with id newMotherNatureIslandId already has a student disc if it is not opposite
             to the island with id motherNatureIslandId */
             if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.RED)) {

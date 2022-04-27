@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.EmptyBagException;
@@ -18,7 +19,7 @@ public class SetUpTwoAndFourPlayersAction extends SetUp {
     protected void setUpTowers() {
         int index = 0;
         for (Team team : this.getGameEngine().getTeams()) {
-            for (int i = 1; i <= 8; i++)
+            for (int i = ModelConstants.MIN_ID_OF_TOWER; i <= ModelConstants.NUMBER_OF_TOWERS_TWO_FOUR_PLAYERS; i++)
                 team.addTower(new Tower(TowerColor.values()[index]));
             index++;
         }
@@ -27,6 +28,6 @@ public class SetUpTwoAndFourPlayersAction extends SetUp {
     protected void drawStudentsAndPlaceOnEntrance(Bag bag) throws SchoolBoardNotSetException, EmptyBagException {
         for (Team team : this.getGameEngine().getTeams())
             for (Player player : team.getPlayers())
-                player.getSchoolBoard().addStudentsToEntrance(bag.drawStudents(7));
+                player.getSchoolBoard().addStudentsToEntrance(bag.drawStudents(ModelConstants.INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_TWO_FOUR_PLAYERS));
     }
 }

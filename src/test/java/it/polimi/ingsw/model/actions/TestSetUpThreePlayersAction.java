@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.*;
@@ -44,50 +45,71 @@ class TestSetUpThreePlayersAction {
         setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
     }
 
+    /**
+     * Tests round with next players and next actions is set correctly
+     * @throws Exception
+     */
     @Test
     void modifyRoundAndActionList() throws Exception{
+        assertEquals(ModelConstants.THREE_PLAYERS, gameEngine.getNumberOfPlayers());
+        
         setUpThreePlayersAction.modifyRoundAndActionList();
         ArrayList<Integer> orderOfPlay = setUpThreePlayersAction.getGameEngine().getRound().getOrderOfPlay();
-        assertEquals(orderOfPlay.size(),3);
+        assertEquals(gameEngine.getNumberOfPlayers(), orderOfPlay.size());
         Collections.sort(orderOfPlay);
         int index = 1;
         for (Integer integer : orderOfPlay) {
             assertEquals(integer, index);
             index++;
         }
+        // Check also next action is correct
+        assertEquals(1, gameEngine.getRound().getPossibleActions().size());
+        assertEquals(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID, gameEngine.getRound().getPossibleActions().get(0));
     }
 
+
+    /**
+     * Checks I have a cloud tile per player
+     */
     @Test
     void setUpCloudTiles() {
         ArrayList<CloudTile> cloudTiles = new ArrayList<>();
         setUpThreePlayersAction.setUpCloudTiles(cloudTiles);
-        assertEquals(cloudTiles.size(), 3);
-        assertEquals(cloudTiles.get(0).getId(), 1);
-        assertEquals(cloudTiles.get(1).getId(), 2);
-        assertEquals(cloudTiles.get(2).getId(), 3);
+        assertEquals(gameEngine.getNumberOfPlayers(), cloudTiles.size());
+        for (int i = 0; i < gameEngine.getNumberOfPlayers(); i++) {
+            assertEquals(i+1, cloudTiles.get(i).getId());
+        }
     }
 
+    /**
+     * Checks I have a schoolboard per player
+     */
     @Test
     void setUpSchoolBoards() {
         ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
         setUpThreePlayersAction.setUpSchoolBoards(schoolBoards);
-        assertEquals(schoolBoards.size(), 3);
-        assertEquals(assertDoesNotThrow(()->setUpThreePlayersAction.getGameEngine().getTeams().get(0).getPlayers().get(0).getSchoolBoard()), schoolBoards.get(0));
-        assertEquals(assertDoesNotThrow(()->setUpThreePlayersAction.getGameEngine().getTeams().get(1).getPlayers().get(0).getSchoolBoard()), schoolBoards.get(1));
-        assertEquals(assertDoesNotThrow(()->setUpThreePlayersAction.getGameEngine().getTeams().get(2).getPlayers().get(0).getSchoolBoard()), schoolBoards.get(2));
+        assertEquals(gameEngine.getNumberOfPlayers(), schoolBoards.size());
+        for (int i = 0; i < gameEngine.getNumberOfPlayers(); i++) {
+            int finalI = i;
+            assertEquals(schoolBoards.get(i), assertDoesNotThrow(()->setUpThreePlayersAction.getGameEngine().getTeams().get(finalI).getPlayers().get(0).getSchoolBoard()));
+        }
     }
 
+    /**
+     * Checks I have generated correctly the towers
+     */
     @Test
     void setUpTowers() {
         setUpThreePlayersAction.setUpTowers();
-        assertEquals(setUpThreePlayersAction.getGameEngine().getTeams().get(0).getTowers().size(), 6);
-        assertEquals(setUpThreePlayersAction.getGameEngine().getTeams().get(0).getTowers().get(0).getColor(), TowerColor.WHITE);
-        assertEquals(setUpThreePlayersAction.getGameEngine().getTeams().get(1).getTowers().size(), 6);
-        assertEquals(setUpThreePlayersAction.getGameEngine().getTeams().get(1).getTowers().get(0).getColor(), TowerColor.BLACK);
-        assertEquals(setUpThreePlayersAction.getGameEngine().getTeams().get(2).getTowers().size(), 6);
-        assertEquals(setUpThreePlayersAction.getGameEngine().getTeams().get(2).getTowers().get(0).getColor(), TowerColor.GREY);
+        for (int i = 0; i < gameEngine.getNumberOfPlayers(); i++) {
+            assertEquals(ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS, setUpThreePlayersAction.getGameEngine().getTeams().get(i).getTowers().size());
+            assertEquals(TowerColor.values()[i], setUpThreePlayersAction.getGameEngine().getTeams().get(i).getTowers().get(0).getColor());
+        }
     }
 
+    /**
+     * Checks I have placed correctly the students in the entrance
+     */
     @Test
     void drawStudentsAndPlaceOnEntrance() {
         ArrayList<StudentDisc> studentDiscs = setUpThreePlayersAction.generateStudentDiscs();
@@ -98,7 +120,16 @@ class TestSetUpThreePlayersAction {
         assertDoesNotThrow(()->setUpThreePlayersAction.drawStudentsAndPlaceOnEntrance(bag));
         for (Team team : setUpThreePlayersAction.getGameEngine().getTeams())
             for (Player player : team.getPlayers())
-                assertEquals(assertDoesNotThrow(()->player.getSchoolBoard().getEntrance().size()), 9);
-        assertEquals(assertDoesNotThrow(()->bag.getNumberOfStudents()), 130 - 27);
+                assertEquals(ModelConstants.INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS, assertDoesNotThrow(()->player.getSchoolBoard().getEntrance().size()));
+        assertEquals(ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * PawnColor.values().length - ModelConstants.INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS * gameEngine.getNumberOfPlayers()
+                , assertDoesNotThrow(()->bag.getNumberOfStudents()));
     }
+
+    /**
+     * This action does not parse options
+     */
+    @Test
+    void setOptions() {
+    }
+
 }

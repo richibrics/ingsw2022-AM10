@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Contains methods to manage CharacterCard creation and use.
- * To create a CharacterCard randomly, use {@link CharacterManager#pickThreeCharacters()} to get 3 random Character that can be used
+ * To create a CharacterCard randomly, use {@link CharacterManager#pickCharacters(int)} to get 3 random Character that can be used
  * to instantiate 3 CharacterCards.
  * Pass a CharacterCard to {@link CharacterManager#setupCardStorage(CharacterCard, Bag)} to insert in the CharacterCard the correct number of StudentDisc.
  * Then you can use the factory method {@link CharacterManager#generateAction(CharacterCard)} to set the correct
@@ -41,13 +41,14 @@ public class CharacterManager extends Manager {
     /**
      * Random draws three different Character from the enumeration and returns them in an ArrayList.
      *
+     * @param number number of characters to draw. Must be from 0 to 12
      * @return three different Character
      * @see Character
      */
-    public ArrayList<Character> pickThreeCharacters() {
+    public ArrayList<Character> pickCharacters(int number) {
         ArrayList<Integer> idPool = new ArrayList<>();
         ArrayList<Character> cards = new ArrayList<>();
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 1; i <= Character.values().length; i++) {
             idPool.add(i);
         }
 
@@ -55,7 +56,7 @@ public class CharacterManager extends Manager {
         Collections.shuffle(idPool);
 
         // Pick 3 elements
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < number; i++) {
             cards.add(Character.values()[idPool.get(i) - 1]);
         }
         return cards;

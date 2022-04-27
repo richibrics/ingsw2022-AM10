@@ -52,7 +52,7 @@ public class MoveStudentsFromEntranceAction extends Action {
             throw new WrongMessageContentException("Error while parsing the future student position from the ActionMessage");
         }
         if (this.futureStudentPosition != ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM
-                && (this.futureStudentPosition < 1 || this.futureStudentPosition>12))
+                && (this.futureStudentPosition < ModelConstants.MIN_ID_OF_ISLAND || this.futureStudentPosition > ModelConstants.NUMBER_OF_ISLAND_TILES))
             throw new WrongMessageContentException("Future student position is not valid");
     }
 

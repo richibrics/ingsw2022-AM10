@@ -38,7 +38,7 @@ public class FriarEffectAction extends Action {
         } catch (NumberFormatException e) {
             throw new WrongMessageContentException("Error while parsing island id from the ActionMessage");
         }
-        if (this.islandId < 1 || this.islandId > ModelConstants.ISLAND_TILES_NUMBER)
+        if (this.islandId < ModelConstants.MIN_ID_OF_ISLAND || this.islandId > ModelConstants.NUMBER_OF_ISLAND_TILES)
             throw new WrongMessageContentException("Island id not in [1,12]");
     }
 

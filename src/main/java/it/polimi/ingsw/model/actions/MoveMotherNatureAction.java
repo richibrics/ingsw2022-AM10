@@ -36,7 +36,7 @@ public class MoveMotherNatureAction extends Action {
             throw new WrongMessageContentException("Error while parsing island id from the ActionMessage");
         }
 
-        if (this.chosenIslandId<1 || this.chosenIslandId>ModelConstants.ISLAND_TILES_NUMBER)
+        if (this.chosenIslandId<1 || this.chosenIslandId>ModelConstants.NUMBER_OF_ISLAND_TILES)
             throw new WrongMessageContentException("Island id received is not in [1,12]");
 
     }

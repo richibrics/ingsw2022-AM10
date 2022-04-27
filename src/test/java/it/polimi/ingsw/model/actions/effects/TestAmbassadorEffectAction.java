@@ -101,7 +101,7 @@ class TestAmbassadorEffectAction {
         IslandTile islandTile = assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 4));
         /* Place no entry tile on island 4 */
         islandTile.setNoEntry(true);
-        if (motherNatureIslandId != 4 && ((motherNatureIslandId + ModelConstants.ISLAND_TILES_NUMBER/2) % ModelConstants.ISLAND_TILES_NUMBER) != 4) {
+        if (motherNatureIslandId != 4 && ((motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES) != 4) {
             /* The island with id 4 already has a student disc if it is not the island with mother nature or the island opposite
             to the island with mother nature */
             if (islandTile.peekStudents().get(0).getColor().equals(PawnColor.RED)) {
