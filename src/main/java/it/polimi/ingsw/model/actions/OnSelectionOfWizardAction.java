@@ -1,10 +1,8 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
-import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 
 import java.util.*;
@@ -48,7 +46,8 @@ public class OnSelectionOfWizardAction extends Action {
     /**
      * Modifies the round for the next Players actions.
      * If none of the players have done the selection, set as next action the selection for the next player.
-     * Else if everybody did it, pass to the next Action.
+     * Else if everybody did it, pass to the next Action with the same order of play:
+     * after this selection, system draws the students from the bag to the cloud.
      * @throws Exception if something bad happens
      */
 
@@ -60,14 +59,9 @@ public class OnSelectionOfWizardAction extends Action {
             nextActions.add(this.getId());
             this.getGameEngine().getRound().setPossibleActions(nextActions);
         } else {
-            // Everyone selected the Wizard. Now players have to select the assistant card: I let them play with the same
-            // order as here
-            this.getGameEngine().getRound().setOrderOfPlay(this.getGameEngine().getRound().getOrderOfPlay());
-
-            // Set next action (select assistant card)
-            ArrayList<Integer> nextActions = new ArrayList<>();
-            nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID);
-            this.getGameEngine().getRound().setPossibleActions(nextActions);
+            // Draw from bag to cloud
+            this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, ModelConstants.NO_PLAYER, new HashMap<>(), true);
+            // Next actions are set from the DrawFromBagToCloud; the order is not set to permit using the same order as before
         }
     }
 

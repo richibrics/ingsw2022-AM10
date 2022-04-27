@@ -42,6 +42,7 @@ class TestOnSelectionOfWizardAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
         assertDoesNotThrow(()->setUpThreePlayersAction.act());
 
@@ -115,6 +116,9 @@ class TestOnSelectionOfWizardAction {
         // Check round is going forward
         assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
 
+        // Before making the new order I check that the clouds are empty, because with the new order the clouds will be filled
+        assertEquals(0, assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()));
+
         // This will make the new order
         assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
 
@@ -123,8 +127,7 @@ class TestOnSelectionOfWizardAction {
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(1)));
         assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(2)));
 
-        // Check next action
-        assertEquals(1, gameEngine.getRound().getPossibleActions().size());
-        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
+        // Check the clouds have been filled from the execution of DrawFromBagToCloud
+        assertNotEquals(0, assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()));
     }
 }

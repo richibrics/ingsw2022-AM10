@@ -151,7 +151,7 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
                     this.getGameEngine().getIslandManager().unifyPossibleIslands();
                     /* Find the winner if a team has no towers left or there are only 3 groups of islands */
                     if (team.getTowers().size() == 0 || this.getGameEngine().getTable().getIslandTiles().size() == 3)
-                        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+                        this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>(), false);
 
                 }
 
@@ -164,13 +164,13 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
                                 losingTeam.addTower(islandTile.replaceTower(team.popTower()));
                             } catch (TowerNotSetException towerNotSetException) {
                                 /* If the team has no towers left it wins */
-                                this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+                                this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>(), false);
                             }
                     }
                     this.getGameEngine().getIslandManager().unifyPossibleIslands();
                     /* Find the winner if there are only 3 groups of islands */
                     if (this.getGameEngine().getTable().getIslandTiles().size() == ModelConstants.MIN_NUMBER_OF_ISLAND_GROUPS)
-                        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
+                        this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>(), false);
                 }
             }
         }
@@ -184,13 +184,14 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      *
+     * After this action the player will choose a cloud tile, so I add to the round the FromCloudTileToEntrance action.
+     *
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        ArrayList<Integer> possibleActions = new ArrayList<>();
-        possibleActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
+        ArrayList<Integer> possibleActions = getGameEngine().getRound().getPossibleActions();
         possibleActions.add(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID);
         this.getGameEngine().getRound().setPossibleActions(possibleActions);
     }

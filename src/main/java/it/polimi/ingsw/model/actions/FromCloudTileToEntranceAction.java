@@ -43,9 +43,9 @@ public class FromCloudTileToEntranceAction extends Action {
     @Override
     public void modifyRoundAndActionList() throws Exception {
         /* Check if the round has ended*/
-        if (!this.getGameEngine().getRound().playerTurnEnded())
-            this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>());
-        else {
+        if (!this.getGameEngine().getRound().playerTurnEnded()) // Round ended
+            this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, -1, new HashMap<>(), true);
+        else { // Round not ended: next player's turn
             ArrayList<Integer> listOfActions = new ArrayList<>();
             listOfActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
             listOfActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);

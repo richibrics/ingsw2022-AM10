@@ -33,7 +33,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, -1, new HashMap<>());
+        this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, -1, new HashMap<>(), true);
     }
 
     /**

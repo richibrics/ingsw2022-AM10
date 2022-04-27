@@ -46,6 +46,7 @@ class TestMoveStudentsFromEntranceAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
         assertDoesNotThrow(()->setUpThreePlayersAction.act());
 
@@ -201,7 +202,7 @@ class TestMoveStudentsFromEntranceAction {
         assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
 
-        // Check next actions are correct
+        // Check next Assign professor started (will set to next actions the MoveMotherNature action)
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
     }
 }

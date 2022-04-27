@@ -218,6 +218,7 @@ public abstract class SetUp extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * After setup, players have to choose the Wizard.
      * @throws Exception if something bad happens
      */
 

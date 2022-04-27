@@ -61,15 +61,16 @@ public class MoveMotherNatureAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
-     * Here I remove this action from the round and add the next actions that must be performed by the player.
+     * Here I remove this action from the round and calls directly the calculate influence.
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
+        // TODO CAll calc inf
+
         ArrayList<Integer> nextActions = this.getGameEngine().getRound().getPossibleActions();
         nextActions.remove(Integer.valueOf(this.getId()));
-        nextActions.add(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID);
         this.getGameEngine().getRound().setPossibleActions(nextActions);
     }
 }

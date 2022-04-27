@@ -137,14 +137,13 @@ class TestMoveMotherNatureAction {
     }
 
     /**
-     * Checks that MoveMotherNatureAction is removed from the Round and that FromCloudTileToEntrance in placed in it.
+     * Checks that MoveMotherNatureAction is removed from the Round and that Calculate influence had been executed.
      */
     @Test
     void modifyRoundAndActionList() {
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
-        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         assertDoesNotThrow(()->moveMotherNatureAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
-        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
+        // TODO test that Calculate influence had been executed
     }
 }
