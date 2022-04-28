@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -153,6 +154,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Checks if one of the game-ending conditions is satisfied. Ends the game if a condition is satisfied.
+     * If nobody wins, it puts all the assistant cards of the players down, ready to start the new round.
      * @throws Exception if something bad happens
      */
 
@@ -171,5 +173,11 @@ public class CheckEndMatchConditionAction extends Action {
         winners = this.noAssistantCardsCondition();
         if (winners != null)
             this.communicateWinner(winners);
+
+        // If no winners, prepare for next round
+        if (winners == null)
+            for (int i = ModelConstants.MIN_ID_OF_PLAYER; i < getGameEngine().getNumberOfPlayers(); i++) {
+                getGameEngine().getAssistantManager().moveAssistantCardInHandToLastPlayed(i);
+            }
     }
 }

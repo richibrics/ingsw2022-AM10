@@ -52,6 +52,7 @@ public class ModelConstants {
 
     public static int NUMBER_OF_ISLAND_TILES = 12;
     public static int MIN_ID_OF_ISLAND = 1;
+    public static int MIN_ID_OF_PLAYER = 1;
     public static int MIN_ID_OF_TOWER = 1;
     public static int MIN_ID_OF_STUDENT_DISC = 1;
     public static int MIN_ID_OF_CLOUD_TILE = 1;

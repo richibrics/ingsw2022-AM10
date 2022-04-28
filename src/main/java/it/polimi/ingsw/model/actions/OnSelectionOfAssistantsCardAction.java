@@ -38,7 +38,7 @@ public class OnSelectionOfAssistantsCardAction extends Action {
      **/
     @Override
     public void act() throws Exception {
-        // TODO moveAssistantCardInHandToLastPlayed should be called before the start of this round, not here
+        // moveAssistantCardInHandToLastPlayed that sets player's card to null is set in CheckEndMatchCondition action.
         try {
             // Check legal choose: previous players should not have the same assistant card value unless this
             // player has only that choose

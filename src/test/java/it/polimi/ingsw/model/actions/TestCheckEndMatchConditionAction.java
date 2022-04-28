@@ -5,9 +5,11 @@ import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.game_components.AssistantCard;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.PawnColor;
+import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -202,6 +204,26 @@ class TestCheckEndMatchConditionAction {
         /* The winners should be the second and third team */
         assertEquals(winners[0], 2);
         assertEquals(winners[1], 3);
+    }
+
+    /**
+     * Tests what happens if there's no winner and the next round is prepared.
+     * Players assistant cards are set to old played cards
+     */
+    @Test
+    void actNoWinnerPrepareNextRound() {
+        // Prepare the game to check an EndMatchCondition without win
+        gameEngine.getAssistantManager().setWizard(1,1);
+        gameEngine.getAssistantManager().setWizard(2,2);
+        gameEngine.getAssistantManager().setWizard(3,3);
+
+        // Do the tests
+        assertDoesNotThrow(()->checkEndMatchConditionAction.act());
+        for (int i = 1; i < gameEngine.getNumberOfPlayers(); i++) {
+            int finalI = i;
+            assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine, finalI).getActiveAssistantCard());
+        }
+
     }
 
     //TODO
