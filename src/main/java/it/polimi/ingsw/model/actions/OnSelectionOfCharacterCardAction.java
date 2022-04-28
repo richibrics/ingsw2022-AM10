@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.exceptions.ActionNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -51,10 +52,18 @@ public class OnSelectionOfCharacterCardAction extends Action {
      * and the order of play, and the Action List in the Action Manager.
      * In this case the Action won't do anything after the act.
      *
+     * When a character card is used in a player's turn, the player won't select any card anymore,
+     * so this action is removed from round actions list. In fact, when it's next player's turn, at turn start this
+     * action will be set again in the round for him.
+     *
      * @throws Exception if something bad happens
      */
     @Override
     public void modifyRoundAndActionList() throws Exception {
+        ArrayList<Integer> actions = this.getGameEngine().getRound().getPossibleActions();
+        if(!actions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID))) // Remove and throw if wasn't inside
+            throw new IllegalGameStateException("OnSelectionOfCharacterCard action was run but it wasn't in Round actions");
+        getGameEngine().getRound().setPossibleActions(actions);
     }
 
     /**

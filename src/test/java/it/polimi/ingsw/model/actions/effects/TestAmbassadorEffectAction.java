@@ -7,10 +7,7 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.SetUpTwoAndFourPlayersAction;
-import it.polimi.ingsw.model.game_components.IslandTile;
-import it.polimi.ingsw.model.game_components.PawnColor;
-import it.polimi.ingsw.model.game_components.ProfessorPawn;
-import it.polimi.ingsw.model.game_components.StudentDisc;
+import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -149,9 +146,24 @@ class TestAmbassadorEffectAction {
         gameEngine.getTeams().get(0).addProfessorPawn(redProfessor);
         gameEngine.getTeams().get(1).addProfessorPawn(pinkProfessor);
 
-        assertDoesNotThrow(() -> gameEngine.getActionManager().executeAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options1));
-        /* The color red does not count, so the island tile 4 should have a tower of the second team */
-        assertDoesNotThrow(() -> ambassadorEffectAction.act());
+        /**
+         * There are 2 cases with the next statement:
+         *  - If Mother Nature isn't on Island 4: influence is calculated on another island so the NoEntry tile
+         *  remains on the island 4
+         *  - If Mother Nature is on Island 4: influence should be calculated on island 4 but there's a NoEntry tile on it,
+         *  so it is removed and no Tower is set.
+         *  Currently I have a Black Tower on Island 3 (which has a No Entry Tile) and nothing on island 4.
+         *  When I will use the Ambassador effect in the following statement (passing islandId = 4), the "Calculate Influence"
+         *  will run on island 4, but with the MushroomHunter effect activated before, so in this situation the Island 4
+         *  has influence for Black Tower.
+         *  With the black towers on islands 3 and 4, there's a merge and this makes the NoEntry tile spread from Island 3
+         *  to the Island 4.
+         *  So, also in this situation, I have a NoEntry tile on Island 4 after the next 2 statements.
+         */
+
+        assertDoesNotThrow(()->gameEngine.getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options1, false));
+        assertDoesNotThrow(()->ambassadorEffectAction.act());
+
         assertTrue(islandTile.hasNoEntry());
     }
 }

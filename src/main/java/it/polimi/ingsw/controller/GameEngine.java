@@ -152,7 +152,7 @@ public class GameEngine {
      */
     public void resumeGame(int actionId, int playerId, String options)
     {
-        // Implement with ActionManager.executeAction()
+        // Implement with ActionManager.prepareAndExecuteAction()
     }
 
     /**

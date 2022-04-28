@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class AmbassadorEffectAction extends Action {
     @Override
     public void act() throws Exception {
         Map<String, String> options = new HashMap<>();
-        options.put(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND, this.islandId);
-        this.getGameEngine().getActionManager().executeAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options);
+        options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, this.islandId);
+        this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options, false);
     }
 }

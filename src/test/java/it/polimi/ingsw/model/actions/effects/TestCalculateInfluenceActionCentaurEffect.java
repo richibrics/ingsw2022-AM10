@@ -138,12 +138,16 @@ class TestCalculateInfluenceActionCentaurEffect {
         assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).getTower().getColor()), assertDoesNotThrow(() -> CommonManager.takeTeamById(gameEngine, 2).getTeamTowersColor()));
     }
 
+    /**
+     * Checks that the original calculateInfluenceAction is set back in the actions list and that the next
+     * action for the player is from cloud tile to entrance.
+     */
     @Test
     void modifyRoundAndActionList() {
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionCentaurEffect;
-        assertDoesNotThrow(() -> calculateInfluenceActionCentaurEffect.modifyRoundAndActionList());
-        assertEquals(gameEngine.getRound().getPossibleActions().get(0), 3);
-        assertEquals(gameEngine.getRound().getPossibleActions().get(1), 6);
+        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffect.modifyRoundAndActionList());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID], calculateInfluenceAction);
     }
 

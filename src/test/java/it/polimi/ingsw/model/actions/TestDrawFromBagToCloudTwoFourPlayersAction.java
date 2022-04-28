@@ -17,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestDrawFromBagToCloudTwoFourPlayersAction {
     static DrawFromBagToCloudTwoFourPlayersAction drawFromBagToCloudTwoPlayersAction;
     static DrawFromBagToCloudTwoFourPlayersAction drawFromBagToCloudFourPlayersAction;
-    static GameEngine gameEngine;
+    static GameEngine gameEngineTwo;
+    static GameEngine gameEngineFour;
 
     /**
      * Tests only exception throw or not.
@@ -64,12 +65,12 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         ArrayList<Team> teams = new ArrayList<>();
         teams.add(team1);
         teams.add(team2);
-        gameEngine = new GameEngine(teams);
-        SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
+        gameEngineTwo = new GameEngine(teams);
+        SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngineTwo);
         assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
 
-        drawFromBagToCloudTwoPlayersAction = new DrawFromBagToCloudTwoFourPlayersAction(gameEngine);
-        return gameEngine;
+        drawFromBagToCloudTwoPlayersAction = new DrawFromBagToCloudTwoFourPlayersAction(gameEngineTwo);
+        return gameEngineTwo;
     }
 
 
@@ -117,13 +118,27 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         Team team2 = new Team(2, players2);
         teams.add(team1);
         teams.add(team2);
-        gameEngine = new GameEngine(teams);
-        SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
+        gameEngineFour = new GameEngine(teams);
+        SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngineFour);
         assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
 
-        drawFromBagToCloudFourPlayersAction = new DrawFromBagToCloudTwoFourPlayersAction(gameEngine);
-        return gameEngine;
+        drawFromBagToCloudFourPlayersAction = new DrawFromBagToCloudTwoFourPlayersAction(gameEngineFour);
+        return gameEngineFour;
     }
 
+    /**
+     * Checks next action is set correctly and order of play is same as before.
+     */
+    @Test
+    void modifyRoundAndActionList() {
+        GameEngine gameEngine = setUpFourPlayers();
+        ArrayList<Integer> originalOrder = gameEngineFour.getRound().getOrderOfPlay();
 
+        assertDoesNotThrow(()->drawFromBagToCloudFourPlayersAction.modifyRoundAndActionList());
+        // Check next action
+        assertTrue(gameEngineFour.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
+
+        ArrayList<Integer> newOrder = gameEngineFour.getRound().getOrderOfPlay();
+        assertEquals(originalOrder, newOrder); // Check it's same as before
+    }
 }

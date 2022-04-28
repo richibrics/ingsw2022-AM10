@@ -208,11 +208,14 @@ class TestCalculateInfluenceAction {
         assertFalse(assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).hasNoEntry()));
     }
 
+    /**
+     * Checks next action is added to round actions list
+     */
     @Test
     void modifyRoundAndActionList() {
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         assertDoesNotThrow(()->calculateInfluenceAction.modifyRoundAndActionList());
-        assertEquals(gameEngine.getRound().getPossibleActions().get(0), ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
-        assertEquals(gameEngine.getRound().getPossibleActions().get(1), ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID);
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
     }
 
     @Test

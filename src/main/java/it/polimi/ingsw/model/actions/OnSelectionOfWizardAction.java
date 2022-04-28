@@ -4,7 +4,6 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 
 import java.util.*;
@@ -48,27 +47,25 @@ public class OnSelectionOfWizardAction extends Action {
     /**
      * Modifies the round for the next Players actions.
      * If none of the players have done the selection, set as next action the selection for the next player.
-     * Else if everybody did it, pass to the next Action.
+     * Else if everybody did it, pass to the next Action with the same order of play:
+     * after this selection, system draws the students from the bag to the cloud.
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        if (this.getGameEngine().getRound().playerTurnEnded()) { // There's someone else next
-            // Set that the next player has to select the assistant
-            ArrayList<Integer> nextActions = new ArrayList<>();
-            nextActions.add(this.getId());
-            this.getGameEngine().getRound().setPossibleActions(nextActions);
-        } else {
-            // Everyone selected the Wizard. Now players have to select the assistant card: I let them play with the same
-            // order as here
-            this.getGameEngine().getRound().setOrderOfPlay(this.getGameEngine().getRound().getOrderOfPlay());
-
-            // Set next action (select assistant card)
-            ArrayList<Integer> nextActions = new ArrayList<>();
-            nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID);
-            this.getGameEngine().getRound().setPossibleActions(nextActions);
+        if (! this.getGameEngine().getRound().playerTurnEnded()) { // After there's nobody
+            // Remove this action from player's actions list
+            ArrayList<Integer> nextActions = getGameEngine().getRound().getPossibleActions();
+            // Remove, if it returns false, the action isn't inside -> Wrong game state
+            if (!nextActions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID)))
+                throw new IllegalGameStateException("OnSelectionOfWizard action was run but it wasn't in Round actions");
+            getGameEngine().getRound().setPossibleActions(nextActions);
+            // Draw from bag to cloud automatically
+            this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, ModelConstants.NO_PLAYER, new HashMap<>(), true);
+            // Next actions are set from the DrawFromBagToCloud; the order is not set to permit using the same order as before
         }
+        // Else, this action remains in the player's actions list (I don't edit round actions)
     }
 
 }

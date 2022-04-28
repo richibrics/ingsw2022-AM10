@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.model.managers.CommonManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,4 +73,20 @@ public abstract class AbstractAssignProfessorAction extends Action {
 
     @Override
     public void setOptions(Map<String, String> options) throws Exception { }
+
+    /**
+     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * and the order of play, and the Action List in the Action Manager.
+     *
+     * After this action the player will move mother nature, so I add that action to the round action list.
+     *
+     * @throws Exception if something bad happens
+     */
+
+    @Override
+    public void modifyRoundAndActionList() throws Exception {
+        ArrayList<Integer> possibleActions = getGameEngine().getRound().getPossibleActions();
+        possibleActions.add(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID);
+        this.getGameEngine().getRound().setPossibleActions(possibleActions);
+    }
 }

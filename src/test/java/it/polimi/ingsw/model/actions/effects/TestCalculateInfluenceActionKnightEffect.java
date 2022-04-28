@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
@@ -94,5 +95,18 @@ class TestCalculateInfluenceActionKnightEffect {
 
     @Test
     void setOptions() {
+    }
+
+    /**
+     * Checks that the original calculateInfluenceAction is set back in the actions list and that the next
+     * action for the player is from cloud tile to entrance.
+     */
+    @Test
+    void modifyRoundAndActionList() {
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
+        gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionKnightEffect;
+        assertDoesNotThrow(()->calculateInfluenceActionKnightEffect.modifyRoundAndActionList());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
+        assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID], calculateInfluenceAction);
     }
 }
