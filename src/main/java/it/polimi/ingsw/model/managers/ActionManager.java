@@ -85,10 +85,25 @@ public class ActionManager extends Manager {
      * @throws Exception if the action executed throws an exception
      */
 
-    public void executeAction(int actionId, int playerId, Map<String, String> options) throws Exception {
+    public void prepareAndExecuteAction(int actionId, int playerId, Map<String, String> options, boolean runModifyRoundAndActionList) throws Exception {
         actions[actionId].setPlayerId(playerId);
         actions[actionId].setOptions(options);
         actions[actionId].act();
+        if(runModifyRoundAndActionList)
+            actions[actionId].modifyRoundAndActionList();
+    }
+
+    /**
+     * Sets the playerId and executes the action, without setting any option.
+     * @param actionId the identifier of the action
+     * @param playerId the identifier of the player performing the action
+     * @throws Exception if the action executed throws an exception
+     */
+    public void executeInternalAction(int actionId, int playerId, boolean runModifyRoundAndActionList) throws Exception {
+        actions[actionId].setPlayerId(playerId);
+        actions[actionId].act();
+        if (runModifyRoundAndActionList)
+            actions[actionId].modifyRoundAndActionList();
     }
 
     /**

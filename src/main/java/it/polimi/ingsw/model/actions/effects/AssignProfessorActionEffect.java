@@ -50,6 +50,7 @@ public abstract class AssignProfessorActionEffect extends AbstractAssignProfesso
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
+        super.modifyRoundAndActionList();
         this.modifyActionList();
     }
 }

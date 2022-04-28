@@ -46,6 +46,7 @@ class TestMoveStudentsFromEntranceAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
         assertDoesNotThrow(()->setUpThreePlayersAction.act());
 
@@ -187,6 +188,11 @@ class TestMoveStudentsFromEntranceAction {
         return false;
     }
 
+    /**
+     * Checks if at third movement, the action is removes from round actions list and not before.
+     * Also checks that at third movement, the MoveProfessor action is run.
+     * Tests also that if it's called again after 3 new movements, it throws an exception.
+     */
     @Test
     void modifyRoundAndActionList() {
         ArrayList<Integer> nextActions = new ArrayList<>();
@@ -201,7 +207,12 @@ class TestMoveStudentsFromEntranceAction {
         assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
 
-        // Check next actions are correct
+        // Check next Assign professor started (will set to next actions the MoveMotherNature action)
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
+
+        // Action not in round anymore, at third movement when I remove it there's an exception
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, ()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
     }
 }

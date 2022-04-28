@@ -142,4 +142,17 @@ class TestCalculateInfluenceActionMushroomHunterEffect {
         options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, "-1");
         assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options));
     }
+
+    /**
+     * Checks that the original calculateInfluenceAction is set back in the actions list and that the next
+     * action for the player is from cloud tile to entrance.
+     */
+    @Test
+    void modifyRoundAndActionList() {
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
+        gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionMushroomHunterEffect;
+        assertDoesNotThrow(()->calculateInfluenceActionMushroomHunterEffect.modifyRoundAndActionList());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
+        assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID], calculateInfluenceAction);
+    }
 }

@@ -50,14 +50,23 @@ public class ModelConstants {
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM = -1;
     public static int ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND = -1;
 
-    public static int ISLAND_TILES_NUMBER = 12;
+    public static int NUMBER_OF_ISLAND_TILES = 12;
     public static int MIN_ID_OF_ISLAND = 1;
+    public static int MIN_ID_OF_PLAYER = 1;
+    public static int MIN_ID_OF_TOWER = 1;
+    public static int MIN_ID_OF_STUDENT_DISC = 1;
+    public static int MIN_ID_OF_CLOUD_TILE = 1;
     public static int NUMBER_OF_MOVEMENTS_FROM_ENTRANCE = 3;
     public static int MIN_NUMBER_OF_ISLAND_GROUPS = 3;
     public static int MAX_NUMBER_OF_TOWERS = 8;
     public static int NUMBER_OF_TOWERS_TWO_FOUR_PLAYERS = 8;
     public static int NUMBER_OF_TOWERS_THREE_PLAYERS = 6;
     public static int MAX_NUMBER_OF_STUDENTS_IN_BAG = 126;
+    public static int INITIAL_NUMBER_OF_STUDENTS_PER_COLOR = 26;
+    public static int INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_TWO_FOUR_PLAYERS = 7;
+    public static int INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS = 9;
+    public static int NUMBER_OF_CHARACTER_CARDS = 3;
+    public static int INITIAL_NUMBER_OF_STUDENTS_PER_ISLAND = 2;
 
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_TWO_PLAYERS_STUDENTS_NUMBER = 3;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_THREE_PLAYERS_STUDENTS_NUMBER = 4;

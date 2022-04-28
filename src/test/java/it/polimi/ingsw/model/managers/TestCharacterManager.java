@@ -29,9 +29,9 @@ class TestCharacterManager {
      * Tests that 3 different Character are returned.
      */
     @Test
-    void pickThreeCharacters() {
+    void pickCharacters() {
         CharacterManager characterManager = new CharacterManager(new GameEngine(new ArrayList<>()));
-        ArrayList<Character> characters = characterManager.pickThreeCharacters();
+        ArrayList<Character> characters = assertDoesNotThrow(()->characterManager.pickCharacters(3));
         assertEquals(3, characters.size());
         assertNotEquals(characters.get(0), characters.get(1));
         assertNotEquals(characters.get(0), characters.get(2));

@@ -52,7 +52,7 @@ public class MoveStudentsFromEntranceAction extends Action {
             throw new WrongMessageContentException("Error while parsing the future student position from the ActionMessage");
         }
         if (this.futureStudentPosition != ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM
-                && (this.futureStudentPosition < 1 || this.futureStudentPosition>12))
+                && (this.futureStudentPosition < ModelConstants.MIN_ID_OF_ISLAND || this.futureStudentPosition > ModelConstants.NUMBER_OF_ISLAND_TILES))
             throw new WrongMessageContentException("Future student position is not valid");
     }
 
@@ -83,6 +83,8 @@ public class MoveStudentsFromEntranceAction extends Action {
      * and the order of play, and the Action List in the Action Manager.
      * In this case I count the number of times the player has moved a student. If it's 3 I can remove this action
      * from the playable actions and add the next ones.
+     * Also, when all (3) students have been moved, run the "calculate influence" (not at every movement cause if I call
+     * the first time calculate influence that has en effect active, at the second movement the effect isn't active anymore).
      * @throws Exception if something bad happens
      */
 
@@ -90,15 +92,19 @@ public class MoveStudentsFromEntranceAction extends Action {
     public void modifyRoundAndActionList() throws Exception {
         this.countMovedStudents += 1;
         if(this.countMovedStudents >= ModelConstants.NUMBER_OF_MOVEMENTS_FROM_ENTRANCE) {
-            this.countMovedStudents = 0;
+            this.countMovedStudents = 0; // Reset counter for the next player.
+
+            // Remove this action from the possible actions list
             ArrayList<Integer> nextActions = this.getGameEngine().getRound().getPossibleActions();
-            // Remove this action from round
-            nextActions.remove(Integer.valueOf(this.getId()));
-            // Add next actions
-            nextActions.add(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID);
-            // Set actions
+            if(!nextActions.remove(Integer.valueOf(this.getId()))) // Tests it was inside the round before removing, if so removes it
+                throw new IllegalGameStateException("MoveStudentsFromEntrance action was run but it wasn't in Round actions");
             this.getGameEngine().getRound().setPossibleActions(nextActions);
+
+            // Run the Assign professor action
+            this.getGameEngine().getActionManager().executeInternalAction(ModelConstants.ACTION_ASSIGN_PROFESSORS_ID, this.getPlayerId(), true);
+
+            // Next actions are set from the assign professor action
         }
-        // Otherwise, round is not edited
+        // Otherwise, round is not edited; this action will run other times.
     }
 }

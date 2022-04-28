@@ -119,6 +119,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
 
+        addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         // Check round is going forward
         assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
@@ -164,6 +165,7 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
 
+        addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList()); // This generates the new order
@@ -174,7 +176,6 @@ class TestOnSelectionOfAssistantsCardAction {
         assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(2)));
 
         // Check next actions
-        assertEquals(2, gameEngine.getRound().getPossibleActions().size());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
 
@@ -190,14 +191,39 @@ class TestOnSelectionOfAssistantsCardAction {
         assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 2).getActiveAssistantCard());
         assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 3).getActiveAssistantCard());
         // Send the round state forward to when only one player remains
+        addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
         assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+
         // Now if I call the modifyRAAL it makes the new order: I break it removing the card from one player
         assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 2).popActiveAssistantCard());
         // Check that the Action recognize an unknown game state
         assertThrows(IllegalGameStateException.class, ()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
     }
 
+    /**
+     * Checks an exception is thrown when Round players finished selection, and I try to remove the action from the round, but it's not there
+     */
+    @Test
+    void modifyRoundAndActionListWhenActionNotInRound() {
+        // Go in finished round situation, when the OnSelectionOfAssistantsCardAction will remove the action from round actions list
+        gameEngine.getRound().setPossibleActions(new ArrayList<>());
+        gameEngine.getRound().playerTurnEnded();
+        gameEngine.getRound().playerTurnEnded();
+
+        // --- set back the assistants card because it would throw an exception for cards not set otherwise
+        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(1,5));
+        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(2,15));
+        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,25));
+
+        // Okay now it's ready to be tested
+        assertThrows(IllegalGameStateException.class, ()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+    }
+
+    /**
+     * Checks player can't play with a card he doesn't have
+     */
     @Test
     void actWithWrongCardNumber() {
         HashMap<String, String> options = new HashMap<>();
@@ -210,5 +236,26 @@ class TestOnSelectionOfAssistantsCardAction {
 
         // Check not okay
         assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine,1).getActiveAssistantCard().getId());
+    }
+
+    /**
+     * Checks if a wrong game state exception os thrown when modify round should remove OnSelectionOfAssistantsCard action from the
+     * round, but it's not inside it
+     */
+    @Test
+    void modifyRoundAndActionListCheckIllegalStateExceptionThrown() {
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        // Remove action that should be inside -> create an inconsistency
+        ArrayList<Integer> nextActions = gameEngine.getRound().getPossibleActions();
+        nextActions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
+        gameEngine.getRound().setPossibleActions(nextActions);
+        assertThrows(IllegalGameStateException.class, ()-> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+    }
+
+    void addActionToRoundActions(GameEngine gameEngine) {
+        ArrayList<Integer> nextActions = gameEngine.getRound().getPossibleActions();
+        nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID);
+        gameEngine.getRound().setPossibleActions(nextActions);
     }
 }

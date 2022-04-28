@@ -127,7 +127,7 @@ class TestCalculateInfluenceAction {
 
         /* Create array of students */
         ArrayList<StudentDisc> students = new ArrayList<>();
-        if (newMotherNatureIslandId != (motherNatureIslandId + ModelConstants.ISLAND_TILES_NUMBER/2) % ModelConstants.ISLAND_TILES_NUMBER) {
+        if (newMotherNatureIslandId != (motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES) {
             /* The island with id newMotherNatureIslandId already has a student disc if it is not opposite
             to the island with id motherNatureIslandId */
             if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.RED)) {
@@ -208,11 +208,14 @@ class TestCalculateInfluenceAction {
         assertFalse(assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).hasNoEntry()));
     }
 
+    /**
+     * Checks next action is added to round actions list
+     */
     @Test
     void modifyRoundAndActionList() {
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         assertDoesNotThrow(()->calculateInfluenceAction.modifyRoundAndActionList());
-        assertEquals(gameEngine.getRound().getPossibleActions().get(0), ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
-        assertEquals(gameEngine.getRound().getPossibleActions().get(1), ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID);
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
     }
 
     @Test

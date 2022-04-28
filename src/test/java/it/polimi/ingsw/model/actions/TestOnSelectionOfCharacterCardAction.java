@@ -68,6 +68,11 @@ class TestOnSelectionOfCharacterCardAction {
         assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         onSelectionOfCharacterCardAction = new OnSelectionOfCharacterCardAction(gameEngine);
+
+        // Place OnSelectCharacterCard in round actions list
+        ArrayList<Integer> nextActions = gameEngine.getRound().getPossibleActions();
+        nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
+        gameEngine.getRound().setPossibleActions(nextActions);
     }
 
     /**
@@ -111,5 +116,19 @@ class TestOnSelectionOfCharacterCardAction {
         // Now remove the table and get IllegalState
         gameEngine.setTable(null);
         assertThrows(IllegalGameStateException.class, () -> onSelectionOfCharacterCardAction.act());
+    }
+
+    /**
+     * Checks that this action is removed from round once used.
+     * Checks exception thrown if this action was run without being in round actions list.
+     */
+    @Test
+    void modifyRoundAndActionList() {
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+        assertDoesNotThrow(()->onSelectionOfCharacterCardAction.modifyRoundAndActionList());
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+
+        // Now run again, this action is not in round anymore -> exception
+        assertThrows(IllegalGameStateException.class, ()->onSelectionOfCharacterCardAction.modifyRoundAndActionList());
     }
 }

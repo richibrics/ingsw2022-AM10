@@ -19,7 +19,6 @@ public abstract class SetUp extends Action {
         super(ModelConstants.ACTION_SETUP_ID, gameEngine);
     }
 
-    //TODO
     public void setOptions(Map<String, String> options) throws Exception {
 
     }
@@ -33,7 +32,7 @@ public abstract class SetUp extends Action {
         ArrayList<ArrayList<IslandTile>> islandGroups = this.setUpIsland();
         MotherNature motherNature = this.placeMotherNature(islandGroups);
         ArrayList<StudentDisc> studentDiscs = this.generateStudentDiscs();
-        this.drawFromBagAndPutOnIsland(bag, studentDiscs, islandGroups, motherNature.getIslandTile().getId() - 1);
+        this.drawFromBagAndPutOnIsland(bag, studentDiscs, islandGroups, motherNature.getIslandTile().getId() - ModelConstants.MIN_ID_OF_ISLAND);
         this.putRemainingStudentsInBag(bag, studentDiscs);
         this.setUpCloudTiles(cloudTiles);
         this.setUpProfessors(professorPawns);
@@ -56,7 +55,7 @@ public abstract class SetUp extends Action {
      */
 
     protected void drawCharacters(Map<Integer, CharacterCard> characterCards, Bag bag) throws Exception {
-        ArrayList<Character> characters = this.getGameEngine().getCharacterManager().pickThreeCharacters();
+        ArrayList<Character> characters = this.getGameEngine().getCharacterManager().pickCharacters(ModelConstants.NUMBER_OF_CHARACTER_CARDS);
         for (Character character : characters) {
             characterCards.put(character.getId(), new CharacterCard(character));
         }
@@ -75,7 +74,7 @@ public abstract class SetUp extends Action {
 
     protected ArrayList<ArrayList<IslandTile>> setUpIsland() {
         ArrayList<ArrayList<IslandTile>> islandGroups = new ArrayList<>();
-        for (int i = 1; i <= 12; i++) {
+        for (int i = ModelConstants.MIN_ID_OF_ISLAND; i <= ModelConstants.NUMBER_OF_ISLAND_TILES; i++) {
             ArrayList<IslandTile> islandGroup = new ArrayList<>();
             islandGroup.add(new IslandTile(i));
             islandGroups.add(islandGroup);
@@ -109,7 +108,8 @@ public abstract class SetUp extends Action {
     protected ArrayList<StudentDisc> generateStudentDiscs() {
         ArrayList<StudentDisc> studentDiscs = new ArrayList<>();
         for (PawnColor color : PawnColor.values())
-            for (int id = 26 * color.getId() + 1; id <= 26 + 26 * color.getId(); id++)
+            for (int id = ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * color.getId() + ModelConstants.MIN_ID_OF_STUDENT_DISC;
+                    id <= ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR + ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * color.getId(); id++)
                 studentDiscs.add(new StudentDisc(id, color));
         return studentDiscs;
     }
@@ -132,14 +132,17 @@ public abstract class SetUp extends Action {
         // the students of the next color are available from index {24 * color.getId} (26-2).
 
         ArrayList<StudentDisc> students = new ArrayList<>();
-        for (PawnColor color : PawnColor.values())
-            for (int i = color.getId() * 24; i < color.getId() * 24 + 2; i++)
+        for (PawnColor color : PawnColor.values()) {
+            int indexOfSecondToLastOfThisColor = color.getId() * (ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR - ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_ISLAND);
+            int indexOfFirstOfNextColor = indexOfSecondToLastOfThisColor + ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_ISLAND;
+            for (int i = indexOfSecondToLastOfThisColor; i < indexOfFirstOfNextColor; i++)
                 students.add(studentDiscs.remove(i));
+        }
 
         bag.pushStudents(students);
 
-        for (int i = 0; i < 12; i++)
-            if (i != indexOfMotherNatureIsland && i != (indexOfMotherNatureIsland + 6) % 12)
+        for (int i = 0; i < ModelConstants.NUMBER_OF_ISLAND_TILES; i++)
+            if (i != indexOfMotherNatureIsland && i != (indexOfMotherNatureIsland + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES)
                 islandGroups.get(i).get(0).addStudent(bag.drawStudents(1).get(0));
     }
 
@@ -161,7 +164,7 @@ public abstract class SetUp extends Action {
      */
 
     protected void setUpCloudTiles(ArrayList<CloudTile> cloudTiles) {
-        int id = 1;
+        int id = ModelConstants.MIN_ID_OF_CLOUD_TILE;
         for (Team team : this.getGameEngine().getTeams())
             for (Player player : team.getPlayers()) {
                 cloudTiles.add(new CloudTile(id));
@@ -215,6 +218,7 @@ public abstract class SetUp extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * After setup, players have to choose the Wizard.
      * @throws Exception if something bad happens
      */
 
@@ -224,7 +228,7 @@ public abstract class SetUp extends Action {
         Collections.shuffle(orderOfPlay);
         round.setOrderOfPlay(orderOfPlay);
         ArrayList<Integer> possibleActions = new ArrayList<>();
-        possibleActions.add(0); // Action for the Player: OnSelectionOfWizardAction
+        possibleActions.add(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID); // Action for the Player: OnSelectionOfWizardAction
         round.setPossibleActions(possibleActions);
     }
 }

@@ -5,9 +5,11 @@ import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.game_components.AssistantCard;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.PawnColor;
+import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +44,7 @@ class TestCheckEndMatchConditionAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         checkEndMatchConditionAction = new CheckEndMatchConditionAction(gameEngine);
     }
 
@@ -49,13 +52,20 @@ class TestCheckEndMatchConditionAction {
     void setOptions() {
     }
 
+    /**
+     * Checks that a new order is created and that DrawFromBagToCloud run
+     */
     @Test
     void modifyRoundAndActionList() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(1, 1));
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(2, 2));
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(3, 3));
         assertDoesNotThrow(()->checkEndMatchConditionAction.modifyRoundAndActionList());
+        // Checks I have only one action in the round which is the OnSelectionOfAssistantCard which had been added
+        // from the DrawFromBagToCloud action
+        assertEquals(1, gameEngine.getRound().getPossibleActions().size());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
+        // Also I can test DrawFromBagToCloud run because it has drawn from the bag ad added to the clouds.
         assertEquals(assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()), 4);
         assertEquals(assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(1).peekStudents().size()), 4);
         assertEquals(assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(2).peekStudents().size()), 4);
@@ -63,7 +73,6 @@ class TestCheckEndMatchConditionAction {
 
     @Test
     void checkTowersCondition() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS; i ++)
             assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
         Integer[] winner = assertDoesNotThrow(()->checkEndMatchConditionAction.checkTowersCondition());
@@ -73,7 +82,6 @@ class TestCheckEndMatchConditionAction {
 
     @Test
     void findWinner() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         /* First criterion: number of towers left */
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 2; i++)
             assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
@@ -103,7 +111,6 @@ class TestCheckEndMatchConditionAction {
 
     @Test
     void checkIslandGroupsCondition() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
 
         /* Place towers on islands */
         ArrayList<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(()->gameEngine.getTable().getIslandTiles());
@@ -143,7 +150,6 @@ class TestCheckEndMatchConditionAction {
 
     @Test
     void noStudentsInBagCondition() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
 
         /* Remove students from bag */
         int studentsInBag = ModelConstants.MAX_NUMBER_OF_STUDENTS_IN_BAG;
@@ -169,7 +175,6 @@ class TestCheckEndMatchConditionAction {
 
     @Test
     void noAssistantCardsCondition() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         gameEngine.getAssistantManager().setWizard(1, 1);
         gameEngine.getAssistantManager().setWizard(2, 2);
         gameEngine.getAssistantManager().setWizard(3, 3);
@@ -199,6 +204,29 @@ class TestCheckEndMatchConditionAction {
         /* The winners should be the second and third team */
         assertEquals(winners[0], 2);
         assertEquals(winners[1], 3);
+    }
+
+    /**
+     * Tests what happens if there's no winner and the next round is prepared.
+     * Players assistant cards are set to old played cards
+     */
+    @Test
+    void actNoWinnerPrepareNextRound() {
+        // Prepare the game to check an EndMatchCondition without win
+        gameEngine.getAssistantManager().setWizard(1,1);
+        gameEngine.getAssistantManager().setWizard(2,2);
+        gameEngine.getAssistantManager().setWizard(3,3);
+        gameEngine.getAssistantManager().setAssistantCard(1,1);
+        gameEngine.getAssistantManager().setAssistantCard(2,12);
+        gameEngine.getAssistantManager().setAssistantCard(3,23);
+
+        // Do the tests
+        assertDoesNotThrow(()->checkEndMatchConditionAction.act());
+        for (int i = 1; i <= gameEngine.getNumberOfPlayers(); i++) {
+            int finalI = i;
+            assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine, finalI).getActiveAssistantCard());
+        }
+
     }
 
     //TODO
