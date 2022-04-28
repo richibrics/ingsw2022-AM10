@@ -216,10 +216,13 @@ class TestCheckEndMatchConditionAction {
         gameEngine.getAssistantManager().setWizard(1,1);
         gameEngine.getAssistantManager().setWizard(2,2);
         gameEngine.getAssistantManager().setWizard(3,3);
+        gameEngine.getAssistantManager().setAssistantCard(1,1);
+        gameEngine.getAssistantManager().setAssistantCard(2,12);
+        gameEngine.getAssistantManager().setAssistantCard(3,23);
 
         // Do the tests
         assertDoesNotThrow(()->checkEndMatchConditionAction.act());
-        for (int i = 1; i < gameEngine.getNumberOfPlayers(); i++) {
+        for (int i = 1; i <= gameEngine.getNumberOfPlayers(); i++) {
             int finalI = i;
             assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine, finalI).getActiveAssistantCard());
         }

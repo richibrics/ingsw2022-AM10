@@ -176,7 +176,7 @@ public class CheckEndMatchConditionAction extends Action {
 
         // If no winners, prepare for next round
         if (winners == null)
-            for (int i = ModelConstants.MIN_ID_OF_PLAYER; i < getGameEngine().getNumberOfPlayers(); i++) {
+            for (int i = ModelConstants.MIN_ID_OF_PLAYER; i <= getGameEngine().getNumberOfPlayers(); i++) {
                 getGameEngine().getAssistantManager().moveAssistantCardInHandToLastPlayed(i);
             }
     }
