@@ -7,7 +7,10 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
 import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
-import it.polimi.ingsw.model.game_components.*;
+import it.polimi.ingsw.model.game_components.IslandTile;
+import it.polimi.ingsw.model.game_components.PawnColor;
+import it.polimi.ingsw.model.game_components.ProfessorPawn;
+import it.polimi.ingsw.model.game_components.StudentDisc;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -16,7 +19,8 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestCalculateInfluenceActionCentaurEffect {
 
@@ -32,7 +36,7 @@ class TestCalculateInfluenceActionCentaurEffect {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -52,7 +56,7 @@ class TestCalculateInfluenceActionCentaurEffect {
         calculateInfluenceActionCentaurEffect = new CalculateInfluenceActionCentaurEffect(gameEngine, calculateInfluenceAction);
 
         setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
     }
 
     @Test
@@ -66,19 +70,18 @@ class TestCalculateInfluenceActionCentaurEffect {
         for (StudentDisc studentDisc : studentDiscs)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
 
-        int motherNatureIslandId = assertDoesNotThrow(()->gameEngine.getIslandManager().getMotherNatureIslandId());
+        int motherNatureIslandId = assertDoesNotThrow(() -> gameEngine.getIslandManager().getMotherNatureIslandId());
         if (motherNatureIslandId != 1 && motherNatureIslandId != 12) {
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).setTower(gameEngine.getTeams().get(0).popTower()));
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId + 1).setTower(gameEngine.getTeams().get(0).popTower()));
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId - 1).setTower(gameEngine.getTeams().get(0).popTower()));
-        }
-        else {
+        } else {
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).setTower(gameEngine.getTeams().get(0).popTower()));
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId == 1 ? motherNatureIslandId + 1 : motherNatureIslandId - 1).setTower(gameEngine.getTeams().get(0).popTower()));
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId == 1 ? motherNatureIslandId + 2 : motherNatureIslandId - 2).setTower(gameEngine.getTeams().get(0).popTower()));
         }
 
-        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().unifyPossibleIslands());
 
         int influence1 = 0;
         int influence2 = 0;
@@ -86,26 +89,26 @@ class TestCalculateInfluenceActionCentaurEffect {
 
         Random rand = new Random();
 
-        IslandTile motherNatureIsland = assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()));
-        List<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(()->gameEngine.getTable().getIslandTiles().stream().filter(islandGroup-> islandGroup.contains(motherNatureIsland)).toList());
+        IslandTile motherNatureIsland = assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()));
+        List<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(() -> gameEngine.getTable().getIslandTiles().stream().filter(islandGroup -> islandGroup.contains(motherNatureIsland)).toList());
 
-        for (ProfessorPawn professorPawn : assertDoesNotThrow(()->gameEngine.getTable().getAvailableProfessorPawns())) {
+        for (ProfessorPawn professorPawn : assertDoesNotThrow(() -> gameEngine.getTable().getAvailableProfessorPawns())) {
             int index = rand.nextInt(0, 3);
             gameEngine.getTeams().get(index).addProfessorPawn(professorPawn);
             if (index == 0)
                 for (IslandTile islandTile : islandGroups.get(0))
-                    influence1 += assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
+                    influence1 += assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
             else if (index == 1)
                 for (IslandTile islandTile : islandGroups.get(0))
-                    influence2 += assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
+                    influence2 += assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
             else if (index == 2)
                 for (IslandTile islandTile : islandGroups.get(0))
-                    influence3 += assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
+                    influence3 += assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
         }
 
         Map<Integer, Integer> influences = new HashMap<>();
 
-        assertDoesNotThrow(()->calculateInfluenceActionCentaurEffect.calculateInfluences(influences, islandGroups.get(0)));
+        assertDoesNotThrow(() -> calculateInfluenceActionCentaurEffect.calculateInfluences(influences, islandGroups.get(0)));
         assertEquals(influence1, influences.get(1));
         assertEquals(influence2, influences.get(2));
         assertEquals(influence3, influences.get(3));
@@ -126,13 +129,13 @@ class TestCalculateInfluenceActionCentaurEffect {
         for (StudentDisc studentDisc : students)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
 
-        ProfessorPawn yellowProfessor = assertDoesNotThrow(()->gameEngine.getTable().popProfessorPawn(PawnColor.YELLOW));
-        ProfessorPawn redProfessor = assertDoesNotThrow(()->gameEngine.getTable().popProfessorPawn(PawnColor.RED));
+        ProfessorPawn yellowProfessor = assertDoesNotThrow(() -> gameEngine.getTable().popProfessorPawn(PawnColor.YELLOW));
+        ProfessorPawn redProfessor = assertDoesNotThrow(() -> gameEngine.getTable().popProfessorPawn(PawnColor.RED));
         gameEngine.getTeams().get(1).addProfessorPawn(yellowProfessor);
         gameEngine.getTeams().get(0).addProfessorPawn(redProfessor);
 
         assertDoesNotThrow(() -> calculateInfluenceActionCentaurEffect.act());
-        assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).getTower().getColor()), assertDoesNotThrow(()->CommonManager.takeTeamById(gameEngine, 2).getTeamTowersColor()));
+        assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).getTower().getColor()), assertDoesNotThrow(() -> CommonManager.takeTeamById(gameEngine, 2).getTeamTowersColor()));
     }
 
     /**

@@ -21,7 +21,12 @@ public class FriarEffectAction extends Action {
         super(ModelConstants.ACTION_FRIAR_ID, gameEngine);
     }
 
-
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     * In this case I get the student and the island Ids from the options.
+     *
+     * @param options additional information for act method.
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_STUDENT))
@@ -45,6 +50,7 @@ public class FriarEffectAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * In this case the round doesn't change.
      *
      * @throws Exception if something bad happens
      */
@@ -54,6 +60,12 @@ public class FriarEffectAction extends Action {
 
     }
 
+    /**
+     * Moves the student specified in options from the card storage to the island specified in options.
+     * At the end the storage is filled by a CharacterManager method and throw Exception if the bag is empty.
+     *
+     * @throws Exception if something bad happens.
+     */
     @Override
     public void act() throws Exception {
         CharacterCard characterCard = this.getGameEngine().getTable().getCharacterCards().get(Character.FRIAR.getId());

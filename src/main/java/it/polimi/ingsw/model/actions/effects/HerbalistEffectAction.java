@@ -20,7 +20,7 @@ public class HerbalistEffectAction extends Action {
      * Sets the options. Options represents additional information used by the act method.
      * In this case I get the island id from the options.
      *
-     * @param options additional information for act method
+     * @param options additional information for act method.
      */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
@@ -37,17 +37,22 @@ public class HerbalistEffectAction extends Action {
     }
 
     /**
-     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * Modifies the Round class, which contains the actions that can be performed by the current player.
      * and the order of play, and the Action List in the Action Manager.
      * In this case the round doesn't change.
      *
-     * @throws Exception if something bad happens
+     * @throws Exception if something bad happens.
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
     }
 
+    /**
+     * Sets the noEntryTile on the island specified in options and decrease the number of AvailableNoEntryTiles in Table.
+     *
+     * @throws Exception if something bad happens.
+     */
     @Override
     public void act() throws Exception {
         // Check I have available no entry tiles

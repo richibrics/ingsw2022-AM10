@@ -18,14 +18,19 @@ public class ThiefEffectAction extends Action {
         super(ModelConstants.ACTION_THIEF_ID, gameEngine);
     }
 
-
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     * In this case I get the color from the options.
+     *
+     * @param options additional information for act method.
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_THIEF_OPTIONS_KEY_COLOR))
             throw new WrongMessageContentException("ActionMessage doesn't contain the color");
         try {
             this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_THIEF_OPTIONS_KEY_COLOR));
-        } catch (IllegalArgumentException e) {
+        } catch (WrongMessageContentException e) {
             throw new WrongMessageContentException("Error while parsing color from the ActionMessage");
         }
     }
@@ -33,8 +38,9 @@ public class ThiefEffectAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * In this case the round doesn't change.
      *
-     * @throws Exception if something bad happens
+     * @throws Exception if something bad happens.
      */
 
     @Override
@@ -42,6 +48,13 @@ public class ThiefEffectAction extends Action {
 
     }
 
+    /**
+     * Removes three DiningRoom students, with the specified color from options, from all schoolBoards,
+     * or fewer students in case a player hasn't three student with this one.
+     * Then it adds these students to the bag.
+     *
+     * @throws Exception if something bad happens.
+     */
     @Override
     public void act() throws Exception {
         ArrayList<StudentDisc> studentsToPush = new ArrayList<>();

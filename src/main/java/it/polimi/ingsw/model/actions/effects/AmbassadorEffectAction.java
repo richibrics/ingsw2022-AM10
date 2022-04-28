@@ -17,7 +17,12 @@ public class AmbassadorEffectAction extends Action {
         super(ModelConstants.ACTION_AMBASSADOR_ID, gameEngine);
     }
 
-
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     * In this case I get the island id from the options.
+     *
+     * @param options additional information for act method.
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND))
@@ -27,10 +32,11 @@ public class AmbassadorEffectAction extends Action {
     }
 
     /**
-     * Modifies the Round class, which contains the actions that can be performed by the current player
+     * Modifies the Round class, which contains the actions that can be performed by the current player.
      * and the order of play, and the Action List in the Action Manager.
+     * In this case the round doesn't change.
      *
-     * @throws Exception if something bad happens
+     * @throws Exception if something bad happens.
      */
 
     @Override
@@ -39,7 +45,8 @@ public class AmbassadorEffectAction extends Action {
 
     /**
      * Calculates the influence on the island specified in options.
-     * @throws Exception if something bad happens
+     *
+     * @throws Exception if something bad happens.
      */
 
     @Override

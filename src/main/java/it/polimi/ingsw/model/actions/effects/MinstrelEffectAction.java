@@ -24,6 +24,13 @@ public class MinstrelEffectAction extends Action {
         super(ModelConstants.ACTION_MINSTREL_ID, gameEngine);
     }
 
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     * In this case I get from one to two different student Ids in the DiningRoom
+     * and the other student Ids in the entrance.
+     *
+     * @param options additional information for act method.
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM1))
@@ -41,7 +48,8 @@ public class MinstrelEffectAction extends Action {
             throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
         }
 
-
+        this.studentInDiningRoom2Id = null;
+        this.studentInEntrance2Id = null;
         if (options.containsKey(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM2)) {
             try {
                 this.studentInDiningRoom2Id = Integer.parseInt(options.get(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM2));
@@ -64,8 +72,9 @@ public class MinstrelEffectAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * In this case the round doesn't change.
      *
-     * @throws Exception if something bad happens
+     * @throws Exception if something bad happens.
      */
 
     @Override
@@ -73,6 +82,11 @@ public class MinstrelEffectAction extends Action {
 
     }
 
+    /**
+     * Switches from one to two different students of the entrance with other students of the DiningRoom.
+     *
+     * @throws Exception if something bad happens.
+     */
     @Override
     public void act() throws Exception {
         StudentDisc studentInEntrance1 = null;
