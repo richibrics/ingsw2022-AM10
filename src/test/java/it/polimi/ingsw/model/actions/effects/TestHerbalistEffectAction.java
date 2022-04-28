@@ -6,7 +6,6 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.actions.OnSelectionOfAssistantsCardAction;
 import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.managers.CommonManager;
@@ -30,7 +29,7 @@ class TestHerbalistEffectAction {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -46,7 +45,7 @@ class TestHerbalistEffectAction {
         teams.add(team3);
         gameEngine = new GameEngine(teams);
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         herbalistEffectAction = new HerbalistEffectAction(gameEngine);
     }
@@ -63,21 +62,21 @@ class TestHerbalistEffectAction {
         assertThrows(WrongMessageContentException.class, () -> herbalistEffectAction.setOptions(options));
 
         // Parse error
-        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND,"a");
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "a");
         assertThrows(WrongMessageContentException.class, () -> herbalistEffectAction.setOptions(options));
 
         // Out of bound
-        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND,"13");
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "13");
         assertThrows(WrongMessageContentException.class, () -> herbalistEffectAction.setOptions(options));
-        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND,"0");
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "0");
         assertThrows(WrongMessageContentException.class, () -> herbalistEffectAction.setOptions(options));
 
         // OK
-        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND,"12");
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "12");
         assertDoesNotThrow(() -> herbalistEffectAction.setOptions(options));
-        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND,"5");
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "5");
         assertDoesNotThrow(() -> herbalistEffectAction.setOptions(options));
-        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND,"1");
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "1");
         assertDoesNotThrow(() -> herbalistEffectAction.setOptions(options));
     }
 

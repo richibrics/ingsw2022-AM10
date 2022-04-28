@@ -58,7 +58,7 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         /* If color is not in options search for islandId and throw WrongMessageContentException if islandId is not
-        * in options */
+         * in options */
         if (!options.containsKey(ModelConstants.ACTION_CALCULATE_INFLUENCE_MUSHROOM_HUNTER_OPTIONS_KEY_COLOR)) {
             try {
                 super.setOptions(options);
@@ -72,7 +72,8 @@ public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInflu
             this.color = PawnColor.convertStringToPawnColor(options.get(ModelConstants.ACTION_CALCULATE_INFLUENCE_MUSHROOM_HUNTER_OPTIONS_KEY_COLOR));
             try {
                 super.setOptions(options);
-            } catch (WrongMessageContentException e) { }
+            } catch (WrongMessageContentException e) {
+            }
         }
     }
 }

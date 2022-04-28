@@ -43,8 +43,8 @@ class TestAssignProfessorActionCook {
         gameEngine = new GameEngine(teams);
         assignProfessorsAction = new AssignProfessorsAction(gameEngine);
         assignProfessorActionCookEffect = new AssignProfessorActionCookEffect(gameEngine, assignProfessorsAction);
-        setUpTwoAndFourPlayersAction  = new SetUpTwoAndFourPlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
+        setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
+        assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
     }
 
     @Test
@@ -68,19 +68,19 @@ class TestAssignProfessorActionCook {
         /* The condition is in the form F = A and (B or (C and D)) */
         assignProfessorActionCookEffect.setPlayerId(1);
         Team winningTeam = gameEngine.getTeams().get(0);
-        assertDoesNotThrow(()->winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
-        assertDoesNotThrow(()->winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
+        assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
+        assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
         Map<Integer, Long> studentsOfPlayer = new HashMap<>();
         studentsOfPlayer.put(1, (long) 5);
         studentsOfPlayer.put(2, (long) 4);
         /* A = TRUE, B = TRUE, C = TRUE, D = TRUE, F = TRUE */
         assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningTeam, studentsOfPlayer));
 
-        assertDoesNotThrow(()->winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
+        assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
         /* A = FALSE, B = TRUE, C = TRUE, D = TRUE, F = FALSE */
         assertFalse(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningTeam, studentsOfPlayer));
 
-        gameEngine.getSchoolPawnManager().moveProfessor(2,1,PawnColor.RED);
+        gameEngine.getSchoolPawnManager().moveProfessor(2, 1, PawnColor.RED);
         studentsOfPlayer.put(2, (long) 5);
         /* A = TRUE, B = FALSE, C = TRUE, D = TRUE, F = TRUE */
         assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningTeam, studentsOfPlayer));
@@ -98,23 +98,23 @@ class TestAssignProfessorActionCook {
     @Test
     void act() {
         assignProfessorActionCookEffect.setPlayerId(1);
-        assertDoesNotThrow(()->gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
-        assertDoesNotThrow(()->gameEngine.getTeams().get(1).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
-        assertDoesNotThrow(()->gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.YELLOW)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(1).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.YELLOW)));
 
         for (int i = 126; i < 129; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.RED)));
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.RED)));
         }
 
         for (int i = 129; i < 132; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->gameEngine.getTeams().get(1).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.RED)));
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(1).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.RED)));
         }
 
         for (int i = 133; i < 136; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.GREEN)));
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.GREEN)));
         }
 
         for (int i = 136; i < 139; i++) {
@@ -124,7 +124,7 @@ class TestAssignProfessorActionCook {
 
         for (int i = 139; i < 142; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.YELLOW)));
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.YELLOW)));
         }
 
         for (int i = 142; i < 146; i++) {
@@ -132,18 +132,18 @@ class TestAssignProfessorActionCook {
             assertDoesNotThrow(() -> gameEngine.getTeams().get(1).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(finalI, PawnColor.YELLOW)));
         }
 
-        assertDoesNotThrow(()->assignProfessorActionCookEffect.act());
+        assertDoesNotThrow(() -> assignProfessorActionCookEffect.act());
         /* Both players have the same number of red students. The professor should be assigned to the first team */
         assertEquals(gameEngine.getTeams().get(0).getProfessorTable().get(0).getColor(), PawnColor.RED);
         /* Both players have the same number of green students. The professor should be assigned to the first team even
-        * though the professor is in the professor table of the second team */
+         * though the professor is in the professor table of the second team */
         assertEquals(gameEngine.getTeams().get(0).getProfessorTable().get(1).getColor(), PawnColor.GREEN);
         /* The second player has 4 yellow students, while the first player has 3 yellow students. The professor
          * should be assigned to the second team */
         assertEquals(gameEngine.getTeams().get(1).getProfessorTable().get(0).getColor(), PawnColor.YELLOW);
 
         assertDoesNotThrow(() -> gameEngine.getTeams().get(1).getPlayers().get(0).getSchoolBoard().addStudentToDiningRoom(new StudentDisc(147, PawnColor.GREEN)));
-        assertDoesNotThrow(()->assignProfessorActionCookEffect.act());
+        assertDoesNotThrow(() -> assignProfessorActionCookEffect.act());
         /* Now the second player has more green students than the first player */
         assertEquals(gameEngine.getTeams().get(1).getProfessorTable().get(1).getColor(), PawnColor.GREEN);
     }
@@ -155,7 +155,7 @@ class TestAssignProfessorActionCook {
     @Test
     void modifyRoundAndActionList() {
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_ASSIGN_PROFESSORS_ID] = assignProfessorActionCookEffect;
-        assertDoesNotThrow(()->assignProfessorActionCookEffect.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> assignProfessorActionCookEffect.modifyRoundAndActionList());
         assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_ASSIGN_PROFESSORS_ID], assignProfessorsAction);
     }
 }

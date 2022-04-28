@@ -48,6 +48,9 @@ class TestAmbassadorEffectAction {
         assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
     }
 
+    /**
+     * Tests only exception throw or not.
+     */
     @Test
     void setOptions() {
         HashMap<String, String> options = new HashMap<>();
@@ -78,30 +81,30 @@ class TestAmbassadorEffectAction {
         /* Set islandId of Ambassador Effect */
         HashMap<String, String> options = new HashMap<>();
         options.put(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND, "3");
-        assertDoesNotThrow(()->ambassadorEffectAction.setOptions(options));
+        assertDoesNotThrow(() -> ambassadorEffectAction.setOptions(options));
         /* Set no entry tile on island with id 3 */
-        assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 3).setNoEntry(true));
-        assertDoesNotThrow(()->ambassadorEffectAction.act());
+        assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 3).setNoEntry(true));
+        assertDoesNotThrow(() -> ambassadorEffectAction.act());
         /* Changes should have been applied even though the island has a no entry tile */
         assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 3).getTower().getColor()), assertDoesNotThrow(() -> gameEngine.getTeams().get(1).getTeamTowersColor()));
-        assertTrue(assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 3).hasNoEntry()));
+        assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 3).hasNoEntry()));
 
         /* Check if it works with a different calculator of influence */
         CalculateInfluenceActionMushroomHunterEffect calculateInfluenceActionMushroomHunterEffect = new CalculateInfluenceActionMushroomHunterEffect(gameEngine, gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID]);
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionMushroomHunterEffect;
         HashMap<String, String> options1 = new HashMap<>();
         options1.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_MUSHROOM_HUNTER_OPTIONS_KEY_COLOR, "red");
-        assertDoesNotThrow(()->calculateInfluenceActionMushroomHunterEffect.setOptions(options1));
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.setOptions(options1));
         HashMap<String, String> options2 = new HashMap<>();
         options2.put(ModelConstants.ACTION_AMBASSADOR_OPTIONS_KEY_ISLAND, "4");
-        assertDoesNotThrow(()->ambassadorEffectAction.setOptions(options2));
+        assertDoesNotThrow(() -> ambassadorEffectAction.setOptions(options2));
 
         ArrayList<StudentDisc> students = new ArrayList<>();
-        int motherNatureIslandId = assertDoesNotThrow(()->gameEngine.getIslandManager().getMotherNatureIslandId());
-        IslandTile islandTile = assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, 4));
+        int motherNatureIslandId = assertDoesNotThrow(() -> gameEngine.getIslandManager().getMotherNatureIslandId());
+        IslandTile islandTile = assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 4));
         /* Place no entry tile on island 4 */
         islandTile.setNoEntry(true);
-        if (motherNatureIslandId != 4 && ((motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES) != 4) {
+        if (motherNatureIslandId != 4 && ((motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES / 2) % ModelConstants.NUMBER_OF_ISLAND_TILES) != 4) {
             /* The island with id 4 already has a student disc if it is not the island with mother nature or the island opposite
             to the island with mother nature */
             if (islandTile.peekStudents().get(0).getColor().equals(PawnColor.RED)) {
@@ -119,8 +122,7 @@ class TestAmbassadorEffectAction {
                 students.add(new StudentDisc(5, PawnColor.PINK));
                 students.add(new StudentDisc(6, PawnColor.PINK));
             }
-        }
-        else {
+        } else {
 
             students.add(new StudentDisc(1, PawnColor.RED));
             students.add(new StudentDisc(1, PawnColor.RED));
@@ -147,9 +149,9 @@ class TestAmbassadorEffectAction {
         gameEngine.getTeams().get(0).addProfessorPawn(redProfessor);
         gameEngine.getTeams().get(1).addProfessorPawn(pinkProfessor);
 
-        assertDoesNotThrow(()->gameEngine.getActionManager().executeAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options1));
+        assertDoesNotThrow(() -> gameEngine.getActionManager().executeAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options1));
         /* The color red does not count, so the island tile 4 should have a tower of the second team */
-        assertDoesNotThrow(()->ambassadorEffectAction.act());
+        assertDoesNotThrow(() -> ambassadorEffectAction.act());
         assertTrue(islandTile.hasNoEntry());
     }
 }

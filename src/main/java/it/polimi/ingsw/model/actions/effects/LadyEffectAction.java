@@ -20,7 +20,12 @@ public class LadyEffectAction extends Action {
         super(ModelConstants.ACTION_LADY_ID, gameEngine);
     }
 
-
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     * In this case I get the student id from the options.
+     *
+     * @param options additional information for act method.
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_LADY_OPTIONS_KEY_STUDENT))
@@ -35,8 +40,9 @@ public class LadyEffectAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * In this case the round doesn't change.
      *
-     * @throws Exception if something bad happens
+     * @throws Exception if something bad happens.
      */
 
     @Override
@@ -44,6 +50,11 @@ public class LadyEffectAction extends Action {
 
     }
 
+    /**
+     * Moves the student specified in options from card storage to the player's DiningRoom and fills the storage.
+     *
+     * @throws Exception if something bad happens.
+     */
     @Override
     public void act() throws Exception {
         CharacterCard characterCard = this.getGameEngine().getTable().getCharacterCards().get(Character.LADY.getId());

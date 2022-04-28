@@ -26,7 +26,13 @@ public class JesterEffectAction extends Action {
         super(ModelConstants.ACTION_JESTER_ID, gameEngine);
     }
 
-
+    /**
+     * Sets the options. Options represents additional information used by the act method.
+     * In this case I get from one to three different student Ids in the entrance
+     * and the other Ids in the card storage from the options.
+     *
+     * @param options additional information for act method.
+     */
     @Override
     public void setOptions(Map<String, String> options) throws Exception {
         if (!options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE1))
@@ -44,43 +50,51 @@ public class JesterEffectAction extends Action {
             throw new WrongMessageContentException("Error while parsing student id in the storage from the ActionMessage");
         }
 
-
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2))
+        this.studentId2 = null;
+        this.studentInStorageId2 = null;
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2)) {
             try {
                 this.studentId2 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
             }
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2))
+        }
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2)) {
             try {
                 this.studentInStorageId2 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the storage from the ActionMessage");
             }
+        }
         if ((studentId2 == null && studentInStorageId2 != null) || (studentId2 != null && studentInStorageId2 == null))
             throw new WrongMessageContentException("studentId2 or studentInStorage2 is null");
 
-
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3))
+        this.studentId3 = null;
+        this.studentInStorageId3 = null;
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3)) {
             try {
                 this.studentId3 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the entrance from the ActionMessage");
             }
-        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3))
+        }
+        if (options.containsKey(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3)) {
             try {
                 this.studentInStorageId3 = Integer.parseInt(options.get(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3));
             } catch (NumberFormatException e) {
                 throw new WrongMessageContentException("Error while parsing student id in the storage from the ActionMessage");
             }
+        }
         if ((studentId3 == null && studentInStorageId3 != null) || (studentId3 != null && studentInStorageId3 == null))
             throw new WrongMessageContentException("studentId3 or studentInStorage3 is null");
+
 
     }
 
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     * In this case the round doesn't change.
      *
      * @throws Exception if something bad happens
      */
@@ -90,6 +104,12 @@ public class JesterEffectAction extends Action {
 
     }
 
+    /**
+     * Switches from one to three entrance students specified in options
+     * with the card storage students specified in options.
+     *
+     * @throws Exception if something bad happens.
+     */
     @Override
     public void act() throws Exception {
         CharacterCard characterCard = this.getGameEngine().getTable().getCharacterCards().get(Character.JESTER.getId());

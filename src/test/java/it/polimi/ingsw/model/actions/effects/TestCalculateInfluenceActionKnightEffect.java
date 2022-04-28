@@ -16,7 +16,8 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestCalculateInfluenceActionKnightEffect {
 
@@ -44,7 +45,7 @@ class TestCalculateInfluenceActionKnightEffect {
         calculateInfluenceAction = new CalculateInfluenceAction(gameEngine);
         calculateInfluenceActionKnightEffect = new CalculateInfluenceActionKnightEffect(gameEngine, calculateInfluenceAction);
         setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
+        assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
     }
 
     @Test
@@ -53,41 +54,40 @@ class TestCalculateInfluenceActionKnightEffect {
         for (StudentDisc studentDisc : studentDiscs)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()).addStudent(studentDisc));
 
-        int motherNatureIslandId = assertDoesNotThrow(()->gameEngine.getIslandManager().getMotherNatureIslandId());
+        int motherNatureIslandId = assertDoesNotThrow(() -> gameEngine.getIslandManager().getMotherNatureIslandId());
         if (motherNatureIslandId != 12) {
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).setTower(gameEngine.getTeams().get(0).popTower()));
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId + 1).setTower(gameEngine.getTeams().get(0).popTower()));
-        }
-        else {
+        } else {
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId).setTower(gameEngine.getTeams().get(0).popTower()));
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, motherNatureIslandId - 1).setTower(gameEngine.getTeams().get(0).popTower()));
         }
 
-        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().unifyPossibleIslands());
 
         int influence1 = 4;
         int influence2 = 0;
 
         Random rand = new Random();
 
-        IslandTile motherNatureIsland = assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()));
-        List<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(()->gameEngine.getTable().getIslandTiles().stream().filter(islandGroup-> islandGroup.contains(motherNatureIsland)).toList());
+        IslandTile motherNatureIsland = assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, gameEngine.getIslandManager().getMotherNatureIslandId()));
+        List<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(() -> gameEngine.getTable().getIslandTiles().stream().filter(islandGroup -> islandGroup.contains(motherNatureIsland)).toList());
 
-        for (ProfessorPawn professorPawn : assertDoesNotThrow(()->gameEngine.getTable().getAvailableProfessorPawns())) {
+        for (ProfessorPawn professorPawn : assertDoesNotThrow(() -> gameEngine.getTable().getAvailableProfessorPawns())) {
             int index = rand.nextInt(0, 2);
             gameEngine.getTeams().get(index).addProfessorPawn(professorPawn);
             if (index == 0)
                 for (IslandTile islandTile : islandGroups.get(0))
-                    influence1 += assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
+                    influence1 += assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
             else if (index == 1)
                 for (IslandTile islandTile : islandGroups.get(0))
-                    influence2 += assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
+                    influence2 += assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, islandTile.getId()).peekStudents().stream().filter(studentDisc -> studentDisc.getColor().equals(professorPawn.getColor())).collect(Collectors.reducing(0, e -> 1, Integer::sum)));
         }
 
         Map<Integer, Integer> influences = new HashMap<>();
 
         calculateInfluenceActionKnightEffect.setPlayerId(1);
-        assertDoesNotThrow(()->calculateInfluenceActionKnightEffect.calculateInfluences(influences, islandGroups.get(0)));
+        assertDoesNotThrow(() -> calculateInfluenceActionKnightEffect.calculateInfluences(influences, islandGroups.get(0)));
         assertEquals(influence1, influences.get(1));
         assertEquals(influence2, influences.get(2));
     }
