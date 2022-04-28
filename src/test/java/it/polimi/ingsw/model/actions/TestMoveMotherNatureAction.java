@@ -138,12 +138,23 @@ class TestMoveMotherNatureAction {
 
     /**
      * Checks that MoveMotherNatureAction is removed from the Round and that Calculate influence had been executed.
+     * Also checks that if I run again modifyRoundAndActionList, an exception is thrown because this action isn't
+     * in round actions list
      */
     @Test
     void modifyRoundAndActionList() {
+        // State check to assert that Calculate Influence will insert FromCloudTileToEntranceAction to the round Actions
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
+
+        // Check before was in round actions list and after it isn't
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
         assertDoesNotThrow(()->moveMotherNatureAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
-        // TODO test that Calculate influence had been executed
+
+        // Test exception if I try another execution
+        assertThrows(IllegalGameStateException.class, moveMotherNatureAction::modifyRoundAndActionList);
+
+        // Test Calculate influence run: it should have added to Round Action list the FromCloudTileToEntranceAction
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
     }
 }

@@ -136,11 +136,9 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
 
         assertDoesNotThrow(()->drawFromBagToCloudFourPlayersAction.modifyRoundAndActionList());
         // Check next action
-        assertEquals(1, gameEngineFour.getRound().getPossibleActions().size());
         assertTrue(gameEngineFour.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
 
         ArrayList<Integer> newOrder = gameEngineFour.getRound().getOrderOfPlay();
-
-        assertEquals(originalOrder, newOrder);
+        assertEquals(originalOrder, newOrder); // Check it's same as before
     }
 }

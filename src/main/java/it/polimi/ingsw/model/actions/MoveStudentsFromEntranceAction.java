@@ -96,7 +96,8 @@ public class MoveStudentsFromEntranceAction extends Action {
 
             // Remove this action from the possible actions list
             ArrayList<Integer> nextActions = this.getGameEngine().getRound().getPossibleActions();
-            nextActions.remove(Integer.valueOf(this.getId()));
+            if(!nextActions.remove(Integer.valueOf(this.getId()))) // Tests it was inside the round before removing, if so removes it
+                throw new IllegalGameStateException("MoveStudentsFromEntrance action was run but it wasn't in Round actions");
             this.getGameEngine().getRound().setPossibleActions(nextActions);
 
             // Run the Assign professor action

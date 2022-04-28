@@ -36,7 +36,7 @@ public abstract class DrawFromBagToCloudAction extends Action {
     @Override
     public void modifyRoundAndActionList() throws Exception {
         // Set next action (select assistant card): I don't touch the order
-        ArrayList<Integer> nextActions = new ArrayList<>();
+        ArrayList<Integer> nextActions = getGameEngine().getRound().getPossibleActions();
         nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID);
         this.getGameEngine().getRound().setPossibleActions(nextActions);
     }

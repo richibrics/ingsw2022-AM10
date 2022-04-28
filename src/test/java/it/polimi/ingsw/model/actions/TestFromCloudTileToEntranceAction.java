@@ -44,6 +44,8 @@ class TestFromCloudTileToEntranceAction {
         teams.add(team1);
         teams.add(team2);
         gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+
         fromCloudTileToEntranceAction = new FromCloudTileToEntranceAction(gameEngine);
         setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
         assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
@@ -71,22 +73,44 @@ class TestFromCloudTileToEntranceAction {
         assertDoesNotThrow(() -> fromCloudTileToEntranceAction.setOptions(options));
     }
 
+    /**
+     * Checks that if round ended, the check end match condition run;
+     * if round not ended, it's turn of somebody else, and I set the correct actions in round.
+     */
     @Test
     void modifyRoundAndActionList() {
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
         ArrayList<Integer> orderOfPlay = new ArrayList<>();
         orderOfPlay.add(2);
         orderOfPlay.add(3);
         orderOfPlay.add(1);
         orderOfPlay.add(4);
         assertDoesNotThrow(()->gameEngine.getRound().setOrderOfPlay(orderOfPlay));
+
+        // First player turn
         assertDoesNotThrow(()->fromCloudTileToEntranceAction.modifyRoundAndActionList());
-        assertEquals(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().size(), 2);
-        assertEquals(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().get(0), ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
-        assertEquals(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().get(1), ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
-        gameEngine.getRound().playerTurnEnded();
-        gameEngine.getRound().playerTurnEnded();
-        gameEngine.getRound().playerTurnEnded();
+
+        // Second player turn
+        assertEquals(2, fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().size());
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertDoesNotThrow(()->fromCloudTileToEntranceAction.modifyRoundAndActionList());
+
+        // Third player turn
+        assertEquals(2, fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().size());
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertDoesNotThrow(()->fromCloudTileToEntranceAction.modifyRoundAndActionList());
+
+        // Fourth player turn
+        assertEquals(2, fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().size());
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertDoesNotThrow(()->fromCloudTileToEntranceAction.modifyRoundAndActionList());
+
+        // Round ended, check end match condition run which should call DrawFromBagToCloud which adds the OnSelectionOfAssistantsCard the round actions list
+        assertFalse(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
+        assertFalse(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertTrue(fromCloudTileToEntranceAction.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
     }
 
     @Test

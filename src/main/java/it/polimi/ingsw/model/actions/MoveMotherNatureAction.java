@@ -67,10 +67,12 @@ public class MoveMotherNatureAction extends Action {
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        // TODO CAll calc inf
-
         ArrayList<Integer> nextActions = this.getGameEngine().getRound().getPossibleActions();
-        nextActions.remove(Integer.valueOf(this.getId()));
+        if(!nextActions.remove(Integer.valueOf(this.getId())))
+            throw new IllegalGameStateException("MoveMotherNature action was run but it wasn't in Round actions");
         this.getGameEngine().getRound().setPossibleActions(nextActions);
+
+        // Run calculate influence, with modifyRoundAndAction flag ON
+        this.getGameEngine().getActionManager().executeInternalAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, this.getPlayerId(), true);
     }
 }

@@ -63,12 +63,7 @@ public class OnSelectionOfAssistantsCardAction extends Action {
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        if (this.getGameEngine().getRound().playerTurnEnded()) { // There's someone else next
-            // Set that the next player has to select the assistant
-            ArrayList<Integer> nextActions = new ArrayList<>();
-            nextActions.add(this.getId());
-            this.getGameEngine().getRound().setPossibleActions(nextActions);
-        } else {
+        if (! this.getGameEngine().getRound().playerTurnEnded()) { // There's nobody after me
             // Everyone selected the AssistantCard, so now I order the characters turns using the assistant card value.
             ArrayList<Integer> oldOrderOfPlay = this.getGameEngine().getRound().getOrderOfPlay();
             Map<Integer, Float> orderMap = new HashMap<>();
@@ -90,10 +85,15 @@ public class OnSelectionOfAssistantsCardAction extends Action {
             this.getGameEngine().getRound().setOrderOfPlay(newOrderOfPlay);
 
             // Set next actions for the first player of the round
-            ArrayList<Integer> nextActions = new ArrayList<>();
+            ArrayList<Integer> nextActions = getGameEngine().getRound().getPossibleActions();
+            // Check it was inside: if not, wrong game state
+            if(!nextActions.contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID))
+                throw new IllegalGameStateException("OnSelectionOfAssistantsCard action was run but it wasn't in Round actions");
+
             nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
             nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
             this.getGameEngine().getRound().setPossibleActions(nextActions);
         }
+        // Else the actions remains like before, with this action in the round actions list
     }
 }

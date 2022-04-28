@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
@@ -53,16 +54,18 @@ public class OnSelectionOfWizardAction extends Action {
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        if (this.getGameEngine().getRound().playerTurnEnded()) { // There's someone else next
-            // Set that the next player has to select the assistant
-            ArrayList<Integer> nextActions = new ArrayList<>();
-            nextActions.add(this.getId());
-            this.getGameEngine().getRound().setPossibleActions(nextActions);
-        } else {
-            // Draw from bag to cloud
+        if (! this.getGameEngine().getRound().playerTurnEnded()) { // After there's nobody
+            // Remove this action from player's actions list
+            ArrayList<Integer> nextActions = getGameEngine().getRound().getPossibleActions();
+            // Remove, if it returns false, the action isn't inside -> Wrong game state
+            if (!nextActions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID)))
+                throw new IllegalGameStateException("OnSelectionOfWizard action was run but it wasn't in Round actions");
+            getGameEngine().getRound().setPossibleActions(nextActions);
+            // Draw from bag to cloud automatically
             this.getGameEngine().getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, ModelConstants.NO_PLAYER, new HashMap<>(), true);
             // Next actions are set from the DrawFromBagToCloud; the order is not set to permit using the same order as before
         }
+        // Else, this action remains in the player's actions list (I don't edit round actions)
     }
 
 }
