@@ -11,7 +11,7 @@ import java.util.Map;
 public abstract class DrawFromBagToCloudAction extends Action {
 
     public DrawFromBagToCloudAction(GameEngine gameEngine) {
-        super(1, gameEngine);
+        super(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, gameEngine);
     }
 
 
