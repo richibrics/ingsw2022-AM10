@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.ActionNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
+import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,18 +68,32 @@ public class OnSelectionOfCharacterCardAction extends Action {
     }
 
     /**
-     * Prepares the action of the chosen character to be run.
+     * Prepares the action of the chosen character to be run, also managing player's money (check and decrease).
      *
      * @throws Exception if something bad happens.
      */
     @Override
     public void act() throws Exception {
         try {
+            // Check player's money
+            if(!this.getGameEngine().getCharacterManager().checkPlayerCanPlayCard(this.getPlayerId(), this.chosenCharacterId))
+                throw new IllegalGameActionException("The player hasn't enough coins to play that card");
+        } catch (NoSuchElementException e) {
+            throw new IllegalGameActionException(e.getMessage());
+        } catch (TableNotSetException e) {
+            throw new IllegalGameStateException(e.getMessage());
+        }
+
+        try {
             this.getGameEngine().getCharacterManager().selectCharacterCard(this.chosenCharacterId, this.getPlayerId(), this.characterActionOptions);
         } catch (NoSuchElementException | IllegalGameActionException e) { // For wrong card id or illegal game action
             throw new IllegalGameActionException(e.getMessage());
-        } catch (TableNotSetException | ActionNotSetException e) {
+        } catch (ActionNotSetException e) {
             throw new IllegalGameStateException(e.getMessage());
         }
+
+        // I don't catch NotEnoughMoney here because there's no CharacterCard that makes player lose money during its
+        // act, so if before player had the money, he still has them.
+        this.getGameEngine().getCharacterManager().decreasePlayersMoneyEditCardCost(this.getPlayerId(), this.chosenCharacterId);
     }
 }

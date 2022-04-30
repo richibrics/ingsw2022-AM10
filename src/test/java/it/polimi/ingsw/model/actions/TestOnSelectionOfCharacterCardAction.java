@@ -100,18 +100,38 @@ class TestOnSelectionOfCharacterCardAction {
      */
     @Test
     void act() {
+        /**
+         * Prepare a card request, for an herbalist, so add to options the herbalist card id and the options for the herbalist action
+         */
         HashMap<String, String> options = new HashMap<>();
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER, String.valueOf(Character.HERBALIST.getId()));
         options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "1"); // Option for the character card action
+        onSelectionOfCharacterCardAction.setPlayerId(1);
         assertDoesNotThrow(() -> onSelectionOfCharacterCardAction.setOptions(options));
         assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1)).hasNoEntry()); // Check before
         assertDoesNotThrow(() -> onSelectionOfCharacterCardAction.act());
         assertTrue(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1)).hasNoEntry()); // Check after
 
-        // Now a wrong thing to action (add another entry tile to the same island) to the card action and get the exception
+        // Now player 1 asks to play again that card: no money !
+        options.clear();
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER, String.valueOf(Character.HERBALIST.getId()));
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "2"); // Option for the character card action
+        onSelectionOfCharacterCardAction.setPlayerId(1);
+        assertDoesNotThrow(() -> onSelectionOfCharacterCardAction.setOptions(options));
         assertThrows(IllegalGameActionException.class, () -> onSelectionOfCharacterCardAction.act());
+
+        // Now a wrong thing to action (add another entry tile to the same island) to the card action and get the exception
+        options.clear();
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER, String.valueOf(Character.HERBALIST.getId()));
+        options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "1"); // Option for the character card action
+        onSelectionOfCharacterCardAction.setPlayerId(2);
+        assertDoesNotThrow(() -> onSelectionOfCharacterCardAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, () -> onSelectionOfCharacterCardAction.act());
+
         // Now ask for wrong action
+        options.clear();
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER, "-2");
+        assertDoesNotThrow(() -> onSelectionOfCharacterCardAction.setOptions(options));
         assertThrows(IllegalGameActionException.class, () -> onSelectionOfCharacterCardAction.act());
         // Now remove the table and get IllegalState
         gameEngine.setTable(null);

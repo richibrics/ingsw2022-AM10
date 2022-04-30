@@ -184,4 +184,42 @@ public class CharacterManager extends Manager {
         }
         return false;
     }
+
+    /**
+     * Checks if the player has enough money to use the CharacterCard
+     * @param playerId the player who wants to play the card
+     * @param characterCardId the cards that the player wants to play
+     * @return true if the player can play the card
+     * @throws NoSuchElementException if requested player/card could not be found
+     * @throws TableNotSetException if table was not set
+     */
+    public boolean checkPlayerCanPlayCard(int playerId, int characterCardId) throws NoSuchElementException, TableNotSetException {
+        Map<Integer, CharacterCard> cards = getGameEngine().getTable().getCharacterCards();
+        if(!cards.containsKey(characterCardId))
+            throw new NoSuchElementException("Requested CharacterCard couldn't be found on table");
+        int cost = cards.get(characterCardId).getCost();
+        if (CommonManager.takePlayerById(getGameEngine(), playerId).getCoins()>=cost)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Decreases player's money of the cost of the character card. If player hasn't enough money, an exception is thrown.
+     * This also marks the card as used, to edit its cost.
+     * @param playerId the player who wants to play the card
+     * @param characterCardId the cards that the player wants to play
+     * @throws NoSuchElementException if requested player/card could not be found
+     * @throws NotEnoughCoinException if player hasn't enough money to play that card
+     * @throws TableNotSetException if table was not set
+     */
+    public void decreasePlayersMoneyEditCardCost(int playerId, int characterCardId) throws NoSuchElementException, NotEnoughCoinException, TableNotSetException {
+        if(!this.checkPlayerCanPlayCard(playerId, characterCardId))
+            throw new NotEnoughCoinException();
+        Map<Integer, CharacterCard> cards = getGameEngine().getTable().getCharacterCards();
+        // Card is there on the table, else an exception would have been thrown when checked for enough player coins.
+        int cost = cards.get(characterCardId).getCost();
+        CommonManager.takePlayerById(getGameEngine(),playerId).decrementCoins(cost);
+        cards.get(characterCardId).setAsUsed();
+    }
 }
