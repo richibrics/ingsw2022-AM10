@@ -33,6 +33,12 @@ class TestPlayer {
         assertEquals(player.getPlayerId(), value);
     }
 
+    @Test
+    void getUsername() {
+        Player player = new Player(user,1, 5);
+        assertEquals(player.getUsername(), "test");
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {0,100,Integer.MAX_VALUE})
     void getCoins(int value) {
