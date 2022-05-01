@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import it.polimi.ingsw.model.game_components.Bag;
-import it.polimi.ingsw.model.game_components.MotherNature;
 
 import java.lang.reflect.Type;
 

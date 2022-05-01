@@ -15,6 +15,7 @@ import java.lang.reflect.Type;
  * mother nature is on, because all the information about the island are
  * already available in the list of island tiles directly in the table.
  */
+
 public class MotherNatureSerializer implements JsonSerializer<MotherNature> {
     @Override
     public JsonElement serialize(MotherNature motherNature, Type type, JsonSerializationContext jsonSerializationContext) {

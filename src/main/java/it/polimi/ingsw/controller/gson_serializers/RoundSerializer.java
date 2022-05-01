@@ -6,6 +6,11 @@ import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 
 import java.lang.reflect.Type;
 
+/**
+ * Serializer for the Round class. The properties needed are the current player and the list of the actions the current
+ * player can perform.
+ */
+
 public class RoundSerializer implements JsonSerializer<Round> {
 
     @Override

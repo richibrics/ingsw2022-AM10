@@ -29,6 +29,15 @@ public class Player {
     }
 
     /**
+     * Gets the username of the player.
+     * @return the username of the player
+     */
+
+    public String getUsername() {
+        return this.user.getId();
+    }
+
+    /**
      * Gets the identifier of the player.
      * @return the identifier of the player
      */
