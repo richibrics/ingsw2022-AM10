@@ -19,13 +19,13 @@ Build status:  [![Build](https://github.com/riccardo-briccola/ingsw2022-AM10/act
 Functionality | State
 -- | --
 Basic rules | 🟢
-Complete rules | 🟡
+Complete rules | 🟢
 CLI | 🔴
 GUI | 🔴
 Socket | 🔴
-12 character cards | 🟡
+12 character cards | 🟢
 4 players match | 🟢
-Multiple matches | 🔴
+Multiple matches | 🟡
 
 
 
