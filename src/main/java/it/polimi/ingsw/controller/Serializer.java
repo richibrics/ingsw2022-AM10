@@ -69,7 +69,7 @@ public class Serializer {
         jsonObjectPayload.add("players", gson.toJsonTree(players));
 
         JsonObject jsonObjectMessage = new JsonObject();
-        jsonObjectMessage.addProperty("type", MessageTypes.GAME.getType());
+        jsonObjectMessage.addProperty("type", String.valueOf(MessageTypes.GAME));
         jsonObjectMessage.add("payload", gson.toJsonTree(jsonObjectPayload));
         return gson.toJson(jsonObjectMessage);
     }
@@ -84,7 +84,7 @@ public class Serializer {
                 .registerTypeAdapter(Round.class, new RoundSerializer())
                 .create();
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", MessageTypes.ROUND.getType());
+        jsonObject.addProperty("type", String.valueOf(MessageTypes.ROUND));
         jsonObject.add("payload", gson.toJsonTree(gameEngine.getRound()));
         return gson.toJson(jsonObject);
     }

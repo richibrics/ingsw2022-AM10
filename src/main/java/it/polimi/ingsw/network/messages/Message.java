@@ -1,10 +1,12 @@
 package it.polimi.ingsw.network.messages;
 
+import it.polimi.ingsw.network.MessageTypes;
+
 public class Message {
-    private String type;
+    private MessageTypes type;
     private String payload;
 
-    public Message(String type, String payload) {
+    public Message(MessageTypes type, String payload) {
         this.type = type;
         this.payload = payload;
     }
@@ -13,7 +15,7 @@ public class Message {
      * Retruns the type of the message.
      * @return the type of the message
      */
-    public String getType() {
+    public MessageTypes getType() {
         return type;
     }
 
