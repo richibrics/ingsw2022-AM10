@@ -53,6 +53,7 @@ public class ActionManager extends Manager {
         if (setUp == null) throw new NullPointerException();
 
         setUp.act();
+        setUp.modifyRoundAndActionList();
     }
 
     /**

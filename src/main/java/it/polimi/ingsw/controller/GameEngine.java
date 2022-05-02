@@ -8,6 +8,7 @@ import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.managers.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class GameEngine {
@@ -150,18 +151,15 @@ public class GameEngine {
      * @param playerId  the id of the Player that asked for that action
      * @param options   the options to perform the action correctly as asked
      */
-    public void resumeGame(int actionId, int playerId, String options)
-    {
-        // Implement with ActionManager.prepareAndExecuteAction()
+    public void resumeGame(int actionId, int playerId, Map<String, String> options) throws Exception {
+        this.getActionManager().prepareAndExecuteAction(actionId, playerId, options, true);
     }
 
     /**
      * Asks the ActionManager to generate all the Actions and run the setup
      */
-    public void startGame()
-    {
-        // Implement with ActionManager.generateActions()
-        // Call the setup if not done from ActionManager.generateActions()
+    public void startGame() throws Exception {
+        this.getActionManager().generateActions();
     }
 
 }
