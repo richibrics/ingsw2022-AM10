@@ -2,7 +2,9 @@ package it.polimi.ingsw.network;
 
 public enum MessageTypes {
     USER("user"),
-    STILL_ALIVE("still_alive");
+    STILL_ALIVE("still_alive"),
+    GAME("game"),
+    ROUND("round");
 
     final private String type;
 
