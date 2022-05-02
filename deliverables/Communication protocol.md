@@ -69,7 +69,7 @@ When the current player receives the ROUND message, they decide which action to 
 {
     "type": "ACTION",
     "content": {
-        "actionID": 5,
+        "action": 5,
         "options": {
             "color": "red"
         }
