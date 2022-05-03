@@ -28,7 +28,15 @@ public class Serializer {
 
     public static Message fromStringToMessage(String json) throws WrongMessageContentException {
         try {
-            return new Gson().fromJson(json, Message.class);
+            Message message = new Gson().fromJson(json, Message.class);
+            // Check message is okay
+            if(message == null)
+                throw new WrongMessageContentException("The json cannot be converted to a Message object");
+            // Check message fields aren't null
+            if (message.getType() == null || message.getPayload() == null)
+                throw new WrongMessageContentException("Missing message fields");
+            else
+                return message;
         } catch (JsonSyntaxException e) {
             throw new WrongMessageContentException("The json cannot be converted to a Message object");
         }

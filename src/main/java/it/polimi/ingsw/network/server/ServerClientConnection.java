@@ -9,14 +9,15 @@ import it.polimi.ingsw.model.managers.CommonManager;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
 import it.polimi.ingsw.network.exceptions.GameControllerNotSetException;
-import it.polimi.ingsw.network.exceptions.UserNotSet;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.network.messages.Message;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
+import java.net.SocketTimeoutException;
 
 public class ServerClientConnection implements Runnable {
     private Socket clientSocket;
@@ -24,18 +25,32 @@ public class ServerClientConnection implements Runnable {
     private Integer stillAliveTimer;
     private GameController gameController;
     private boolean continueReceiving;
+    private MessageReceivingStep messageReceivingStep;
     private final Object synchronizeStillAliveTimer;
+    private final Object synchronizeContinueReceiving;
+    private final Object synchronizeMessageReceivingStep;
 
-    private Scanner bufferIn;
+    private BufferedReader bufferIn;
     private PrintWriter bufferOut;
 
-    public ServerClientConnection(Socket clientSocket) {
+    public ServerClientConnection(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
+        this.clientSocket.setSoTimeout(NetworkConstants.SOCKET_SO_TIMEOUT_IN_MILLISECONDS);
         this.user = null;
         this.gameController = null;
-        // Uses this object to synchronize on variables that are value indexed, like Integer and Boolean.
+
+        // Uses these objects to synchronize on variables that are value indexed, like Integer and Boolean.
         this.synchronizeStillAliveTimer = new Object();
+        this.synchronizeContinueReceiving = new Object();
+        this.synchronizeMessageReceivingStep = new Object();
+
         this.resetTimer();
+
+        this.setMessageReceivingStep(MessageReceivingStep.STEP_HANDSHAKE);
+
+        this.bufferIn = new BufferedReader(
+                new InputStreamReader(this.clientSocket.getInputStream()));
+        this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
     }
 
     /**
@@ -44,29 +59,18 @@ public class ServerClientConnection implements Runnable {
      */
     @Override
     public void run() {
+        this.setContinueReceiving(true);
+        // Send first Handshake message
+        this.sendHandshake();
+        // Wait for messages for a long of time
+        while (this.getContinueReceiving()) {
+            this.receiveMessage();
+        }
+        // After I don't have to receive any other message, I close the socket and the streams.
         try {
-            synchronized (this) {
-                this.bufferIn = new Scanner(this.clientSocket.getInputStream());
-                this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
-            }
-
-            this.continueReceiving = true;
-            // Request user to the client
-            this.requestHandshake();
-            this.requestUser();
-            // Wait for messages for a long of time
-            while (this.continueReceiving) {
-                this.receiveMessage();
-            }
-            // After I don't have to receive any other message, I close the socket and the streams.
-            try {
-                this.closeConnection();
-            } catch (IOException e) {
-                System.err.println("Error while closing the client socket");
-                e.printStackTrace();
-            }
+            this.closeConnection();
         } catch (IOException e) {
-            System.err.println("Error while creating the buffers");
+            System.err.println("Error while closing the client socket");
             e.printStackTrace();
         }
     }
@@ -74,57 +78,22 @@ public class ServerClientConnection implements Runnable {
     /**
      * Reads from the Input buffer the next message and passes it to the deserialize method.
      */
-    private synchronized void receiveMessage() {
-        String line = this.bufferIn.nextLine();
-        this.deserialize(line);
-    }
-
-    /**
-     * Waits for the handshake with the client. Once the client has sent the correct Handshake message, the method ends.
-     */
-    private synchronized void requestHandshake() {
-        Message handshakeMessage = new Message(MessageTypes.HANDSHAKE, NetworkConstants.HANDSHAKE_STRING);
-        boolean okay = false;
-        this.sendMessage(handshakeMessage);
-        while (!okay) {
-            if (this.bufferIn.nextLine().equals(Serializer.fromMessageToString(handshakeMessage)))
-                okay = true;
-            else {
-                this.sendMessage(handshakeMessage);
-            }
+    private void receiveMessage() {
+        String line = null;
+        try {
+            line = this.bufferIn.readLine();
+        } catch (SocketTimeoutException e) {
+            // No message received
+            line = null;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
-
-    /**
-     * Waits for the User from the client. Once the client has sent the correct user message, the method ends.
-     * This method check if the username is already used, asking it to the Lobby Handler.
-     */
-    private synchronized void requestUser() {
-        // Wait for a User message from the User.
-        Message receivedMessage;
-        boolean okay = false;
-        while (!okay) {
-            try {
-                receivedMessage = Serializer.fromStringToMessage(this.bufferIn.nextLine());
-                if (receivedMessage.getType() == MessageTypes.USER) {
-                    okay = true;
-                    User newUser = Serializer.fromMessageToUser(receivedMessage);
-                        /* Check if username is available with the LobbyHandler. Synchronize here because
-                           if 2 clients ask together I could encounter troubles.*/
-                    if (!LobbyHandler.getLobbyHandler().checkIfUsernameIsUsed(newUser.getId())) {
-                        // Then add the user and the connection to the LobbyHandler
-                        this.user = newUser;
-                        LobbyHandler.getLobbyHandler().addClient(this.user, this);
-                    } else {
-                        this.sendMessage(new Message(MessageTypes.USER_ERROR, "Username already in use, please choose another one"));
-                        okay = false;
-                    }
-                } else {
-                    this.sendMessage(new Message(MessageTypes.USER_ERROR, "Expected a User"));
-                }
-            } catch (WrongMessageContentException e) {
-                e.printStackTrace();
-            }
+        if (line != null)
+            this.deserialize(line);
+        try {
+            Thread.sleep(NetworkConstants.SLEEP_TIME_RECEIVE_MESSAGE_IN_MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -133,7 +102,7 @@ public class ServerClientConnection implements Runnable {
      *
      * @param message the message that is going to be serialized and sent to the client
      */
-    public synchronized void sendMessage(Message message) {
+    public void sendMessage(Message message) {
         this.bufferOut.println(Serializer.fromMessageToString(message));
         this.bufferOut.flush();
     }
@@ -142,23 +111,26 @@ public class ServerClientConnection implements Runnable {
      * Sets the Connection to stop receiving and to close socket and streams.
      */
     public void askToCloseConnection() {
-        this.continueReceiving = false;
+        this.setContinueReceiving(false);
     }
 
     /**
      * Closes the Socket and the Streams
      */
-    private synchronized void closeConnection() throws IOException {
+    private void closeConnection() throws IOException {
         this.bufferIn.close();
         this.bufferOut.close();
         this.clientSocket.close();
-
     }
 
     /**
      * With the passed string, reads the message type and does the correct actions with that message.
      * If the message is a User message, asks the Lobby Handler to update the User object.
      * If the message is a Still Alive message, resets the Still Alive timer.
+     * There are some steps in which only a certain type of messages are accepted:
+     * first step: only a handshake can be accepted (still_alive also)
+     * second step: only a user can be accepted (still_alive also)
+     * third step: when game starts, handshake and user are not accepted.
      *
      * @param messageString the message received by the Client, that is going to be deserialized and read
      */
@@ -166,38 +138,92 @@ public class ServerClientConnection implements Runnable {
         try {
             Message message = Serializer.fromStringToMessage(messageString);
             switch (message.getType()) {
+                case HANDSHAKE -> {
+                    if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_HANDSHAKE) {
+                        // Then handshake okay, change communication step
+                        this.setMessageReceivingStep(MessageReceivingStep.STEP_USER_REGISTER);
+                    } else {
+                        // Shouldn't receive this type of message in this step: error
+                        throw new WrongMessageContentException("Handshake message not allowed in this communication step");
+                    }
+                }
                 case USER -> {
-                /* I received a User message. This means I have to change the preference of the User
-                   in the Lobby Handler. Before changing it, I have to check that the username is the same as before.
-                 */
-                    User updatedUser = Serializer.fromMessageToUser(message);
-                    if (updatedUser.getId() == this.user.getId()) {
-                        try {
-                            LobbyHandler.getLobbyHandler().changePreference(updatedUser.getId(), updatedUser.getPreference());
-                        } catch (Exception e) {
-                            throw new WrongMessageContentException("The preference could not be changed.");
+                    if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_USER_REGISTER) {
+                        // I received a User message. If it's valid, I register it in the LobbyHandler
+                        User newUser = Serializer.fromMessageToUser(message);
+                        // Check if username is available with the LobbyHandler. Synchronize here because
+                        // if 2 clients ask together I could encounter troubles.
+                        if (!LobbyHandler.getLobbyHandler().checkIfUsernameIsUsed(newUser.getId())) {
+                            // Then add the user and the connection to the LobbyHandler
+                            this.user = newUser;
+                            // Set communication step as LOBBY
+                            this.setMessageReceivingStep(MessageReceivingStep.STEP_LOBBY);
+                            // Add the client. If this generates a Game, a GameController is set in this class
+                            // and  also the step becomes IN_GAME
+                            LobbyHandler.getLobbyHandler().addClient(this.user, this);
+                        } else {
+                            throw new WrongMessageContentException("Username already in use, please choose another one");
+                        }
+                    } else if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_LOBBY) {
+                        // I received a User message. This means I have to set the new user or to change the preference of the User
+                        // in the Lobby Handler. Before changing it, I have to check that the username is the same as before.
+                        User updatedUser = Serializer.fromMessageToUser(message);
+                        if (updatedUser.getId().equals(this.user.getId())) {
+                            try {
+                                LobbyHandler.getLobbyHandler().changePreference(updatedUser.getId(), updatedUser.getPreference());
+                            } catch (Exception e) {
+                                throw new WrongMessageContentException("The preference could not be changed.");
+                            }
+                        } else {
+                            throw new WrongMessageContentException("User id cannot change when the player wants to change his lobby preference.");
                         }
                     } else {
-                        throw new WrongMessageContentException("User id cannot change when the player wants to change his lobby preference.");
+                        // Shouldn't receive this type of message in this step: error
+                        throw new WrongMessageContentException("User message not allowed in this communication step");
+                    }
+                }
+                case ACTION -> {
+                    if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_IN_GAME) {
+                        // Convert the payload of the Message (a Json) to an ActionMessage, then asks the GameController to run the Action.
+                        ActionMessage actionMessage = Serializer.fromMessageToActionMessage(message);
+                        gameController.resumeGame(CommonManager.takePlayerIdByUserId(gameController.getGameEngine(), user.getId()), actionMessage);
+                    } else {
+                        // Shouldn't receive this type of message in this step: error
+                        throw new WrongMessageContentException("Action message not allowed in this communication step");
                     }
                 }
                 case STILL_ALIVE -> {
-                /*
-                I received a Still Alive message from the client, so I reset his timer so show he is still connected.
-                 */
+                    // I received a Still Alive message from the client, so I reset his timer so show he is still connected.
                     this.resetTimer();
                 }
-                case ACTION -> {
-                /*
-                Convert the payload of the Message (a Json) to an ActionMessage, then asks the GameController to run the Action.
-                 */
-                    ActionMessage actionMessage = Serializer.fromMessageToActionMessage(message);
-                    gameController.resumeGame(CommonManager.takePlayerIdByUserId(gameController.getGameEngine(), user.getId()), actionMessage);
+                default -> {
+                    throw new WrongMessageContentException("Unknown message type");
                 }
             }
+            // If no exception thrown, then I haven't an error but a success. So send a Success message (avoid for STILL_ALIVE)
+            this.notifySuccess(message.getType());
         } catch (WrongMessageContentException e) {
-            // TODO Error management
+            this.sendMessage(new Message(MessageTypes.ERROR, e.getMessage()));
+        } finally {
+            // If I'm handshaking, at each message, after which I'm in Handshake again, send the Handshake message
+            if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_HANDSHAKE)
+                this.sendHandshake();
         }
+    }
+
+    /**
+     * Sends the handshake message to the client.
+     */
+    private void sendHandshake() {
+        this.sendMessage(new Message(MessageTypes.HANDSHAKE, ""));
+    }
+
+    /**
+     * Sends the success message to the client for a specific message type.
+     */
+    private void notifySuccess(MessageTypes type) {
+        if (type != MessageTypes.STILL_ALIVE)
+            this.sendMessage(new Message(MessageTypes.SUCCESS, type.toString()));
     }
 
     /**
@@ -229,19 +255,7 @@ public class ServerClientConnection implements Runnable {
      */
     public synchronized void setGameController(GameController gameController) {
         this.gameController = gameController;
-    }
-
-    /**
-     * Returns the previously set User.
-     *
-     * @return the User
-     * @throws UserNotSet if the User was not set before
-     */
-    public User getUser() throws UserNotSet {
-        if (user == null) {
-            throw new UserNotSet("User not set in ServerClientConnection");
-        }
-        return user;
+        this.setMessageReceivingStep(MessageReceivingStep.STEP_IN_GAME);
     }
 
     /**
@@ -251,13 +265,66 @@ public class ServerClientConnection implements Runnable {
      */
 
     public int getTimer() {
-        return this.stillAliveTimer;
+        synchronized (this.synchronizeStillAliveTimer) {
+            return this.stillAliveTimer;
+        }
     }
 
     /**
      * Decrements Still Alive Timer by one
      */
     public void decrementTimer() {
-        this.stillAliveTimer -= 1;
+        synchronized (this.synchronizeStillAliveTimer) {
+            this.stillAliveTimer -= 1;
+        }
+    }
+
+    /**
+     * Returns the value of the Boolean continueReceiving, needed to check if the Server has to continue listening to messages
+     * from the Client
+     *
+     * @return value of the Boolean continueReceiving
+     */
+    private boolean getContinueReceiving() {
+        synchronized (synchronizeContinueReceiving) {
+            return continueReceiving;
+        }
+    }
+
+    /**
+     * Sets the value of the Boolean continueReceiving, needed to check if the Server has to continue listening to messages
+     * from the Client
+     *
+     * @param continueReceiving the new value for continueReceiving
+     */
+    private void setContinueReceiving(boolean continueReceiving) {
+        synchronized (synchronizeContinueReceiving) {
+            this.continueReceiving = continueReceiving;
+        }
+    }
+
+    /**
+     * Returns the value of the enumeration messageReceivingStep, needed to filter the received messages in the different
+     * communication steps.
+     *
+     * @return the value of the enumeration messageReceivingStep
+     */
+    private MessageReceivingStep getMessageReceivingStep() {
+        synchronized (this.synchronizeMessageReceivingStep) {
+            return messageReceivingStep;
+        }
+    }
+
+    /**
+     * Sets the value of the enumeration messageReceivingStep, needed to filter the received messages in the different
+     * communication steps.
+     *
+     * @param messageReceivingStep the new value for messageReceivingStep
+     */
+    private void setMessageReceivingStep(MessageReceivingStep messageReceivingStep) {
+        synchronized (this.synchronizeMessageReceivingStep) {
+            this.messageReceivingStep = messageReceivingStep;
+        }
     }
 }
+

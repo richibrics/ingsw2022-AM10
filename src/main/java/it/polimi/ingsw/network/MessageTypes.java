@@ -9,6 +9,6 @@ public enum MessageTypes {
     ACTION,
     END_GAME,
     LOBBY,
-    USER_ERROR,
-    ACTION_ERROR;
+    ERROR,
+    SUCCESS
 }

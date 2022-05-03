@@ -32,7 +32,7 @@ public class ServerStillAliveChecker implements Runnable {
                         serverClientConnection.askToCloseConnection();
                     else {
                         serverClientConnection.decrementTimer();
-                        serverClientConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, NetworkConstants.HANDSHAKE_STRING));
+                        serverClientConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, ""));
                     }
                 }
             }
