@@ -125,8 +125,11 @@ public class LobbyHandler {
     private void generateGame(int preference) {
         Map<User, ServerClientConnection> map = new HashMap<>(this.clientsWaiting.get(preference));
         this.clientsWaiting.get(preference).clear();
-        // TODO pass the game controller to the server-client connections
         GameController gameController = new GameController(map);
+
+        for (ServerClientConnection serverClientConnection : map.values())
+            serverClientConnection.setGameController(gameController);
+
         gameController.startGame();
     }
 
