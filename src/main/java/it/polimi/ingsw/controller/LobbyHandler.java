@@ -45,7 +45,8 @@ public class LobbyHandler {
                     this.clientsWaiting.put(ControllerConstants.TWO_PLAYERS_PREFERENCE, clients);
                 } else {
                     this.clientsWaiting.get(ControllerConstants.TWO_PLAYERS_PREFERENCE).put(user, serverClientConnection);
-                    this.generateGame(ControllerConstants.TWO_PLAYERS_PREFERENCE);
+                    if (this.clientsWaiting.get(ControllerConstants.TWO_PLAYERS_PREFERENCE).size() == ControllerConstants.TWO_PLAYERS_PREFERENCE)
+                        this.generateGame(ControllerConstants.TWO_PLAYERS_PREFERENCE);
                 }
                 break;
 
