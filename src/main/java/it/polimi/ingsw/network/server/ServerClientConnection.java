@@ -50,6 +50,19 @@ public class ServerClientConnection implements Runnable {
     }
 
     /**
+     * Gets the still alive timer.
+     * @return the still alive timer
+     */
+
+    public int getTimer() {
+        return this.stillAliveTimer;
+    }
+
+    public void decrementTimer() {
+        this.stillAliveTimer -= 1;
+    }
+
+    /**
      * Resets Still Alive timer to its initial value.
      */
     public void resetTimer() {

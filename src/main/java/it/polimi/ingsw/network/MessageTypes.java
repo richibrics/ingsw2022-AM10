@@ -1,26 +1,12 @@
 package it.polimi.ingsw.network;
 
 public enum MessageTypes {
-    USER("user"),
-    STILL_ALIVE("still_alive"),
-    GAME("game"),
-    ROUND("round");
+    USER,
+    STILL_ALIVE,
+    GAME,
+    ROUND,
+    ACTION,
+    END_GAME,
+    LOBBY;
 
-    final private String type;
-
-    MessageTypes(String type)
-    {
-        this.type = type;
-    }
-
-    /**
-     * Returns the type of the MessageType in the enumeration
-     *
-     * @return      MessageType string
-     */
-
-    public String getType()
-    {
-        return type;
-    }
 }
