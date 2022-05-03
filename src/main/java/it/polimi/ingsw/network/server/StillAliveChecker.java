@@ -1,6 +1,8 @@
 package it.polimi.ingsw.network.server;
 
+import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
+import it.polimi.ingsw.network.messages.Message;
 
 import java.util.ArrayList;
 
@@ -27,11 +29,10 @@ public class StillAliveChecker implements Runnable {
             synchronized (this.listOfServerClientConnections) {
                 for (ServerClientConnection serverClientConnection : this.listOfServerClientConnections) {
                     if (serverClientConnection.getTimer() <= 0)
-                        serverClientConnection.closeConnection();
+                        serverClientConnection.askToCloseConnection();
                     else {
                         serverClientConnection.decrementTimer();
-                        // TODO
-                        // serverClientConnection.sendMessage();
+                        serverClientConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, NetworkConstants.HANDSHAKE_STRING));
                     }
                 }
             }

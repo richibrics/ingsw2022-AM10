@@ -27,7 +27,7 @@ class TestSerializer {
         String string = String.format("{\"type\": \"%s\", \"payload\": \"{\\\"hello\\\": \\\"hi\\\"}\"}", MessageTypes.GAME);
         // Convert string to message
         Message targetMessage = assertDoesNotThrow(()->Serializer.fromStringToMessage(string));
-        assertEquals(targetMessage.getType(), MessageTypes.GAME.toString());
+        assertEquals(targetMessage.getType(), MessageTypes.GAME);
         assertEquals(targetMessage.getPayload(), "{\"hello\": \"hi\"}");
         // Check if Serializer.fromStringToMessage throws a WrongMessageContentException
         String wrongString = "hello";
@@ -36,7 +36,7 @@ class TestSerializer {
 
     @Test
     void fromMessageToString() {
-        Message message = new Message(MessageTypes.GAME.toString(), "{\"hello\"}");
+        Message message = new Message(MessageTypes.GAME, "{\"hello\"}");
         assertEquals(String.format("{\"type\":\"%s\",\"payload\":\"{\\\"hello\\\"}\"}", MessageTypes.GAME), Serializer.fromMessageToString(message));
     }
 
@@ -48,7 +48,7 @@ class TestSerializer {
         ActionMessage actionMessage = new ActionMessage(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, options);
         // Create message
         Gson gson = new GsonBuilder().create();
-        Message message = new Message(MessageTypes.ACTION.toString(), gson.toJson(actionMessage));
+        Message message = new Message(MessageTypes.ACTION, gson.toJson(actionMessage));
         // Convert message to action message with Serializer.fromMessageToActonMessage
         ActionMessage targetActionMessage = assertDoesNotThrow(()-> Serializer.fromMessageToActionMessage(message));
         assertEquals(targetActionMessage.getActionId(), ModelConstants.ACTION_CALCULATE_INFLUENCE_ID);
@@ -58,7 +58,7 @@ class TestSerializer {
     @Test
     void fromMessageToUser() {
         // Create message
-        Message message = new Message(MessageTypes.USER.toString(), "{\"id\": \"kevin\", \"preference\": 3}");
+        Message message = new Message(MessageTypes.USER, "{\"id\": \"kevin\", \"preference\": 3}");
         // Convert message to user with Serializer.fromMessageToUser
         User user = assertDoesNotThrow(()->Serializer.fromMessageToUser(message));
         assertEquals(user.getId(), "kevin");

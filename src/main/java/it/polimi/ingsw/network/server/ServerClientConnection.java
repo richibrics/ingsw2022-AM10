@@ -26,20 +26,16 @@ public class ServerClientConnection implements Runnable {
     private boolean continueReceiving;
     private final Object synchronizeStillAliveTimer;
 
-    private final Scanner bufferIn;
-    private final PrintWriter bufferOut;
+    private Scanner bufferIn;
+    private PrintWriter bufferOut;
 
-    public ServerClientConnection(Socket clientSocket) throws IOException {
+    public ServerClientConnection(Socket clientSocket) {
         this.clientSocket = clientSocket;
         this.user = null;
         this.gameController = null;
-        this.resetTimer();
-
-        this.bufferIn = new Scanner(this.clientSocket.getInputStream());
-        this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
-
         // Uses this object to synchronize on variables that are value indexed, like Integer and Boolean.
         this.synchronizeStillAliveTimer = new Object();
+        this.resetTimer();
     }
 
     /**
@@ -48,19 +44,27 @@ public class ServerClientConnection implements Runnable {
      */
     @Override
     public void run() {
-        this.continueReceiving = true;
-        // Request user to the client
-        this.requestHandshake();
-        this.requestUser();
-        // Wait for messages for a long of time
-        while (this.continueReceiving) {
-            this.receiveMessage();
-        }
-        // After I don't have to receive any other message, I close the socket and the streams.
         try {
-            this.closeConnection();
+            this.bufferIn = new Scanner(this.clientSocket.getInputStream());
+            this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
+
+            this.continueReceiving = true;
+            // Request user to the client
+            this.requestHandshake();
+            this.requestUser();
+            // Wait for messages for a long of time
+            while (this.continueReceiving) {
+                this.receiveMessage();
+            }
+            // After I don't have to receive any other message, I close the socket and the streams.
+            try {
+                this.closeConnection();
+            } catch (IOException e) {
+                System.err.println("Error while closing the client socket");
+                e.printStackTrace();
+            }
         } catch (IOException e) {
-            System.out.println("Error while closing the client socket");
+            System.err.println("Error while creating the buffers");
             e.printStackTrace();
         }
     }
@@ -187,7 +191,11 @@ public class ServerClientConnection implements Runnable {
                  */
                     User updatedUser = Serializer.fromMessageToUser(message);
                     if (updatedUser.getId() == this.user.getId()) {
-                        LobbyHandler.getLobbyHandler().changePreference(updatedUser.getId(), updatedUser.getPreference());
+                        try {
+                            LobbyHandler.getLobbyHandler().changePreference(updatedUser.getId(), updatedUser.getPreference());
+                        } catch (Exception e) {
+                            throw new WrongMessageContentException("The preference could not be changed.");
+                        }
                     } else {
                         throw new WrongMessageContentException("User id cannot change when the player wants to change his lobby preference.");
                     }
@@ -215,7 +223,7 @@ public class ServerClientConnection implements Runnable {
      * Resets Still Alive timer to its initial value.
      */
     public void resetTimer() {
-        synchronized (synchronizeStillAliveTimer) {
+        synchronized (this.synchronizeStillAliveTimer) {
             this.stillAliveTimer = NetworkConstants.INITIAL_STILL_ALIVE_TIMER_VALUE;
         }
     }
