@@ -45,8 +45,10 @@ public class ServerClientConnection implements Runnable {
     @Override
     public void run() {
         try {
-            this.bufferIn = new Scanner(this.clientSocket.getInputStream());
-            this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
+            synchronized (this) {
+                this.bufferIn = new Scanner(this.clientSocket.getInputStream());
+                this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
+            }
 
             this.continueReceiving = true;
             // Request user to the client
@@ -72,31 +74,23 @@ public class ServerClientConnection implements Runnable {
     /**
      * Reads from the Input buffer the next message and passes it to the deserialize method.
      */
-    private void receiveMessage() {
-        synchronized (this.bufferIn) {
-            synchronized (this.bufferOut) {
-                String line = this.bufferIn.nextLine();
-                this.deserialize(line);
-            }
-        }
+    private synchronized void receiveMessage() {
+        String line = this.bufferIn.nextLine();
+        this.deserialize(line);
     }
 
     /**
      * Waits for the handshake with the client. Once the client has sent the correct Handshake message, the method ends.
      */
-    private void requestHandshake() {
-        synchronized (this.bufferIn) {
-            synchronized (this.bufferOut) {
-                Message handshakeMessage = new Message(MessageTypes.HANDSHAKE, NetworkConstants.HANDSHAKE_STRING);
-                boolean okay = false;
+    private synchronized void requestHandshake() {
+        Message handshakeMessage = new Message(MessageTypes.HANDSHAKE, NetworkConstants.HANDSHAKE_STRING);
+        boolean okay = false;
+        this.sendMessage(handshakeMessage);
+        while (!okay) {
+            if (this.bufferIn.nextLine().equals(Serializer.fromMessageToString(handshakeMessage)))
+                okay = true;
+            else {
                 this.sendMessage(handshakeMessage);
-                while (!okay) {
-                    if (this.bufferIn.nextLine().equals(Serializer.fromMessageToString(handshakeMessage)))
-                        okay = true;
-                    else {
-                        this.sendMessage(handshakeMessage);
-                    }
-                }
             }
         }
     }
@@ -105,37 +99,31 @@ public class ServerClientConnection implements Runnable {
      * Waits for the User from the client. Once the client has sent the correct user message, the method ends.
      * This method check if the username is already used, asking it to the Lobby Handler.
      */
-    private void requestUser() {
-        synchronized (this.bufferIn) {
-            synchronized (this.bufferOut) {
-                // Wait for a User message from the User.
-                Message receivedMessage;
-                boolean okay = false;
-                while (!okay) {
-                    try {
-                        receivedMessage = Serializer.fromStringToMessage(this.bufferIn.nextLine());
-                        if (receivedMessage.getType() == MessageTypes.USER) {
-                            okay = true;
-                            User newUser = Serializer.fromMessageToUser(receivedMessage);
+    private synchronized void requestUser() {
+        // Wait for a User message from the User.
+        Message receivedMessage;
+        boolean okay = false;
+        while (!okay) {
+            try {
+                receivedMessage = Serializer.fromStringToMessage(this.bufferIn.nextLine());
+                if (receivedMessage.getType() == MessageTypes.USER) {
+                    okay = true;
+                    User newUser = Serializer.fromMessageToUser(receivedMessage);
                         /* Check if username is available with the LobbyHandler. Synchronize here because
                            if 2 clients ask together I could encounter troubles.*/
-                            synchronized (LobbyHandler.getLobbyHandler()) { // TODO Check if safe
-                                if (LobbyHandler.getLobbyHandler().checkIfUsernameIsUsed(newUser.getId())) {
-                                    // Then add the user and the connection to the LobbyHandler
-                                    this.user = newUser;
-                                    LobbyHandler.getLobbyHandler().addClient(this.user, this);
-                                } else {
-                                    this.sendMessage(new Message(MessageTypes.USER_ERROR, "Username already in use, please choose another one"));
-                                    okay = false;
-                                }
-                            }
-                        } else {
-                            this.sendMessage(new Message(MessageTypes.USER_ERROR, "Expected a User"));
-                        }
-                    } catch (WrongMessageContentException e) {
-                        e.printStackTrace();
+                    if (!LobbyHandler.getLobbyHandler().checkIfUsernameIsUsed(newUser.getId())) {
+                        // Then add the user and the connection to the LobbyHandler
+                        this.user = newUser;
+                        LobbyHandler.getLobbyHandler().addClient(this.user, this);
+                    } else {
+                        this.sendMessage(new Message(MessageTypes.USER_ERROR, "Username already in use, please choose another one"));
+                        okay = false;
                     }
+                } else {
+                    this.sendMessage(new Message(MessageTypes.USER_ERROR, "Expected a User"));
                 }
+            } catch (WrongMessageContentException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -145,13 +133,9 @@ public class ServerClientConnection implements Runnable {
      *
      * @param message the message that is going to be serialized and sent to the client
      */
-    public void sendMessage(Message message) {
-        synchronized (this.bufferIn) {
-            synchronized (this.bufferOut) {
-                this.bufferOut.println(Serializer.fromMessageToString(message));
-                this.bufferOut.flush();
-            }
-        }
+    public synchronized void sendMessage(Message message) {
+        this.bufferOut.println(Serializer.fromMessageToString(message));
+        this.bufferOut.flush();
     }
 
     /**
@@ -164,14 +148,11 @@ public class ServerClientConnection implements Runnable {
     /**
      * Closes the Socket and the Streams
      */
-    private void closeConnection() throws IOException {
-        synchronized (this.bufferIn) {
-            synchronized (this.bufferOut) {
-                this.bufferIn.close();
-                this.bufferOut.close();
-                this.clientSocket.close();
-            }
-        }
+    private synchronized void closeConnection() throws IOException {
+        this.bufferIn.close();
+        this.bufferOut.close();
+        this.clientSocket.close();
+
     }
 
     /**
@@ -234,7 +215,7 @@ public class ServerClientConnection implements Runnable {
      * @return the GameController
      * @throws GameControllerNotSetException if the GameController was not set before
      */
-    public GameController getGameController() throws GameControllerNotSetException {
+    public synchronized GameController getGameController() throws GameControllerNotSetException {
         if (gameController == null) {
             throw new GameControllerNotSetException("GameController not set in ServerClientConnection");
         }
@@ -246,7 +227,7 @@ public class ServerClientConnection implements Runnable {
      *
      * @param gameController the GameController to set
      */
-    public void setGameController(GameController gameController) {
+    public synchronized void setGameController(GameController gameController) {
         this.gameController = gameController;
     }
 
@@ -265,6 +246,7 @@ public class ServerClientConnection implements Runnable {
 
     /**
      * Gets the still alive timer.
+     *
      * @return the still alive timer
      */
 
