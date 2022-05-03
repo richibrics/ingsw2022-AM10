@@ -6,12 +6,12 @@ import it.polimi.ingsw.network.messages.Message;
 
 import java.util.ArrayList;
 
-public class StillAliveChecker implements Runnable {
+public class ServerStillAliveChecker implements Runnable {
 
     private final ArrayList<ServerClientConnection> listOfServerClientConnections;
     private final boolean continueRunning;
 
-    public StillAliveChecker(ArrayList<ServerClientConnection> clientConnections) {
+    public ServerStillAliveChecker(ArrayList<ServerClientConnection> clientConnections) {
         this.listOfServerClientConnections = clientConnections;
         this.continueRunning = true;
     }

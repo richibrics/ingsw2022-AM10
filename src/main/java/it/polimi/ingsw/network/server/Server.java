@@ -19,7 +19,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Accepts connections from clients; starts the thread that runs the StillAliveChecker, which checks if the clients
+     * Accepts connections from clients; starts the thread that runs the ServerStillAliveChecker, which checks if the clients
      * are still alive and sends messages to notify the clients that the server is running; creates a new instance of
      * ServerClientConnection and adds it to the list of server-client connections.
      */
@@ -47,7 +47,7 @@ public class Server implements Runnable {
                 }
 
                 if (this.firstConnection) {
-                    new Thread(new StillAliveChecker(this.listOfServerClientConnections)).start();
+                    new Thread(new ServerStillAliveChecker(this.listOfServerClientConnections)).start();
                     this.firstConnection = false;
                 }
             }
