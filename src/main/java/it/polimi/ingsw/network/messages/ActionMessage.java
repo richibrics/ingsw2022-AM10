@@ -3,11 +3,11 @@ package it.polimi.ingsw.network.messages;
 import java.util.Map;
 
 public class ActionMessage {
-    int action;
+    int actionId;
     Map<String, String> options;
 
     public ActionMessage(int actionId, Map<String, String> options) {
-        this.action = actionId;
+        this.actionId = actionId;
         this.options = options;
     }
 
@@ -16,7 +16,7 @@ public class ActionMessage {
      * @return id of the requested action
      */
     public int getActionId() {
-        return action;
+        return actionId;
     }
 
     /**

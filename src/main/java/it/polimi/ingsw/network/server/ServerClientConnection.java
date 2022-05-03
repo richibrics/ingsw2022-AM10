@@ -256,11 +256,18 @@ public class ServerClientConnection implements Runnable {
     }
 
     /**
-     * Sets the User.
-     *
-     * @param user the User to set
+     * Gets the still alive timer.
+     * @return the still alive timer
      */
-    public void setUser(User user) {
-        this.user = user;
+
+    public int getTimer() {
+        return this.stillAliveTimer;
+    }
+
+    /**
+     * Decrements Still Alive Timer by one
+     */
+    public void decrementTimer() {
+        this.stillAliveTimer -= 1;
     }
 }

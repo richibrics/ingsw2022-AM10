@@ -12,7 +12,7 @@ public class Message {
     }
 
     /**
-     * Retruns the type of the message.
+     * Returns the type of the message.
      * @return the type of the message
      */
     public MessageTypes getType() {

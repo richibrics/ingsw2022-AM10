@@ -1,12 +1,14 @@
 package it.polimi.ingsw.network;
 
 public enum MessageTypes {
-    STILL_ALIVE,
-    HANDSHAKE,
     USER,
+    HANDSHAKE,
+    STILL_ALIVE,
     GAME,
     ROUND,
     ACTION,
+    END_GAME,
+    LOBBY,
     USER_ERROR,
     ACTION_ERROR;
 }

@@ -20,4 +20,11 @@ class TestUser {
         User user = new User("test",value);
         assertEquals(value,user.getPreference());
     }
+
+    @Test
+    void changePreference() {
+        User user = new User("test",3);
+        user.changePreference(2);
+        assertEquals(user.getPreference(), 2);
+    }
 }
