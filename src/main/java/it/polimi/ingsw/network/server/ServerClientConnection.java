@@ -186,7 +186,7 @@ public class ServerClientConnection implements Runnable {
                    in the Lobby Handler. Before changing it, I have to check that the username is the same as before.
                  */
                     User updatedUser = Serializer.fromMessageToUser(message);
-                    if (!LobbyHandler.getLobbyHandler().checkIfUsernameHasChanged(updatedUser.getId(), this)) {
+                    if (updatedUser.getId() == this.user.getId()) {
                         LobbyHandler.getLobbyHandler().changePreference(updatedUser.getId(), updatedUser.getPreference());
                     } else {
                         throw new WrongMessageContentException("User id cannot change when the player wants to change his lobby preference.");
