@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network.messages;
 
+import it.polimi.ingsw.network.MessageTypes;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,8 +12,8 @@ class TestMessage {
      */
     @Test
     void getType() {
-        Message message = new Message("prova","payl");
-        assertEquals("prova",message.getType());
+        Message message = new Message(MessageTypes.USER,"payl");
+        assertEquals(MessageTypes.USER,message.getType());
     }
 
     /**
@@ -20,7 +21,7 @@ class TestMessage {
      */
     @Test
     void getPayload() {
-        Message message = new Message("prova","payl");
+        Message message = new Message(MessageTypes.USER,"payl");
         assertEquals("payl",message.getPayload());
     }
 }
