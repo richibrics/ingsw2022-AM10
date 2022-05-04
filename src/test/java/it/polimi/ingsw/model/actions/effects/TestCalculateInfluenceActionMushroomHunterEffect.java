@@ -151,7 +151,7 @@ class TestCalculateInfluenceActionMushroomHunterEffect {
     void modifyRoundAndActionList() {
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID] = calculateInfluenceActionMushroomHunterEffect;
-        assertDoesNotThrow(()->calculateInfluenceActionMushroomHunterEffect.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> calculateInfluenceActionMushroomHunterEffect.modifyRoundAndActionList());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
         assertEquals(gameEngine.getActionManager().getActions()[ModelConstants.ACTION_CALCULATE_INFLUENCE_ID], calculateInfluenceAction);
     }

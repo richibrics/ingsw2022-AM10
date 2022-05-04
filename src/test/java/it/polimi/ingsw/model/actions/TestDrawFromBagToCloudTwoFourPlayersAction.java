@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.CloudTile;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -37,15 +36,15 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         drawFromBagToCloudTwoPlayersAction.setPlayerId(ModelConstants.NO_PLAYER);
 
         // Check cloud empty before
-        for (CloudTile cloudTile: assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles())) {
+        for (CloudTile cloudTile : assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles())) {
             assertEquals(0, cloudTile.peekStudents().size());
         }
 
         // Fill them with the action
-        assertDoesNotThrow(()->drawFromBagToCloudTwoPlayersAction.act());
+        assertDoesNotThrow(() -> drawFromBagToCloudTwoPlayersAction.act());
 
         // Check clouds filled
-        for (CloudTile cloudTile: assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles())) {
+        for (CloudTile cloudTile : assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles())) {
             assertEquals(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_TWO_PLAYERS_STUDENTS_NUMBER, cloudTile.peekStudents().size());
         }
     }
@@ -67,7 +66,7 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         teams.add(team2);
         gameEngineTwo = new GameEngine(teams);
         SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngineTwo);
-        assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
+        assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
 
         drawFromBagToCloudTwoPlayersAction = new DrawFromBagToCloudTwoFourPlayersAction(gameEngineTwo);
         return gameEngineTwo;
@@ -84,15 +83,15 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         drawFromBagToCloudFourPlayersAction.setPlayerId(ModelConstants.NO_PLAYER);
 
         // Check cloud empty before
-        for (CloudTile cloudTile: assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles())) {
+        for (CloudTile cloudTile : assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles())) {
             assertEquals(0, cloudTile.peekStudents().size());
         }
 
         // Fill them with the action
-        assertDoesNotThrow(()->drawFromBagToCloudFourPlayersAction.act());
+        assertDoesNotThrow(() -> drawFromBagToCloudFourPlayersAction.act());
 
         // Check clouds filled
-        for (CloudTile cloudTile: assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles())) {
+        for (CloudTile cloudTile : assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles())) {
             assertEquals(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_FOUR_PLAYERS_STUDENTS_NUMBER, cloudTile.peekStudents().size());
         }
     }
@@ -120,7 +119,7 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         teams.add(team2);
         gameEngineFour = new GameEngine(teams);
         SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngineFour);
-        assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
+        assertDoesNotThrow(() -> setUpTwoAndFourPlayersAction.act());
 
         drawFromBagToCloudFourPlayersAction = new DrawFromBagToCloudTwoFourPlayersAction(gameEngineFour);
         return gameEngineFour;
@@ -134,7 +133,7 @@ class TestDrawFromBagToCloudTwoFourPlayersAction {
         GameEngine gameEngine = setUpFourPlayers();
         ArrayList<Integer> originalOrder = gameEngineFour.getRound().getOrderOfPlay();
 
-        assertDoesNotThrow(()->drawFromBagToCloudFourPlayersAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> drawFromBagToCloudFourPlayersAction.modifyRoundAndActionList());
         // Check next action
         assertTrue(gameEngineFour.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
 

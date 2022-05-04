@@ -123,14 +123,13 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
                     islandGroup = islandTiles;
                     break;
                 }
-        }
-        else {
+        } else {
             targetIsland = this.getGameEngine().getTable().getMotherNature().getIslandTile();
             islandGroup = this.getGroupWithMotherNature();
         }
 
         /* Calculate influence if there are no no-entry tiles on the islands or this.islandId != -1  */
-        if (!islandGroup.get(0).hasNoEntry() ||  this.islandId != -1) {
+        if (!islandGroup.get(0).hasNoEntry() || this.islandId != -1) {
             this.calculateInfluences(influences, islandGroup);
 
             TowerColor color = null;
@@ -183,7 +182,7 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
-     *
+     * <p>
      * After this action the player will choose a cloud tile, so I add to the round the FromCloudTileToEntrance action.
      *
      * @throws Exception if something bad happens

@@ -10,6 +10,7 @@ import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
 import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
 import it.polimi.ingsw.model.actions.effects.*;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
+import it.polimi.ingsw.model.exceptions.NotEnoughCoinException;
 import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.*;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -211,6 +213,80 @@ class TestCharacterManager {
         };
         assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
+        return gameEngine;
+    }
+
+    @Test
+    public void decreasePlayersMoneyEditCardCost() {
+        GameEngine gameEngine = setupPlayerMoneyChecks();
+        ArrayList<Integer> cardsId = (ArrayList<Integer>) assertDoesNotThrow(()->gameEngine.getTable().getCharacterCards().keySet().stream().collect(Collectors.toList()));
+
+        // Player 1 has 3 coins so can play all the cards
+        int cardCost = assertDoesNotThrow(()->gameEngine.getTable().getCharacterCards().get(cardsId.get(0)).getCost());
+        assertEquals(3, assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getCoins()));
+        assertDoesNotThrow(()->gameEngine.getCharacterManager().decreasePlayersMoneyEditCardCost(1, cardsId.get(0)));
+        assertEquals(3-cardCost, assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getCoins()));
+
+        // Now player 3 that has 4 coins uses again the card, and I check the cost of the card is greater
+        cardCost = cardCost + 1;
+        assertEquals(4, assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 3).getCoins()));
+        assertDoesNotThrow(()->gameEngine.getCharacterManager().decreasePlayersMoneyEditCardCost(3, cardsId.get(0)));
+        assertEquals(4-cardCost, assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 3).getCoins()));
+
+        // Now player 2 without money asks for the card: exception
+        assertThrows(NotEnoughCoinException.class, ()->gameEngine.getCharacterManager().decreasePlayersMoneyEditCardCost(2, cardsId.get(0)));
+
+        // Check exceptions: no player, no card
+        assertThrows(NoSuchElementException.class, ()->gameEngine.getCharacterManager().decreasePlayersMoneyEditCardCost(5, cardsId.get(0)));
+        assertThrows(NoSuchElementException.class, ()->gameEngine.getCharacterManager().decreasePlayersMoneyEditCardCost(1, -1));
+    }
+
+    /**
+     * Tests checkPlayerCanPlayCard: player with money can play, player without money can't; exceptions check
+     */
+    @Test
+    public void checkPlayerCanPlayCard() {
+        GameEngine gameEngine = setupPlayerMoneyChecks();
+        ArrayList<Integer> cardsId = (ArrayList<Integer>) assertDoesNotThrow(()->gameEngine.getTable().getCharacterCards().keySet().stream().collect(Collectors.toList()));
+
+        // Player 1 has 3 coins so can play all the cards
+        // Test true
+        assertTrue(assertDoesNotThrow(()->gameEngine.getCharacterManager().checkPlayerCanPlayCard(1, cardsId.get(0))));
+
+        // Player 2 has 0 coins so can't play any card
+        // Test False
+        assertFalse(assertDoesNotThrow(()->gameEngine.getCharacterManager().checkPlayerCanPlayCard(2, cardsId.get(0))));
+
+        // Check exceptions: no player, no card
+        assertThrows(NoSuchElementException.class, ()->gameEngine.getCharacterManager().checkPlayerCanPlayCard(5, cardsId.get(0)));
+        assertThrows(NoSuchElementException.class, ()->gameEngine.getCharacterManager().checkPlayerCanPlayCard(1, -1));
+    }
+
+    GameEngine setupPlayerMoneyChecks() {
+        User user1 = new User("1", 3);
+        User user2 = new User("2", 3);
+        User user3 = new User("3", 3);
+        Player player1 = new Player(user1, 1, 3);
+        Player player2 = new Player(user2, 2, 0);
+        Player player3 = new Player(user3, 3, 4);
+        ArrayList<Player> players1 = new ArrayList<>();
+        players1.add(player1);
+        Team team1 = new Team(1, players1);
+        ArrayList<Player> players2 = new ArrayList<>();
+        players2.add(player2);
+        Team team2 = new Team(2, players2);
+        ArrayList<Player> players3 = new ArrayList<>();
+        players3.add(player3);
+        Team team3 = new Team(3, players3);
+        ArrayList<Team> teams = new ArrayList<>();
+        teams.add(team1);
+        teams.add(team2);
+        teams.add(team3);
+        GameEngine gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
+
+        SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
         return gameEngine;
     }
 }

@@ -127,7 +127,7 @@ class TestCalculateInfluenceAction {
 
         /* Create array of students */
         ArrayList<StudentDisc> students = new ArrayList<>();
-        if (newMotherNatureIslandId != (motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES) {
+        if (newMotherNatureIslandId != (motherNatureIslandId + ModelConstants.NUMBER_OF_ISLAND_TILES / 2) % ModelConstants.NUMBER_OF_ISLAND_TILES) {
             /* The island with id newMotherNatureIslandId already has a student disc if it is not opposite
             to the island with id motherNatureIslandId */
             if (motherNature.getIslandTile().peekStudents().get(0).getColor().equals(PawnColor.RED)) {
@@ -145,8 +145,7 @@ class TestCalculateInfluenceAction {
                 students.add(new StudentDisc(5, PawnColor.PINK));
                 students.add(new StudentDisc(6, PawnColor.PINK));
             }
-        }
-        else {
+        } else {
             /* The island with id newMotherNatureIslandId does not have a student disc if it is opposite
             to the island with id motherNatureIslandId */
             students.add(new StudentDisc(1, PawnColor.RED));
@@ -201,11 +200,11 @@ class TestCalculateInfluenceAction {
         for (StudentDisc studentDisc : students)
             assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).addStudent(studentDisc));
         /* Set no entry tile */
-        assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).setNoEntry(true));
+        assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).setNoEntry(true));
         /* Calculate influence. Case 4: A satisfied */
         assertDoesNotThrow(() -> calculateInfluenceAction.act());
         assertEquals(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).getTower().getColor()), assertDoesNotThrow(() -> CommonManager.takeTeamById(gameEngine, 1).getTeamTowersColor()));
-        assertFalse(assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).hasNoEntry()));
+        assertFalse(assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, newMotherNatureIslandId).hasNoEntry()));
     }
 
     /**
@@ -214,7 +213,7 @@ class TestCalculateInfluenceAction {
     @Test
     void modifyRoundAndActionList() {
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
-        assertDoesNotThrow(()->calculateInfluenceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> calculateInfluenceAction.modifyRoundAndActionList());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID));
     }
 

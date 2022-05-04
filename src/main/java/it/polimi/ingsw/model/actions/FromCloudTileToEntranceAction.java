@@ -18,6 +18,7 @@ public class FromCloudTileToEntranceAction extends Action {
 
     /**
      * Sets the options. Options represents additional information used by the act method.
+     *
      * @param options additional information for act method
      * @throws Exception if the required key is not provided
      */
@@ -37,6 +38,7 @@ public class FromCloudTileToEntranceAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -55,6 +57,7 @@ public class FromCloudTileToEntranceAction extends Action {
 
     /**
      * Moves the students from a cloud tile to the entrance of {@code this.playerId}.
+     *
      * @throws Exception if something bad happens
      */
 

@@ -5,7 +5,9 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
+import it.polimi.ingsw.model.exceptions.IllegalStudentDiscMovementException;
 import it.polimi.ingsw.model.game_components.PawnColor;
+import it.polimi.ingsw.model.game_components.SchoolBoard;
 import it.polimi.ingsw.model.game_components.StudentDisc;
 import it.polimi.ingsw.model.managers.CommonManager;
 
@@ -89,39 +91,70 @@ public class MinstrelEffectAction extends Action {
      */
     @Override
     public void act() throws Exception {
+        SchoolBoard schoolBoard = CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId());
         StudentDisc studentInEntrance1 = null;
         StudentDisc studentInEntrance2 = null;
         StudentDisc studentInDiningRoom1 = null;
         StudentDisc studentInDiningRoom2 = null;
         for (PawnColor color : PawnColor.values()) {
-            for (StudentDisc studentDisc : CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).getDiningRoomColor(color)) {
+            for (StudentDisc studentDisc : schoolBoard.getDiningRoomColor(color)) {
                 if (studentDisc.getId() == this.studentInDiningRoom1Id)
                     studentInDiningRoom1 = studentDisc;
                 if (studentInDiningRoom2Id != null && studentDisc.getId() == this.studentInDiningRoom2Id)
                     studentInDiningRoom2 = studentDisc;
             }
         }
-        for (StudentDisc studentDisc : CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).getEntrance()) {
+        for (StudentDisc studentDisc : schoolBoard.getEntrance()) {
             if (studentDisc.getId() == this.studentInEntrance1Id)
                 studentInEntrance1 = studentDisc;
             if (studentInEntrance2Id != null && studentDisc.getId() == this.studentInEntrance2Id)
                 studentInEntrance2 = studentDisc;
         }
-        if (studentInEntrance1 == null || studentInEntrance2 == null) {
+        if (studentInEntrance1 == null || (studentInEntrance2Id != null && studentInEntrance2 == null)) {
             throw new IllegalGameActionException("The student requested isn't in the entrance");
         }
-        if (studentInDiningRoom1 == null || studentInDiningRoom2 == null) {
+        if (studentInDiningRoom1 == null || (studentInDiningRoom2Id != null && studentInDiningRoom2 == null)) {
             throw new IllegalGameActionException("The student requested isn't in the diningRoom");
         }
-        CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).replaceStudentInDiningRoom(studentInDiningRoom1, studentInEntrance1);
         if (studentInDiningRoom2Id != null) {
-            CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).replaceStudentInDiningRoom(studentInDiningRoom2, studentInEntrance2);
+            // If I have to move 2 students from the dining room, and if these students are in
+            // the same table, then I have to move the student in the last position of the table first
+            // and then the other one. So now I check which one is the last one, and I move it first
+            if (studentInDiningRoom1.getColor() == studentInDiningRoom2.getColor()) {
+                // Check which one is the last on the table
+                if (schoolBoard.getDiningRoomColor(studentInDiningRoom1.getColor()).get(schoolBoard.getDiningRoomColor(studentInDiningRoom1.getColor()).size() - 1) == studentInDiningRoom1) {
+                    // studentInDiningRoom1 is the last. Move 1, then 2
+                    schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom1);
+                    schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom2);
+                    schoolBoard.addStudentToDiningRoom(studentInEntrance1);
+                    schoolBoard.addStudentToDiningRoom(studentInEntrance2);
+
+                } else if (schoolBoard.getDiningRoomColor(studentInDiningRoom2.getColor()).get(schoolBoard.getDiningRoomColor(studentInDiningRoom2.getColor()).size() - 1) == studentInDiningRoom2) {
+                    // studentInDiningRoom2 is the last. Move 2, then 1
+                    schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom2);
+                    schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom1);
+                    schoolBoard.addStudentToDiningRoom(studentInEntrance1);
+                    schoolBoard.addStudentToDiningRoom(studentInEntrance2);
+                } else {
+                    // Nobody is the last: exception
+                    throw new IllegalStudentDiscMovementException("The two studentInDiningRoom aren't in the last position");
+                }
+            } else {
+                schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom1);
+                schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom2);
+                schoolBoard.addStudentToDiningRoom(studentInEntrance1);
+                schoolBoard.addStudentToDiningRoom(studentInEntrance2);
+            }
+        } else { // I have to move only a student, and I have no problems
+            schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom1);
+            schoolBoard.addStudentToDiningRoom(studentInEntrance1);
         }
         ArrayList<StudentDisc> studentsToEntrance = new ArrayList<>();
         studentsToEntrance.add(studentInDiningRoom1);
         if (studentInDiningRoom2Id != null) {
             studentsToEntrance.add(studentInDiningRoom2);
         }
-        CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).addStudentsToEntrance(studentsToEntrance);
+        schoolBoard.addStudentsToEntrance(studentsToEntrance);
     }
+
 }

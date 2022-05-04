@@ -4,7 +4,6 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
-import it.polimi.ingsw.model.game_components.*;
 
 
 public class DrawFromBagToCloudTwoFourPlayersAction extends DrawFromBagToCloudAction {

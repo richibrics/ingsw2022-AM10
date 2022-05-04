@@ -8,7 +8,7 @@ public abstract class Action {
 
     private final int id;
     private int playerId;
-    private GameEngine gameEngine;
+    private final GameEngine gameEngine;
 
     public Action(int id, GameEngine gameEngine) {
         this.id = id;
@@ -17,6 +17,7 @@ public abstract class Action {
 
     /**
      * Implements the behaviour of the action.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -24,6 +25,7 @@ public abstract class Action {
 
     /**
      * Returns the identifier of the Action class.
+     *
      * @return the id of the Action class.
      */
 
@@ -33,6 +35,7 @@ public abstract class Action {
 
     /**
      * Gets the playerId of the player performing the action.
+     *
      * @return the playerId of the player performing the action
      */
 
@@ -42,6 +45,7 @@ public abstract class Action {
 
     /**
      * Sets the playerId, which indicates the player performing the action.
+     *
      * @param playerId the id of the player performing the action
      */
 
@@ -51,6 +55,7 @@ public abstract class Action {
 
     /**
      * Sets the options. Options represents additional information used by the act method.
+     *
      * @param options additional information for act method
      * @throws Exception if the required key is not provided
      */
@@ -59,6 +64,7 @@ public abstract class Action {
 
     /**
      * Gets the game engine.
+     *
      * @return the game engine
      */
 
@@ -69,6 +75,7 @@ public abstract class Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 
