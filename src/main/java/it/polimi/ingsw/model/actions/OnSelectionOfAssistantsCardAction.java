@@ -90,6 +90,8 @@ public class OnSelectionOfAssistantsCardAction extends Action {
             if(!nextActions.contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID))
                 throw new IllegalGameStateException("OnSelectionOfAssistantsCard action was run but it wasn't in Round actions");
 
+            nextActions.remove(Integer.valueOf(this.getId()));; // No more assistant selection
+
             nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
             nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
             this.getGameEngine().getRound().setPossibleActions(nextActions);

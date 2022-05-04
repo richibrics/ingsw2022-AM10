@@ -105,6 +105,7 @@ class TestMinstrelEffectAction {
 
     /**
      * Tests property set to the correct entrance and diningRoom students.
+     * A lot of tests are essential because there are a lot of random possibilities of drawing form bag.
      */
     @RepeatedTest(100)
     void act() {
@@ -135,10 +136,6 @@ class TestMinstrelEffectAction {
 
         minstrelEffectAction.setPlayerId(1);
         assertDoesNotThrow(() -> minstrelEffectAction.setOptions(options));
-        System.out.println(studentEntrance1);
-        System.out.println(studentEntrance2);
-        System.out.println(student3);
-        System.out.println(student4);
         assertDoesNotThrow(() -> minstrelEffectAction.act());
 
         assertTrue(checkStudentIdInEntrance(1, student3));
