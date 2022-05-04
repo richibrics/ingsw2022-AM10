@@ -32,9 +32,22 @@ class TestSerializer {
         Message targetMessage = assertDoesNotThrow(()->Serializer.fromStringToMessage(string));
         assertEquals(targetMessage.getType(), MessageTypes.GAME);
         assertEquals(targetMessage.getPayload(), "{\"hello\": \"hi\"}");
+
         // Check if Serializer.fromStringToMessage throws a WrongMessageContentException
-        String wrongString = "hello";
-        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString));
+
+        // Incompatible message
+        String wrongString1 = "hello";
+        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString1));
+
+        // Missing json
+        String wrongString2 = "";
+        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString2));
+
+        // Wrong fields
+        String wrongString3 = "{\"payload\": \"{\\\"hello\\\": \\\"hi\\\"}\"}";
+        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString3));
+        String wrongString4 = "{\"type\": \"%s\"}";
+        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString4));
     }
 
     /**
