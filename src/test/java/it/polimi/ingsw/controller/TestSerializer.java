@@ -21,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestSerializer {
 
+    /**
+     * Tests string is converted to message, tests exception with wrong strings.
+     */
     @Test
     void fromStringToMessage() {
         // Create string in json format
@@ -34,12 +37,19 @@ class TestSerializer {
         assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString));
     }
 
+    /**
+     * Tests correct string is made out of a message.
+     */
     @Test
     void fromMessageToString() {
         Message message = new Message(MessageTypes.GAME, "{\"hello\"}");
         assertEquals(String.format("{\"type\":\"%s\",\"payload\":\"{\\\"hello\\\"}\"}", MessageTypes.GAME), Serializer.fromMessageToString(message));
     }
 
+    /**
+     * Creates an ActionMessage, inserts it in a message.
+     * Then converts the message in ActionMessage and check it has the same fields as the initial ActionMessage.
+     */
     @Test
     void fromMessageToActionMessage() {
         // Create action message
@@ -55,6 +65,9 @@ class TestSerializer {
         assertEquals(targetActionMessage.getOptions().get("color"), "red");
     }
 
+    /**
+     * Checks correct user is deserialized from a predefined user message string.
+     */
     @Test
     void fromMessageToUser() {
         // Create message
@@ -65,6 +78,9 @@ class TestSerializer {
         assertEquals(user.getPreference(), 3);
     }
 
+    /**
+     * Checks that the GameMessage has the correct type and prints the game message for the developer to read it.
+     */
     @Test
     void generateGameMessage() {
         User user1 = new User("1", 3);
@@ -88,10 +104,17 @@ class TestSerializer {
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
         assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+
+        Message message = assertDoesNotThrow(()-> Serializer.generateGameMessage(gameEngine));
+        // Check type
+        assertEquals(MessageTypes.GAME, message.getType());
         // Check json printed on stdout
-        assertDoesNotThrow(()->System.out.println(Serializer.generateGameMessage(gameEngine)));
+        System.out.println(message.getPayload());
     }
 
+    /**
+     * Checks that the LobbyMessage has the correct type and prints the lobby message for the developer to read it.
+     */
     @Test
     void generateLobbyMessage() {
         User user1 = new User("1", 2);
@@ -100,15 +123,20 @@ class TestSerializer {
         User user4 = new User("4", 4);
         User user5 = new User("5", 2);
         // Add users to lobby
-        LobbyHandler.getLobbyHandler().addClient(user1, new ServerClientConnection(new Socket()));
-        LobbyHandler.getLobbyHandler().addClient(user2, new ServerClientConnection(new Socket()));
-        LobbyHandler.getLobbyHandler().addClient(user3, new ServerClientConnection(new Socket()));
-        LobbyHandler.getLobbyHandler().addClient(user4, new ServerClientConnection(new Socket()));
-        LobbyHandler.getLobbyHandler().addClient(user5, new ServerClientConnection(new Socket()));
+        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user1, null));
+        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user2, null));
+        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user3, null));
+
+        Message message = assertDoesNotThrow(()-> Serializer.generateLobbyMessage());
+        // Check type
+        assertEquals(MessageTypes.LOBBY, message.getType());
         // Check json printed on stdout
-        assertDoesNotThrow(()->System.out.println(Serializer.generateLobbyMessage()));
+        System.out.println(message.getPayload());
     }
 
+    /**
+     * Checks that the RoundMessage has the correct type and prints the round message for the developer to read it.
+     */
     @Test
     void generateRoundMessage() {
         User user1 = new User("1", 2);
@@ -126,10 +154,17 @@ class TestSerializer {
         teams.add(team2);
         GameEngine gameEngine = new GameEngine(teams);
         assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
-        // Check json printed on stdout
-        assertDoesNotThrow(()->System.out.println(Serializer.generateRoundMessage(gameEngine)));
+
+        Message message = assertDoesNotThrow(()-> Serializer.generateRoundMessage(gameEngine));
+        // Check type
+        assertEquals(MessageTypes.ROUND, message.getType());
+        // Check json in payload printed on stdout
+        System.out.println(message.getPayload());
     }
 
+    /**
+     * Checks that the EndGameMessage has the correct type and checks also if payload is correct.
+     */
     @Test
     void generateEndGameMessage() {
         User user1 = new User("kevin", 2);
@@ -139,7 +174,11 @@ class TestSerializer {
         ArrayList<Player> winners = new ArrayList<>();
         winners.add(player1);
         winners.add(player2);
-        // Check json string returned by Serializer.generateEndGameMessage
-        assertEquals(Serializer.generateEndGameMessage(winners), "{\"type\":\"END_GAME\",\"payload\":\"[\\\"kevin\\\",\\\"steph\\\"]\"}");
+
+        Message message = assertDoesNotThrow(()-> Serializer.generateEndGameMessage(winners));
+        // Check type
+        assertEquals(MessageTypes.END_GAME, message.getType());
+        // Check json in payload
+        assertEquals(message.getPayload(), "[\"kevin\",\"steph\"]");
     }
 }

@@ -91,11 +91,10 @@ public class Serializer {
     /**
      * Generates the game message, which contains the state of the game (table and players in game).
      * @param gameEngine the game engine
-     * @return a json string containing the state of the game
+     * @return a Message object containing the Game
      * @throws Exception if something bad happens during the conversion
      */
-
-    public static String generateGameMessage(GameEngine gameEngine) throws Exception {
+    public static Message generateGameMessage(GameEngine gameEngine) throws Exception {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Bag.class, new BagSerializer())
                 .registerTypeAdapter(MotherNature.class, new MotherNatureSerializer())
@@ -103,35 +102,29 @@ public class Serializer {
                 .registerTypeAdapter(StudentDisc.class, new StudentDiscSerializer())
                 .registerTypeAdapter(Player.class, new PlayerSerializer())
                 .create();
+
         JsonObject jsonObjectPayload = new JsonObject();
+
         jsonObjectPayload.addProperty("table", gson.toJson(gameEngine.getTable()));
 
         ArrayList<Player> players = new ArrayList<>();
         for (Team team : gameEngine.getTeams())
             for (Player player : team.getPlayers())
                 players.add(player);
-
         jsonObjectPayload.addProperty("players", gson.toJson(players));
 
-        JsonObject jsonObjectMessage = new JsonObject();
-        jsonObjectMessage.addProperty("type", MessageTypes.GAME.toString());
-        jsonObjectMessage.addProperty("payload", gson.toJson(jsonObjectPayload));
-        return gson.toJson(jsonObjectMessage);
+        return new Message(MessageTypes.GAME, gson.toJson(jsonObjectPayload));
     }
 
     /**
      * Generates the lobby message, which contains the state of the lobby (users waiting for each game type).
-     * @return a json string containing the state of the lobby
+     * @return a Message object containing the state of the lobby
      */
-
-    public static String generateLobbyMessage() {
+    public static Message generateLobbyMessage() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LobbyHandler.class, new LobbyHandlerSerializer())
                 .create();
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", MessageTypes.LOBBY.toString());
-        jsonObject.addProperty("payload", gson.toJson(LobbyHandler.getLobbyHandler()));
-        return gson.toJson(jsonObject);
+        return new Message(MessageTypes.LOBBY, gson.toJson(LobbyHandler.getLobbyHandler()));
     }
 
 
@@ -141,25 +134,19 @@ public class Serializer {
      * @return a json string containing the state of the round
      */
 
-    public static String generateRoundMessage(GameEngine gameEngine) {
+    public static Message generateRoundMessage(GameEngine gameEngine) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Round.class, new RoundSerializer())
                 .create();
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", MessageTypes.ROUND.toString());
-        jsonObject.addProperty("payload", gson.toJson(gameEngine.getRound()));
-        return gson.toJson(jsonObject);
+        return new Message(MessageTypes.ROUND, gson.toJson(gameEngine.getRound()));
     }
 
 
-    public static String generateEndGameMessage(ArrayList<Player> winners) {
+    public static Message generateEndGameMessage(ArrayList<Player> winners) {
         ArrayList<String> usernames = new ArrayList<>();
         for (Player player : winners)
             usernames.add(player.getUsername());
         Gson gson = new Gson();
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("type", MessageTypes.END_GAME.toString());
-        jsonObject.addProperty("payload", gson.toJson(usernames));
-        return gson.toJson(jsonObject);
+        return new Message(MessageTypes.END_GAME, gson.toJson(usernames));
     }
 }
