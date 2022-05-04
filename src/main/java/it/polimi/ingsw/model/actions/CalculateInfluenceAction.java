@@ -5,7 +5,8 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.ProfessorPawn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction {

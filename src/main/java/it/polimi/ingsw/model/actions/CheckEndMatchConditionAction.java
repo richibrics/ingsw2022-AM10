@@ -4,10 +4,8 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class CheckEndMatchConditionAction extends Action {
@@ -17,6 +15,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Sets the options. Options represents additional information used by the act method.
+     *
      * @param options additional information for act method
      * @throws Exception if the required key is not provided
      */
@@ -29,6 +28,7 @@ public class CheckEndMatchConditionAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -41,6 +41,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Checks if a team has no towers left.
+     *
      * @return the list of winners in the condition is satisfied, null otherwise
      * @throws Exception if something bad happens
      */
@@ -56,6 +57,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Checks if the number of island groups equals the minimum number of island groups.
+     *
      * @return the list of winners in the condition is satisfied, null otherwise
      * @throws Exception if something bad happens
      */
@@ -63,13 +65,13 @@ public class CheckEndMatchConditionAction extends Action {
     public Integer[] checkIslandGroupsCondition() throws Exception {
         if (this.getGameEngine().getTable().getIslandTiles().size() == ModelConstants.MIN_NUMBER_OF_ISLAND_GROUPS) {
             return this.findWinner();
-        }
-        else
+        } else
             return null;
     }
 
     /**
      * Checks if the bag is empty
+     *
      * @return the list of winners in the condition is satisfied, null otherwise
      * @throws Exception if something bad happens
      */
@@ -83,6 +85,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Checks if a player has no assistant cards.
+     *
      * @return the list of winners in the condition is satisfied, null otherwise
      * @throws Exception if something bad happens
      */
@@ -98,13 +101,14 @@ public class CheckEndMatchConditionAction extends Action {
     /**
      * Finds the winner of the game. The player who has built the most towers on islands wins the game. In case of a tie,
      * the player who controls the most professors wins the game.
+     *
      * @return the list of winners
      * @throws Exception if something bad happens
      */
 
     public Integer[] findWinner() throws Exception {
         int minTowersLeft = ModelConstants.MAX_NUMBER_OF_TOWERS;
-        ArrayList<Team>  possibleWinners = new ArrayList<>();
+        ArrayList<Team> possibleWinners = new ArrayList<>();
 
         /* Find the possible winners */
         /* First criterion: number of towers left */
@@ -121,12 +125,10 @@ public class CheckEndMatchConditionAction extends Action {
 
         if (possibleWinners.size() == 1) {
             return possibleWinners.stream().map(team -> team.getId()).toList().toArray(new Integer[1]);
-        }
-
-        else {
+        } else {
             /* Second criterion: number of professors */
             int maxNumOfProfessors = -1;
-            ArrayList<Team>  winners = new ArrayList<>();
+            ArrayList<Team> winners = new ArrayList<>();
             for (Team team : possibleWinners) {
                 int numOfProfessors = team.getProfessorTable().size();
                 if (numOfProfessors == maxNumOfProfessors)
@@ -143,6 +145,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Communicates the winner of the game.
+     *
      * @param teamIds the ids of the winning teams
      * @throws Exception if something bad happens
      */
@@ -155,6 +158,7 @@ public class CheckEndMatchConditionAction extends Action {
     /**
      * Checks if one of the game-ending conditions is satisfied. Ends the game if a condition is satisfied.
      * If nobody wins, it puts all the assistant cards of the players down, ready to start the new round.
+     *
      * @throws Exception if something bad happens
      */
 

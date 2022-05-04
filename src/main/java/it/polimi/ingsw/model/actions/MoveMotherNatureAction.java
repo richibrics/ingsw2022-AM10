@@ -36,15 +36,16 @@ public class MoveMotherNatureAction extends Action {
             throw new WrongMessageContentException("Error while parsing island id from the ActionMessage");
         }
 
-        if (this.chosenIslandId<1 || this.chosenIslandId>ModelConstants.NUMBER_OF_ISLAND_TILES)
+        if (this.chosenIslandId < 1 || this.chosenIslandId > ModelConstants.NUMBER_OF_ISLAND_TILES)
             throw new WrongMessageContentException("Island id received is not in [1,12]");
 
     }
 
     /**
      * Moves mother nature to the requested Island
+     *
      * @throws Exception if something bad happens, like cannot move to that island (IllegalGameActionException) or the items
-     * are not correctly set in the game (IllegalGameStateException)
+     *                   are not correctly set in the game (IllegalGameStateException)
      */
 
     @Override
@@ -62,13 +63,14 @@ public class MoveMotherNatureAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * Here I remove this action from the round and calls directly the calculate influence.
+     *
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
         ArrayList<Integer> nextActions = this.getGameEngine().getRound().getPossibleActions();
-        if(!nextActions.remove(Integer.valueOf(this.getId())))
+        if (!nextActions.remove(Integer.valueOf(this.getId())))
             throw new IllegalGameStateException("MoveMotherNature action was run but it wasn't in Round actions");
         this.getGameEngine().getRound().setPossibleActions(nextActions);
 

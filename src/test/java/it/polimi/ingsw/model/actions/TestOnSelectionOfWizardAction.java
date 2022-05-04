@@ -12,7 +12,6 @@ import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,7 +28,7 @@ class TestOnSelectionOfWizardAction {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -44,9 +43,9 @@ class TestOnSelectionOfWizardAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         onSelectionOfWizardAction = new OnSelectionOfWizardAction(gameEngine);
 
@@ -72,11 +71,11 @@ class TestOnSelectionOfWizardAction {
         assertThrows(WrongMessageContentException.class, () -> onSelectionOfWizardAction.setOptions(options));
 
         // Parse error
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD,"a");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "a");
         assertThrows(WrongMessageContentException.class, () -> onSelectionOfWizardAction.setOptions(options));
 
         // OK
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD,"12");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "12");
         assertDoesNotThrow(() -> onSelectionOfWizardAction.setOptions(options));
     }
 
@@ -92,15 +91,15 @@ class TestOnSelectionOfWizardAction {
         // Player 1 acts
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "4");
         onSelectionOfWizardAction.setPlayerId(1);
-        assertDoesNotThrow(()->onSelectionOfWizardAction.setOptions(options));
-        assertDoesNotThrow(()->onSelectionOfWizardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.setOptions(options));
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.act());
 
         // Check okay
-        assertEquals(4, assertDoesNotThrow(()-> CommonManager.takePlayerById(gameEngine,1).getWizard().getId()));
+        assertEquals(4, assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getWizard().getId()));
 
         // Check player 2 can't use the same wizard (wizard 4 already in options, so I use them)
         onSelectionOfWizardAction.setPlayerId(2);
-        assertThrows(IllegalGameActionException.class, ()->onSelectionOfWizardAction.act());
+        assertThrows(IllegalGameActionException.class, () -> onSelectionOfWizardAction.act());
     }
 
     /**
@@ -111,40 +110,40 @@ class TestOnSelectionOfWizardAction {
      */
     @Test
     void modifyRoundAndActionList() {
-        assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
+        assertEquals(1, assertDoesNotThrow(() -> gameEngine.getRound().getCurrentPlayer()));
 
         // Check round actions
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID));
 
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.modifyRoundAndActionList());
 
         // Check round is going forward
-        assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
+        assertEquals(2, assertDoesNotThrow(() -> gameEngine.getRound().getCurrentPlayer()));
         // Check round actions
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID));
 
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.modifyRoundAndActionList());
 
         // Check round is going forward
-        assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
+        assertEquals(3, assertDoesNotThrow(() -> gameEngine.getRound().getCurrentPlayer()));
         // Check round actions
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID));
 
         // Before making the new order I check that the clouds are empty, because with the new order the clouds will be filled
-        assertEquals(0, assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()));
+        assertEquals(0, assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()));
 
         // This will make the new order
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.modifyRoundAndActionList());
         // Check round actions
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID));
 
         // Check new order is the same as before
-        assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));
-        assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(1)));
-        assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(2)));
+        assertEquals(1, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(0)));
+        assertEquals(2, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(1)));
+        assertEquals(3, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(2)));
 
         // Check the clouds have been filled from the execution of DrawFromBagToCloud
-        assertNotEquals(0, assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()));
+        assertNotEquals(0, assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()));
     }
 
     /**
@@ -153,12 +152,12 @@ class TestOnSelectionOfWizardAction {
      */
     @Test
     void modifyRoundAndActionListCheckIllegalStateExceptionThrown() {
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
-        assertDoesNotThrow(()->onSelectionOfWizardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfWizardAction.modifyRoundAndActionList());
         // Remove action that should be inside -> create an inconsistency
         ArrayList<Integer> nextActions = gameEngine.getRound().getPossibleActions();
         nextActions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID));
         gameEngine.getRound().setPossibleActions(nextActions);
-        assertThrows(IllegalGameStateException.class, ()-> onSelectionOfWizardAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, () -> onSelectionOfWizardAction.modifyRoundAndActionList());
     }
 }

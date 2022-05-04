@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.ActionNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
-import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,7 @@ public class OnSelectionOfCharacterCardAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * In this case the Action won't do anything after the act.
-     *
+     * <p>
      * When a character card is used in a player's turn, the player won't select any card anymore,
      * so this action is removed from round actions list. In fact, when it's next player's turn, at turn start this
      * action will be set again in the round for him.
@@ -62,7 +61,7 @@ public class OnSelectionOfCharacterCardAction extends Action {
     @Override
     public void modifyRoundAndActionList() throws Exception {
         ArrayList<Integer> actions = this.getGameEngine().getRound().getPossibleActions();
-        if(!actions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID))) // Remove and throw if wasn't inside
+        if (!actions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID))) // Remove and throw if wasn't inside
             throw new IllegalGameStateException("OnSelectionOfCharacterCard action was run but it wasn't in Round actions");
         getGameEngine().getRound().setPossibleActions(actions);
     }
@@ -76,7 +75,7 @@ public class OnSelectionOfCharacterCardAction extends Action {
     public void act() throws Exception {
         try {
             // Check player's money
-            if(!this.getGameEngine().getCharacterManager().checkPlayerCanPlayCard(this.getPlayerId(), this.chosenCharacterId))
+            if (!this.getGameEngine().getCharacterManager().checkPlayerCanPlayCard(this.getPlayerId(), this.chosenCharacterId))
                 throw new IllegalGameActionException("The player hasn't enough coins to play that card");
         } catch (NoSuchElementException e) {
             throw new IllegalGameActionException(e.getMessage());

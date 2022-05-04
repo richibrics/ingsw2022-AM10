@@ -145,10 +145,10 @@ class TestOnSelectionOfCharacterCardAction {
     @Test
     void modifyRoundAndActionList() {
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
-        assertDoesNotThrow(()->onSelectionOfCharacterCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfCharacterCardAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
 
         // Now run again, this action is not in round anymore -> exception
-        assertThrows(IllegalGameStateException.class, ()->onSelectionOfCharacterCardAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, () -> onSelectionOfCharacterCardAction.modifyRoundAndActionList());
     }
 }

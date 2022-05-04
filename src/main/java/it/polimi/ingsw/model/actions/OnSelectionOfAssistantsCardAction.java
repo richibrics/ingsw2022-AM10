@@ -7,7 +7,10 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class OnSelectionOfAssistantsCardAction extends Action {
     private Integer chosenAssistantId;
@@ -34,6 +37,7 @@ public class OnSelectionOfAssistantsCardAction extends Action {
 
     /**
      * Sets the player card if that card is available.
+     *
      * @throws Exception if something bad happens
      **/
     @Override
@@ -58,12 +62,13 @@ public class OnSelectionOfAssistantsCardAction extends Action {
      * Modifies the round for the next Players actions.
      * If none of the players have done the selection, set as next action the selection for the next player.
      * Else if everybody did it, pass to the next Action.
+     *
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        if (! this.getGameEngine().getRound().playerTurnEnded()) { // There's nobody after me
+        if (!this.getGameEngine().getRound().playerTurnEnded()) { // There's nobody after me
             // Everyone selected the AssistantCard, so now I order the characters turns using the assistant card value.
             ArrayList<Integer> oldOrderOfPlay = this.getGameEngine().getRound().getOrderOfPlay();
             Map<Integer, Float> orderMap = new HashMap<>();
@@ -87,10 +92,11 @@ public class OnSelectionOfAssistantsCardAction extends Action {
             // Set next actions for the first player of the round
             ArrayList<Integer> nextActions = getGameEngine().getRound().getPossibleActions();
             // Check it was inside: if not, wrong game state
-            if(!nextActions.contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID))
+            if (!nextActions.contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID))
                 throw new IllegalGameStateException("OnSelectionOfAssistantsCard action was run but it wasn't in Round actions");
 
-            nextActions.remove(Integer.valueOf(this.getId()));; // No more assistant selection
+            nextActions.remove(Integer.valueOf(this.getId()));
+            // No more assistant selection
 
             nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
             nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);

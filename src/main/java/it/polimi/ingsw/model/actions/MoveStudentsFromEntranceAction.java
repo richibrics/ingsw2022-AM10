@@ -7,11 +7,7 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
-import it.polimi.ingsw.model.game_components.IslandTile;
-import it.polimi.ingsw.model.game_components.SchoolBoard;
-import it.polimi.ingsw.model.game_components.StudentDisc;
 
-import javax.lang.model.element.ModuleElement;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -59,6 +55,7 @@ public class MoveStudentsFromEntranceAction extends Action {
     /**
      * Adds the requested student to the dining room or to the island tile.
      * The student and the position are defined in the options.
+     *
      * @throws Exception if something bad happens
      */
     @Override
@@ -85,18 +82,19 @@ public class MoveStudentsFromEntranceAction extends Action {
      * from the playable actions and add the next ones.
      * Also, when all (3) students have been moved, run the "calculate influence" (not at every movement cause if I call
      * the first time calculate influence that has en effect active, at the second movement the effect isn't active anymore).
+     *
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
         this.countMovedStudents += 1;
-        if(this.countMovedStudents >= ModelConstants.NUMBER_OF_MOVEMENTS_FROM_ENTRANCE) {
+        if (this.countMovedStudents >= ModelConstants.NUMBER_OF_MOVEMENTS_FROM_ENTRANCE) {
             this.countMovedStudents = 0; // Reset counter for the next player.
 
             // Remove this action from the possible actions list
             ArrayList<Integer> nextActions = this.getGameEngine().getRound().getPossibleActions();
-            if(!nextActions.remove(Integer.valueOf(this.getId()))) // Tests it was inside the round before removing, if so removes it
+            if (!nextActions.remove(Integer.valueOf(this.getId()))) // Tests it was inside the round before removing, if so removes it
                 throw new IllegalGameStateException("MoveStudentsFromEntrance action was run but it wasn't in Round actions");
             this.getGameEngine().getRound().setPossibleActions(nextActions);
 

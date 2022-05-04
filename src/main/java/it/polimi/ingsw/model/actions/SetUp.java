@@ -7,8 +7,8 @@ import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
-import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.model.game_components.Character;
+import it.polimi.ingsw.model.game_components.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,7 +109,7 @@ public abstract class SetUp extends Action {
         ArrayList<StudentDisc> studentDiscs = new ArrayList<>();
         for (PawnColor color : PawnColor.values())
             for (int id = ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * color.getId() + ModelConstants.MIN_ID_OF_STUDENT_DISC;
-                    id <= ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR + ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * color.getId(); id++)
+                 id <= ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR + ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * color.getId(); id++)
                 studentDiscs.add(new StudentDisc(id, color));
         return studentDiscs;
     }
@@ -142,7 +142,7 @@ public abstract class SetUp extends Action {
         bag.pushStudents(students);
 
         for (int i = 0; i < ModelConstants.NUMBER_OF_ISLAND_TILES; i++)
-            if (i != indexOfMotherNatureIsland && i != (indexOfMotherNatureIsland + ModelConstants.NUMBER_OF_ISLAND_TILES /2) % ModelConstants.NUMBER_OF_ISLAND_TILES)
+            if (i != indexOfMotherNatureIsland && i != (indexOfMotherNatureIsland + ModelConstants.NUMBER_OF_ISLAND_TILES / 2) % ModelConstants.NUMBER_OF_ISLAND_TILES)
                 islandGroups.get(i).get(0).addStudent(bag.drawStudents(1).get(0));
     }
 
@@ -219,6 +219,7 @@ public abstract class SetUp extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * After setup, players have to choose the Wizard.
+     *
      * @throws Exception if something bad happens
      */
 

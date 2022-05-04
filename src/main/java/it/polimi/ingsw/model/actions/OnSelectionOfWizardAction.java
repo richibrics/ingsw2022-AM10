@@ -6,7 +6,9 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OnSelectionOfWizardAction extends Action {
     private Integer chosenWizardId;
@@ -33,11 +35,12 @@ public class OnSelectionOfWizardAction extends Action {
 
     /**
      * Sets the Wizard for the player that asked it
+     *
      * @throws Exception if something bad happens
      */
     public void act() throws Exception {
         // Check that nobody has the chosen Wizard
-        if(this.getGameEngine().getAssistantManager().isWizardAvailableToBeChosen(this.chosenWizardId))
+        if (this.getGameEngine().getAssistantManager().isWizardAvailableToBeChosen(this.chosenWizardId))
             this.getGameEngine().getAssistantManager().setWizard(this.getPlayerId(), chosenWizardId);
         else
             throw new IllegalGameActionException("The requested Wizard had already been selected and can't be set to the player");
@@ -49,12 +52,13 @@ public class OnSelectionOfWizardAction extends Action {
      * If none of the players have done the selection, set as next action the selection for the next player.
      * Else if everybody did it, pass to the next Action with the same order of play:
      * after this selection, system draws the students from the bag to the cloud.
+     *
      * @throws Exception if something bad happens
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-        if (! this.getGameEngine().getRound().playerTurnEnded()) { // After there's nobody
+        if (!this.getGameEngine().getRound().playerTurnEnded()) { // After there's nobody
             // Remove this action from player's actions list
             ArrayList<Integer> nextActions = getGameEngine().getRound().getPossibleActions();
             // Remove, if it returns false, the action isn't inside -> Wrong game state

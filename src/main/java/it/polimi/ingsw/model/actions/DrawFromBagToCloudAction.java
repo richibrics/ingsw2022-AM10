@@ -30,6 +30,7 @@ public abstract class DrawFromBagToCloudAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * After this action the players will choose the assistant, with the same order already present in the round.
+     *
      * @throws Exception if something bad happens
      */
 

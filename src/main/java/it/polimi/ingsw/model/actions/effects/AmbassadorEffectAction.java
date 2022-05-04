@@ -5,7 +5,6 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.Action;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
