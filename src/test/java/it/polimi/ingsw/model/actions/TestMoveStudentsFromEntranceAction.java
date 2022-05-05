@@ -22,10 +22,38 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TestMoveStudentsFromEntranceAction {
     static MoveStudentsFromEntranceAction moveStudentsFromEntranceAction;
-    static GameEngine gameEngine;
 
-    @BeforeEach
-    void setUp() {
+    GameEngine setUpTwoPlayers() {
+        GameEngine gameEngine;
+        User user1 = new User("1", 2);
+        User user2 = new User("2", 2);
+        Player player1 = new Player(user1, 1, 3);
+        Player player2 = new Player(user2, 2, 3);
+        ArrayList<Player> players1 = new ArrayList<>();
+        players1.add(player1);
+        Team team1 = new Team(1, players1);
+        ArrayList<Player> players2 = new ArrayList<>();
+        players2.add(player2);
+        Team team2 = new Team(2, players2);
+        ArrayList<Team> teams = new ArrayList<>();
+        teams.add(team1);
+        teams.add(team2);
+        gameEngine = new GameEngine(teams);
+        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        SetUpTwoAndFourPlayersAction setUpTwoAndFourPlayersAction = new SetUpTwoAndFourPlayersAction(gameEngine);
+        assertDoesNotThrow(()->setUpTwoAndFourPlayersAction.act());
+
+        moveStudentsFromEntranceAction = new MoveStudentsFromEntranceAction(gameEngine);
+
+        ArrayList<Integer> order = new ArrayList<>();
+        order.add(1);
+        order.add(2);
+        gameEngine.getRound().setOrderOfPlay(order);
+        return gameEngine;
+    }
+
+    GameEngine setUpThreePlayers() {
+        GameEngine gameEngine;
         User user1 = new User("1", 3);
         User user2 = new User("2", 3);
         User user3 = new User("3", 3);
@@ -57,6 +85,7 @@ class TestMoveStudentsFromEntranceAction {
         order.add(2);
         order.add(3);
         gameEngine.getRound().setOrderOfPlay(order);
+        return gameEngine;
     }
 
     /**
@@ -108,6 +137,7 @@ class TestMoveStudentsFromEntranceAction {
 
     @Test
     void act() {
+        GameEngine gameEngine = setUpThreePlayers();
         // Get a student of player 1 and move it to dining room
         int entranceStudent;
 
@@ -115,8 +145,8 @@ class TestMoveStudentsFromEntranceAction {
         HashMap<String, String> options = new HashMap<>();
 
         // Check pre-action state
-        assertTrue(checkStudentIdInEntrance(1, entranceStudent));
-        assertFalse(checkStudentIdInDiningRoom(1, entranceStudent));
+        assertTrue(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
+        assertFalse(checkStudentIdInDiningRoom(gameEngine, 1, entranceStudent));
 
         options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT,String.valueOf(entranceStudent));
         options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,String.valueOf(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM));
@@ -125,8 +155,8 @@ class TestMoveStudentsFromEntranceAction {
         assertDoesNotThrow(()->moveStudentsFromEntranceAction.act());
 
         // Check post-action state
-        assertFalse(checkStudentIdInEntrance(1, entranceStudent));
-        assertTrue(checkStudentIdInDiningRoom(1, entranceStudent));
+        assertFalse(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
+        assertTrue(checkStudentIdInDiningRoom(gameEngine, 1, entranceStudent));
 
 
 
@@ -134,8 +164,8 @@ class TestMoveStudentsFromEntranceAction {
         entranceStudent = assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0)).getId();
 
         // Check pre-action state
-        assertTrue(checkStudentIdInEntrance(1, entranceStudent));
-        assertFalse(checkStudentIdOnIslandId(5, entranceStudent));
+        assertTrue(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
+        assertFalse(checkStudentIdOnIslandId(gameEngine, 5, entranceStudent));
 
         options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT,String.valueOf(entranceStudent));
         options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"5");
@@ -143,10 +173,8 @@ class TestMoveStudentsFromEntranceAction {
         assertDoesNotThrow(()->moveStudentsFromEntranceAction.act());
 
         // Check post-action state
-        assertFalse(checkStudentIdInEntrance(1, entranceStudent));
-        assertTrue(checkStudentIdOnIslandId(5, entranceStudent));
-
-
+        assertFalse(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
+        assertTrue(checkStudentIdOnIslandId(gameEngine, 5, entranceStudent));
 
         // Now ensure it throws correctly
         // Repeat the move (student no longer in entrance): Exception
@@ -162,7 +190,7 @@ class TestMoveStudentsFromEntranceAction {
         assertThrows(IllegalGameStateException.class, ()->moveStudentsFromEntranceAction.act());
     }
 
-    private boolean checkStudentIdInDiningRoom(int playerId, int studentId) {
+    private boolean checkStudentIdInDiningRoom(GameEngine gameEngine, int playerId, int studentId) {
         for (ArrayList<StudentDisc> diningTable: assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, playerId).getSchoolBoard().getDiningRoom())) {
             for (StudentDisc studentDisc: diningTable) {
                 if (studentDisc.getId() == studentId)
@@ -172,7 +200,7 @@ class TestMoveStudentsFromEntranceAction {
         return false;
     }
 
-    private boolean checkStudentIdInEntrance(int playerId, int studentId) {
+    private boolean checkStudentIdInEntrance(GameEngine gameEngine, int playerId, int studentId) {
         for (StudentDisc studentDisc: assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, playerId).getSchoolBoard().getEntrance())) {
             if (studentDisc.getId() == studentId)
                 return true;
@@ -180,7 +208,7 @@ class TestMoveStudentsFromEntranceAction {
         return false;
     }
 
-    private boolean checkStudentIdOnIslandId(int islandId, int studentId) {
+    private boolean checkStudentIdOnIslandId(GameEngine gameEngine, int islandId, int studentId) {
         for (StudentDisc studentDisc: assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameEngine, islandId).peekStudents())) {
                 if (studentDisc.getId() == studentId)
                     return true;
@@ -189,12 +217,45 @@ class TestMoveStudentsFromEntranceAction {
     }
 
     /**
+     * Checks if at fourth movement, the action is removes from round actions list and not before.
+     * Also checks that at fourth movement, the MoveProfessor action is run.
+     * Tests also that if it's called again after 4 new movements, it throws an exception.
+     */
+    @Test
+    void modifyRoundAndActionListThreePlayers() {
+        GameEngine gameEngine = setUpThreePlayers();
+        ArrayList<Integer> nextActions = new ArrayList<>();
+        nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
+        gameEngine.getRound().setPossibleActions(nextActions);
+
+        // Check that the action id is removed only after 4 calls to modifyRoundAndActionList
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
+
+        // Check next Assign professor started (will set to next actions the MoveMotherNature action)
+        assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
+
+        // Action not in round anymore, at fourth movement when I remove it there's an exception
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, ()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+    }
+
+    /**
      * Checks if at third movement, the action is removes from round actions list and not before.
      * Also checks that at third movement, the MoveProfessor action is run.
      * Tests also that if it's called again after 3 new movements, it throws an exception.
      */
     @Test
-    void modifyRoundAndActionList() {
+    void modifyRoundAndActionListTwoFourPlayers() {
+        GameEngine gameEngine = setUpTwoPlayers();
         ArrayList<Integer> nextActions = new ArrayList<>();
         nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
         gameEngine.getRound().setPossibleActions(nextActions);

@@ -57,6 +57,8 @@ class TestCheckEndMatchConditionAction {
      */
     @Test
     void modifyRoundAndActionList() {
+        assertDoesNotThrow(()->new SetUpThreePlayersAction(gameEngine).act());
+        assertDoesNotThrow(()->new DrawFromBagToCloudThreePlayersAction(gameEngine).act());
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(1, 1));
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(2, 2));
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(3, 3));

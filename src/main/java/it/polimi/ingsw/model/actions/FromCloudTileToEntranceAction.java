@@ -1,12 +1,17 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
+import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
+import it.polimi.ingsw.model.exceptions.TableNotSetException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class FromCloudTileToEntranceAction extends Action {
 
@@ -18,6 +23,7 @@ public class FromCloudTileToEntranceAction extends Action {
 
     /**
      * Sets the options. Options represents additional information used by the act method.
+     *
      * @param options additional information for act method
      * @throws Exception if the required key is not provided
      */
@@ -37,6 +43,7 @@ public class FromCloudTileToEntranceAction extends Action {
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -55,11 +62,19 @@ public class FromCloudTileToEntranceAction extends Action {
 
     /**
      * Moves the students from a cloud tile to the entrance of {@code this.playerId}.
+     *
      * @throws Exception if something bad happens
      */
 
     @Override
     public void act() throws Exception {
-        this.getGameEngine().getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(this.getPlayerId(), this.cloudId);
+        // Already manage: no cloud tile found, cloud tile already chosen
+        try {
+            this.getGameEngine().getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(this.getPlayerId(), this.cloudId);
+        } catch (NoSuchElementException e) {
+            throw new IllegalGameActionException(e.getMessage());
+        } catch (TableNotSetException | SchoolBoardNotSetException e) {
+            throw new IllegalGameStateException(e.getMessage());
+        }
     }
 }

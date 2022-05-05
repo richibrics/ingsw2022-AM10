@@ -134,6 +134,9 @@ public class SchoolPawnManager extends Manager {
         if (cloud == null)
             throw  new NoSuchElementException("The required cloud tile could not be found");
 
+        if(cloud.peekStudents().size()==0) // Already removed the students
+            throw new NoSuchElementException("The required cloud tile hasn't any student");
+
         CommonManager.takeSchoolBoardByPlayerId(this.getGameEngine(), playerId).addStudentsToEntrance(cloud.popStudents());
     }
 
