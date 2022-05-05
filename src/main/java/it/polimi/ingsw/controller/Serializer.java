@@ -89,31 +89,34 @@ public class Serializer {
     }
 
     /**
-     * Generates the game message, which contains the state of the game (table and players in game).
+     * Generates the table message, which contains most of the objects of the match.
      * @param gameEngine the game engine
-     * @return a Message object containing the Game
+     * @return a Message object containing the Table
      * @throws Exception if something bad happens during the conversion
      */
-    public static Message generateGameMessage(GameEngine gameEngine) throws Exception {
+    public static Message generateTableMessage(GameEngine gameEngine) throws Exception {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Bag.class, new BagSerializer())
                 .registerTypeAdapter(MotherNature.class, new MotherNatureSerializer())
                 .registerTypeAdapter(CharacterCard.class, new CharacterCardSerializer())
                 .registerTypeAdapter(StudentDisc.class, new StudentDiscSerializer())
+                .create();
+
+        return new Message(MessageTypes.TABLE, gson.toJson(gameEngine.getTable()));
+    }
+
+    /**
+     * Generates the teams message, which contains the teams and the players of the game with their towers and professors.
+     * @param gameEngine the game engine
+     * @return a Message object containing the Teams
+     * @throws Exception if something bad happens during the conversion
+     */
+    public static Message generateTeamsMessage(GameEngine gameEngine) throws Exception {
+        Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Player.class, new PlayerSerializer())
                 .create();
 
-        JsonObject jsonObjectPayload = new JsonObject();
-
-        jsonObjectPayload.addProperty("table", gson.toJson(gameEngine.getTable()));
-
-        ArrayList<Player> players = new ArrayList<>();
-        for (Team team : gameEngine.getTeams())
-            for (Player player : team.getPlayers())
-                players.add(player);
-        jsonObjectPayload.addProperty("players", gson.toJson(players));
-
-        return new Message(MessageTypes.GAME, gson.toJson(jsonObjectPayload));
+        return new Message(MessageTypes.TEAMS, gson.toJson(gameEngine.getTeams()));
     }
 
     /**
