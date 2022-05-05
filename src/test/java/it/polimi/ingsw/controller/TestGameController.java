@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.managers.CommonManager;
 import it.polimi.ingsw.network.messages.ActionMessage;
@@ -25,7 +26,7 @@ class TestGameController {
         connections.put(new User("2", 2), null);
         GameController gameController = new GameController(connections);
         assertNull(gameController.getGameEngine());
-        gameController.startGame();
+        assertDoesNotThrow(gameController::startGame);
         assertNotNull(gameController.getGameEngine());
         assertEquals(2, gameController.getGameEngine().getNumberOfPlayers());
         assertEquals(2, gameController.getGameEngine().getTeams().size());
@@ -44,7 +45,7 @@ class TestGameController {
         connections.put(new User("3", 3), null);
         GameController gameController = new GameController(connections);
         assertNull(gameController.getGameEngine());
-        gameController.startGame();
+        assertDoesNotThrow(gameController::startGame);
         assertNotNull(gameController.getGameEngine());
         assertEquals(3, gameController.getGameEngine().getNumberOfPlayers());
         assertEquals(3, gameController.getGameEngine().getTeams().size());
@@ -64,7 +65,7 @@ class TestGameController {
         connections.put(new User("4", 4), null);
         GameController gameController = new GameController(connections);
         assertNull(gameController.getGameEngine());
-        gameController.startGame();
+        assertDoesNotThrow(gameController::startGame);
         assertNotNull(gameController.getGameEngine());
         assertEquals(4, gameController.getGameEngine().getNumberOfPlayers());
         assertEquals(2, gameController.getGameEngine().getTeams().size());
@@ -82,7 +83,7 @@ class TestGameController {
         connections.put(new User("1", 2), null);
         connections.put(new User("2", 2), null);
         GameController gameController = new GameController(connections);
-        gameController.startGame();
+        assertDoesNotThrow(gameController::startGame);
 
         HashMap<String, String> options = new HashMap<>();
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "2");
@@ -93,11 +94,14 @@ class TestGameController {
         int playerNotWithTurn = (assertDoesNotThrow(()->gameController.getGameEngine().getRound().getCurrentPlayer())%2)+1;
 
         // Ask for action to player that has not the turn and check that he hasn't selected the wizard
-        gameController.resumeGame(playerNotWithTurn,wizardSelect);
+        ActionMessage finalWizardSelect = wizardSelect;
+        assertThrows(IllegalGameActionException.class, ()->gameController.resumeGame(playerNotWithTurn, finalWizardSelect));
         assertFalse(assertDoesNotThrow(()-> CommonManager.takePlayerById(gameController.getGameEngine(), playerNotWithTurn).hasWizard()));
 
         // Now the command is from player who has rights: check wizard selected
-        gameController.resumeGame(playerWithTurn,wizardSelect);
+        int finalPlayerWithTurn1 = playerWithTurn;
+        ActionMessage finalWizardSelect1 = wizardSelect;
+        assertDoesNotThrow(()->gameController.resumeGame(finalPlayerWithTurn1, finalWizardSelect1));
         int finalPlayerWithTurn = playerWithTurn;
         assertTrue(assertDoesNotThrow(()-> CommonManager.takePlayerById(gameController.getGameEngine(), finalPlayerWithTurn).hasWizard()));
 
@@ -105,7 +109,8 @@ class TestGameController {
         options.clear();
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "1");
         wizardSelect = new ActionMessage(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID, options);
-        gameController.resumeGame(playerNotWithTurn,wizardSelect);
+        ActionMessage finalWizardSelect2 = wizardSelect;
+        assertDoesNotThrow(()->gameController.resumeGame(playerNotWithTurn, finalWizardSelect2));
         assertTrue(assertDoesNotThrow(()-> CommonManager.takePlayerById(gameController.getGameEngine(), playerNotWithTurn).hasWizard()));
 
         // Last check: player can't select Action not in round: play Herbalist card to set NoEntryTile and check it hasn't been set
@@ -114,8 +119,13 @@ class TestGameController {
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER, String.valueOf(Character.HERBALIST.getId()));
         options.put(ModelConstants.ACTION_HERBALIST_OPTIONS_KEY_ISLAND, "3");
         ActionMessage playCardHerbalist = new ActionMessage(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID, options);
-        gameController.resumeGame(playerWithTurn,playCardHerbalist);
+        int finalPlayerWithTurn2 = playerWithTurn;
+        assertThrows(IllegalGameActionException.class, ()->gameController.resumeGame(finalPlayerWithTurn2,playCardHerbalist));
         assertFalse(assertDoesNotThrow(()->CommonManager.takeIslandTileById(gameController.getGameEngine(),3).hasNoEntry()));
+    }
+
+    @Test
+    void interruptGame() {
 
     }
 }

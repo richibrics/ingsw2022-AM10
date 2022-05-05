@@ -4,7 +4,9 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyHandler;
 import it.polimi.ingsw.controller.Serializer;
 import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.managers.CommonManager;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
@@ -200,10 +202,14 @@ public class ServerClientConnection implements Runnable {
                     throw new WrongMessageContentException("Unknown message type");
                 }
             }
-            // If no exception thrown, then I haven't an error but a success. So send a Success message (avoid for STILL_ALIVE)
+            // If no exception is thrown, can send a Success message
             this.notifySuccess(message.getType());
         } catch (WrongMessageContentException e) {
-            this.sendMessage(new Message(MessageTypes.ERROR, e.getMessage()));
+            this.notifyError(e.getMessage());
+        } catch (InterruptedGameException e) {
+            this.notifyError(e.getClass().getName());
+        } catch (IllegalGameActionException e) {
+            this.notifyError(e.getMessage());
         } finally {
             // If I'm handshaking, at each message, after which I'm in Handshake again, send the Handshake message
             if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_HANDSHAKE)
@@ -220,10 +226,21 @@ public class ServerClientConnection implements Runnable {
 
     /**
      * Sends the success message to the client for a specific message type.
+     *
+     * @param type the type of the message that server successfully received
      */
     private void notifySuccess(MessageTypes type) {
         if (type != MessageTypes.STILL_ALIVE)
             this.sendMessage(new Message(MessageTypes.SUCCESS, type.toString()));
+    }
+
+    /**
+     * Sends the error message to the client for a specific message type.
+     *
+     * @param message message of the error
+     */
+    public void notifyError(String message) {
+        this.sendMessage(new Message(MessageTypes.ERROR, message));
     }
 
     /**

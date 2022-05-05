@@ -1,6 +1,8 @@
 package it.polimi.ingsw.controller;
 
-import com.google.gson.Gson;
+import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
+import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
+import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
@@ -42,14 +44,18 @@ public class GameController {
      * Creates the players and the teams using the users present in the serverClientConnections map.
      * Then the GameEngine is created with those teams.
      * With the new GameEngine, the match is prepared using GameEngine start game method.
+     *
+     * @throws InterruptedGameException if an error was encountered during match creation.
      */
-    public void startGame() {
+    public void startGame() throws InterruptedGameException {
         this.gameEngine = new GameEngine(this.createPlayersAndTeams());
         try {
             this.gameEngine.startGame();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            // TODO Work with exceptions, this exceptions isn't for client
+            // Match crashed during its creation: end the match
+            e.printStackTrace();
+            this.interruptGame("Error during match creation");
+            throw new InterruptedGameException();
         }
     }
 
@@ -60,33 +66,48 @@ public class GameController {
      * else an error has been made by the client and must be warned.
      *
      * @param actionMessage
+     * @return the success value, useful to avoid warning the client of a success if I had an error
      */
-    public void resumeGame(int playerId, ActionMessage actionMessage) {
+    public void resumeGame(int playerId, ActionMessage actionMessage) throws InterruptedGameException, IllegalGameActionException, WrongMessageContentException {
         // TODO Error management
         // Player with turn check
         try {
             if (playerId != gameEngine.getRound().getCurrentPlayer())
                 throw new IllegalGameActionException("The player hasn't the rights to perform the requested Action");
         } catch (PlayerOrderNotSetException e) {
+            // Local error print
+            System.out.println("Error during game resume: no round order defined");
             e.printStackTrace();
-            return;
-        } catch (IllegalGameActionException e) {
-            // Warn the player
-            return;
+            // Send information outside
+            this.interruptGame("Internal error during action perform");
+            throw new InterruptedGameException();
         }
 
         // Asked action check
-        if(!gameEngine.getRound().getPossibleActions().contains(actionMessage.getActionId())) {
+        if (!gameEngine.getRound().getPossibleActions().contains(actionMessage.getActionId())) {
             // Warn the player
-            return;
+            throw new IllegalGameActionException("The requested action is not available");
         }
 
         // Player has rights to perform that action
         try {
             getGameEngine().resumeGame(actionMessage.getActionId(), playerId, actionMessage.getOptions());
-        } catch (Exception e) {
+        } catch (WrongMessageContentException e) {
+            throw e;
+        } catch (IllegalGameActionException e) {
+            throw e;
+        } catch (IllegalGameStateException e) {
+            // Local error print
+            System.out.println("Error during game resume: game state error during action run");
             e.printStackTrace();
-            // TODO Work with exceptions, this exception may be for client
+            // Send information outside
+            this.interruptGame("Internal error during action perform");
+            throw new InterruptedGameException();
+        } catch (Exception e) {
+            // Unknown exception
+            System.out.println("Error during game resume: action error");
+            e.printStackTrace();
+            return;
         }
     }
 
@@ -119,5 +140,16 @@ public class GameController {
         }
 
         return teams;
+    }
+
+    /**
+     * Stops the game, warns all the players with a message and closes all the connections.
+     */
+    public void interruptGame(String playersMessage) {
+        for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
+            serverClientConnection.notifyError(playersMessage);
+            serverClientConnection.askToCloseConnection();
+        }
+        // TODO Destroy game
     }
 }

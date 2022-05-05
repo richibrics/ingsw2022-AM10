@@ -23,9 +23,7 @@ public class TeamSerializer implements JsonSerializer<Team>  {
         jsonObject.addProperty("numberOfTowers", team.getTowers().size());
         JsonArray jsonArray = new JsonArray();
         for (ProfessorPawn professorPawn : team.getProfessorTable()) {
-            JsonObject jsonObject1 = new JsonObject();
-            jsonObject1.addProperty("color", professorPawn.getColor().toString());
-            jsonArray.add(jsonObject1);
+            jsonArray.add(professorPawn.getColor().toString());
         }
         jsonObject.add("professorPawns", gson.toJsonTree(jsonArray));
         jsonArray = new JsonArray();

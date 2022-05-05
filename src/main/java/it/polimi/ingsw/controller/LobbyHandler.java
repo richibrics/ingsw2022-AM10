@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
 import it.polimi.ingsw.controller.exceptions.UserNotFoundException;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
@@ -32,11 +33,12 @@ public class LobbyHandler {
      * @param user the user to add
      * @param serverClientConnection the server-client connection associated with the user
      * @throws IllegalArgumentException if the preference of the user is invalid
+     * @throws InterruptedGameException if an error was encountered during match creation.
      * @see User
      * @see ServerClientConnection
      */
 
-    public void addClient(User user, ServerClientConnection serverClientConnection) throws IllegalArgumentException {
+    public void addClient(User user, ServerClientConnection serverClientConnection) throws IllegalArgumentException, InterruptedGameException {
         switch (user.getPreference()) {
             case ControllerConstants.TWO_PLAYERS_PREFERENCE:
                 if (!this.clientsWaiting.containsKey(ControllerConstants.TWO_PLAYERS_PREFERENCE)) {
@@ -121,9 +123,10 @@ public class LobbyHandler {
      * Generates the game when the number of users with same preference equals the preference. This method is called by
      * addUser.
      * @param preference the number of players participating in the game
+     * @throws InterruptedGameException if an error was encountered during match creation.
      */
 
-    private void generateGame(int preference) {
+    private void generateGame(int preference) throws InterruptedGameException {
         Map<User, ServerClientConnection> map = new HashMap<>(this.clientsWaiting.get(preference));
         this.clientsWaiting.get(preference).clear();
         GameController gameController = new GameController(map);
