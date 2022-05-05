@@ -13,6 +13,7 @@ import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.view.game_objects.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Serializer {
     /**
      * Returns the Gson object, that is instantiated only the first time it is requested.
      * This Gson works with all the TypeAdapters.
+     *
      * @return Gson object
      */
     private static Gson getGson() {
@@ -118,7 +120,6 @@ public class Serializer {
         } catch (JsonSyntaxException e) {
             throw new WrongMessageContentException("The payload of the message cannot be converted to a User object");
         }
-
     }
 
     /**
@@ -127,7 +128,10 @@ public class Serializer {
      * @param gameEngine the game engine
      * @return a Message object containing the Table
      * @throws Exception if something bad happens during the conversion
+     * @see Message
+     * @see Table
      */
+
     public static Message generateTableMessage(GameEngine gameEngine) throws Exception {
         return new Message(MessageTypes.TABLE, getGson().toJson(gameEngine.getTable()));
     }
@@ -138,7 +142,10 @@ public class Serializer {
      * @param gameEngine the game engine
      * @return a Message object containing the Teams
      * @throws Exception if something bad happens during the conversion
+     * @see Message
+     * @see Team
      */
+
     public static Message generateTeamsMessage(GameEngine gameEngine) throws Exception {
         return new Message(MessageTypes.TEAMS, getGson().toJson(gameEngine.getTeams()));
     }
@@ -147,7 +154,10 @@ public class Serializer {
      * Generates the lobby message, which contains the state of the lobby (users waiting for each game type).
      *
      * @return a Message object containing the state of the lobby
+     * @see Message
+     * @see LobbyHandler
      */
+
     public static Message generateLobbyMessage() {
         return new Message(MessageTypes.LOBBY, getGson().toJson(LobbyHandler.getLobbyHandler()));
     }
@@ -158,17 +168,134 @@ public class Serializer {
      *
      * @param gameEngine the game engine
      * @return a json string containing the state of the round
+     * @see Message
+     * @see Round
      */
 
     public static Message generateRoundMessage(GameEngine gameEngine) {
         return new Message(MessageTypes.ROUND, getGson().toJson(gameEngine.getRound()));
     }
 
+    /**
+     * Generates an end game message, which contains the usernames of the winners.
+     *
+     * @param winners the list of the usernames of the winners
+     * @return a Message object containing the winners
+     * @see Message
+     */
 
     public static Message generateEndGameMessage(ArrayList<Player> winners) {
         ArrayList<String> usernames = new ArrayList<>();
         for (Player player : winners)
             usernames.add(player.getUsername());
         return new Message(MessageTypes.END_GAME, getGson().toJson(usernames));
+    }
+
+    /**
+     * Generates a Message object representing a user.
+     *
+     * @param user the user
+     * @return a Message object
+     * @see Message
+     * @see User
+     */
+
+    public static Message fromUserToMessage(User user) {
+        return new Message(MessageTypes.USER, getGson().toJson(user));
+    }
+
+    /**
+     * Generates a ClientTable object from a Message object.
+     *
+     * @param message the Message object to deserialize
+     * @return a ClientTable object
+     * @throws WrongMessageContentException if the payload of the message cannot be converted to a ClientTable object
+     * @see Message
+     * @see ClientTable
+     */
+
+    public static ClientTable fromMessageToClientTable(Message message) throws WrongMessageContentException {
+        try {
+            return getGson().fromJson(message.getPayload(), ClientTable.class);
+        } catch (JsonSyntaxException e) {
+            throw new WrongMessageContentException("The payload of the message cannot be converted to a ClientTable object");
+        }
+    }
+
+    /**
+     * Generates a ClientTeams object from a Message object.
+     *
+     * @param message the Message object to deserialize
+     * @return a ClientTeams object
+     * @throws WrongMessageContentException if the payload of the message cannot be converted to a ClientTeams object
+     * @see Message
+     * @see ClientTeams
+     */
+
+    public static ClientTeams fromMessageToClientTeams(Message message) throws WrongMessageContentException {
+        try {
+            Type type = (new TypeToken<ArrayList<ClientTeam>>() {
+            }).getType();
+            return new ClientTeams(getGson().fromJson(message.getPayload(), type));
+        } catch (JsonSyntaxException e) {
+            throw new WrongMessageContentException("The payload of the message cannot be converted to a ClientTeams object");
+        }
+    }
+
+    /**
+     * Generates a ClientLobby object from a Message object.
+     *
+     * @param message the Message object to deserialize
+     * @return a ClientLobby object
+     * @throws WrongMessageContentException if the payload of the message cannot be converted to a ClientLobby object
+     * @see Message
+     * @see ClientLobby
+     */
+
+    public static ClientLobby fromMessageToClientLobby(Message message) throws WrongMessageContentException {
+        try {
+            Type type = (new TypeToken<Map<Integer, Integer>>() {
+            }).getType();
+            return new ClientLobby(getGson().fromJson(message.getPayload(), type));
+        } catch (JsonSyntaxException e) {
+            throw new WrongMessageContentException("The payload of the message cannot be converted to a ClientLobby object");
+        }
+    }
+
+    /**
+     * Generates a ClientRound object from a Message object.
+     *
+     * @param message the Message object to deserialize
+     * @return a ClientRound object
+     * @throws WrongMessageContentException if the payload of the message cannot be converted to a ClientRound object
+     * @see Message
+     * @see ClientRound
+     */
+
+    public static ClientRound fromMessageToClientRound(Message message) throws WrongMessageContentException {
+        try {
+            return getGson().fromJson(message.getPayload(), ClientRound.class);
+        } catch (JsonSyntaxException e) {
+            throw new WrongMessageContentException("The payload of the message cannot be converted to a ClientRound object");
+        }
+    }
+
+    /**
+     * Generates a list of usernames of the winners from a Message object.
+     *
+     * @param message the Message object to deserialize
+     * @return the list of usernames of the winners
+     * @throws WrongMessageContentException if the payload of the message cannot be converted to a list of usernames
+     * @see Message
+     */
+
+    public static ArrayList<String> fromMessageToClientEndGame(Message message) throws WrongMessageContentException {
+        try {
+            Type type = (new TypeToken<ArrayList<String>>() {
+            }).getType();
+            return getGson().fromJson(message.getPayload(), type);
+        } catch (JsonSyntaxException e) {
+            throw new WrongMessageContentException("The payload of the message cannot be converted to a list of usernames");
+        }
     }
 }
