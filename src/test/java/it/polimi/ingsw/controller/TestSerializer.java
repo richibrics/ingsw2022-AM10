@@ -6,13 +6,13 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.game_components.AssistantCard;
+import it.polimi.ingsw.model.game_components.Wizard;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.network.server.ServerClientConnection;
 import org.junit.jupiter.api.Test;
 
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,7 +122,7 @@ class TestSerializer {
         // Check type
         assertEquals(MessageTypes.TABLE, message.getType());
         // Check json printed on stdout
-        System.out.println(message.getPayload());
+        System.out.println(Serializer.fromMessageToString(message));
     }
 
 
@@ -137,6 +137,9 @@ class TestSerializer {
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
         Player player3 = new Player(user3, 3,3);
+        ArrayList<AssistantCard> assistantCards = new ArrayList<>();
+        assistantCards.add(new AssistantCard(1, 3,2));
+        player1.setWizard(new Wizard(1, assistantCards));
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -157,7 +160,7 @@ class TestSerializer {
         // Check type
         assertEquals(MessageTypes.TEAMS, message.getType());
         // Check json printed on stdout
-        System.out.println(message.getPayload());
+        System.out.println(Serializer.fromMessageToString(message));
     }
 
     /**

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.controller.gson_serializers.*;
 import it.polimi.ingsw.model.Player;
@@ -14,7 +15,9 @@ import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.network.messages.Message;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Serializer {
 
@@ -95,10 +98,11 @@ public class Serializer {
      * @throws Exception if something bad happens during the conversion
      */
     public static Message generateTableMessage(GameEngine gameEngine) throws Exception {
+        Type type = (new TypeToken<Map<Integer, CharacterCard>>() {}).getType();
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Bag.class, new BagSerializer())
                 .registerTypeAdapter(MotherNature.class, new MotherNatureSerializer())
-                .registerTypeAdapter(CharacterCard.class, new CharacterCardSerializer())
+                .registerTypeAdapter(type, new CharacterMapDeserializer())
                 .registerTypeAdapter(StudentDisc.class, new StudentDiscSerializer())
                 .create();
 
@@ -113,7 +117,7 @@ public class Serializer {
      */
     public static Message generateTeamsMessage(GameEngine gameEngine) throws Exception {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Player.class, new PlayerSerializer())
+                .registerTypeAdapter(Team.class, new TeamSerializer())
                 .create();
 
         return new Message(MessageTypes.TEAMS, gson.toJson(gameEngine.getTeams()));
