@@ -7,7 +7,10 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.game_components.AssistantCard;
+import it.polimi.ingsw.model.game_components.Tower;
+import it.polimi.ingsw.model.game_components.TowerColor;
 import it.polimi.ingsw.model.game_components.Wizard;
+import it.polimi.ingsw.model.managers.CommonManager;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.network.messages.Message;
@@ -117,7 +120,7 @@ class TestSerializer {
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
         assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
-
+        assertDoesNotThrow(()-> CommonManager.takeIslandTileById(gameEngine, 2).setTower(new Tower(TowerColor.BLACK)));
         Message message = assertDoesNotThrow(()-> Serializer.generateTableMessage(gameEngine));
         // Check type
         assertEquals(MessageTypes.TABLE, message.getType());
