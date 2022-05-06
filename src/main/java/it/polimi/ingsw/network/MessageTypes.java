@@ -11,5 +11,6 @@ public enum MessageTypes {
     END_GAME,
     LOBBY,
     ERROR,
-    SUCCESS
+    SUCCESS,
+    DEFAULT
 }
