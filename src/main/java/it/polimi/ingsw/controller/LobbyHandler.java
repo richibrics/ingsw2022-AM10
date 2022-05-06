@@ -159,4 +159,13 @@ public class LobbyHandler {
     public Map<Integer, Map<User, ServerClientConnection>> getClientsWaiting() {
         return new HashMap<>(this.clientsWaiting);
     }
+
+    /**
+     * Clears the map. Method used by tests in TestSerializer.
+     */
+
+    public void emptyMap() {
+        for (Map<User, ServerClientConnection> map : this.clientsWaiting.values())
+            map.clear();
+    }
 }

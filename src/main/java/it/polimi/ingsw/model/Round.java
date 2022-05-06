@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
