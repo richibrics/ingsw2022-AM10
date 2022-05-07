@@ -1,9 +1,9 @@
 package it.polimi.ingsw.model.game_components;
 
-import it.polimi.ingsw.model.game_components.IslandTile;
-import it.polimi.ingsw.model.game_components.MotherNature;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TestMotherNature {
 
@@ -14,8 +14,7 @@ public class TestMotherNature {
      * At the end checks if MotherNature has changed correctly the IslandTile, switching the first with the second one.
      */
     @Test
-    public void testIslandTile()
-    {
+    public void testIslandTile() {
         IslandTile startingIslandTile = new IslandTile(0);
         IslandTile nextIslandTile = new IslandTile(1);
         MotherNature motherNature = new MotherNature(startingIslandTile);

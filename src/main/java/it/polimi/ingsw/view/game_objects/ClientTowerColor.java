@@ -8,13 +8,16 @@ public enum ClientTowerColor {
 
     final private int id;
 
-    ClientTowerColor(int id)
-    {
+    ClientTowerColor(int id) {
         this.id = id;
     }
 
-    public int getId()
-    {
+    /**
+     * Gets the id of the TowerColor of client team
+     *
+     * @return id of the TowerColor of client team.
+     */
+    public int getId() {
         return this.id;
     }
 }

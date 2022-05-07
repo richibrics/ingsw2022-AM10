@@ -9,19 +9,17 @@ public enum ClientPawnColor {
 
     final private int id;
 
-    ClientPawnColor(int id)
-    {
+    ClientPawnColor(int id) {
         this.id = id;
     }
 
     /**
      * Returns the id of the Color value in the enumeration
      *
-     * @return      Color id
+     * @return Color id
      */
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 }
