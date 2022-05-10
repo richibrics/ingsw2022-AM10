@@ -27,6 +27,7 @@ class TestClientTeam {
 
         ArrayList<ClientPlayer> players = new ArrayList<>();
         String user = "Aerith";
+        int playerId = 1;
         int coins = 3;
         int wizard = 2;
         ArrayList<ClientAssistantCard> assistantCards = new ArrayList<>();
@@ -38,9 +39,10 @@ class TestClientTeam {
         assistantCards.add(clientAssistantCard1);
         assistantCards.add(clientAssistantCard2);
         assistantCards.add(clientAssistantCard3);
-        ClientPlayer clientPlayer = new ClientPlayer(user, coins, wizard, assistantCards);
+        ClientPlayer clientPlayer = new ClientPlayer(user, playerId, coins, wizard, assistantCards);
         players.add(clientPlayer);
         String user1 = "Aloy";
+        int playerId1 = 2;
         int coins1 = 2;
         int wizard1 = 1;
         ArrayList<ClientAssistantCard> assistantCards1 = new ArrayList<>();
@@ -52,7 +54,7 @@ class TestClientTeam {
         assistantCards.add(clientAssistantCard5);
         assistantCards.add(clientAssistantCard6);
         assistantCards.add(clientAssistantCard7);
-        ClientPlayer clientPlayer1 = new ClientPlayer(user1, coins1, wizard1, assistantCards1);
+        ClientPlayer clientPlayer1 = new ClientPlayer(user1, playerId1, coins1, wizard1, assistantCards1);
         players.add(clientPlayer1);
 
         ClientTeam clientTeam = new ClientTeam(clientTowerColor, professorPawns, numberOfTowers, players);

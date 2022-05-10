@@ -26,6 +26,7 @@ class TestClientTeams {
         int numberOfTowers = value;
         ArrayList<ClientPlayer> players = new ArrayList<>();
         String user = "Wanda";
+        int playerId = 1;
         int coins = 3;
         int wizard = 2;
         ArrayList<ClientAssistantCard> assistantCards = new ArrayList<>();
@@ -37,7 +38,7 @@ class TestClientTeams {
         assistantCards.add(clientAssistantCard1);
         assistantCards.add(clientAssistantCard2);
         assistantCards.add(clientAssistantCard3);
-        ClientPlayer clientPlayer = new ClientPlayer(user, coins, wizard, assistantCards);
+        ClientPlayer clientPlayer = new ClientPlayer(user, playerId, coins, wizard, assistantCards);
         players.add(clientPlayer);
         ClientTeam clientTeam = new ClientTeam(clientTowerColor, professorPawns, numberOfTowers, players);
         teams.add(clientTeam);
@@ -48,6 +49,7 @@ class TestClientTeams {
         int numberOfTowers1 = value + 1;
         ArrayList<ClientPlayer> players1 = new ArrayList<>();
         String user1 = "Aloy";
+        int playerId1 = 1;
         int coins1 = 2;
         int wizard1 = 1;
         ArrayList<ClientAssistantCard> assistantCards1 = new ArrayList<>();
@@ -59,7 +61,7 @@ class TestClientTeams {
         assistantCards.add(clientAssistantCard5);
         assistantCards.add(clientAssistantCard6);
         assistantCards.add(clientAssistantCard7);
-        ClientPlayer clientPlayer1 = new ClientPlayer(user1, coins1, wizard1, assistantCards1);
+        ClientPlayer clientPlayer1 = new ClientPlayer(user1, playerId1, coins1, wizard1, assistantCards1);
         players1.add(clientPlayer1);
         ClientTeam clientTeam1 = new ClientTeam(clientTowerColor1, professorPawns1, numberOfTowers1, players1);
         teams.add(clientTeam1);
@@ -71,6 +73,7 @@ class TestClientTeams {
         int numberOfTowers2 = value + 2;
         ArrayList<ClientPlayer> players2 = new ArrayList<>();
         String user2 = "Tifa";
+        int playerId2 = 1;
         int coins2 = 2;
         int wizard2 = 1;
         ArrayList<ClientAssistantCard> assistantCards2 = new ArrayList<>();
@@ -82,7 +85,7 @@ class TestClientTeams {
         assistantCards.add(clientAssistantCard9);
         assistantCards.add(clientAssistantCard10);
         assistantCards.add(clientAssistantCard11);
-        ClientPlayer clientPlayer2 = new ClientPlayer(user2, coins2, wizard2, assistantCards2);
+        ClientPlayer clientPlayer2 = new ClientPlayer(user2, playerId2, coins2, wizard2, assistantCards2);
         players2.add(clientPlayer2);
         ClientTeam clientTeam2 = new ClientTeam(clientTowerColor2, professorPawns2, numberOfTowers2, players2);
         teams.add(clientTeam2);

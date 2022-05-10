@@ -18,6 +18,7 @@ class TestClientPlayer {
     @ValueSource(ints = {0, 100, Integer.MAX_VALUE})
     void testGet(int value) {
         String user = "Aerith";
+        int player = 1;
         int coins = 3;
         int wizard = 2;
         ArrayList<ClientAssistantCard> assistantCards = new ArrayList<>();
@@ -29,7 +30,7 @@ class TestClientPlayer {
         assistantCards.add(clientAssistantCard1);
         assistantCards.add(clientAssistantCard2);
         assistantCards.add(clientAssistantCard3);
-        ClientPlayer clientPlayer = new ClientPlayer(user, coins, wizard, assistantCards);
+        ClientPlayer clientPlayer = new ClientPlayer(user, player, coins, wizard, assistantCards);
         assertEquals(clientPlayer.getUsername(), user);
         assertEquals(clientPlayer.getCoins(), coins);
         assertEquals(clientPlayer.getWizard(), wizard);

@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class ClientPlayer {
 
     private final String username;
+    private final int playerId;
     private final int coins;
     private final int wizard;
     private final ArrayList<ClientAssistantCard> assistantCards;
 
-    public ClientPlayer(String username, int coins, int wizard, ArrayList<ClientAssistantCard> assistantCards) {
+    public ClientPlayer(String username, int playerId, int coins, int wizard, ArrayList<ClientAssistantCard> assistantCards) {
         this.username = username;
+        this.playerId = playerId;
         this.coins = coins;
         this.wizard = wizard;
         this.assistantCards = assistantCards;
@@ -25,8 +27,12 @@ public class ClientPlayer {
         return this.username;
     }
 
+    public int getPlayerId() {
+        return this.playerId;
+    }
+
     /**
-     * Gets the amount of client coinss.
+     * Gets the amount of client coins.
      *
      * @return the amount of coins owned by the client.
      */
