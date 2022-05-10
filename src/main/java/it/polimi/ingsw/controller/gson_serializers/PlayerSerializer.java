@@ -20,6 +20,7 @@ public class PlayerSerializer implements JsonSerializer<Player> {
         Gson gson = new Gson();
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("username", player.getUsername());
+        jsonObject.addProperty("playerId", player.getPlayerId());
         jsonObject.addProperty("coins", player.getCoins());
         try {
             jsonObject.addProperty("wizard", player.getWizard().getId());
