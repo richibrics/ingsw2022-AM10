@@ -298,4 +298,14 @@ public class Serializer {
             throw new WrongMessageContentException("The payload of the message cannot be converted to a list of usernames");
         }
     }
+
+    /**
+     * Generates a Message object from an ActionMessage object.
+     * @param message the ActionMessage object to convert
+     * @return the Message object
+     */
+
+    public static Message fromActionMessageToMessage (ActionMessage message) {
+        return new Message(MessageTypes.ACTION, getGson().toJson(message));
+    }
 }

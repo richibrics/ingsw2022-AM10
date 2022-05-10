@@ -36,7 +36,7 @@ class TestSerializer {
         // Create string in json format
         String string = String.format("{\"type\": \"%s\", \"payload\": \"{\\\"hello\\\": \\\"hi\\\"}\"}", MessageTypes.TABLE);
         // Convert string to message
-        Message targetMessage = assertDoesNotThrow(()->Serializer.fromStringToMessage(string));
+        Message targetMessage = assertDoesNotThrow(() -> Serializer.fromStringToMessage(string));
         assertEquals(targetMessage.getType(), MessageTypes.TABLE);
         assertEquals(targetMessage.getPayload(), "{\"hello\": \"hi\"}");
 
@@ -44,17 +44,17 @@ class TestSerializer {
 
         // Incompatible message
         String wrongString1 = "hello";
-        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString1));
+        assertThrows(WrongMessageContentException.class, () -> Serializer.fromStringToMessage(wrongString1));
 
         // Missing json
         String wrongString2 = "";
-        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString2));
+        assertThrows(WrongMessageContentException.class, () -> Serializer.fromStringToMessage(wrongString2));
 
         // Wrong fields
         String wrongString3 = "{\"payload\": \"{\\\"hello\\\": \\\"hi\\\"}\"}";
-        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString3));
+        assertThrows(WrongMessageContentException.class, () -> Serializer.fromStringToMessage(wrongString3));
         String wrongString4 = "{\"type\": \"%s\"}";
-        assertThrows(WrongMessageContentException.class, ()->Serializer.fromStringToMessage(wrongString4));
+        assertThrows(WrongMessageContentException.class, () -> Serializer.fromStringToMessage(wrongString4));
     }
 
     /**
@@ -80,7 +80,7 @@ class TestSerializer {
         Gson gson = new GsonBuilder().create();
         Message message = new Message(MessageTypes.ACTION, gson.toJson(actionMessage));
         // Convert message to action message with Serializer.fromMessageToActonMessage
-        ActionMessage targetActionMessage = assertDoesNotThrow(()-> Serializer.fromMessageToActionMessage(message));
+        ActionMessage targetActionMessage = assertDoesNotThrow(() -> Serializer.fromMessageToActionMessage(message));
         assertEquals(targetActionMessage.getActionId(), ModelConstants.ACTION_CALCULATE_INFLUENCE_ID);
         assertEquals(targetActionMessage.getOptions().get("color"), "red");
     }
@@ -93,7 +93,7 @@ class TestSerializer {
         // Create message
         Message message = new Message(MessageTypes.USER, "{\"id\": \"kevin\", \"preference\": 3}");
         // Convert message to user with Serializer.fromMessageToUser
-        User user = assertDoesNotThrow(()->Serializer.fromMessageToUser(message));
+        User user = assertDoesNotThrow(() -> Serializer.fromMessageToUser(message));
         assertEquals(user.getId(), "kevin");
         assertEquals(user.getPreference(), 3);
     }
@@ -108,7 +108,7 @@ class TestSerializer {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -123,9 +123,9 @@ class TestSerializer {
         teams.add(team2);
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
-        assertDoesNotThrow(()-> CommonManager.takeIslandTileById(gameEngine, 2).setTower(new Tower(TowerColor.BLACK)));
-        Message message = assertDoesNotThrow(()-> Serializer.generateTableMessage(gameEngine));
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 2).setTower(new Tower(TowerColor.BLACK)));
+        Message message = assertDoesNotThrow(() -> Serializer.generateTableMessage(gameEngine));
         // Check type
         assertEquals(MessageTypes.TABLE, message.getType());
 
@@ -142,7 +142,7 @@ class TestSerializer {
     }
 
     /**
-     * Checks that the Teams message has the correct type and and properties.
+     * Checks that the Teams message has the correct type and properties.
      */
     @Test
     void generateTeamsMessage() {
@@ -151,9 +151,9 @@ class TestSerializer {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<AssistantCard> assistantCards = new ArrayList<>();
-        assistantCards.add(new AssistantCard(1, 3,2));
+        assistantCards.add(new AssistantCard(1, 3, 2));
         player1.setWizard(new Wizard(1, assistantCards));
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
@@ -169,15 +169,16 @@ class TestSerializer {
         teams.add(team2);
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateTeamsMessage(gameEngine));
+        Message message = assertDoesNotThrow(() -> Serializer.generateTeamsMessage(gameEngine));
         // Check type
         assertEquals(MessageTypes.TEAMS, message.getType());
 
         // Check if payload has the correct properties
         Gson gson = new Gson();
-        Type type = (new TypeToken<ArrayList<JsonObject>>() {}).getType();
+        Type type = (new TypeToken<ArrayList<JsonObject>>() {
+        }).getType();
 
         ArrayList<JsonObject> jsonObjects = gson.fromJson(message.getPayload(), type);
         assertTrue(jsonObjects.get(0).has("towersColor"));
@@ -205,17 +206,18 @@ class TestSerializer {
         User user2 = new User("2", 3);
         User user3 = new User("3", 4);
         // Add users to lobby
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user1, null));
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user2, null));
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user3, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user1, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user2, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user3, null));
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateLobbyMessage());
+        Message message = assertDoesNotThrow(() -> Serializer.generateLobbyMessage());
         // Check type
         assertEquals(MessageTypes.LOBBY, message.getType());
 
         // Check if payload has the correct properties
         Gson gson = new Gson();
-        Type type = (new TypeToken<Map<Integer, Integer>>() {}).getType();
+        Type type = (new TypeToken<Map<Integer, Integer>>() {
+        }).getType();
         Map<Integer, Integer> map = gson.fromJson(message.getPayload(), type);
         assertEquals(1, map.get(2));
         assertEquals(1, map.get(3));
@@ -242,9 +244,9 @@ class TestSerializer {
         teams.add(team1);
         teams.add(team2);
         GameEngine gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateRoundMessage(gameEngine));
+        Message message = assertDoesNotThrow(() -> Serializer.generateRoundMessage(gameEngine));
         // Check type
         assertEquals(MessageTypes.ROUND, message.getType());
 
@@ -267,7 +269,7 @@ class TestSerializer {
         winners.add(player1);
         winners.add(player2);
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateEndGameMessage(winners));
+        Message message = assertDoesNotThrow(() -> Serializer.generateEndGameMessage(winners));
         // Check type
         assertEquals(MessageTypes.END_GAME, message.getType());
         // Check json in payload
@@ -285,7 +287,7 @@ class TestSerializer {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -300,11 +302,11 @@ class TestSerializer {
         teams.add(team2);
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
-        Message message = assertDoesNotThrow(()-> Serializer.generateTableMessage(gameEngine));
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
+        Message message = assertDoesNotThrow(() -> Serializer.generateTableMessage(gameEngine));
 
         // Check content of ClientTable object
-        ClientTable clientTable = assertDoesNotThrow(()->Serializer.fromMessageToClientTable(message));
+        ClientTable clientTable = assertDoesNotThrow(() -> Serializer.fromMessageToClientTable(message));
         assertEquals(3, clientTable.getSchoolBoards().size());
         assertEquals(9, clientTable.getSchoolBoards().get(0).getEntrance().size());
         assertTrue(clientTable.getBag().getStudents() <= 126 && clientTable.getBag().getStudents() >= 0);
@@ -327,12 +329,12 @@ class TestSerializer {
         User user3 = new User("ja", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         // Set wizard for player 1
         ArrayList<AssistantCard> assistantCards = new ArrayList<>();
-        assistantCards.add(new AssistantCard(1, 3,2));
+        assistantCards.add(new AssistantCard(1, 3, 2));
         player1.setWizard(new Wizard(1, assistantCards));
         Team team1 = new Team(1, players1);
         ArrayList<Player> players2 = new ArrayList<>();
@@ -346,14 +348,14 @@ class TestSerializer {
         teams.add(team2);
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
-        Message message = assertDoesNotThrow(()-> Serializer.generateTeamsMessage(gameEngine));
-        ClientTeams clientTeams = assertDoesNotThrow(()->Serializer.fromMessageToClientTeams(message));
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
+        Message message = assertDoesNotThrow(() -> Serializer.generateTeamsMessage(gameEngine));
+        ClientTeams clientTeams = assertDoesNotThrow(() -> Serializer.fromMessageToClientTeams(message));
 
         // Check content of ClientTeams object
         assertTrue(clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.BLACK) ||
                 clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.WHITE) ||
-                        clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.GREY));
+                clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.GREY));
         assertEquals(6, clientTeams.getTeams().get(0).getNumberOfTowers());
         assertEquals(0, clientTeams.getTeams().get(0).getProfessorPawns().size());
         assertEquals("steph", clientTeams.getTeams().get(1).getPlayers().get(0).getUsername());
@@ -377,16 +379,16 @@ class TestSerializer {
         User user4 = new User("4", 3);
         User user5 = new User("5", 4);
         // Add users to lobby
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user1, null));
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user2, null));
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user3, null));
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user4, null));
-        assertDoesNotThrow(()->LobbyHandler.getLobbyHandler().addClient(user5, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user1, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user2, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user3, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user4, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user5, null));
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateLobbyMessage());
+        Message message = assertDoesNotThrow(() -> Serializer.generateLobbyMessage());
 
         // Check content of ClientLobby
-        ClientLobby clientLobby = assertDoesNotThrow(()->Serializer.fromMessageToClientLobby(message));
+        ClientLobby clientLobby = assertDoesNotThrow(() -> Serializer.fromMessageToClientLobby(message));
         assertEquals(1, clientLobby.getLobbyStatus().get(ModelConstants.TWO_PLAYERS));
         assertEquals(2, clientLobby.getLobbyStatus().get(ModelConstants.THREE_PLAYERS));
         assertEquals(2, clientLobby.getLobbyStatus().get(ModelConstants.FOUR_PLAYERS));
@@ -420,12 +422,12 @@ class TestSerializer {
         teams.add(team2);
         teams.add(team3);
         GameEngine gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateRoundMessage(gameEngine));
+        Message message = assertDoesNotThrow(() -> Serializer.generateRoundMessage(gameEngine));
 
         // Check content of ClientRound
-        ClientRound clientRound = assertDoesNotThrow(()->Serializer.fromMessageToClientRound(message));
+        ClientRound clientRound = assertDoesNotThrow(() -> Serializer.fromMessageToClientRound(message));
         assertEquals(0, clientRound.getPossibleActions().get(0));
         assertTrue(clientRound.getCurrentPlayer() <= 3 && clientRound.getCurrentPlayer() >= 1);
     }
@@ -444,11 +446,35 @@ class TestSerializer {
         winners.add(player1);
         winners.add(player2);
 
-        Message message = assertDoesNotThrow(()-> Serializer.generateEndGameMessage(winners));
+        Message message = assertDoesNotThrow(() -> Serializer.generateEndGameMessage(winners));
 
         // Check content of ClientEndGame
-        ArrayList<String> winnersAfterDeserialization = assertDoesNotThrow(()->Serializer.fromMessageToClientEndGame(message));
+        ArrayList<String> winnersAfterDeserialization = assertDoesNotThrow(() -> Serializer.fromMessageToClientEndGame(message));
         assertTrue(winnersAfterDeserialization.get(0).equals("kevin"));
         assertTrue(winnersAfterDeserialization.get(1).equals("steph"));
+    }
+
+    /**
+     * Checks if the conversion from an ActionMessage object to a Message object is correct.
+     */
+    @Test
+    void fromActionMessageToMessage() {
+        Map<String, String> options = new HashMap<>();
+        options.put(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND, "-1");
+
+        // Convert action message to message
+        Message message = Serializer.fromActionMessageToMessage(new ActionMessage(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, options));
+
+        // Check if the type and payload of the message are correct
+        assertTrue(message.getType().equals(MessageTypes.ACTION));
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(message.getPayload(), JsonObject.class);
+        assertTrue(jsonObject.has("actionId"));
+        assertTrue(jsonObject.has("options"));
+        assertEquals(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, jsonObject.get("actionId").getAsInt());
+        Type type = (new TypeToken<Map<String, String>>() {
+        }).getType();
+        Map<String, String> optionsFromMessage = gson.fromJson(jsonObject.get("options"), type);
+        assertTrue(optionsFromMessage.get(ModelConstants.ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND).equals(Integer.toString(-1)));
     }
 }
