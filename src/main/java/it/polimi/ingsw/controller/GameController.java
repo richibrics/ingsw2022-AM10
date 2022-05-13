@@ -3,6 +3,8 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.controller.observers.GameObserver;
+import it.polimi.ingsw.controller.observers.Observer;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  */
 public class GameController {
     private GameEngine gameEngine;
+    private Observer gameObserver;
     private final Map<User, ServerClientConnection> serverClientConnections;
 
     public GameController(Map<User, ServerClientConnection> serverClientConnections) {
@@ -49,8 +52,10 @@ public class GameController {
      */
     public void startGame() throws InterruptedGameException {
         this.gameEngine = new GameEngine(this.createPlayersAndTeams());
+        this.gameObserver = new GameObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
         try {
             this.gameEngine.startGame();
+            this.gameObserver.notifyClients();
         } catch (Exception e) {
             // Match crashed during its creation: end the match
             e.printStackTrace();
@@ -74,13 +79,16 @@ public class GameController {
         try {
             if (playerId != gameEngine.getRound().getCurrentPlayer())
                 throw new IllegalGameActionException("The player hasn't the rights to perform the requested Action");
-        } catch (PlayerOrderNotSetException e) {
-            // Local error print
-            System.out.println("Error during game resume: no round order defined");
+        } catch (NullPointerException e) {
+            // Game engine unavailable, was destroyed from this.interruptGame()
+            System.out.println("Error during game resume: game engine not available anymore");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
             throw new InterruptedGameException();
+        } catch (PlayerOrderNotSetException e) {
+            // Can't get here: to resume a game, the game must be started with start game.
+            // Starting the game the round is set and after that it cannot be set to null in any way.
         }
 
         // Asked action check
@@ -92,6 +100,7 @@ public class GameController {
         // Player has rights to perform that action
         try {
             getGameEngine().resumeGame(actionMessage.getActionId(), playerId, actionMessage.getOptions());
+            this.gameObserver.notifyClients();
         } catch (WrongMessageContentException e) {
             throw e;
         } catch (IllegalGameActionException e) {
@@ -104,7 +113,7 @@ public class GameController {
             this.interruptGame("Internal error during action perform");
             throw new InterruptedGameException();
         } catch (Exception e) {
-            // Unknown exception
+            // Unknown exception - debug purposes, in fact this is unreachable from tests.
             System.out.println("Error during game resume: action error");
             e.printStackTrace();
             return;
@@ -147,9 +156,13 @@ public class GameController {
      */
     public void interruptGame(String playersMessage) {
         for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
-            serverClientConnection.notifyError(playersMessage);
-            serverClientConnection.askToCloseConnection();
+            if (serverClientConnection != null) { // in the tests I have null server client connections
+                serverClientConnection.notifyError(playersMessage);
+                serverClientConnection.askToCloseConnection();
+            }
         }
         // TODO Destroy game
+        this.gameObserver = null;
+        this.gameEngine = null;
     }
 }

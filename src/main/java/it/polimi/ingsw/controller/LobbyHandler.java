@@ -2,6 +2,8 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
 import it.polimi.ingsw.controller.exceptions.UserNotFoundException;
+import it.polimi.ingsw.controller.observers.LobbyObserver;
+import it.polimi.ingsw.controller.observers.Observer;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.HashMap;
@@ -11,9 +13,11 @@ public class LobbyHandler {
 
     private Map<Integer, Map<User, ServerClientConnection>> clientsWaiting;
     private static LobbyHandler lobbyHandler;
+    private Observer lobbyObserver;
 
     private LobbyHandler() {
         this.clientsWaiting = new HashMap<>();
+        this.lobbyObserver = new LobbyObserver(this.clientsWaiting);
     }
 
     /**
@@ -79,6 +83,8 @@ public class LobbyHandler {
             default:
                 throw new IllegalArgumentException("The preference of the user is incorrect");
         }
+        // Arrived here, the user has been added: notify all the clients about the new lobby state
+        this.lobbyObserver.notifyClients();
     }
 
     /**
@@ -90,14 +96,22 @@ public class LobbyHandler {
      * @see User
      */
 
-    public void changePreference(String userId, int newPreference) throws IllegalArgumentException, UserNotFoundException {
+    public void changePreference(String userId, int newPreference) throws IllegalArgumentException, UserNotFoundException, InterruptedGameException {
         if (newPreference != ControllerConstants.TWO_PLAYERS_PREFERENCE
                 && newPreference != ControllerConstants.THREE_PLAYERS_PREFERENCE
                 && newPreference != ControllerConstants.FOUR_PLAYERS_PREFERENCE)
             throw new IllegalArgumentException("Invalid preference");
         else {
+            // Get from clientsWaiting the original user
             User user = this.getUserById(userId);
+            // Now get his ServerClientConnection that we will move with its user in the new preference list
+            ServerClientConnection serverClientConnection = this.clientsWaiting.get(user.getPreference()).get(user);
+            // Remove the user from the clientsWaiting list of the oldPreference
+            this.clientsWaiting.get(user.getPreference()).remove(user);
+            // Change user preference
             user.changePreference(newPreference);
+            // Add the user to the new list with the newPreference
+            this.addClient(user, serverClientConnection);
         }
     }
 
@@ -160,11 +174,10 @@ public class LobbyHandler {
         return new HashMap<>(this.clientsWaiting);
     }
 
-    /**
-     * Clears the map. Method used by tests in TestSerializer.
-     */
-
-    public void emptyMap() {
+     /**
+      * Clears the map. Method used by tests in TestSerializer.
+      */
+      public void emptyMap() {
         for (Map<User, ServerClientConnection> map : this.clientsWaiting.values())
             map.clear();
     }

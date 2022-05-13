@@ -9,6 +9,7 @@ import it.polimi.ingsw.controller.gson_serializers.*;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import it.polimi.ingsw.model.game_components.*;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
@@ -132,7 +133,7 @@ public class Serializer {
      * @see Table
      */
 
-    public static Message generateTableMessage(GameEngine gameEngine) throws Exception {
+    public static Message generateTableMessage(GameEngine gameEngine) throws TableNotSetException {
         return new Message(MessageTypes.TABLE, getGson().toJson(gameEngine.getTable()));
     }
 
@@ -146,7 +147,7 @@ public class Serializer {
      * @see Team
      */
 
-    public static Message generateTeamsMessage(GameEngine gameEngine) throws Exception {
+    public static Message generateTeamsMessage(GameEngine gameEngine) {
         return new Message(MessageTypes.TEAMS, getGson().toJson(gameEngine.getTeams()));
     }
 

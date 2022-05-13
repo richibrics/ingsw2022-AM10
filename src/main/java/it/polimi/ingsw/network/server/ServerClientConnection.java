@@ -37,7 +37,6 @@ public class ServerClientConnection implements Runnable {
 
     public ServerClientConnection(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
-        this.clientSocket.setSoTimeout(NetworkConstants.SOCKET_SO_TIMEOUT_IN_MILLISECONDS);
         this.user = null;
         this.gameController = null;
 
@@ -50,9 +49,19 @@ public class ServerClientConnection implements Runnable {
 
         this.setMessageReceivingStep(MessageReceivingStep.STEP_HANDSHAKE);
 
+        this.prepareSocket();
+    }
+
+    /**
+     * Prepares socket buffer and timeout; public for testing purposes
+     *
+     * @throws IOException
+     */
+    public void prepareSocket() throws IOException {
         this.bufferIn = new BufferedReader(
                 new InputStreamReader(this.clientSocket.getInputStream()));
         this.bufferOut = new PrintWriter(this.clientSocket.getOutputStream());
+        this.clientSocket.setSoTimeout(NetworkConstants.SOCKET_SO_TIMEOUT_IN_MILLISECONDS);
     }
 
     /**
