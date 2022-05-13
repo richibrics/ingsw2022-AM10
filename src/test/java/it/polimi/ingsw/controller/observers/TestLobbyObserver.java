@@ -46,5 +46,8 @@ class TestLobbyObserver {
         lobbyObserver.notifyClients();
         // Also check that at least once the sendMessage is called (using messageArrived)
         assertTrue(messageArrived[0]);
+
+        // Always reset lobby status if touched after any test, because the lobby is a singleton
+        lobbyHandler.emptyMap();
     }
 }
