@@ -191,6 +191,8 @@ public class AssistantManager extends Manager {
                 if (player.hasWizard())
                     if (player.getWizard().getId() == wizardId)
                         return false;
+        if(wizardId < 1 || wizardId > 5)
+            return false;
         return true;
     }
 }

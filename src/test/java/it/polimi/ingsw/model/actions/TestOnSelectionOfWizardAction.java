@@ -101,6 +101,19 @@ class TestOnSelectionOfWizardAction {
         // Check player 2 can't use the same wizard (wizard 4 already in options, so I use them)
         onSelectionOfWizardAction.setPlayerId(2);
         assertThrows(IllegalGameActionException.class, ()->onSelectionOfWizardAction.act());
+
+        // Check player 2 can't play wizard 0 or 6 (invalid)
+        onSelectionOfWizardAction.setPlayerId(2);
+
+        options.clear();
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "0");
+        assertDoesNotThrow(()->onSelectionOfWizardAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, ()->onSelectionOfWizardAction.act());
+
+        options.clear();
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "6");
+        assertDoesNotThrow(()->onSelectionOfWizardAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, ()->onSelectionOfWizardAction.act());
     }
 
     /**
