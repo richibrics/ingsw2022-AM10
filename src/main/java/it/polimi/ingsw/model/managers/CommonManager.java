@@ -153,7 +153,7 @@ public class CommonManager {
     public static int takePlayerIdByUserId(GameEngine gameEngine, String userId) throws NoSuchElementException {
         for (Team team: gameEngine.getTeams()) {
             for (Player player: team.getPlayers()) {
-                if (player.getUsername() == userId)
+                if (player.getUsername().equals(userId))
                     return player.getPlayerId();
             }
         }

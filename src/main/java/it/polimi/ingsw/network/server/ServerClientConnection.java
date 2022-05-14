@@ -32,8 +32,8 @@ public class ServerClientConnection implements Runnable {
     private final Object synchronizeContinueReceiving;
     private final Object synchronizeMessageReceivingStep;
 
-    private BufferedReader bufferIn;
-    private PrintWriter bufferOut;
+    protected BufferedReader bufferIn;
+    protected PrintWriter bufferOut;
 
     public ServerClientConnection(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
@@ -50,6 +50,7 @@ public class ServerClientConnection implements Runnable {
         this.setMessageReceivingStep(MessageReceivingStep.STEP_HANDSHAKE);
 
         this.prepareSocket();
+        this.setContinueReceiving(true);
     }
 
     /**
@@ -70,7 +71,6 @@ public class ServerClientConnection implements Runnable {
      */
     @Override
     public void run() {
-        this.setContinueReceiving(true);
         // Send first Handshake message
         this.sendHandshake();
         // Wait for messages for a long of time
@@ -145,7 +145,7 @@ public class ServerClientConnection implements Runnable {
      *
      * @param messageString the message received by the Client, that is going to be deserialized and read
      */
-    private void deserialize(String messageString) {
+    public void deserialize(String messageString) {
         try {
             Message message = Serializer.fromStringToMessage(messageString);
             switch (message.getType()) {
@@ -311,7 +311,7 @@ public class ServerClientConnection implements Runnable {
      *
      * @return value of the Boolean continueReceiving
      */
-    private boolean getContinueReceiving() {
+    public boolean getContinueReceiving() {
         synchronized (synchronizeContinueReceiving) {
             return continueReceiving;
         }
@@ -335,7 +335,7 @@ public class ServerClientConnection implements Runnable {
      *
      * @return the value of the enumeration messageReceivingStep
      */
-    private MessageReceivingStep getMessageReceivingStep() {
+    public MessageReceivingStep getMessageReceivingStep() {
         synchronized (this.synchronizeMessageReceivingStep) {
             return messageReceivingStep;
         }
@@ -347,7 +347,7 @@ public class ServerClientConnection implements Runnable {
      *
      * @param messageReceivingStep the new value for messageReceivingStep
      */
-    private void setMessageReceivingStep(MessageReceivingStep messageReceivingStep) {
+    public void setMessageReceivingStep(MessageReceivingStep messageReceivingStep) {
         synchronized (this.synchronizeMessageReceivingStep) {
             this.messageReceivingStep = messageReceivingStep;
         }
