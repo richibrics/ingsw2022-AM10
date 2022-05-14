@@ -43,7 +43,7 @@ class TestServerClientConnection {
                     @Override
                     public void write(char[] cbuf, int off, int len) throws IOException {
                         String buf = new String(cbuf).substring(off, len);
-                        if (!buf.equals("\n")) {
+                        if (!buf.contains("\n")) { // Avoid the \n message being checked, I only want to check the message with handshake
                             assertEquals(stringOfMessageToSend, buf); // This tests the correct message is sent
                             sendDone[0] = true;
                         }
