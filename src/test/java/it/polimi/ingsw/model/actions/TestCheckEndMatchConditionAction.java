@@ -57,10 +57,14 @@ class TestCheckEndMatchConditionAction {
      */
     @Test
     void modifyRoundAndActionList() {
-        assertDoesNotThrow(() -> gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(1, 1));
-        assertDoesNotThrow(() -> gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(2, 2));
-        assertDoesNotThrow(() -> gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(3, 3));
-        assertDoesNotThrow(() -> checkEndMatchConditionAction.modifyRoundAndActionList());
+
+        assertDoesNotThrow(()->new SetUpThreePlayersAction(gameEngine).act());
+        assertDoesNotThrow(()->new DrawFromBagToCloudThreePlayersAction(gameEngine).act());
+        assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(1, 1));
+        assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(2, 2));
+        assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(3, 3));
+        assertDoesNotThrow(()->checkEndMatchConditionAction.modifyRoundAndActionList());
+      
         // Checks I have only one action in the round which is the OnSelectionOfAssistantCard which had been added
         // from the DrawFromBagToCloud action
         assertEquals(1, gameEngine.getRound().getPossibleActions().size());

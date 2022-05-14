@@ -1,14 +1,12 @@
 package it.polimi.ingsw.model.game_components;
 
-import it.polimi.ingsw.model.game_components.CloudTile;
-import it.polimi.ingsw.model.game_components.PawnColor;
-import it.polimi.ingsw.model.game_components.StudentDisc;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestCloudTile {
 
@@ -18,11 +16,10 @@ public class TestCloudTile {
      * @param value to test.
      */
     @ParameterizedTest
-    @ValueSource(ints = {0,100,Integer.MAX_VALUE})
-    public void testGetId(int value)
-    {
+    @ValueSource(ints = {0, 100, Integer.MAX_VALUE})
+    public void testGetId(int value) {
         CloudTile cloudTile = new CloudTile(value);
-        assertEquals(cloudTile.getId(),value);
+        assertEquals(cloudTile.getId(), value);
     }
 
     /**
@@ -34,9 +31,8 @@ public class TestCloudTile {
      * @param value to test.
      */
     @ParameterizedTest
-    @ValueSource(ints = {0,100})
-    public void testStudents(int value)
-    {
+    @ValueSource(ints = {0, 100})
+    public void testStudents(int value) {
         CloudTile cloudTile = new CloudTile(0);
         ArrayList<StudentDisc> studentsToAdd = new ArrayList<>();
         for (int i = 0; i < value; i++) {
@@ -45,7 +41,7 @@ public class TestCloudTile {
         cloudTile.addStudents(studentsToAdd);
         assertTrue(studentsToAdd.equals(cloudTile.peekStudents()));
         assertTrue(studentsToAdd.equals(cloudTile.popStudents()));
-        assertEquals(0,cloudTile.peekStudents().size());
+        assertEquals(0, cloudTile.peekStudents().size());
     }
 
 }

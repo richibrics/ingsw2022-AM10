@@ -53,6 +53,7 @@ public class ActionManager extends Manager {
         if (setUp == null) throw new NullPointerException("The number of players in the game is not supported, so Setup action can't be generated.");
 
         setUp.act();
+        setUp.modifyRoundAndActionList();
     }
 
     /**

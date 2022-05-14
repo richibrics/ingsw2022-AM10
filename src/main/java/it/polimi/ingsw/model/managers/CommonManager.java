@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
@@ -135,6 +136,25 @@ public class CommonManager {
             for (Player player: team.getPlayers()) {
                 if (player.getPlayerId() == playerId)
                     return player;
+            }
+        }
+        throw new NoSuchElementException("The required player could not be found");
+    }
+
+    /**
+     * Returns the Player whose user id matched {@code userId}.
+     * @param gameEngine the game engine
+     * @param userId the id of the required user
+     * @return the required player id
+     * @throws NoSuchElementException if the required player could not be found
+     * @see Player
+     * @see User
+     */
+    public static int takePlayerIdByUserId(GameEngine gameEngine, String userId) throws NoSuchElementException {
+        for (Team team: gameEngine.getTeams()) {
+            for (Player player: team.getPlayers()) {
+                if (player.getUsername().equals(userId))
+                    return player.getPlayerId();
             }
         }
         throw new NoSuchElementException("The required player could not be found");

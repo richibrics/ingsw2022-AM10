@@ -132,6 +132,8 @@ public class CharacterManager extends Manager {
      * @throws ActionNotSetException        if Action is not set in the CharacterCard
      * @throws WrongMessageContentException if there's an exception relative to options map
      * @throws RuntimeException             if there's an Exception during Action run
+     * @throws IllegalGameActionException   if there's an IllegalGameActionException during card act
+     * @throws IllegalGameStateException    if there's an IllegalGameStateException during card act
      */
     public void selectCharacterCard(int cardId, int playerId, Map<String, String> options) throws NoSuchElementException, TableNotSetException, ActionNotSetException, WrongMessageContentException, RuntimeException, IllegalGameActionException, IllegalGameStateException {
         Map<Integer, CharacterCard> cards = this.getGameEngine().getTable().getCharacterCards();

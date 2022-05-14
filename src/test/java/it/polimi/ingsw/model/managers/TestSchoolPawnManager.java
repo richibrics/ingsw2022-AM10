@@ -184,6 +184,9 @@ class TestSchoolPawnManager {
         assertEquals(ids.get(2), assertDoesNotThrow(() -> gameEngine.getTable().getSchoolBoards().get(0).getEntrance().get(2).getId()));
 
         assertThrows(NoSuchElementException.class, () -> schoolPawnManager.moveStudentsFromCloudTileToEntrance(1, 5));
+
+        // Now ask again the cloud tile that this time is empty: exception
+        assertThrows(NoSuchElementException.class, () -> schoolPawnManager.moveStudentsFromCloudTileToEntrance(1, 1));
     }
 
     @Test

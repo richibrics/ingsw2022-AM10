@@ -22,6 +22,7 @@ class TestCharacterCard {
 
     /**
      * Initializes a CharacterCard with a {@code character} and tests the returned id is the same one that the Character has.
+     *
      * @param character the Character for the CharacterCard
      */
     @ParameterizedTest
@@ -34,6 +35,7 @@ class TestCharacterCard {
     /**
      * Initializes a CharacterCard with a {@code character} and tests the returned storage capacity is the same one that
      * the Character has.
+     *
      * @param character the Character for the CharacterCard
      */
     @ParameterizedTest
@@ -50,12 +52,12 @@ class TestCharacterCard {
     @Test
     void getStudentsStorage() {
         CharacterCard characterCard = new CharacterCard(Character.FRIAR);
-        assertEquals(0,characterCard.getStudentsStorage().size());
-        assertDoesNotThrow(()->characterCard.addStudentToStorage(new StudentDisc(1,PawnColor.BLUE)));
-        assertDoesNotThrow(()->characterCard.addStudentToStorage(new StudentDisc(2,PawnColor.BLUE)));
-        assertEquals(2,characterCard.getStudentsStorage().size());
-        assertEquals(1,characterCard.getStudentsStorage().get(0).getId());
-        assertEquals(2,characterCard.getStudentsStorage().get(1).getId());
+        assertEquals(0, characterCard.getStudentsStorage().size());
+        assertDoesNotThrow(() -> characterCard.addStudentToStorage(new StudentDisc(1, PawnColor.BLUE)));
+        assertDoesNotThrow(() -> characterCard.addStudentToStorage(new StudentDisc(2, PawnColor.BLUE)));
+        assertEquals(2, characterCard.getStudentsStorage().size());
+        assertEquals(1, characterCard.getStudentsStorage().get(0).getId());
+        assertEquals(2, characterCard.getStudentsStorage().get(1).getId());
     }
 
     /**
@@ -69,7 +71,7 @@ class TestCharacterCard {
         CharacterCard characterCard = new CharacterCard(Character.FRIAR);
         for (int i = 0; i < 4; i++) {
             int id = i + 1;
-            assertDoesNotThrow(()->characterCard.addStudentToStorage(new StudentDisc(id, PawnColor.BLUE)));
+            assertDoesNotThrow(() -> characterCard.addStudentToStorage(new StudentDisc(id, PawnColor.BLUE)));
         }
         // Now check I have them inside
         assertEquals(4, characterCard.getStudentsStorage().size());
@@ -79,7 +81,7 @@ class TestCharacterCard {
         }
 
         // Now add another Student, should get Exception. Check then nothing has changed
-        assertThrows(CharacterStudentsStorageFull.class, ()->characterCard.addStudentToStorage(new StudentDisc(5, PawnColor.BLUE)));
+        assertThrows(CharacterStudentsStorageFull.class, () -> characterCard.addStudentToStorage(new StudentDisc(5, PawnColor.BLUE)));
         assertEquals(4, characterCard.getStudentsStorage().size());
     }
 
@@ -94,22 +96,22 @@ class TestCharacterCard {
         CharacterCard characterCard = new CharacterCard(Character.FRIAR);
         for (int i = 0; i < 4; i++) {
             int id = i + 1;
-            assertDoesNotThrow(()->characterCard.addStudentToStorage(new StudentDisc(id, PawnColor.BLUE)));
+            assertDoesNotThrow(() -> characterCard.addStudentToStorage(new StudentDisc(id, PawnColor.BLUE)));
         }
         assertEquals(4, characterCard.getStudentsStorage().size());
 
         // Now in the Card I have 4 students: remove them correctly and check it.
-        assertDoesNotThrow(()->characterCard.removeStudentFromStorage(1));
+        assertDoesNotThrow(() -> characterCard.removeStudentFromStorage(1));
         assertEquals(3, characterCard.getStudentsStorage().size());
-        assertDoesNotThrow(()->characterCard.removeStudentFromStorage(2));
+        assertDoesNotThrow(() -> characterCard.removeStudentFromStorage(2));
         assertEquals(2, characterCard.getStudentsStorage().size());
-        assertDoesNotThrow(()->characterCard.removeStudentFromStorage(3));
+        assertDoesNotThrow(() -> characterCard.removeStudentFromStorage(3));
         assertEquals(1, characterCard.getStudentsStorage().size());
-        assertDoesNotThrow(()->characterCard.removeStudentFromStorage(4));
+        assertDoesNotThrow(() -> characterCard.removeStudentFromStorage(4));
         assertEquals(0, characterCard.getStudentsStorage().size());
 
         // Remove a non available StudentDisc: exception
-        assertThrows(NoSuchElementException.class, ()->characterCard.removeStudentFromStorage(4));
+        assertThrows(NoSuchElementException.class, () -> characterCard.removeStudentFromStorage(4));
         assertEquals(0, characterCard.getStudentsStorage().size()); // Check correct state
     }
 
@@ -120,9 +122,9 @@ class TestCharacterCard {
     void setgetAction() {
         GameEngine gameEngine = new GameEngine(new ArrayList<>());
         CharacterCard characterCard = new CharacterCard(Character.FRIAR);
-        assertThrows(ActionNotSetException.class,()->characterCard.getAction());
+        assertThrows(ActionNotSetException.class, () -> characterCard.getAction());
         characterCard.setAction(new FriarEffectAction(gameEngine));
-        assertEquals(FriarEffectAction.class, assertDoesNotThrow(()->characterCard.getAction()).getClass());
+        assertEquals(FriarEffectAction.class, assertDoesNotThrow(() -> characterCard.getAction()).getClass());
     }
 
     /**
@@ -137,6 +139,6 @@ class TestCharacterCard {
         assertEquals(character.getCost(), characterCard.getCost());
         characterCard.setAsUsed();
         characterCard.setAsUsed();
-        assertEquals(character.getCost()+1, characterCard.getCost());
+        assertEquals(character.getCost() + 1, characterCard.getCost());
     }
 }
