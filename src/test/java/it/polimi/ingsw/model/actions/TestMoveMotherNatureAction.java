@@ -8,16 +8,12 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
-import it.polimi.ingsw.model.game_components.Bag;
-import it.polimi.ingsw.model.game_components.Character;
-import it.polimi.ingsw.model.game_components.CharacterCard;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,9 +51,9 @@ class TestMoveMotherNatureAction {
 
         moveMotherNatureAction = new MoveMotherNatureAction(gameEngine);
 
-        gameEngine.getAssistantManager().setWizard(1,1);
-        gameEngine.getAssistantManager().setWizard(2,2);
-        gameEngine.getAssistantManager().setWizard(3,3);
+        gameEngine.getAssistantManager().setWizard(1, 1);
+        gameEngine.getAssistantManager().setWizard(2, 2);
+        gameEngine.getAssistantManager().setWizard(3, 3);
 
         ArrayList<Integer> order = new ArrayList<>();
         order.add(1);
@@ -113,7 +109,7 @@ class TestMoveMotherNatureAction {
         gameEngine.getAssistantManager().setAssistantCard(1, 2);
 
         // Move MM to the island with id = current id + 1: operation okay
-        nextIslandId = (assertDoesNotThrow(()->gameEngine.getIslandManager().getMotherNatureIslandId()) % 12) + 1;
+        nextIslandId = (assertDoesNotThrow(() -> gameEngine.getIslandManager().getMotherNatureIslandId()) % 12) + 1;
         options.put(ModelConstants.ACTION_MOVE_MOTHER_NATURE_OPTIONS_KEY_ISLAND, String.valueOf(nextIslandId));
         moveMotherNatureAction.setPlayerId(1);
         assertDoesNotThrow(() -> moveMotherNatureAction.setOptions(options));
@@ -127,7 +123,7 @@ class TestMoveMotherNatureAction {
         assertThrows(IllegalGameActionException.class, () -> moveMotherNatureAction.act()); // Exception thrown
 
         // Unset the assistant, should throw
-        assertDoesNotThrow(()-> CommonManager.takePlayerById(gameEngine,1).popActiveAssistantCard());
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).popActiveAssistantCard());
         assertThrows(IllegalGameStateException.class, () -> moveMotherNatureAction.act()); // Exception thrown
 
         // Unset the table (set a new assistant card), should throw
@@ -148,7 +144,7 @@ class TestMoveMotherNatureAction {
 
         // Check before was in round actions list and after it isn't
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
-        assertDoesNotThrow(()->moveMotherNatureAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> moveMotherNatureAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
 
         // Test exception if I try another execution

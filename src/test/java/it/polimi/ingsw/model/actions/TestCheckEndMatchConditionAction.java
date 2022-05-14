@@ -29,7 +29,7 @@ class TestCheckEndMatchConditionAction {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -44,7 +44,7 @@ class TestCheckEndMatchConditionAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
         checkEndMatchConditionAction = new CheckEndMatchConditionAction(gameEngine);
     }
 
@@ -57,27 +57,29 @@ class TestCheckEndMatchConditionAction {
      */
     @Test
     void modifyRoundAndActionList() {
+
         assertDoesNotThrow(()->new SetUpThreePlayersAction(gameEngine).act());
         assertDoesNotThrow(()->new DrawFromBagToCloudThreePlayersAction(gameEngine).act());
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(1, 1));
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(2, 2));
         assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(3, 3));
         assertDoesNotThrow(()->checkEndMatchConditionAction.modifyRoundAndActionList());
+      
         // Checks I have only one action in the round which is the OnSelectionOfAssistantCard which had been added
         // from the DrawFromBagToCloud action
         assertEquals(1, gameEngine.getRound().getPossibleActions().size());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
         // Also I can test DrawFromBagToCloud run because it has drawn from the bag ad added to the clouds.
-        assertEquals(assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()), 4);
-        assertEquals(assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(1).peekStudents().size()), 4);
-        assertEquals(assertDoesNotThrow(()->gameEngine.getTable().getCloudTiles().get(2).peekStudents().size()), 4);
+        assertEquals(assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles().get(0).peekStudents().size()), 4);
+        assertEquals(assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles().get(1).peekStudents().size()), 4);
+        assertEquals(assertDoesNotThrow(() -> gameEngine.getTable().getCloudTiles().get(2).peekStudents().size()), 4);
     }
 
     @Test
     void checkTowersCondition() {
-        for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS; i ++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
-        Integer[] winner = assertDoesNotThrow(()->checkEndMatchConditionAction.checkTowersCondition());
+        for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS; i++)
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).popTower());
+        Integer[] winner = assertDoesNotThrow(() -> checkEndMatchConditionAction.checkTowersCondition());
         assertEquals(winner.length, 1);
         assertEquals(winner[0], 1);
     }
@@ -86,26 +88,26 @@ class TestCheckEndMatchConditionAction {
     void findWinner() {
         /* First criterion: number of towers left */
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 2; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).popTower());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 3; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(1).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(1).popTower());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 1; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(2).popTower());
-        Integer[] winners = assertDoesNotThrow(()->checkEndMatchConditionAction.findWinner());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(2).popTower());
+        Integer[] winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.findWinner());
         assertEquals(winners.length, 1);
         assertEquals(winners[0], 3);
 
         /* Second criterion: number of professors */
         /* Different number of professors */
-        assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
-        assertDoesNotThrow(()->gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
-        winners = assertDoesNotThrow(()->checkEndMatchConditionAction.findWinner());
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(0).popTower());
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
+        winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.findWinner());
         assertEquals(winners.length, 1);
         assertEquals(winners[0], 1);
 
         /* Same number of professors */
-        assertDoesNotThrow(()->gameEngine.getTeams().get(2).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
-        winners = assertDoesNotThrow(()->checkEndMatchConditionAction.findWinner());
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(2).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
+        winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.findWinner());
         assertEquals(winners.length, 2);
         assertEquals(winners[0], 1);
         assertEquals(winners[1], 3);
@@ -115,35 +117,35 @@ class TestCheckEndMatchConditionAction {
     void checkIslandGroupsCondition() {
 
         /* Place towers on islands */
-        ArrayList<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(()->gameEngine.getTable().getIslandTiles());
+        ArrayList<ArrayList<IslandTile>> islandGroups = assertDoesNotThrow(() -> gameEngine.getTable().getIslandTiles());
         for (int i = 0; i < 4; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->islandGroups.get(finalI).get(0).setTower(assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower())));
+            assertDoesNotThrow(() -> islandGroups.get(finalI).get(0).setTower(assertDoesNotThrow(() -> gameEngine.getTeams().get(0).popTower())));
         }
         for (int i = 4; i < 8; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->islandGroups.get(finalI).get(0).setTower(assertDoesNotThrow(()->gameEngine.getTeams().get(1).popTower())));
+            assertDoesNotThrow(() -> islandGroups.get(finalI).get(0).setTower(assertDoesNotThrow(() -> gameEngine.getTeams().get(1).popTower())));
         }
         for (int i = 8; i < 12; i++) {
             int finalI = i;
-            assertDoesNotThrow(()->islandGroups.get(finalI).get(0).setTower(assertDoesNotThrow(()->gameEngine.getTeams().get(2).popTower())));
+            assertDoesNotThrow(() -> islandGroups.get(finalI).get(0).setTower(assertDoesNotThrow(() -> gameEngine.getTeams().get(2).popTower())));
         }
 
         /* Unify islands. After this method invocation the number of island groups equals 3 */
-        assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
+        assertDoesNotThrow(() -> gameEngine.getIslandManager().unifyPossibleIslands());
 
-        Integer[] winners = assertDoesNotThrow(()->checkEndMatchConditionAction.checkIslandGroupsCondition());
+        Integer[] winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.checkIslandGroupsCondition());
         assertNotNull(winners);
         /* The players have built the same number of towers */
         assertEquals(winners.length, 3);
 
         /* Add professors to professor tables */
-        assertDoesNotThrow(()->gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.YELLOW)));
-        assertDoesNotThrow(()->gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.BLUE)));
-        assertDoesNotThrow(()->gameEngine.getTeams().get(2).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
-        assertDoesNotThrow(()->gameEngine.getTeams().get(2).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
-        assertDoesNotThrow(()->gameEngine.getTeams().get(1).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
-        winners = assertDoesNotThrow(()->checkEndMatchConditionAction.checkIslandGroupsCondition());
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.YELLOW)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(0).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.BLUE)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(2).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(2).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
+        assertDoesNotThrow(() -> gameEngine.getTeams().get(1).addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
+        winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.checkIslandGroupsCondition());
         assertEquals(winners.length, 2);
         /* The winners should be player 1 and player 3 */
         assertEquals(winners[0], 1);
@@ -162,13 +164,13 @@ class TestCheckEndMatchConditionAction {
 
         /* Remove towers from teams */
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 2; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).popTower());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 1; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(1).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(1).popTower());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 2; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(2).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(2).popTower());
 
-        Integer[] winners = assertDoesNotThrow(()->checkEndMatchConditionAction.noStudentsInBagCondition());
+        Integer[] winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.noStudentsInBagCondition());
         assertNotNull(winners);
         assertEquals(winners.length, 1);
         /* The winner should be the second team */
@@ -182,24 +184,24 @@ class TestCheckEndMatchConditionAction {
         gameEngine.getAssistantManager().setWizard(3, 3);
 
         /* Remove assistant cards of player 1 */
-        ArrayList<AssistantCard> assistantCards = assertDoesNotThrow(()->gameEngine.getTeams().get(0).getPlayers().get(0).getWizard().getAssistantCards());
+        ArrayList<AssistantCard> assistantCards = assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getPlayers().get(0).getWizard().getAssistantCards());
         int index = 0;
-        while (assertDoesNotThrow(()->gameEngine.getTeams().get(0).getPlayers().get(0).getWizard().getAssistantCards().size() != 0)) {
+        while (assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getPlayers().get(0).getWizard().getAssistantCards().size() != 0)) {
             int finalI = index;
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).getPlayers().get(0).getWizard().removeAssistantCard(assistantCards.get(finalI)));
-            index ++;
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).getPlayers().get(0).getWizard().removeAssistantCard(assistantCards.get(finalI)));
+            index++;
         }
 
         /* Remove towers */
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 4; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(0).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(0).popTower());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 3; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(1).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(1).popTower());
         for (int i = 0; i < ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS - 3; i++)
-            assertDoesNotThrow(()->gameEngine.getTeams().get(2).popTower());
+            assertDoesNotThrow(() -> gameEngine.getTeams().get(2).popTower());
 
         /* Check condition */
-        Integer[] winners = assertDoesNotThrow(()->checkEndMatchConditionAction.noAssistantCardsCondition());
+        Integer[] winners = assertDoesNotThrow(() -> checkEndMatchConditionAction.noAssistantCardsCondition());
 
         assertNotNull(winners);
         assertEquals(winners.length, 2);
@@ -215,18 +217,18 @@ class TestCheckEndMatchConditionAction {
     @Test
     void actNoWinnerPrepareNextRound() {
         // Prepare the game to check an EndMatchCondition without win
-        gameEngine.getAssistantManager().setWizard(1,1);
-        gameEngine.getAssistantManager().setWizard(2,2);
-        gameEngine.getAssistantManager().setWizard(3,3);
-        gameEngine.getAssistantManager().setAssistantCard(1,1);
-        gameEngine.getAssistantManager().setAssistantCard(2,12);
-        gameEngine.getAssistantManager().setAssistantCard(3,23);
+        gameEngine.getAssistantManager().setWizard(1, 1);
+        gameEngine.getAssistantManager().setWizard(2, 2);
+        gameEngine.getAssistantManager().setWizard(3, 3);
+        gameEngine.getAssistantManager().setAssistantCard(1, 1);
+        gameEngine.getAssistantManager().setAssistantCard(2, 12);
+        gameEngine.getAssistantManager().setAssistantCard(3, 23);
 
         // Do the tests
-        assertDoesNotThrow(()->checkEndMatchConditionAction.act());
+        assertDoesNotThrow(() -> checkEndMatchConditionAction.act());
         for (int i = 1; i <= gameEngine.getNumberOfPlayers(); i++) {
             int finalI = i;
-            assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine, finalI).getActiveAssistantCard());
+            assertThrows(AssistantCardNotSetException.class, () -> CommonManager.takePlayerById(gameEngine, finalI).getActiveAssistantCard());
         }
 
     }

@@ -7,14 +7,20 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
+import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
+import it.polimi.ingsw.model.game_components.Bag;
+import it.polimi.ingsw.model.game_components.Character;
+import it.polimi.ingsw.model.game_components.CharacterCard;
+import it.polimi.ingsw.model.game_components.StudentDisc;
+import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestFriarEffectAction {
     static GameEngine gameEngine;
@@ -42,7 +48,20 @@ class TestFriarEffectAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
-        SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
+        SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine) {
+            @Override
+            protected void drawCharacters(Map<Integer, CharacterCard> characterCards, Bag bag) throws Exception {
+                ArrayList<Character> characters = new ArrayList<>();
+                characters.add(Character.FRIAR);
+                for (Character character : characters) {
+                    characterCards.put(character.getId(), new CharacterCard(character));
+                }
+                for (CharacterCard characterCard : characterCards.values()) {
+                    this.getGameEngine().getCharacterManager().generateAction(characterCard);
+                    this.getGameEngine().getCharacterManager().setupCardStorage(characterCard, bag);
+                }
+            }
+        };
         assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         friarEffectAction = new FriarEffectAction(gameEngine);
@@ -99,5 +118,54 @@ class TestFriarEffectAction {
      */
     @Test
     void act() {
+        HashMap<String, String> options = new HashMap<>();
+
+
+        int storageStudent;
+
+        storageStudent = assertDoesNotThrow(() -> gameEngine.getTable().getCharacterCards().get(Character.FRIAR.getId()).getStudentsStorage().get(1).getId());
+
+        int islandId = assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1).getId());
+        options.put(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_ISLAND, String.valueOf(islandId));
+        options.put(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_STUDENT, String.valueOf(storageStudent));
+        friarEffectAction.setPlayerId(1);
+        assertDoesNotThrow(() -> friarEffectAction.setOptions(options));
+        assertDoesNotThrow(() -> friarEffectAction.act());
+
+        assertTrue(checkStudentIdOnIslandId(islandId, storageStudent));
+
+        //The student requested isn't in the card storage
+
+        options.clear();
+        options.put(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_STUDENT, String.valueOf(storageStudent));
+        options.put(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_ISLAND, String.valueOf(islandId));
+        friarEffectAction.setPlayerId(1);
+        assertDoesNotThrow(() -> friarEffectAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, () -> friarEffectAction.act());
+
+        //Bag empty
+
+
+        assertDoesNotThrow(() -> gameEngine.getTable().getBag().drawStudents(gameEngine.getTable().getBag().getNumberOfStudents()));
+        options.clear();
+        int storageStudent1;
+
+        storageStudent1 = assertDoesNotThrow(() -> gameEngine.getTable().getCharacterCards().get(Character.FRIAR.getId()).getStudentsStorage().get(2).getId());
+
+        int islandId1 = assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, 1).getId());
+        options.put(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_STUDENT, String.valueOf(storageStudent1));
+        options.put(ModelConstants.ACTION_FRIAR_OPTIONS_KEY_ISLAND, String.valueOf(islandId1));
+        friarEffectAction.setPlayerId(1);
+        assertDoesNotThrow(() -> friarEffectAction.setOptions(options));
+        assertDoesNotThrow(() -> friarEffectAction.act());
+
+    }
+
+    private boolean checkStudentIdOnIslandId(int islandId, int studentId) {
+        for (StudentDisc studentDisc : assertDoesNotThrow(() -> CommonManager.takeIslandTileById(gameEngine, islandId).peekStudents())) {
+            if (studentDisc.getId() == studentId)
+                return true;
+        }
+        return false;
     }
 }

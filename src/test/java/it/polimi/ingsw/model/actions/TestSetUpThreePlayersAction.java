@@ -27,7 +27,7 @@ class TestSetUpThreePlayersAction {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -47,12 +47,13 @@ class TestSetUpThreePlayersAction {
 
     /**
      * Tests round with next players and next actions is set correctly
+     *
      * @throws Exception
      */
     @Test
-    void modifyRoundAndActionList() throws Exception{
+    void modifyRoundAndActionList() throws Exception {
         assertEquals(ModelConstants.THREE_PLAYERS, gameEngine.getNumberOfPlayers());
-        
+
         setUpThreePlayersAction.modifyRoundAndActionList();
         ArrayList<Integer> orderOfPlay = setUpThreePlayersAction.getGameEngine().getRound().getOrderOfPlay();
         assertEquals(gameEngine.getNumberOfPlayers(), orderOfPlay.size());
@@ -77,7 +78,7 @@ class TestSetUpThreePlayersAction {
         setUpThreePlayersAction.setUpCloudTiles(cloudTiles);
         assertEquals(gameEngine.getNumberOfPlayers(), cloudTiles.size());
         for (int i = 0; i < gameEngine.getNumberOfPlayers(); i++) {
-            assertEquals(i+1, cloudTiles.get(i).getId());
+            assertEquals(i + 1, cloudTiles.get(i).getId());
         }
     }
 
@@ -91,7 +92,7 @@ class TestSetUpThreePlayersAction {
         assertEquals(gameEngine.getNumberOfPlayers(), schoolBoards.size());
         for (int i = 0; i < gameEngine.getNumberOfPlayers(); i++) {
             int finalI = i;
-            assertEquals(schoolBoards.get(i), assertDoesNotThrow(()->setUpThreePlayersAction.getGameEngine().getTeams().get(finalI).getPlayers().get(0).getSchoolBoard()));
+            assertEquals(schoolBoards.get(i), assertDoesNotThrow(() -> setUpThreePlayersAction.getGameEngine().getTeams().get(finalI).getPlayers().get(0).getSchoolBoard()));
         }
     }
 
@@ -117,12 +118,12 @@ class TestSetUpThreePlayersAction {
         setUpThreePlayersAction.putRemainingStudentsInBag(bag, studentDiscs);
         ArrayList<SchoolBoard> schoolBoards = new ArrayList<>();
         setUpThreePlayersAction.setUpSchoolBoards(schoolBoards);
-        assertDoesNotThrow(()->setUpThreePlayersAction.drawStudentsAndPlaceOnEntrance(bag));
+        assertDoesNotThrow(() -> setUpThreePlayersAction.drawStudentsAndPlaceOnEntrance(bag));
         for (Team team : setUpThreePlayersAction.getGameEngine().getTeams())
             for (Player player : team.getPlayers())
-                assertEquals(ModelConstants.INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS, assertDoesNotThrow(()->player.getSchoolBoard().getEntrance().size()));
+                assertEquals(ModelConstants.INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS, assertDoesNotThrow(() -> player.getSchoolBoard().getEntrance().size()));
         assertEquals(ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR * PawnColor.values().length - ModelConstants.INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS * gameEngine.getNumberOfPlayers()
-                , assertDoesNotThrow(()->bag.getNumberOfStudents()));
+                , assertDoesNotThrow(() -> bag.getNumberOfStudents()));
     }
 
     /**

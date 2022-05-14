@@ -51,7 +51,7 @@ public class OnSelectionOfCharacterCardAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * In this case the Action won't do anything after the act.
-     *
+     * <p>
      * When a character card is used in a player's turn, the player won't select any card anymore,
      * so this action is removed from round actions list. In fact, when it's next player's turn, at turn start this
      * action will be set again in the round for him.
@@ -61,24 +61,38 @@ public class OnSelectionOfCharacterCardAction extends Action {
     @Override
     public void modifyRoundAndActionList() throws Exception {
         ArrayList<Integer> actions = this.getGameEngine().getRound().getPossibleActions();
-        if(!actions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID))) // Remove and throw if wasn't inside
+        if (!actions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID))) // Remove and throw if wasn't inside
             throw new IllegalGameStateException("OnSelectionOfCharacterCard action was run but it wasn't in Round actions");
         getGameEngine().getRound().setPossibleActions(actions);
     }
 
     /**
-     * Prepares the action of the chosen character to be run.
+     * Prepares the action of the chosen character to be run, also managing player's money (check and decrease).
      *
      * @throws Exception if something bad happens.
      */
     @Override
     public void act() throws Exception {
         try {
+            // Check player's money
+            if (!this.getGameEngine().getCharacterManager().checkPlayerCanPlayCard(this.getPlayerId(), this.chosenCharacterId))
+                throw new IllegalGameActionException("The player hasn't enough coins to play that card");
+        } catch (NoSuchElementException e) {
+            throw new IllegalGameActionException(e.getMessage());
+        } catch (TableNotSetException e) {
+            throw new IllegalGameStateException(e.getMessage());
+        }
+
+        try {
             this.getGameEngine().getCharacterManager().selectCharacterCard(this.chosenCharacterId, this.getPlayerId(), this.characterActionOptions);
         } catch (NoSuchElementException | IllegalGameActionException e) { // For wrong card id or illegal game action
             throw new IllegalGameActionException(e.getMessage());
-        } catch (TableNotSetException | ActionNotSetException e) {
+        } catch (ActionNotSetException e) {
             throw new IllegalGameStateException(e.getMessage());
         }
+
+        // I don't catch NotEnoughMoney here because there's no CharacterCard that makes player lose money during its
+        // act, so if before player had the money, he still has them.
+        this.getGameEngine().getCharacterManager().decreasePlayersMoneyEditCardCost(this.getPlayerId(), this.chosenCharacterId);
     }
 }

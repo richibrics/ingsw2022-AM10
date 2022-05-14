@@ -11,7 +11,7 @@ import java.util.Map;
 public abstract class DrawFromBagToCloudAction extends Action {
 
     public DrawFromBagToCloudAction(GameEngine gameEngine) {
-        super(1, gameEngine);
+        super(ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID, gameEngine);
     }
 
 
@@ -30,6 +30,7 @@ public abstract class DrawFromBagToCloudAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * After this action the players will choose the assistant, with the same order already present in the round.
+     *
      * @throws Exception if something bad happens
      */
 

@@ -129,6 +129,7 @@ class TestFromCloudTileToEntranceAction {
 
         /* Remove students from the entrance of player 2 */
         Integer[] studentIds = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 2).getSchoolBoard().getEntrance().stream().map(studentDisc -> studentDisc.getId()).toList().toArray(new Integer[0]));
+
         for (int i = 0; i < studentIds.length; i++) {
             int finalI = i;
             assertDoesNotThrow(() -> gameEngine.getSchoolPawnManager().moveStudentFromEntranceToDiningRoom(2, studentIds[finalI]));

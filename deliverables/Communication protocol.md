@@ -16,12 +16,11 @@ The server listens for client connection requests. Once a connection is establis
     "content": {
         "id": "username",
         "preference": numOfPlayers
-        "register": true/false
     }
 }
 ```
 
-The username is a string that identifies the client, while preference is an integer that represents the type of game the client wants to play (two-player game, three-player game or four-player game). The server than adds the user to the waiting list of the lobby. The client can decide to change their preference by sending a USER message with register set to false. In this case the username must be the same used by the client in the registration process. If in the meanwhile a game has been created, the server refuses the request and notifies the client.
+The username is a string that identifies the client, while preference is an integer that represents the type of game the client wants to play (two-player game, three-player game or four-player game). The server than adds the user to the waiting list of the lobby. The client can decide to change their preference by sending a new USER message. In this case the username must be the same used by the client in the registration process. If in the meanwhile a game has been created, the server refuses the request and notifies the client.
 
 ## STILL_ALIVE_MSG message
 
@@ -69,7 +68,7 @@ When the current player receives the ROUND message, they decide which action to 
 {
     "type": "ACTION",
     "content": {
-        "actionID": 5,
+        "action": 5,
         "options": {
             "color": "red"
         }

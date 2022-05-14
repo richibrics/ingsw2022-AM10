@@ -50,7 +50,7 @@ public class ActionManager extends Manager {
         else if (this.getGameEngine().getNumberOfPlayers() == 3)
             setUp = new SetUpThreePlayersAction(this.getGameEngine());
 
-        if (setUp == null) throw new NullPointerException();
+        if (setUp == null) throw new NullPointerException("The number of players in the game is not supported, so Setup action can't be generated.");
 
         setUp.act();
         setUp.modifyRoundAndActionList();

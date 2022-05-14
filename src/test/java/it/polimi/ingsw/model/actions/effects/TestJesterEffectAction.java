@@ -7,14 +7,20 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
+import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
+import it.polimi.ingsw.model.game_components.Bag;
+import it.polimi.ingsw.model.game_components.Character;
+import it.polimi.ingsw.model.game_components.CharacterCard;
+import it.polimi.ingsw.model.game_components.StudentDisc;
+import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestJesterEffectAction {
     static GameEngine gameEngine;
@@ -42,7 +48,20 @@ class TestJesterEffectAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
-        SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
+        SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine) {
+            @Override
+            protected void drawCharacters(Map<Integer, CharacterCard> characterCards, Bag bag) throws Exception {
+                ArrayList<Character> characters = new ArrayList<>();
+                characters.add(Character.JESTER);
+                for (Character character : characters) {
+                    characterCards.put(character.getId(), new CharacterCard(character));
+                }
+                for (CharacterCard characterCard : characterCards.values()) {
+                    this.getGameEngine().getCharacterManager().generateAction(characterCard);
+                    this.getGameEngine().getCharacterManager().setupCardStorage(characterCard, bag);
+                }
+            }
+        };
         assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         jesterEffectAction = new JesterEffectAction(gameEngine);
@@ -150,5 +169,77 @@ class TestJesterEffectAction {
      */
     @Test
     void act() {
+        HashMap<String, String> options = new HashMap<>();
+
+        int entranceStudent1;
+        entranceStudent1 = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0)).getId();
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE1, String.valueOf(entranceStudent1));
+        int storageStudent1;
+        storageStudent1 = assertDoesNotThrow(() -> gameEngine.getTable().getCharacterCards().get(Character.JESTER.getId()).getStudentsStorage().get(1).getId());
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1, String.valueOf(storageStudent1));
+        int entranceStudent2;
+        entranceStudent2 = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(1)).getId();
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2, String.valueOf(entranceStudent2));
+        int storageStudent2;
+        storageStudent2 = assertDoesNotThrow(() -> gameEngine.getTable().getCharacterCards().get(Character.JESTER.getId()).getStudentsStorage().get(2).getId());
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2, String.valueOf(storageStudent2));
+        int entranceStudent3;
+        entranceStudent3 = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(2)).getId();
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3, String.valueOf(entranceStudent3));
+        int storageStudent3;
+        storageStudent3 = assertDoesNotThrow(() -> gameEngine.getTable().getCharacterCards().get(Character.JESTER.getId()).getStudentsStorage().get(3).getId());
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3, String.valueOf(storageStudent3));
+        jesterEffectAction.setPlayerId(1);
+        assertDoesNotThrow(() -> jesterEffectAction.setOptions(options));
+        assertDoesNotThrow(() -> jesterEffectAction.act());
+
+        assertTrue(checkStudentIdInStorage(entranceStudent1));
+        assertTrue(checkStudentIdInEntrance(1, storageStudent1));
+        assertTrue(checkStudentIdInStorage(entranceStudent2));
+        assertTrue(checkStudentIdInEntrance(1, storageStudent2));
+        assertTrue(checkStudentIdInStorage(entranceStudent3));
+        assertTrue(checkStudentIdInEntrance(1, storageStudent3));
+
+        //An entranceStudent requested isn't in player's entrance
+        options.clear();
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE1, String.valueOf(storageStudent1));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1, String.valueOf(entranceStudent1));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2, String.valueOf(storageStudent2));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2, String.valueOf(entranceStudent2));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3, String.valueOf(entranceStudent3));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3, String.valueOf(entranceStudent3));
+        jesterEffectAction.setPlayerId(1);
+        assertDoesNotThrow(() -> jesterEffectAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, () -> jesterEffectAction.act());
+
+
+        //A storageStudent requested isn't in card storage
+
+        options.clear();
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE1, String.valueOf(entranceStudent1));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE1, String.valueOf(storageStudent1));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE2, String.valueOf(entranceStudent2));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE2, String.valueOf(storageStudent2));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_ENTRANCE3, String.valueOf(entranceStudent3));
+        options.put(ModelConstants.ACTION_JESTER_OPTIONS_KEY_STUDENT_STORAGE3, String.valueOf(storageStudent3));
+        jesterEffectAction.setPlayerId(1);
+        assertDoesNotThrow(() -> jesterEffectAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, () -> jesterEffectAction.act());
+    }
+
+    private boolean checkStudentIdInEntrance(int playerId, int studentId) {
+        for (StudentDisc studentDisc : assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, playerId).getSchoolBoard().getEntrance())) {
+            if (studentDisc.getId() == studentId)
+                return true;
+        }
+        return false;
+    }
+
+    private boolean checkStudentIdInStorage(int studentId) {
+        for (StudentDisc studentDisc : assertDoesNotThrow(() -> gameEngine.getTable().getCharacterCards().get(Character.JESTER.getId()).getStudentsStorage())) {
+            if (studentDisc.getId() == studentId)
+                return true;
+        }
+        return false;
     }
 }

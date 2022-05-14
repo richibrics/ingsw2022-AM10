@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
-import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.model.game_components.StudentDisc;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.SplittableRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,7 +57,7 @@ class TestMoveStudentsFromEntranceAction {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -74,9 +72,9 @@ class TestMoveStudentsFromEntranceAction {
         teams.add(team2);
         teams.add(team3);
         gameEngine = new GameEngine(teams);
-        assertDoesNotThrow(()->gameEngine.getActionManager().generateActions());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().generateActions());
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         moveStudentsFromEntranceAction = new MoveStudentsFromEntranceAction(gameEngine);
 
@@ -99,39 +97,39 @@ class TestMoveStudentsFromEntranceAction {
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // Student id parse error
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT,"a");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT, "a");
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // No student position
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT,"12");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT, "12");
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // Student position parse error
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"a");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "a");
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // Student position not valid
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"-2");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "-2");
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // Student position not valid
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"0");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "0");
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // Student position not valid
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"13");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "13");
         assertThrows(WrongMessageContentException.class, () -> moveStudentsFromEntranceAction.setOptions(options));
 
         // ok - on island tile 1
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"1");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "1");
         assertDoesNotThrow(() -> moveStudentsFromEntranceAction.setOptions(options));
 
         // ok - on island tile 12
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"12");
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "12");
         assertDoesNotThrow(() -> moveStudentsFromEntranceAction.setOptions(options));
 
         // ok - in dining room
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,String.valueOf(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM));
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, String.valueOf(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM));
         assertDoesNotThrow(() -> moveStudentsFromEntranceAction.setOptions(options));
     }
 
@@ -141,36 +139,35 @@ class TestMoveStudentsFromEntranceAction {
         // Get a student of player 1 and move it to dining room
         int entranceStudent;
 
-        entranceStudent = assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0)).getId();
+        entranceStudent = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0)).getId();
         HashMap<String, String> options = new HashMap<>();
 
         // Check pre-action state
         assertTrue(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
         assertFalse(checkStudentIdInDiningRoom(gameEngine, 1, entranceStudent));
 
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT,String.valueOf(entranceStudent));
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,String.valueOf(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM));
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT, String.valueOf(entranceStudent));
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, String.valueOf(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION_VALUE_DINING_ROOM));
         moveStudentsFromEntranceAction.setPlayerId(1);
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.setOptions(options));
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.act());
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.setOptions(options));
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.act());
 
         // Check post-action state
         assertFalse(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
         assertTrue(checkStudentIdInDiningRoom(gameEngine, 1, entranceStudent));
 
 
-
         // Now move to an island tile: island 5
-        entranceStudent = assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0)).getId();
+        entranceStudent = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0)).getId();
 
         // Check pre-action state
         assertTrue(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
         assertFalse(checkStudentIdOnIslandId(gameEngine, 5, entranceStudent));
 
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT,String.valueOf(entranceStudent));
-        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION,"5");
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.setOptions(options));
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.act());
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_STUDENT, String.valueOf(entranceStudent));
+        options.put(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_OPTIONS_KEY_POSITION, "5");
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.setOptions(options));
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.act());
 
         // Check post-action state
         assertFalse(checkStudentIdInEntrance(gameEngine, 1, entranceStudent));
@@ -178,16 +175,16 @@ class TestMoveStudentsFromEntranceAction {
 
         // Now ensure it throws correctly
         // Repeat the move (student no longer in entrance): Exception
-        assertThrows(IllegalGameActionException.class, ()->moveStudentsFromEntranceAction.act());
+        assertThrows(IllegalGameActionException.class, () -> moveStudentsFromEntranceAction.act());
 
         // Now unlink the schoolboard and assert I have an IllegalGameStateException
-        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine,1)).setSchoolBoard(null);
-        assertThrows(IllegalGameStateException.class, ()->moveStudentsFromEntranceAction.act());
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1)).setSchoolBoard(null);
+        assertThrows(IllegalGameStateException.class, () -> moveStudentsFromEntranceAction.act());
 
         // Now relink the schoolboard but remove the table and assert I have an IllegalGameStateException
-        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine,1).setSchoolBoard(gameEngine.getTable().getSchoolBoards().get(0)));
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).setSchoolBoard(gameEngine.getTable().getSchoolBoards().get(0)));
         gameEngine.setTable(null);
-        assertThrows(IllegalGameStateException.class, ()->moveStudentsFromEntranceAction.act());
+        assertThrows(IllegalGameStateException.class, () -> moveStudentsFromEntranceAction.act());
     }
 
     private boolean checkStudentIdInDiningRoom(GameEngine gameEngine, int playerId, int studentId) {
@@ -261,19 +258,19 @@ class TestMoveStudentsFromEntranceAction {
         gameEngine.getRound().setPossibleActions(nextActions);
 
         // Check that the action id is removed only after 3 calls to modifyRoundAndActionList
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.modifyRoundAndActionList());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.modifyRoundAndActionList());
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.modifyRoundAndActionList());
         assertFalse(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID));
 
         // Check next Assign professor started (will set to next actions the MoveMotherNature action)
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID));
 
         // Action not in round anymore, at third movement when I remove it there's an exception
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
-        assertDoesNotThrow(()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
-        assertThrows(IllegalGameStateException.class, ()->moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> moveStudentsFromEntranceAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, () -> moveStudentsFromEntranceAction.modifyRoundAndActionList());
     }
 }

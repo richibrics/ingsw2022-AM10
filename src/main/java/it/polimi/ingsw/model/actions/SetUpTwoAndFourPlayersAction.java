@@ -6,9 +6,9 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.SchoolBoardNotSetException;
-import it.polimi.ingsw.model.game_components.*;
-
-import java.util.Arrays;
+import it.polimi.ingsw.model.game_components.Bag;
+import it.polimi.ingsw.model.game_components.Tower;
+import it.polimi.ingsw.model.game_components.TowerColor;
 
 public class SetUpTwoAndFourPlayersAction extends SetUp {
 

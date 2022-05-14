@@ -19,6 +19,7 @@ public abstract class AbstractAssignProfessorAction extends Action {
 
     /**
      * Gets the id of the team with the player with the highest number of students of a certain color in the dining room.
+     *
      * @param studentsOfPlayer the map with playerId - number of students of the required color in the dining room
      * @return the id of the team with the player with the highest number of students of a certain color in the dining room
      */
@@ -29,9 +30,10 @@ public abstract class AbstractAssignProfessorAction extends Action {
 
     /**
      * Checks if the professor  of color {@code color} has to be moved to a different team.
-     * @param color the color of the professor pawn
-     * @param winningTeam the team with the player that has the highest number of students of color {@code color} in the
-     *                    dining room
+     *
+     * @param color            the color of the professor pawn
+     * @param winningTeam      the team with the player that has the highest number of students of color {@code color} in the
+     *                         dining room
      * @param studentsOfPlayer the map with playerId - number of students of color {@code color} in the dining room
      * @return true if the professor  of color {@code color} has to be moved to a different team, false otherwise
      */
@@ -72,12 +74,13 @@ public abstract class AbstractAssignProfessorAction extends Action {
      */
 
     @Override
-    public void setOptions(Map<String, String> options) throws Exception { }
+    public void setOptions(Map<String, String> options) throws Exception {
+    }
 
     /**
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
-     *
+     * <p>
      * After this action the player will move mother nature, so I add that action to the round action list.
      *
      * @throws Exception if something bad happens

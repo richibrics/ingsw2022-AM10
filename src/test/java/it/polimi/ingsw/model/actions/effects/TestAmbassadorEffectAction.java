@@ -7,7 +7,10 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.SetUpTwoAndFourPlayersAction;
-import it.polimi.ingsw.model.game_components.*;
+import it.polimi.ingsw.model.game_components.IslandTile;
+import it.polimi.ingsw.model.game_components.PawnColor;
+import it.polimi.ingsw.model.game_components.ProfessorPawn;
+import it.polimi.ingsw.model.game_components.StudentDisc;
 import it.polimi.ingsw.model.managers.CommonManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -161,8 +164,8 @@ class TestAmbassadorEffectAction {
          *  So, also in this situation, I have a NoEntry tile on Island 4 after the next 2 statements.
          */
 
-        assertDoesNotThrow(()->gameEngine.getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options1, false));
-        assertDoesNotThrow(()->ambassadorEffectAction.act());
+        assertDoesNotThrow(() -> gameEngine.getActionManager().prepareAndExecuteAction(ModelConstants.ACTION_CALCULATE_INFLUENCE_ID, -1, options1, false));
+        assertDoesNotThrow(() -> ambassadorEffectAction.act());
 
         assertTrue(islandTile.hasNoEntry());
     }

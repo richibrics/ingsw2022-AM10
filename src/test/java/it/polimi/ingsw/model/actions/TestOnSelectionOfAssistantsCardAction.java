@@ -29,7 +29,7 @@ class TestOnSelectionOfAssistantsCardAction {
         User user3 = new User("3", 3);
         Player player1 = new Player(user1, 1, 3);
         Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3,3);
+        Player player3 = new Player(user3, 3, 3);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         Team team1 = new Team(1, players1);
@@ -45,13 +45,13 @@ class TestOnSelectionOfAssistantsCardAction {
         teams.add(team3);
         gameEngine = new GameEngine(teams);
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
-        assertDoesNotThrow(()->setUpThreePlayersAction.act());
+        assertDoesNotThrow(() -> setUpThreePlayersAction.act());
 
         onSelectionOfAssistantsCardAction = new OnSelectionOfAssistantsCardAction(gameEngine);
 
-        gameEngine.getAssistantManager().setWizard(1,1);
-        gameEngine.getAssistantManager().setWizard(2,2);
-        gameEngine.getAssistantManager().setWizard(3,3);
+        gameEngine.getAssistantManager().setWizard(1, 1);
+        gameEngine.getAssistantManager().setWizard(2, 2);
+        gameEngine.getAssistantManager().setWizard(3, 3);
 
         ArrayList<Integer> order = new ArrayList<>();
         order.add(1);
@@ -71,11 +71,11 @@ class TestOnSelectionOfAssistantsCardAction {
         assertThrows(WrongMessageContentException.class, () -> onSelectionOfAssistantsCardAction.setOptions(options));
 
         // Parse error
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT,"a");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "a");
         assertThrows(WrongMessageContentException.class, () -> onSelectionOfAssistantsCardAction.setOptions(options));
 
         // OK
-        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT,"12");
+        options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "12");
         assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
     }
 
@@ -90,14 +90,14 @@ class TestOnSelectionOfAssistantsCardAction {
         // Player 1 acts
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "2");
         onSelectionOfAssistantsCardAction.setPlayerId(1);
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.act());
 
         // Check okay
-        assertEquals(2, assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine,1).getActiveAssistantCard().getId()));
+        assertEquals(2, assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getActiveAssistantCard().getId()));
 
         // Check can't play the same card again
-        assertThrows(IllegalGameActionException.class, ()->onSelectionOfAssistantsCardAction.act());
+        assertThrows(IllegalGameActionException.class, () -> onSelectionOfAssistantsCardAction.act());
     }
 
     /**
@@ -108,7 +108,7 @@ class TestOnSelectionOfAssistantsCardAction {
      */
     @Test
     void modifyRoundAndActionList() {
-        assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
+        assertEquals(1, assertDoesNotThrow(() -> gameEngine.getRound().getCurrentPlayer()));
 
         // Set the assistant cards
         HashMap<String, String> options = new HashMap<>();
@@ -116,64 +116,64 @@ class TestOnSelectionOfAssistantsCardAction {
         // Player 1
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "2"); // value = 2
         onSelectionOfAssistantsCardAction.setPlayerId(1);
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.act());
 
         addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         // Check round is going forward
-        assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
+        assertEquals(2, assertDoesNotThrow(() -> gameEngine.getRound().getCurrentPlayer()));
 
         // Player 2
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "11"); // value = 1
         onSelectionOfAssistantsCardAction.setPlayerId(2);
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.act());
 
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         // Check round is going forward
-        assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getCurrentPlayer()));
+        assertEquals(3, assertDoesNotThrow(() -> gameEngine.getRound().getCurrentPlayer()));
 
         // Player 3
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "23"); // value = 3
         onSelectionOfAssistantsCardAction.setPlayerId(3);
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.act());
 
         // This will make the new order
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
 
         // Check new order (order made by id of assistant cards set above)
-        assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));
-        assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(1)));
-        assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(2)));
+        assertEquals(2, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(0)));
+        assertEquals(1, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(1)));
+        assertEquals(3, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(2)));
 
         // Now I remove all the cards from player 3 and I leave only the card with value = 1, that is the same of player 2.
         // Player 3 now can play card 2 and the order will change
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,22));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,24));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,25));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,26));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,27));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,28));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,29));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,30));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 22));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 24));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 25));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 26));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 27));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 28));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 29));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 30));
 
         // Now he has only card value = 1: play it, get the new order and check it
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "21"); // value = 1 - same card of player 2!
         onSelectionOfAssistantsCardAction.setPlayerId(3);
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.act());
 
         addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList()); // This generates the new order
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList()); // This generates the new order
 
         // Check the order
-        assertEquals(2, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(0)));
-        assertEquals(3, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(1)));
-        assertEquals(1, assertDoesNotThrow(()->gameEngine.getRound().getOrderOfPlay().get(2)));
+        assertEquals(2, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(0)));
+        assertEquals(3, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(1)));
+        assertEquals(1, assertDoesNotThrow(() -> gameEngine.getRound().getOrderOfPlay().get(2)));
 
         // Check next actions
         assertTrue(gameEngine.getRound().getPossibleActions().contains(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID));
@@ -187,19 +187,19 @@ class TestOnSelectionOfAssistantsCardAction {
         // Create new round
         gameEngine.getRound().setOrderOfPlay(gameEngine.getRound().getOrderOfPlay());
         // Ensure everybody has the card
-        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 1).getActiveAssistantCard());
-        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 2).getActiveAssistantCard());
-        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 3).getActiveAssistantCard());
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getActiveAssistantCard());
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 2).getActiveAssistantCard());
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 3).getActiveAssistantCard());
         // Send the round state forward to when only one player remains
         addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         addActionToRoundActions(gameEngine); // To avoid exception thrown because Action not in round
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
 
         // Now if I call the modifyRAAL it makes the new order: I break it removing the card from one player
-        assertDoesNotThrow(()->CommonManager.takePlayerById(gameEngine, 2).popActiveAssistantCard());
+        assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 2).popActiveAssistantCard());
         // Check that the Action recognize an unknown game state
-        assertThrows(IllegalGameStateException.class, ()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, () -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
     }
 
     /**
@@ -213,12 +213,12 @@ class TestOnSelectionOfAssistantsCardAction {
         gameEngine.getRound().playerTurnEnded();
 
         // --- set back the assistants card because it would throw an exception for cards not set otherwise
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(1,5));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(2,15));
-        assertDoesNotThrow(()-> gameEngine.getAssistantManager().setAssistantCard(3,25));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(1, 5));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(2, 15));
+        assertDoesNotThrow(() -> gameEngine.getAssistantManager().setAssistantCard(3, 25));
 
         // Okay now it's ready to be tested
-        assertThrows(IllegalGameStateException.class, ()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, () -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
     }
 
     /**
@@ -231,11 +231,11 @@ class TestOnSelectionOfAssistantsCardAction {
         // Player 1 acts with card 20: ERROR
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT, "20");
         onSelectionOfAssistantsCardAction.setPlayerId(1);
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.setOptions(options));
-        assertThrows(IllegalGameActionException.class, ()->onSelectionOfAssistantsCardAction.act());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.setOptions(options));
+        assertThrows(IllegalGameActionException.class, () -> onSelectionOfAssistantsCardAction.act());
 
         // Check not okay
-        assertThrows(AssistantCardNotSetException.class, ()->CommonManager.takePlayerById(gameEngine,1).getActiveAssistantCard().getId());
+        assertThrows(AssistantCardNotSetException.class, () -> CommonManager.takePlayerById(gameEngine, 1).getActiveAssistantCard().getId());
     }
 
     /**
@@ -244,13 +244,13 @@ class TestOnSelectionOfAssistantsCardAction {
      */
     @Test
     void modifyRoundAndActionListCheckIllegalStateExceptionThrown() {
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
-        assertDoesNotThrow(()->onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertDoesNotThrow(() -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
         // Remove action that should be inside -> create an inconsistency
         ArrayList<Integer> nextActions = gameEngine.getRound().getPossibleActions();
         nextActions.remove(Integer.valueOf(ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID));
         gameEngine.getRound().setPossibleActions(nextActions);
-        assertThrows(IllegalGameStateException.class, ()-> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
+        assertThrows(IllegalGameStateException.class, () -> onSelectionOfAssistantsCardAction.modifyRoundAndActionList());
     }
 
     void addActionToRoundActions(GameEngine gameEngine) {
