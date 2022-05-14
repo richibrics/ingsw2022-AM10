@@ -7,7 +7,6 @@ import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
 import it.polimi.ingsw.network.exceptions.UserNotSet;
 import it.polimi.ingsw.network.messages.Message;
-import it.polimi.ingsw.view.Cli;
 import it.polimi.ingsw.view.game_objects.*;
 
 import java.io.BufferedReader;
@@ -19,21 +18,18 @@ import java.net.SocketTimeoutException;
 
 public class ClientServerConnection implements Runnable {
 
-    private Socket socket;
-    private BufferedReader bufferIn;
-    private PrintWriter bufferOut;
-    private User user;
+    private final Socket socket;
+    private final BufferedReader bufferIn;
+    private final PrintWriter bufferOut;
+    private final User user;
     private boolean continueReceiving;
     private boolean teamsFlag;
     private ClientRound lastClientRound;
     private int playerId;
     private int timer;
-    private Object syncObject1;
-    private Object syncObject2;
-    private Object syncObject3;
-    // TODO
-    // Temporary
-    private Cli cli;
+    private final Object syncObject1;
+    private final Object syncObject2;
+    private final Object syncObject3;
 
     public ClientServerConnection(Socket socket) throws IOException {
         this.socket = socket;
@@ -48,9 +44,6 @@ public class ClientServerConnection implements Runnable {
         this.syncObject1 = new Object();
         this.syncObject2 = new Object();
         this.syncObject3 = new Object();
-        // TODO
-        // Temporary
-        this.cli = new Cli();
     }
 
     /**
@@ -120,7 +113,6 @@ public class ClientServerConnection implements Runnable {
 
     private void sendUser() {
         // TODO Ask username and preference to client via CLI or GUI. The following line is temporary.
-        this.user = this.cli.askForUser();
         // Serialize user and send it to the server
         this.sendMessage(Serializer.fromUserToMessage(this.user));
     }
@@ -191,8 +183,7 @@ public class ClientServerConnection implements Runnable {
                 case TABLE -> {
                     ClientTable clientTable = Serializer.fromMessageToClientTable(message);
                     // TODO
-                    // Display content. For now show the message
-                    this.cli.displayContent(message);
+                    // Display content
                 }
                 case TEAMS -> {
                     ClientTeams clientTeams = Serializer.fromMessageToClientTeams(message);
@@ -201,8 +192,7 @@ public class ClientServerConnection implements Runnable {
                         this.teamsFlag = true;
                     }
                     // TODO
-                    // Display content. For now show the message
-                    this.cli.displayContent(message);
+                    // Display content
                 }
                 case ROUND -> {
                     this.lastClientRound = Serializer.fromMessageToClientRound(message);
@@ -210,30 +200,25 @@ public class ClientServerConnection implements Runnable {
                         this.askToCloseConnection();
                     else if (this.lastClientRound.getCurrentPlayer() == this.playerId) {
                         // TODO
-                        // For now ask the client for an action
-                        this.sendMessage(Serializer.fromActionMessageToMessage(this.cli.askAction(this.lastClientRound.getPossibleActions())));
+                        // ask the client for an action
                     }
                 }
                 case LOBBY -> {
                     ClientLobby clientLobby = Serializer.fromMessageToClientLobby(message);
                     // TODO
-                    // Display content. For now show the message
-                    this.cli.displayContent(message);
+                    // Display content
                 }
                 case STILL_ALIVE -> {
                     this.resetTimer();
                 }
                 case END_GAME -> {
                     // TODO
-                    // Display content. For now show the message
-                    this.cli.displayContent(message);
+                    // Display content
                     this.askToCloseConnection();
                 }
                 case ERROR -> {
                     // TODO
-                    // For now display the content of error message and ask the client for a new action
-                    this.cli.displayContent(message);
-                    this.sendMessage(Serializer.fromActionMessageToMessage(this.cli.askAction(this.lastClientRound.getPossibleActions())));
+                    // display the content of error message and ask the client for a new action
                 }
                 default -> {
                 }
@@ -296,18 +281,6 @@ public class ClientServerConnection implements Runnable {
     }
 
     /**
-     * Sets to {@code bool} the flag that controls the while that checks if a new message has been received by the client.
-     *
-     * @param bool the new value of the flag
-     */
-
-    private void setContinueReceiving(boolean bool) {
-        synchronized (syncObject1) {
-            this.continueReceiving = bool;
-        }
-    }
-
-    /**
      * Gets the flag that controls the while that checks if a new message has been received by the client.
      *
      * @return the flag
@@ -316,6 +289,18 @@ public class ClientServerConnection implements Runnable {
     private boolean getContinueReceiving() {
         synchronized (this.syncObject1) {
             return this.continueReceiving;
+        }
+    }
+
+    /**
+     * Sets to {@code bool} the flag that controls the while that checks if a new message has been received by the client.
+     *
+     * @param bool the new value of the flag
+     */
+
+    private void setContinueReceiving(boolean bool) {
+        synchronized (syncObject1) {
+            this.continueReceiving = bool;
         }
     }
 
