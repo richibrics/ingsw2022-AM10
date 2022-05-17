@@ -20,12 +20,12 @@ Functionality | State
 -- | --
 Basic rules | 🟢
 Complete rules | 🟢
-CLI | 🔴
-GUI | 🔴
-Socket | 🔴
+CLI | 🟡
+GUI | 🟡
+Socket | 🟡
 12 character cards | 🟢
 4 players match | 🟢
-Multiple matches | 🟡
+Multiple matches | 🟢
 
 
 
