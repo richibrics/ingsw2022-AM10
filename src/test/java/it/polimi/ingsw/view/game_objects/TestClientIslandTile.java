@@ -21,10 +21,10 @@ class TestClientIslandTile {
     void testGet(int value) {
         ArrayList<Integer> students = new ArrayList<>();
         students.add(value);
-        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students, true, TowerColor.BLACK);
+        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students, true, ClientTowerColor.BLACK);
         assertEquals(clientIslandTile.getId(), value + 1);
         assertEquals(clientIslandTile.getStudents(), students);
         assertTrue(clientIslandTile.hasNoEntry());
-        assertEquals(clientIslandTile.getTower(), TowerColor.BLACK);
+        assertEquals(clientIslandTile.getTower(), ClientTowerColor.BLACK);
     }
 }

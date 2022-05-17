@@ -42,7 +42,7 @@ class TestClientTable {
         ArrayList<ClientIslandTile> islandTiles = new ArrayList<>();
         ArrayList<Integer> students1 = new ArrayList<>();
         students1.add(value);
-        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students1, true, TowerColor.BLACK);
+        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students1, true, ClientTowerColor.BLACK);
         islandTiles.add(clientIslandTile);
         islandGroups.add(islandTiles);
 

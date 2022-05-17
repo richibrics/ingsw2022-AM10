@@ -9,9 +9,9 @@ public class ClientIslandTile {
     private final int id;
     private final ArrayList<Integer> students;
     private final boolean noEntry;
-    private final TowerColor tower;
+    private final ClientTowerColor tower;
 
-    public ClientIslandTile(int id, ArrayList<Integer> students, boolean noEntry, TowerColor tower) {
+    public ClientIslandTile(int id, ArrayList<Integer> students, boolean noEntry, ClientTowerColor tower) {
         this.id = id;
         this.students = students;
         this.noEntry = noEntry;
@@ -51,7 +51,7 @@ public class ClientIslandTile {
      * @return Tower currently on the client IslandTile
      * @see TowerColor
      */
-    public TowerColor getTower() {
+    public ClientTowerColor getTower() {
         return this.tower;
     }
 }
