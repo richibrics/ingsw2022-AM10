@@ -322,7 +322,7 @@ class TestingServerClientConnectionWithAssert extends TestingServerClientConnect
     @Override
     public void sendMessage(Message message) {
         // Checks if I have a correct type of message
-        // If I have table, round, lobby, round, discard.
+        // If I have table, round, lobby, discard.
         // If I have a success or an error, check with the assigned type
         if (message.getType() == MessageTypes.ERROR || message.getType() == MessageTypes.SUCCESS) {
             assertEquals(this.typeOfMessageToCheck, message.getType());

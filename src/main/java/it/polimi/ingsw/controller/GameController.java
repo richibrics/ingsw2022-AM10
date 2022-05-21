@@ -153,6 +153,7 @@ public class GameController {
 
     /**
      * Stops the game, warns all the players with a message and closes all the connections.
+     * Removes also the GameController from the active game controllers in the lobby (so the players in this game can play again).
      */
     public void interruptGame(String playersMessage) {
         for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
@@ -164,5 +165,7 @@ public class GameController {
         // TODO Destroy game
         this.gameObserver = null;
         this.gameEngine = null;
+
+        LobbyHandler.getLobbyHandler().removeActiveGame(this);
     }
 }

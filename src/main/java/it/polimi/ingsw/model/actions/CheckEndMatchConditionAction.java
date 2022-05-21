@@ -145,12 +145,14 @@ public class CheckEndMatchConditionAction extends Action {
 
     /**
      * Communicates the winner of the game.
+     * This also notifies that the match ended.
      *
      * @param teamIds the ids of the winning teams
      * @throws Exception if something bad happens
      */
 
-    //TODO
+    //TODO Implement
+    //TODO Call also LobbyHandler removeActiveGame(String username) !!!
     public void communicateWinner(Integer[] teamIds) throws Exception {
 
     }
