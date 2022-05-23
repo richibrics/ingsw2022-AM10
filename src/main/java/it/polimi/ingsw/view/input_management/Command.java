@@ -69,11 +69,11 @@ public class Command {
     }
 
     /**
-     * Returns True if the current input and the next ones aren't mandatory.
-     * @return True if the current input and the next ones aren't mandatory.
+     * Returns True if the current input and the next ones aren't mandatory, or if there aren't questions next.
+     * @return True if the current input and the next ones aren't mandatory, or if there aren't questions next
      */
     public boolean canEnd() {
-        return this.commandData.getSchema().get(this.currentEntryIndex).isOptional();
+        return !hasQuestion() || this.commandData.getSchema().get(this.currentEntryIndex).isOptional();
     }
 
     /**

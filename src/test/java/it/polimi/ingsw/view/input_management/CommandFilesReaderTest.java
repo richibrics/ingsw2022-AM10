@@ -16,7 +16,7 @@ class CommandFilesReaderTest {
      */
     @Test
     void getCommandData() {
-        assertEquals(3, CommandFilesReader.getCommandFilesReader().getCommandData(3).getActionId());
+        assertEquals(4, CommandFilesReader.getCommandFilesReader().getCommandData(4).getActionId());
         assertThrows(NoSuchElementException.class, ()->CommandFilesReader.getCommandFilesReader().getCommandData(Integer.MIN_VALUE).getActionId());
     }
 }
