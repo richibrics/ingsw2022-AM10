@@ -1,0 +1,9 @@
+.main_layout {
+    -fx-alignment: bottom-center;
+}
+
+.play_button {
+    -fx-translate-y: -15px;
+    -fx-font-size: 15px;
+    -fx-padding: 3px 8px 3px 8px;
+}
