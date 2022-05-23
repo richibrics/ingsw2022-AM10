@@ -12,8 +12,15 @@ public class Server implements Runnable {
     private ArrayList<ServerClientConnection> listOfServerClientConnections;
     private ServerSocket serverSocket;
     private boolean firstConnection;
+    private int port;
+
+    public Server(ArrayList<ServerClientConnection> serverClientConnections, int port) {
+        this(serverClientConnections);
+        this.port = port;
+    }
 
     public Server(ArrayList<ServerClientConnection> serverClientConnections) {
+        this.port = NetworkConstants.PORT;
         this.listOfServerClientConnections = serverClientConnections;
         this.firstConnection = true;
     }
@@ -27,7 +34,7 @@ public class Server implements Runnable {
     @Override
     public void run() {
         try {
-            this.serverSocket = new ServerSocket(NetworkConstants.PORT);
+            this.serverSocket = new ServerSocket(this.port);
         } catch (IOException e) {
             System.out.println("Server unable to create the socket.");
             e.printStackTrace();

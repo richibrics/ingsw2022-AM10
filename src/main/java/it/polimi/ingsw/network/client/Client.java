@@ -34,7 +34,7 @@ public class Client {
             System.err.println("Unable to connect to server");
             e.printStackTrace();
         } catch (IOException e) {
-            System.err.println("Error when connecting to server" + this.serverIp);
+            System.err.println("Error when connecting to server " + this.serverIp);
             e.printStackTrace();
         }
     }

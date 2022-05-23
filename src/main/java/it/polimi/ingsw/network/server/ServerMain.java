@@ -5,9 +5,12 @@ import java.util.ArrayList;
 public class ServerMain {
 
     public static void main(String[] args) {
-        System.out.println("Server started.");
         ArrayList<ServerClientConnection> serverClientConnections = new ArrayList<>();
-        Server server = new Server(serverClientConnections);
+        Server server;
+        if (args.length >= 1)
+            server = new Server(serverClientConnections, Integer.parseInt(args[0])); // Pass the port, if present
+        else
+            server = new Server(serverClientConnections); // Use default port
         Thread thread = new Thread(server);
         thread.start();
     }
