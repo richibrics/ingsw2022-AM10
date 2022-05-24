@@ -1,0 +1,16 @@
+{
+  "action_id": 3,
+  "character_id": 9,
+  "schema": [
+    {
+      "action_key": "color",
+      "question": "Select the color of the student which adds no influence",
+      "cli_hint": " (type the name of the color or the initial letter)",
+      "gui_hint": " (click on the student of the preferred color)",
+      "optional": false,
+      "validation": [
+        "color"
+      ]
+    }
+  ]
+}

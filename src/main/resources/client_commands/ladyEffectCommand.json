@@ -1,0 +1,16 @@
+{
+  "action_id": 3,
+  "character_id": 11,
+  "schema": [
+    {
+      "action_key": "student",
+      "question": "Select a student of the storage",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": false,
+      "validation": [
+        "student_character_card"
+      ]
+    }
+  ]
+}
