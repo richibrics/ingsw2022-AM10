@@ -213,21 +213,36 @@ public class Cli implements ViewInterface {
     @Override
     public void askToChangePreference() {
         try {
+            int newPreference = -1;
             // Ask for new preference
             this.bufferOut.write("\nHave you changed up your mind? We have the solution for you. Select " +
                     "here a new preference (2 for two-players game, 3 for three-players game and 4 for four-players game: ");
             this.bufferOut.flush();
-            int newPreference = Integer.valueOf(this.bufferIn.readLine());
-            while (newPreference != 2 && newPreference != 3 && newPreference != 4) {
-                this.bufferOut.write("\nYou selected a wrong preference. Please try again.\nSelect preference: ");
-                this.bufferOut.flush();
-                newPreference = Integer.valueOf(this.bufferIn.readLine());
-            }
+            do {
+                boolean preferenceSet = false;
+                if (newPreference != -1) {
+                    this.bufferOut.write("\nYou selected a wrong preference. Please try again.\nSelect preference: ");
+                    this.bufferOut.flush();
+                }
+
+                while (!Thread.currentThread().isInterrupted() && !preferenceSet) {
+                    if (this.bufferIn.ready()) {
+                        newPreference = Integer.valueOf(this.bufferIn.readLine());
+                        preferenceSet = true;
+                    }
+                }
+                if (Thread.currentThread().isInterrupted()) {
+                    return;
+                }
+            } while (newPreference != 2 && newPreference != 3 && newPreference != 4);
             // Update preference
             this.clientServerConnection.changePreference(newPreference);
-        } catch (IOException e) {
+
+        } catch (
+                IOException e) {
             this.clientServerConnection.askToCloseConnection();
         }
+
     }
 
     @Override
@@ -250,7 +265,6 @@ public class Cli implements ViewInterface {
             this.command = new Command(actionId, playerId, clientTable, clientTeams);
             String line;
             while (this.command.hasQuestion()) {
-
                 if (this.command.canEnd()) {
                     this.bufferOut.write("Would you like to continue? Y/N ");
                     this.bufferOut.flush();
