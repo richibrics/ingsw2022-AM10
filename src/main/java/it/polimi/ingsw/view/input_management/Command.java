@@ -14,14 +14,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Command {
-    private CommandData commandData;
-    private int currentEntryIndex;
-    private Map<String, String> actionOptions;
-
-
     private final ClientTable clientTable;
     private final ClientTeams clientTeams;
     private final int playerId;
+    private CommandData commandData;
+    private int currentEntryIndex;
+    private final Map<String, String> actionOptions;
 
     /**
      * Creates the Command, using the {@code actionId} to read the json
@@ -124,7 +122,16 @@ public class Command {
             // Now I have the color, get the id of the student using it. Here I do it from the storage of the character card
             // that is selected
             // The character card is available in CommandData, so I take the storage from the table using it
-            ArrayList<Integer> storage = this.clientTable.getActiveCharacterCards().get(this.commandData.getCharacterId()).getStorage();
+            ArrayList<Integer> storage = null;
+            for (ClientCharacterCard characterCard : this.clientTable.getActiveCharacterCards()) {
+                if (characterCard.getId() == this.commandData.getCharacterId()) {
+                    storage = characterCard.getStorage();
+                    break;
+                }
+            }
+            if (storage == null) {
+                throw new IllegalArgumentException("Can't select any student");
+            }
             // Get a student with the specified color from there, if there's one
             int selectedStudent = -1;
             for (Integer student : storage) {
@@ -199,8 +206,7 @@ public class Command {
             } catch (WrongMessageContentException e) {
                 throw new IllegalArgumentException("Unknown color inserted");
             }
-        }
-        else
+        } else
             throw new IllegalArgumentException("I'm expecting a " + validation);
 
         this.addValueToActionMessage(finalValue);
