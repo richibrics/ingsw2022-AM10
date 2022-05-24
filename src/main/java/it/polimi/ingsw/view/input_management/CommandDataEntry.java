@@ -8,9 +8,9 @@ public class CommandDataEntry {
     private final String cli_hint;
     private final String gui_hint;
     private final boolean optional;
-    private final List<String> validation;
+    private final String validation;
 
-    public CommandDataEntry(String action_key, String question, String cli_hint, String gui_hint, boolean optional, List<String> validation) {
+    public CommandDataEntry(String action_key, String question, String cli_hint, String gui_hint, boolean optional, String validation) {
         this.action_key = action_key;
         this.question = question;
         this.cli_hint = cli_hint;
@@ -39,7 +39,7 @@ public class CommandDataEntry {
         return optional;
     }
 
-    public List<String> getValidation() {
+    public String getValidation() {
         return validation;
     }
 }

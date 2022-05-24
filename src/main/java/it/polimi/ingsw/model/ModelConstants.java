@@ -53,6 +53,10 @@ public class ModelConstants {
     public static int ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND = -1;
 
     public static int NUMBER_OF_ISLAND_TILES = 12;
+    public static int MIN_ID_OF_WIZARD = 1;
+    public static int MAX_ID_OF_WIZARD = 4;
+    public static int MIN_VALUE_OF_ASSISTANT_CARD = 1;
+    public static int MAX_VALUE_OF_ASSISTANT_CARD = 10;
     public static int MIN_ID_OF_ISLAND = 1;
     public static int MIN_ID_OF_PLAYER = 1;
     public static int MIN_ID_OF_TEAM = 1;

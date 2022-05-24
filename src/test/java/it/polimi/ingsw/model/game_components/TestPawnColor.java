@@ -45,5 +45,17 @@ class TestPawnColor {
         assertThrows(WrongMessageContentException.class, () -> PawnColor.convertStringToPawnColor("Hello"));
         assertEquals(PawnColor.PINK, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("pInk")));
         assertThrows(WrongMessageContentException.class, () -> PawnColor.convertStringToPawnColor("Hello"));
+
+        // Now use first letter
+        assertEquals(PawnColor.BLUE, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("b")));
+        assertEquals(PawnColor.RED, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("r")));
+        assertEquals(PawnColor.YELLOW, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("y")));
+        assertEquals(PawnColor.GREEN, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("g")));
+        assertEquals(PawnColor.PINK, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("p")));
+        assertEquals(PawnColor.BLUE, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("B")));
+        assertEquals(PawnColor.RED, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("R")));
+        assertEquals(PawnColor.YELLOW, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("Y")));
+        assertEquals(PawnColor.GREEN, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("G")));
+        assertEquals(PawnColor.PINK, assertDoesNotThrow(() -> PawnColor.convertStringToPawnColor("P")));
     }
 }
