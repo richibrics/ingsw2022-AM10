@@ -112,6 +112,7 @@ public class ServerClientConnection implements Runnable {
             e.printStackTrace();
         }
         if (line != null) {
+            System.out.println(line);
             this.deserialize(line);
             // I received a message from the client, so he's alive: reset his timer
             this.resetTimer();
@@ -128,7 +129,8 @@ public class ServerClientConnection implements Runnable {
      *
      * @param message the message that is going to be serialized and sent to the client
      */
-    public void sendMessage(Message message) {
+
+    public synchronized void sendMessage(Message message) {
         this.bufferOut.println(Serializer.fromMessageToString(message));
         this.bufferOut.flush();
     }

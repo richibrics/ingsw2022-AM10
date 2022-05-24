@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+
+
 public class IslandTilesDrawer {
 
     private static void removeNull(String[][] template) {
@@ -21,20 +23,24 @@ public class IslandTilesDrawer {
                     template[i][j] = "  ";
     }
 
-    public static String[][] generateTemplate() throws WrongNumberOfPlayersException {
+    public static String[][] generateAndFillTemplate(ArrayList<ArrayList<ClientIslandTile>> islandGroups, ClientMotherNature clientMotherNature)
+            throws NoSpaceForIslandGroupException, TowerNotSetException, IllegalStudentIdException {
 
-        int height = 52;
-        int dim = 2 * DrawersConstant.ISLAND_TILE_LENGTH + (DrawersConstant.MAX_DIM_OF_ISLAND_GROUP - 1)*(DrawersConstant.ISLAND_TILE_LENGTH - DrawersConstant.ISLAND_GROUP_LENGTH_OFFSET) + 2;
-        String[][] template = new String[height][dim];
+        int WORST_CASE_ISLAND_GROUP_DIM = 5;
+        // int height = 2 * Math.round((DrawersConstant.ISLAND_TILE_LENGTH + (WORST_CASE_ISLAND_GROUP_DIM - 1) * (DrawersConstant.ISLAND_TILE_LENGTH - DrawersConstant.ISLAND_GROUP_LENGTH_OFFSET))/2) + 3;
+        int height = 65;
+        int length = 2 * (DrawersConstant.ISLAND_TILE_LENGTH + (DrawersConstant.MAX_DIM_OF_ISLAND_GROUP - 1)*(DrawersConstant.ISLAND_TILE_LENGTH - DrawersConstant.ISLAND_GROUP_LENGTH_OFFSET)) + 1;
+        String[][] template = new String[height][length];
         removeNull(template);
-        return template;
+        fillTemplate(template, islandGroups, clientMotherNature);
+        return resizeTemplateAndCopyIslands(template);
     }
 
 
-    public static void fillTemplate(String[][] template, ArrayList<ArrayList<ClientIslandTile>> islandGroups, ClientMotherNature clientMotherNature)
+    private static void fillTemplate(String[][] template, ArrayList<ArrayList<ClientIslandTile>> islandGroups, ClientMotherNature clientMotherNature)
             throws NoSpaceForIslandGroupException, TowerNotSetException, IllegalStudentIdException {
-
-        ArrayList<Long[]> coordinatesOfIslandGroups = findCoordinatesOfIslandGroups(Math.round(template.length / 2), islandGroups.size());
+        ArrayList<Long[]> coordinatesOfIslandGroups = findCoordinatesOfIslandGroups(Math.round(template.length / 2) - 1/* Todo subtract constant here*/, islandGroups.size());
+        shiftCoordinates(coordinatesOfIslandGroups, Math.round((DrawersConstant.ISLAND_TILE_LENGTH + (DrawersConstant.MAX_DIM_OF_ISLAND_GROUP - 1)*(DrawersConstant.ISLAND_TILE_LENGTH - DrawersConstant.ISLAND_GROUP_LENGTH_OFFSET))/2) + 1);
 
         // Put the biggest island group in first position
         int indexOfBiggestGroup = islandGroups.indexOf(Collections.max(islandGroups, Comparator.comparing(c -> c.size())));
@@ -82,6 +88,11 @@ public class IslandTilesDrawer {
             else
                 throw new NoSpaceForIslandGroupException();
         }
+    }
+
+    private static void shiftCoordinates(ArrayList<Long[]> coordinates, int rightShift) {
+        for (Long[] coordinate : coordinates)
+            coordinate[1] += rightShift;
     }
 
     private static void checkSpaceInLengthAndCopyIslandGroup(String[][] template, String[][] islandGroupTemplate,
@@ -146,7 +157,7 @@ public class IslandTilesDrawer {
                 template[row][column + lengthOfIslandGroup + 1] += " ";
             }
         } else {
-            for (int i = 0; i < lengthOfIslandGroup; i++)
+            for (int i = 0; i < lengthOfIslandGroup + 1; i++)
                 template[row][column] += " ";
         }
     }
@@ -168,5 +179,54 @@ public class IslandTilesDrawer {
         }
 
         return coordinatesOfIslandGroups;
+    }
+
+    private static String[][] resizeTemplateAndCopyIslands(String[][] oldTemplate) {
+
+        int newStartingHeight = -1;
+        boolean flagStartingHeight = false;
+        int newEndingHeight = -1;
+        boolean flagEndingHeight = false;
+        int newStartingLength = -1;
+        boolean flagStartingLength = false;
+        int newEndingLength = -1;
+        boolean flagEndingLength = false;
+
+        // Determine starting height and ending height
+        for (int i = 0; i < oldTemplate.length; i++) {
+            for (int j = 0; j < oldTemplate[0].length; j++) {
+                if (oldTemplate[i][j].equals("_") && !flagStartingHeight) {
+                    newStartingHeight = i;
+                    flagStartingHeight = true;
+                }
+                else if (oldTemplate[oldTemplate.length - i - 1][j].equals("_") && !flagEndingHeight) {
+                    newEndingHeight = oldTemplate.length - i - 1;
+                    flagEndingHeight = true;
+                }
+            }
+        }
+
+        // Determine starting length and ending length
+        for (int j = 0; j < oldTemplate[0].length; j++) {
+            for (int i = 0; i < oldTemplate.length; i++) {
+                if ((oldTemplate[i][j].equals("/") || oldTemplate[i][j].equals("\\")) && !flagStartingLength) {
+                    newStartingLength = j - 1;
+                    flagStartingLength = true;
+                }
+                else if ((oldTemplate[i][oldTemplate[0].length - j - 1].equals("/") || oldTemplate[i][oldTemplate[0].length - j - 1].equals("\\")) && !flagEndingLength) {
+                    newEndingLength = oldTemplate[0].length - j - 1;
+                    flagEndingLength = true;
+                }
+            }
+        }
+
+        String[][] newTemplate = new String[newEndingHeight - newStartingHeight + 1][newEndingLength - newStartingLength + 1];
+
+        // Copy content of old template into new template
+        for (int i = newStartingHeight; i < newEndingHeight + 1; i++)
+            for (int j = newStartingLength; j < newEndingLength + 1; j++)
+                newTemplate[i - newStartingHeight][j - newStartingLength] = oldTemplate[i][j];
+
+        return newTemplate;
     }
 }

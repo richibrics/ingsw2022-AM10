@@ -1,5 +1,8 @@
 package it.polimi.ingsw.network.client;
 
+import it.polimi.ingsw.view.ViewInterface;
+import it.polimi.ingsw.view.cli.Cli;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -25,7 +28,9 @@ public class Client {
         try {
             System.out.println("Connecting to server...");
             Socket serverSocket = new Socket(this.serverIp, this.port);
-            ClientServerConnection clientServerConnection = new ClientServerConnection(serverSocket);
+            ViewInterface view = new Cli();
+            ClientServerConnection clientServerConnection = new ClientServerConnection(serverSocket, view);
+            view.setClientServerConnection(clientServerConnection);
             new Thread(clientServerConnection).start();
             new Thread(new ClientStillAliveChecker(clientServerConnection)).start();
 

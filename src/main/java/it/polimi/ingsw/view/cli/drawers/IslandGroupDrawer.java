@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.view.cli.exceptions.IllegalStudentIdException;
 import it.polimi.ingsw.view.game_objects.ClientIslandTile;
 import it.polimi.ingsw.view.game_objects.ClientMotherNature;
+import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -95,7 +96,7 @@ public class IslandGroupDrawer {
         }
 
         // Add tower to island tile
-        if (clientIslandTile.getTower() != null) {
+        if (!clientIslandTile.getTower().equals(ClientTowerColor.EMPTY)) {
             indexOfRandomCoordinate = random.nextInt(arrayOfCoordinates.size());
             randomCoordinates = arrayOfCoordinates.remove(indexOfRandomCoordinate);
             template[randomCoordinates[0]][randomCoordinates[1]] = IdToColorConverter.getRepresentationOfTower(clientIslandTile.getTower());
