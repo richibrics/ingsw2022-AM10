@@ -47,7 +47,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void showMenu(ClientTable clientTable, int playerId) {
+    public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
 
     }
 
