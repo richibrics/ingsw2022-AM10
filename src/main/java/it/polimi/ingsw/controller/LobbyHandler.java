@@ -6,6 +6,10 @@ import it.polimi.ingsw.controller.observers.LobbyObserver;
 import it.polimi.ingsw.controller.observers.Observer;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.managers.CommonManager;
+import it.polimi.ingsw.network.MessageTypes;
+import it.polimi.ingsw.network.NetworkConstants;
+import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.*;
@@ -226,7 +230,8 @@ public class LobbyHandler {
      * @param username the username of a player in that game.
      * @throws NoSuchElementException if the username could not be found in any active game
      */
-    public void removeActiveGame(String username) throws NoSuchElementException {
+
+    public void removeActiveGameAndCommunicateWinners(String username, Integer[] winners) throws NoSuchElementException {
         GameController gameController = null;
         for (int i = 0; i < this.activeGames.size(); i++) {
             for (Team team : this.activeGames.get(i).getGameEngine().getTeams()) {
@@ -239,9 +244,20 @@ public class LobbyHandler {
         if (gameController == null)
             throw new NoSuchElementException("The requested Game could not be found");
 
-        // Removes it
+        // Communicate winners
+        for (Map.Entry<User, ServerClientConnection> entry : gameController.getServerClientConnections().entrySet()) {
+            GameController finalGameController = gameController;
+            if (Arrays.stream(winners).filter(id -> id == CommonManager.getTeamIdByUsername(finalGameController.getGameEngine(), username)).count() == 1) {
+                entry.getValue().sendMessage(new Message(MessageTypes.END_GAME, NetworkConstants.MESSAGE_FOR_WINNERS));
+            }
+            else
+                entry.getValue().sendMessage(new Message(MessageTypes.END_GAME, NetworkConstants.MESSAGE_FOR_LOSERS));
+        }
+
+        // Remove the game controller
         activeGames.remove(gameController);
     }
+
     /**
      * Removes the user and his ServerClientConnection from the users in lobby.
      * Clients in lobby are notified for this lobby edit.

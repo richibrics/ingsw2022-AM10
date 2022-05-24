@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.actions;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.controller.LobbyHandler;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -151,10 +153,8 @@ public class CheckEndMatchConditionAction extends Action {
      * @throws Exception if something bad happens
      */
 
-    //TODO Implement
-    //TODO Call also LobbyHandler removeActiveGame(String username) !!!
-    public void communicateWinner(Integer[] teamIds) throws Exception {
-
+    public void communicateWinner(Integer[] teamIds) {
+        LobbyHandler.getLobbyHandler().removeActiveGameAndCommunicateWinners(CommonManager.takeTeamById(this.getGameEngine(), teamIds[0]).getPlayers().get(0).getUsername(), teamIds);
     }
 
     /**
