@@ -37,10 +37,11 @@ public class ClientServerConnection implements Runnable {
     private boolean gameNotStarted;
     private boolean teamsFlag;
     private boolean flagActionMessageIsReady;
+    private boolean flagTableReady;
+    private boolean flagTeamsReady;
     private ClientRound lastClientRound;
     private ClientTable clientTable;
     private ClientTeams clientTeams;
-    private ClientTable clientTableForShowMenu;
     private int playerId;
     private int timer;
     private Future future;
@@ -57,6 +58,8 @@ public class ClientServerConnection implements Runnable {
         this.playerId = -1;
         this.teamsFlag = false;
         this.flagActionMessageIsReady = false;
+        this.flagTableReady = false;
+        this.flagTeamsReady = false;
         this.lastClientRound = null;
         this.clientTable = null;
         this.clientTeams = null;
@@ -219,18 +222,20 @@ public class ClientServerConnection implements Runnable {
             Message message = Serializer.fromStringToMessage(string);
             switch (message.getType()) {
                 case TABLE -> {
+                    // Cancel Thread execution
                     if (future != null) {
                         this.future.cancel(true);
                     }
+                    // Get ClientTable object
                     this.clientTable = Serializer.fromMessageToClientTable(message);
+                    this.flagTableReady = true;
+
                     // Display the state of the game if the teams message has already been received
-                    if (this.clientTeams != null) {
+                    if (this.flagTableReady && this.flagTeamsReady) {
                         this.view.displayStateOfGame(this.clientTable, this.clientTeams);
-                        this.clientTable = null;
-                        this.clientTeams = null;
+                        this.flagTableReady = false;
+                        this.flagTeamsReady = false;
                     }
-                    // Set table for show menu
-                    this.clientTableForShowMenu = this.clientTable;
 
                     // Check flag gameStarted. If it is true, set it to false
                     if (this.getGameNotStarted())
@@ -240,17 +245,19 @@ public class ClientServerConnection implements Runnable {
                     if (future != null) {
                         this.future.cancel(true);
                     }
+
                     this.clientTeams = Serializer.fromMessageToClientTeams(message);
+                    this.flagTeamsReady = true;
                     // Save the player id of the client
                     if (!this.teamsFlag) {
                         this.storePlayerId(this.clientTeams);
                         this.teamsFlag = true;
                     }
                     // Display the state of the game if the table message has already been received
-                    if (this.clientTable != null) {
+                    if (this.flagTableReady && this.flagTeamsReady) {
                         this.view.displayStateOfGame(this.clientTable, this.clientTeams);
-                        this.clientTable = null;
-                        this.clientTeams = null;
+                        this.flagTableReady = false;
+                        this.flagTeamsReady = false;
                     }
 
                     // Check flag gameStarted. If it is true, set it to false
@@ -431,7 +438,7 @@ public class ClientServerConnection implements Runnable {
             this.askToCloseConnection();
         else if (this.lastClientRound.getCurrentPlayer() == this.playerId) {
             this.view.displayActions(this.lastClientRound.getPossibleActions());
-            this.future = this.executor.submit(() -> this.view.showMenu(this.clientTableForShowMenu, this.playerId));
+            this.future = this.executor.submit(() -> this.view.showMenu(this.clientTable, clientTeams, this.playerId));
             while (!this.getFlagActionMessageIsReady() && this.getContinueReceiving()) { // TODO Modificare condizione, portare dentro getContinueReceiveing
                 this.receiveMessage();
             }

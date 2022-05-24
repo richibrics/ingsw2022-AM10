@@ -25,7 +25,7 @@ public interface ViewInterface {
 
     void displayWinners(String messageForPlayer);
 
-    void showMenu(ClientTable clientTable, int playerId);
+    void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId);
 
     User getUser();
 

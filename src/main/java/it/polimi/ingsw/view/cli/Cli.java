@@ -242,12 +242,12 @@ public class Cli implements ViewInterface {
     }
 
     @Override
-    public void showMenu(ClientTable clientTable, int playerId) {
+    public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
         try {
             this.bufferOut.write("\nSelect the id of the action: ");
             this.bufferOut.flush();
             int actionId = Integer.valueOf(this.bufferIn.readLine());
-            this.command = new Command(actionId, playerId, clientTable);
+            this.command = new Command(actionId, playerId, clientTable, clientTeams);
             String line;
             while (this.command.hasQuestion()) {
 
@@ -299,6 +299,4 @@ public class Cli implements ViewInterface {
                 return null;
         }
     }
-
-
 }
