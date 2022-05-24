@@ -5,8 +5,7 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.view.cli.drawers.UtilityFunctions;
-import it.polimi.ingsw.view.game_objects.ClientCharacterCard;
-import it.polimi.ingsw.view.game_objects.ClientTable;
+import it.polimi.ingsw.view.game_objects.*;
 import javafx.event.Event;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class Command {
 
 
     private final ClientTable clientTable;
+    private final ClientTeams clientTeams;
     private final int playerId;
 
     /**
@@ -32,8 +32,9 @@ public class Command {
      * @param clientTable the table of the game, to grab ids of objects on the table
      * @throws NoSuchElementException if the action id hasn't a CommandData file associated
      */
-    public Command(int actionId, int playerId, ClientTable clientTable) throws NoSuchElementException {
+    public Command(int actionId, int playerId, ClientTable clientTable, ClientTeams clientTeams) throws NoSuchElementException {
         this.clientTable = clientTable;
+        this.clientTeams = clientTeams;
         this.playerId = playerId;
         this.actionOptions = new HashMap<>();
         this.commandData = CommandFilesReader.getCommandFilesReader().getCommandData(actionId);
@@ -45,8 +46,9 @@ public class Command {
      *
      * @param input the string typed by the user in the CLI
      * @throws IllegalArgumentException if the input is not valid
+     * @throws RuntimeException if the client player can't be found in any team
      */
-    public void parseCLIString(String input) throws IllegalArgumentException {
+    public void parseCLIString(String input) throws IllegalArgumentException, RuntimeException {
         String finalValue = "null";
         int intInput = 0;
         String validation = this.commandData.getSchema().get(this.currentEntryIndex).getValidation();
@@ -96,6 +98,7 @@ public class Command {
             if (selectedStudent == -1) {
                 throw new IllegalArgumentException("No students available with the selected color");
             }
+            finalValue = String.valueOf(selectedStudent);
         } else if (validation.equals(CommandDataEntryValidationSet.STUDENT_DINING_ROOM)) {
             PawnColor color;
             try {
@@ -167,7 +170,7 @@ public class Command {
                 throw new IllegalArgumentException("Invalid Assistant number");
 
             // Now using the assistant card value, get the correct id for the card of this student
-            intInput = intInput + ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD * (playerId-1);
+            intInput = intInput + ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD * (this.getWizardNumber()-1);
             finalValue = String.valueOf(intInput);
         } else if (validation.equals(CommandDataEntryValidationSet.WIZARD)) {
             try {
@@ -275,5 +278,19 @@ public class Command {
      */
     public ActionMessage getActionMessage() {
         return new ActionMessage(this.commandData.getActionId(), this.actionOptions);
+    }
+
+    /**
+     * Returns the number of the wizard previously selected by the player.
+     * @return the number of the wizard of the player
+     * @throws RuntimeException if the player can't be found
+     */
+    private Integer getWizardNumber() throws RuntimeException {
+        for (ClientTeam clientTeam: this.clientTeams.getTeams()) {
+            for (ClientPlayer clientPlayer: clientTeam.getPlayers())
+                if (clientPlayer.getPlayerId() == this.playerId)
+                    return clientPlayer.getWizard();
+        }
+        throw new RuntimeException("Can't find this client player in the teams");
     }
 }

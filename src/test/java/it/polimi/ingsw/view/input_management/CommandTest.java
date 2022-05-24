@@ -21,25 +21,25 @@ class CommandTest {
 
     @Test
     void getCLIMenuMessage() {
-        Command command = new Command(4, 1, null);
+        Command command = new Command(4, 1, null, null);
         System.out.println(command.getCLIMenuMessage());
     }
 
     @Test
     void getGUIMenuMessage() {
-        Command command = new Command(4, 1, null);
+        Command command = new Command(4, 1, null, null);
         System.out.println(command.getGUIMenuMessage());
     }
 
     @Test
     void hasQuestion() {
-        Command command = new Command(4, 1, null);
+        Command command = new Command(4, 1, null, null);
         assertTrue(command.hasQuestion());
     }
 
     @Test
     void canEnd() {
-        Command command = new Command(4, 1, null);
+        Command command = new Command(4, 1, null, null);
         assertFalse(command.canEnd());
     }
 
