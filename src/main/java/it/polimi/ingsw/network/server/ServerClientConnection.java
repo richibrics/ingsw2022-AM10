@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 public class ServerClientConnection implements Runnable {
@@ -109,8 +110,9 @@ public class ServerClientConnection implements Runnable {
             // No message received
             line = null;
         } catch (IOException e) {
-            e.printStackTrace();
+            this.askToCloseConnection();
         }
+
         if (line != null) {
             System.out.println(line);
             this.deserialize(line);
