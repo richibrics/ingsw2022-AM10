@@ -8,9 +8,7 @@
       "cli_hint": " (type the color the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": false,
-      "validation": [
-        "student_character_card"
-      ]
+      "validation": "student_character_card"
     },
     {
       "action_key": "island",
@@ -18,9 +16,7 @@
       "cli_hint": " (type the number of the preferred island)",
       "gui_hint": " (click on the preferred island)",
       "optional": false,
-      "validation": [
-        "island"
-      ]
+      "validation": "island"
     }
   ]
 }

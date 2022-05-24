@@ -8,9 +8,7 @@
       "cli_hint": " (type the number of the island)",
       "gui_hint": " (click on the preferred island)",
       "optional": false,
-      "validation": [
-        "island"
-      ]
+      "validation": "island"
     }
   ]
 }

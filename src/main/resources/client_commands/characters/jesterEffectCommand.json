@@ -8,9 +8,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": false,
-      "validation": [
-        "student_entrance"
-      ]
+      "validation": "student_entrance"
     },
     {
       "action_key": "student_storage1",
@@ -18,9 +16,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": false,
-      "validation": [
-        "student_character_card"
-      ]
+      "validation": "student_character_card"
     },
     {
       "action_key": "student_entrance2",
@@ -28,9 +24,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": true,
-      "validation": [
-        "student_entrance"
-      ]
+      "validation": "student_entrance"
     },
     {
       "action_key": "student_storage2",
@@ -38,9 +32,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": false,
-      "validation": [
-        "student_character_card"
-      ]
+      "validation": "student_character_card"
     },
     {
       "action_key": "student_entrance3",
@@ -48,9 +40,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": true,
-      "validation": [
-        "student_entrance"
-      ]
+      "validation": "student_entrance"
     },
     {
       "action_key": "student_storage3",
@@ -58,9 +48,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": false,
-      "validation": [
-        "student_character_card"
-      ]
+      "validation": "student_character_card"
     }
   ]
 }

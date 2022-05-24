@@ -8,9 +8,7 @@
       "cli_hint": " (type the color of the preferred student)",
       "gui_hint": " (click on the preferred student)",
       "optional": false,
-      "validation": [
-        "student_character_card"
-      ]
+      "validation": "student_character_card"
     }
   ]
 }
