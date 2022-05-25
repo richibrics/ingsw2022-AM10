@@ -3,10 +3,17 @@ package it.polimi.ingsw.view.input_management;
 import com.google.gson.Gson;
 import it.polimi.ingsw.view.ViewConstants;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +30,6 @@ public class CommandFilesReader {
         this.charactersCommandDataList = new ArrayList<>();
         this.loadActionCommandData();
         this.loadCharacterCardCommandData();
-        System.out.println("Commands loaded");
     }
 
     /**
@@ -91,23 +97,22 @@ public class CommandFilesReader {
      * @return List with CommandData read
      */
     private List<CommandData> loadCommandsFromDisk(String path) {
-        InputStream inputDirectory = CommandFilesReader.class.getResourceAsStream(path);
-        String filename;
-        BufferedReader reader;
-        String content;
         List<CommandData> results = new ArrayList<>();
+        try {
+            // List all json files in the path
+            List<String> filenames = getResourceListing(path);
 
-        // Iterate for each file in the folder
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputDirectory))) {
-            // Get filename, open the file and read the object.
-            while ((filename = br.readLine()) != null) {
-                if (filename.contains(ViewConstants.JSON_FILE_EXTENSION)) {
-                    reader = new BufferedReader(new InputStreamReader(CommandFilesReader.class.getResourceAsStream(path + "/" + filename)));
-                    content = readContentFromReader(reader);
-                    results.add(new Gson().fromJson(content, CommandData.class));
-                }
+            BufferedReader reader;
+            String content;
+
+            // For each file, read the content and save the object
+            for (String filename : filenames) {
+                reader = new BufferedReader(new InputStreamReader(CommandFilesReader.class.getClassLoader().getResourceAsStream(filename)));
+                content = readContentFromReader(reader);
+                results.add(new Gson().fromJson(content, CommandData.class));
             }
-        } catch (IOException e) {
+
+        } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
             // Ignore, can't have errors in reading of a file whose path is automatically generated
             System.out.println("Error while reading CommandData file: " + e.getMessage());
         }
@@ -130,11 +135,49 @@ public class CommandFilesReader {
 
     /**
      * Reads all the content from the reader.
+     *
      * @param reader the reader from where the content will be taken
      * @return content of the reader
      */
     private String readContentFromReader(BufferedReader reader) throws IOException {
         String content = reader.lines().collect(Collectors.joining());
         return content;
+    }
+
+    /**
+     * Lists all json files in the specified path. Works also with JAR packages.
+     *
+     * @param path the path of the files.
+     * @return list with files in the path (json only)
+     * @throws URISyntaxException            if there's an error with {@code path}
+     * @throws IOException                   if there's an error with {@code path}
+     * @throws UnsupportedOperationException if the application is running in an unknown mode
+     */
+    List<String> getResourceListing(String path) throws URISyntaxException, IOException, UnsupportedOperationException {
+        URL dirURL = CommandFilesReader.class.getClassLoader().getResource(path);
+
+        if (dirURL != null && dirURL.getProtocol().equals("file")) { // IDE execution
+            /* A file path: easy enough */
+            return Arrays.stream((new File(dirURL.toURI()).list())).filter((filename -> filename.contains(ViewConstants.JSON_FILE_EXTENSION))).map(filename -> path + filename).toList();
+        }
+
+        if (dirURL != null && dirURL.getProtocol().equals("jar")) { // JAR execution
+            /* A JAR path */
+            String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
+            JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
+            Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
+            Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
+            while (entries.hasMoreElements()) {
+                String name = entries.nextElement().getName();
+                if (name.startsWith(path)) { //filter according to the path
+                    if (name.split("/").length - 1 == path.split("/").length && name.contains(ViewConstants.JSON_FILE_EXTENSION)) { // Exclude sub-folders files
+                        result.add(name);
+                    }
+                }
+            }
+            return result.stream().toList();
+        }
+
+        throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
     }
 }
