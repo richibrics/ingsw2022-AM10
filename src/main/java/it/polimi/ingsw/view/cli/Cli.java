@@ -14,6 +14,7 @@ import it.polimi.ingsw.view.input_management.Command;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class Cli implements ViewInterface {
 
@@ -137,9 +138,11 @@ public class Cli implements ViewInterface {
 
     @Override
     public void displayActions(ArrayList<Integer> possibleActions) {
+        clientServerConnection.setFlagActionMessageIsReady(false);
         try {
+            this.bufferOut.write("\nAvailable actions:");
             for (int actionId : possibleActions) {
-                this.bufferOut.write("\n" + this.getActionDescriptionFromId(actionId));
+                this.bufferOut.write("\n" + actionId + ": " + this.getActionDescriptionFromId(actionId));
             }
             this.bufferOut.flush();
         } catch (IOException e) {
@@ -257,31 +260,54 @@ public class Cli implements ViewInterface {
     }
 
     @Override
-    public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
-        try {
-            this.bufferOut.write("\nSelect the id of the action: ");
-            this.bufferOut.flush();
-            int actionId = Integer.valueOf(this.bufferIn.readLine());
-            this.command = new Command(actionId, playerId, clientTable, clientTeams);
-            String line;
-            while (this.command.hasQuestion()) {
-                if (this.command.canEnd()) {
-                    this.bufferOut.write("Would you like to continue? Y/N ");
+    public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId, ArrayList<Integer> possibleActions) {
+        boolean valueSet = false;
+        while (!valueSet) {
+            try { // IOException checker, the inside Try Catch is handled by Buffer which throws an exception too.
+                try {
+                    this.bufferOut.write("\nSelect the id of the action: ");
                     this.bufferOut.flush();
-                    line = this.bufferIn.readLine();
-                    if (line.equals("N"))
-                        break;
-                }
+                    int actionId = Integer.parseInt(this.bufferIn.readLine());
 
-                this.bufferOut.write(this.command.getCLIMenuMessage());
-                this.bufferOut.flush();
-                line = this.bufferIn.readLine();
-                this.command.parseCLIString(line);
+                    // Check valid action
+                    if (!possibleActions.contains(actionId)) {
+                        this.bufferOut.write("Action not available, retry\n");
+                        continue;
+                    }
+
+                    this.command = new Command(actionId, playerId, clientTable, clientTeams);
+                    String line;
+                    this.bufferOut.write("\n");
+                    while (this.command.hasQuestion()) {
+                        if (this.command.canEnd()) {
+                            this.bufferOut.write("\nWould you like to continue? Y/N: ");
+                            this.bufferOut.flush();
+                            line = this.bufferIn.readLine();
+                            if (line.equals("N"))
+                                break;
+                        }
+
+                        try {
+                            this.bufferOut.write(this.command.getCLIMenuMessage() + ": ");
+                            this.bufferOut.flush();
+                            line = this.bufferIn.readLine();
+                            this.command.parseCLIString(line);
+                        } catch (IllegalArgumentException e) {
+                            this.bufferOut.write("Wrong input. " + e.getMessage() + "\n\n");
+                        }
+                    }
+                    this.actionMessage = this.command.getActionMessage();
+                    this.clientServerConnection.setFlagActionMessageIsReady(true);
+                    valueSet = true;
+                } catch (NoSuchElementException e) {
+                    this.bufferOut.write("Wrong input. " + e.getMessage() + "\n\n");
+                } catch (NumberFormatException e) {
+                    this.bufferOut.write("Invalid action number, retry" + "\n");
+                }
+            } catch (IOException e) {
+                this.clientServerConnection.askToCloseConnection();
+                System.out.println("IOException: " + e.getMessage() + "\n");
             }
-            this.actionMessage = this.command.getActionMessage();
-            this.clientServerConnection.setFlagActionMessageIsReady(true);
-        } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
         }
     }
 
