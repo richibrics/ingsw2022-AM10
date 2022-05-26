@@ -166,8 +166,8 @@ public class Cli implements ViewInterface {
             this.bufferOut.flush();
             String username = this.bufferIn.readLine();
             while (username.length() > DrawersConstant.SCHOOL_BOARD_LENGTH) {
-                this.bufferOut.write(String.format("The username exceeds the limit of %d characters. Please select " +
-                        "a new username: ", DrawersConstant.SCHOOL_BOARD_LENGTH));
+                this.showError(String.format("The username exceeds the limit of %d characters. ",DrawersConstant.SCHOOL_BOARD_LENGTH));
+                this.bufferOut.write("Please select a new username: ");
                 this.bufferOut.flush();
                 username = this.bufferIn.readLine();
             }
@@ -267,10 +267,15 @@ public class Cli implements ViewInterface {
     @Override
     public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId, ArrayList<Integer> possibleActions) {
         boolean valueSet = false;
+        boolean actionInputCanceled=false;
         while (!valueSet) {
+            if(actionInputCanceled) // If the input was canceled, re-show the possible actions
+                this.displayActions(possibleActions);
+
+            actionInputCanceled = false;
             try { // IOException checker, the inside Try Catch is handled by Buffer which throws an exception too.
                 try {
-                    this.bufferOut.write("\nSelect the id of the action: ");
+                    this.bufferOut.write("\n\nSelect the id of the action: ");
                     this.bufferOut.flush();
                     int actionId = Integer.parseInt(this.bufferIn.readLine());
 
@@ -281,14 +286,15 @@ public class Cli implements ViewInterface {
                     }
 
                     this.command = new Command(actionId, playerId, clientTable, clientTeams);
+                    this.bufferOut.write("PS: If you want to cancel the selected action, write \"" + CliConstants.CANCEL_ACTION_INPUT_STRING + "\"");
                     String line;
                     this.bufferOut.write("\n");
-                    while (this.command.hasQuestion()) {
+                    while (this.command.hasQuestion() && !actionInputCanceled) {
                         if (this.command.canEnd()) {
                             this.bufferOut.write("\nWould you like to continue? Y/N: ");
                             this.bufferOut.flush();
                             line = this.bufferIn.readLine();
-                            if (line.equals("N"))
+                            if (line.equals(CliConstants.TERMINATE_ACTION_INPUT_OPTIONAL_STRING))
                                 break;
                         }
 
@@ -296,16 +302,21 @@ public class Cli implements ViewInterface {
                             this.bufferOut.write(this.command.getCLIMenuMessage() + ": ");
                             this.bufferOut.flush();
                             line = this.bufferIn.readLine();
-                            this.command.parseCLIString(line);
+                            if (line.equals(CliConstants.CANCEL_ACTION_INPUT_STRING))
+                                actionInputCanceled = true;
+                            else
+                                this.command.parseCLIString(line);
                         } catch (IllegalArgumentException e) {
-                            this.bufferOut.write("Wrong input. " + e.getMessage() + "\n\n");
+                            this.bufferOut.write("Wrong input. " + e.getMessage() + "\n");
                         }
                     }
-                    this.actionMessage = this.command.getActionMessage();
-                    this.clientServerConnection.setFlagActionMessageIsReady(true);
-                    valueSet = true;
+                    if (!actionInputCanceled) {
+                        this.actionMessage = this.command.getActionMessage();
+                        this.clientServerConnection.setFlagActionMessageIsReady(true);
+                        valueSet = true;
+                    }
                 } catch (NoSuchElementException e) {
-                    this.bufferOut.write("Wrong input. " + e.getMessage() + "\n\n");
+                    this.bufferOut.write("Wrong input. " + e.getMessage() + "\n");
                 } catch (NumberFormatException e) {
                     this.bufferOut.write("Invalid action number, retry" + "\n");
                 }

@@ -13,4 +13,6 @@ public class CliConstants {
             "to an island or to the dining room.";
     public static String ACTION_MOVE_MOTHER_NATURE_ID_DESCRIPTION = "Change position of mother nature.";
     public static String ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID_DESCRIPTION = "Selection of cloud tile. The students on the cloud are then moved to your entrance.";
+    public static String TERMINATE_ACTION_INPUT_OPTIONAL_STRING = "N";
+    public static String CANCEL_ACTION_INPUT_STRING = "cancel";
 }

@@ -338,7 +338,6 @@ public class ClientServerConnection implements Runnable {
 
     public void askToCloseConnection() {
         this.setContinueReceiving(false);
-        this.bufferOut.write("\nClosing connection...");
     }
 
     /**
@@ -351,7 +350,6 @@ public class ClientServerConnection implements Runnable {
         this.bufferOut.close();
         this.bufferIn.close();
         this.socket.close();
-        this.bufferOut.write("\nConnection closed, goodbye");
         System.exit(0);
     }
 
