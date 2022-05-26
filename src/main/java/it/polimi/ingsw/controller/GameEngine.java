@@ -3,7 +3,6 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
-import it.polimi.ingsw.model.game_components.CharacterCard;
 import it.polimi.ingsw.model.game_components.Table;
 import it.polimi.ingsw.model.managers.*;
 
@@ -156,10 +155,11 @@ public class GameEngine {
     }
 
     /**
-     * Asks the ActionManager to generate all the Actions and run the setup
+     * Asks the ActionManager to generate all the Actions, run the setup, and prepare the character cards actions.
      */
     public void startGame() throws Exception {
         this.getActionManager().generateActions();
+        this.getCharacterManager().prepareCharacterCardsActions(this.table.getCharacterCards().values().stream().toList());
     }
 
 }

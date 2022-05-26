@@ -9,6 +9,7 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.actions.CalculateInfluenceAction;
 import it.polimi.ingsw.model.actions.SetUpThreePlayersAction;
 import it.polimi.ingsw.model.actions.effects.*;
+import it.polimi.ingsw.model.exceptions.ActionNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.NotEnoughCoinException;
 import it.polimi.ingsw.model.game_components.Character;
@@ -288,5 +289,27 @@ class TestCharacterManager {
         SetUpThreePlayersAction setUpThreePlayersAction = new SetUpThreePlayersAction(gameEngine);
         assertDoesNotThrow(() -> setUpThreePlayersAction.act());
         return gameEngine;
+    }
+
+    /**
+     * Tests the passed character card receives the action.
+     */
+    @Test
+    public void prepareCharacterCardsActions() {
+        ArrayList<CharacterCard> characterCards= new ArrayList<>();
+        characterCards.add(new CharacterCard(Character.HERBALIST));
+
+        // Check action is still null
+        for (CharacterCard characterCard: characterCards)
+            assertThrows(ActionNotSetException.class, characterCard::getAction);
+
+        GameEngine gameEngine = setupGameForSelectCharacterCard();
+
+        // Prepare the action
+        gameEngine.getCharacterManager().prepareCharacterCardsActions(characterCards);
+
+        // Check action set correctly
+        for (CharacterCard characterCard: characterCards)
+            assertDoesNotThrow(characterCard::getAction);
     }
 }

@@ -12,10 +12,7 @@ import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.CharacterCard;
 import it.polimi.ingsw.model.game_components.StudentDisc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Contains methods to manage CharacterCard creation and use.
@@ -83,6 +80,7 @@ public class CharacterManager extends Manager {
 
     /**
      * Creates an Effect Action that matches the CharacterCard passed and sets it in the Card.
+     * This needs the Action to be generated before calling this method.
      *
      * @param characterCard the CharacterCard that receives the Action
      * @throws NoSuchElementException if {@code characterCard} is unknown and the method doesn't know which Action is needed
@@ -223,5 +221,15 @@ public class CharacterManager extends Manager {
         int cost = cards.get(characterCardId).getCost();
         CommonManager.takePlayerById(getGameEngine(),playerId).decrementCoins(cost);
         cards.get(characterCardId).setAsUsed();
+    }
+
+    /**
+     * Instantiates the CharacterCards actions.
+     * @param characterCards the CharacterCards to prepare
+     */
+    public void prepareCharacterCardsActions(List<CharacterCard> characterCards) {
+        for (CharacterCard characterCard: characterCards) {
+            this.generateAction(characterCard);
+        }
     }
 }
