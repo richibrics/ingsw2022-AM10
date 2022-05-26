@@ -53,7 +53,9 @@ public class DrawersConstant {
     public static int ISLAND_GROUP_LENGTH_OFFSET = 2; // cells saved after unification of two islands
     public static int HORIZONTAL_LINE_LENGTH = 8;
     public static int OBLIQUE_LINE_LENGTH = 2; // distance ab (length) and ac (height). ISLAND_TILE_HEIGHT = 2*OBLIQUE_LINE_LENGTH + 1
-    public static int MAX_DIM_OF_ISLAND_GROUP = 9;
+    public static int MAX_DIM_OF_ISLAND_GROUP = 8;
+    public static int RADIUS = 30; // Radius for coordinates calculation
+    // The radius cannot be inferred from the other values related to the island tiles.
 
     // The length of the horizontal line must be greater than 5
 

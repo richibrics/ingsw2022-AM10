@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 
 public class Cli implements ViewInterface {
 
-    private final int SPACE_BETWEEN_ELEMENTS = 2;
+    private final int SPACE_BETWEEN_ELEMENTS = 3;
     private final BufferedReader bufferIn;
     private final BufferedWriter bufferOut;
     private final Object syncObject1;
@@ -67,7 +67,7 @@ public class Cli implements ViewInterface {
             // Fill templates
             SchoolBoardDrawer.fillTemplate(this.schoolBoardsTemplate, clientTable, clientTeams);
             CharacterCardDrawer.fillTemplate(this.characterCardsTemplate, clientTable.getActiveCharacterCards());
-            this.islandGroupsTemplate = IslandTilesDrawer.generateAndFillTemplate(clientTable.getIslandTiles(), clientTable.getMotherNature());
+            this.islandGroupsTemplate = IslandGroupsDrawer.generateAndFillTemplate(clientTable.getIslandTiles(), clientTable.getMotherNature());
             CloudTilesDrawer.fillTemplate(this.cloudTilesTemplate, clientTable.getCloudTiles());
 
             // Generate template that represents the entire state of the game
