@@ -38,13 +38,21 @@ public class CharacterCardDrawer {
         // Write legend for character cards with id and name
         int currentHeight = DrawersConstant.OFFSET_OF_LEGEND;
         for (ClientCharacterCard clientCharacterCard : characterCards) {
-            char[] chars = UtilityFunctions.idToNameConverter(clientCharacterCard.getId()).toCharArray();
 
-            template[currentHeight][currentLength] = String.valueOf(clientCharacterCard.getId());
-            template[currentHeight][currentLength + 1] = ":";
-            template[currentHeight][currentLength + 2] = " ";
+            // Write id of character card
+            char[] id = String.valueOf(clientCharacterCard.getId()).toCharArray();
+            int index = 0;
+            for (char c : id) {
+                template[currentHeight][currentLength + index] = String.valueOf(c);
+                index++;
+            }
 
+            template[currentHeight][currentLength + index] = ":";
+            template[currentHeight][currentLength + index + 1] = " ";
+
+            // Write name of character card
             int lengthOffset = 3;
+            char[] chars = UtilityFunctions.idToNameConverter(clientCharacterCard.getId()).toCharArray();
             for (char c : chars) {
                 template[currentHeight][currentLength + lengthOffset] = String.valueOf(c);
                 lengthOffset++;
