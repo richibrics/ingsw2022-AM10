@@ -134,7 +134,7 @@ public class IslandGroupDrawer {
 
         // Add tower to island tile
         try {
-            if (!clientIslandTile.getTower().equals(ClientTowerColor.EMPTY)) {
+            if (clientIslandTile.getTower() != null) {
                 indexOfRandomCoordinate = random.nextInt(arrayOfCoordinates.size());
                 randomCoordinates = arrayOfCoordinates.remove(indexOfRandomCoordinate);
                 template[randomCoordinates[0]][randomCoordinates[1]] = UtilityFunctions.getRepresentationOfTower(clientIslandTile.getTower());

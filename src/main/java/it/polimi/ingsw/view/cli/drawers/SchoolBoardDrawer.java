@@ -284,7 +284,7 @@ public class SchoolBoardDrawer {
         int j = startingIndexLength;
 
         // Empty section with towers
-        UtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight,DrawersConstant.SCHOOL_BOARD_HEIGHT - 1, DrawersConstant.SPACE_BETWEEN_TOWERS, 1);
+        UtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight,DrawersConstant.SCHOOL_BOARD_HEIGHT - 3 , DrawersConstant.SPACE_BETWEEN_TOWERS, 1);
 
         // Get representation of tower
         String tower = UtilityFunctions.getRepresentationOfTower(clientTeam.getTowersColor());
