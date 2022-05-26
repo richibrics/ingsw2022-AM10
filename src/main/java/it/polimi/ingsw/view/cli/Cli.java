@@ -54,6 +54,8 @@ public class Cli implements ViewInterface {
     @Override
     public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams) {
         try {
+            // Clear terminal
+            this.clearTerminal();
             // Create templates if not already created
             if (this.schoolBoardsTemplate == null)
                 this.schoolBoardsTemplate = SchoolBoardDrawer.generateTemplate((int) clientTeams.getTeams().stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).count());
@@ -76,7 +78,7 @@ public class Cli implements ViewInterface {
 
             String[][] template = new String[height][length];
 
-            SchoolBoardDrawer.removeNull(template);
+            UtilityFunctions.removeNullAndAddSingleSpace(template);
             // Insert all the elements into the template
             this.positionElementsInTemplate(template);
 
@@ -141,6 +143,9 @@ public class Cli implements ViewInterface {
         clientServerConnection.setFlagActionMessageIsReady(false);
         try {
             this.bufferOut.write("\nAvailable actions:");
+
+            // For each action in the list of possible actions display a description
+
             for (int actionId : possibleActions) {
                 this.bufferOut.write("\n" + actionId + ": " + this.getActionDescriptionFromId(actionId));
             }
@@ -150,8 +155,8 @@ public class Cli implements ViewInterface {
         }
     }
 
+    @Override
     public void askForUser() {
-
         this.clearTerminal();
         try {
             // Message of presentation
@@ -207,6 +212,7 @@ public class Cli implements ViewInterface {
         }
     }
 
+    @Override
     public void setUserReady(boolean userReady) {
         synchronized (syncObject1) {
             this.flagUserReady = userReady;
@@ -216,14 +222,14 @@ public class Cli implements ViewInterface {
     @Override
     public void askToChangePreference() {
         try {
-            int newPreference = -1;
+            Integer newPreference = null;
             // Ask for new preference
             this.bufferOut.write("\nHave you changed up your mind? We have the solution for you. Select " +
                     "here a new preference (2 for two-players game, 3 for three-players game and 4 for four-players game: ");
             this.bufferOut.flush();
             do {
                 boolean preferenceSet = false;
-                if (newPreference != -1) {
+                if (newPreference != null) {
                     this.bufferOut.write("\nYou selected a wrong preference. Please try again.\nSelect preference: ");
                     this.bufferOut.flush();
                 }
@@ -234,18 +240,17 @@ public class Cli implements ViewInterface {
                         preferenceSet = true;
                     }
                 }
-                if (Thread.currentThread().isInterrupted()) {
+
+                if (Thread.currentThread().isInterrupted())
                     return;
-                }
+
             } while (newPreference != 2 && newPreference != 3 && newPreference != 4);
             // Update preference
             this.clientServerConnection.changePreference(newPreference);
 
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
             this.clientServerConnection.askToCloseConnection();
         }
-
     }
 
     @Override
@@ -312,7 +317,7 @@ public class Cli implements ViewInterface {
     }
 
     @Override
-    public synchronized ActionMessage getActionMessage() {
+    public ActionMessage getActionMessage() {
         return new ActionMessage(this.actionMessage.getActionId(), this.actionMessage.getOptions());
     }
 

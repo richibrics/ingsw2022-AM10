@@ -23,12 +23,16 @@ public class DrawersConstant {
     // School boards
     public static int SPACE_BETWEEN_SCHOOL_BOARDS_LENGTH = 4;
     public static int SPACE_BETWEEN_SCHOOL_BOARDS_HEIGHT = 2;
-    public static int SPACE_FOR_USERNAMES = 2;
+    public static int SPACE_FOR_USERNAMES = 1;
     public static int START_OF_DINING_ROOM = 5;
     public static int SCHOOL_BOARD_HEIGHT = 11;
     public static int SCHOOL_BOARD_LENGTH = 32;
     public static int START_OF_TOWERS = 28;
     public static int START_OF_PROFESSORS = 26;
+    public static int SPACE_BETWEEN_TOWERS = 2;
+    public static int SPACE_BETWEEN_PROFESSORS_IN_HEIGHT = 2;
+    public static int SPACE_BETWEEN_PROFESSORS_IN_LENGTH = 0;
+    public static int SPACE_BETWEEN_STUDENTS = 2;
 
     // Mapping studentId -> color
     public static int STARTING_ID_YELLOW = 1;
@@ -43,7 +47,7 @@ public class DrawersConstant {
     public static int ENDING_ID_PINK = 130;
 
     // Island tiles
-    public static int ISLAND_TILE_HEIGHT = 5;
+    public static int ISLAND_TILE_HEIGHT = 5; // 2 * OBLIQUE_LINE_LENGTH + 1
     public static int ISLAND_TILE_LENGTH = 12; // ISLAND_TILE_LENGTH = HORIZONTAL_LINE_LENGTH + 2 * OBLIQUE_LINE_LENGTH
     public static int ISLAND_GROUP_HEIGHT = 7; // height of island group
     public static int ISLAND_GROUP_LENGTH_OFFSET = 2; // cells saved after unification of two islands
@@ -51,9 +55,11 @@ public class DrawersConstant {
     public static int OBLIQUE_LINE_LENGTH = 2; // distance ab (length) and ac (height). ISLAND_TILE_HEIGHT = 2*OBLIQUE_LINE_LENGTH + 1
     public static int MAX_DIM_OF_ISLAND_GROUP = 9;
 
+    // The length of the horizontal line must be greater than 5
+
     /*
          c______
-         /      \
+         /id: 10\
        a/ b      \
         \        /
          \______/
@@ -61,7 +67,9 @@ public class DrawersConstant {
 
     // Cloud tiles
     public static int CLOUD_TILE_HEIGHT = 6; // 2 + 2 * OBLIQUE_LINE_LENGTH_CLOUD + VERTICAL_LINE_LENGTH_CLOUD
-    public static int CLOUD_TILE_LENGTH = 15; // 2 * OBLIQUE_LINE_LENGTH_CLOUD + 2 * SPACE_BETWEEN_LAST_PLUS_OBLIQUE_AND_FIRST_PLUS_HORIZONTAL + 2 * HORIZONTAL_LINE_LENGTH_CLOUD - 1
+    public static int CLOUD_TILE_LENGTH = 15;
+    // CLOUD_TILE_LENGTH = 2 * DISTANCE_BETWEEN_POINTS_OBLIQUE_LINE * OBLIQUE_LINE_LENGTH_CLOUD + 2 * SPACE_BETWEEN_LAST_PLUS_OBLIQUE_AND_FIRST_PLUS_HORIZONTAL
+    // + (SPACE_BETWEEN_PLUS_HORIZONTAL_LINE + 1) * HORIZONTAL_LINE_LENGTH_CLOUD - 1
     public static int SPACE_FOR_CLOUD_ID = 1;
     public static int SPACE_BETWEEN_CLOUD_TILES = 2;
     public static int HORIZONTAL_LINE_LENGTH_CLOUD = 4;
@@ -69,14 +77,15 @@ public class DrawersConstant {
     public static int OBLIQUE_LINE_LENGTH_CLOUD = 1; // it should increase by 1 every time the length of the
     public static int DISTANCE_BETWEEN_POINTS_OBLIQUE_LINE = 2;
     public static int SPACE_BETWEEN_LAST_PLUS_OBLIQUE_AND_FIRST_PLUS_HORIZONTAL = 2;
+    public static int SPACE_BETWEEN_PLUS_HORIZONTAL_LINE = 1;
 
     /*
-        + + + +
-     +           +
-   +               +
-   +               +
-     +           +
-        + + + +
+       + + + +
+     +         +
+   +             +
+   +             +
+     +         +
+       + + + +
      */
 
     // Character card

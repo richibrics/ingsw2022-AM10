@@ -25,10 +25,10 @@ public class ClientServerConnection implements Runnable {
     private final Socket socket;
     private final BufferedReader bufferIn;
     private final PrintWriter bufferOut;
-    private final Object syncObject1;
-    private final Object syncObject2;
-    private final Object syncObject3;
-    private final Object syncObject4;
+    private final Object syncObject1; // For continue receiving
+    private final Object syncObject2; // For action message
+    private final Object syncObject3; // For timer
+    private final Object syncObject4; // For game not started
     private final Object syncObject5; // for user
     private final ViewInterface view;
     private final ExecutorService executor;
@@ -286,8 +286,7 @@ public class ClientServerConnection implements Runnable {
                         // User error
                         this.view.setUserReady(false);
                         this.sendUser();
-                    }
-                    else {
+                    } else {
                         this.askAndSendAction();
                     }
                 }
@@ -331,6 +330,7 @@ public class ClientServerConnection implements Runnable {
                     }
         }
     }
+
 
     /**
      * Sets to false the flag that controls the while that checks if a new message has been received by the client.
@@ -423,18 +423,11 @@ public class ClientServerConnection implements Runnable {
         }
     }
 
-    public void setFlagActionMessageIsReady(boolean newValue) {
-        synchronized (syncObject2) {
-            this.flagActionMessageIsReady = newValue;
-        }
-    }
-
     private boolean getFlagActionMessageIsReady() {
         synchronized (syncObject2) {
             return this.flagActionMessageIsReady;
         }
     }
-
 
     private void askAndSendAction () {
         if (this.playerId == -1)
@@ -442,10 +435,12 @@ public class ClientServerConnection implements Runnable {
         else if (this.lastClientRound.getCurrentPlayer() == this.playerId) {
             this.view.displayActions(this.lastClientRound.getPossibleActions());
             this.future = this.executor.submit(() -> this.view.showMenu(this.clientTable, clientTeams, this.playerId, this.lastClientRound.getPossibleActions()));
-            while (!this.getFlagActionMessageIsReady() && this.getContinueReceiving()) { // TODO Modificare condizione, portare dentro getContinueReceiveing
+            while (!this.getFlagActionMessageIsReady() && this.getContinueReceiving()) {
                 this.receiveMessage();
             }
-            this.sendMessage(Serializer.fromActionMessageToMessage(this.view.getActionMessage()));
+            // Send action message to the server
+            if (this.getContinueReceiving())
+                this.sendMessage(Serializer.fromActionMessageToMessage(this.view.getActionMessage()));
         }
 
         // Check flag gameStarted. If it is true, set it to false
@@ -453,4 +448,9 @@ public class ClientServerConnection implements Runnable {
             this.setGameNotStarted(false);
     }
 
+    public void setFlagActionMessageIsReady(boolean newValue) {
+        synchronized (syncObject2) {
+            this.flagActionMessageIsReady = newValue;
+        }
+    }
 }

@@ -9,6 +9,15 @@ import java.util.Random;
 
 public class CharacterCardDrawer {
 
+    /**
+     * Generates the matrix of Strings that contains the representation of the character cards and creates a map
+     * id -> name of character card.
+     *
+     * @param characterCards a list of the character cards in use
+     * @return the template, which will be filled with the representation of each character card
+     * @throws IllegalCharacterIdException if one of the character cards in {@code characterCards} has an invalid id
+     */
+
     public static String[][] generateTemplate(ArrayList<ClientCharacterCard> characterCards) throws IllegalCharacterIdException {
 
         // Define height and length of character cards template
@@ -43,9 +52,19 @@ public class CharacterCardDrawer {
             currentHeight++;
         }
 
-        SchoolBoardDrawer.removeNull(template);
+        UtilityFunctions.removeNullAndAddSingleSpace(template);
         return template;
     }
+
+    /**
+     * Generates the representation of each character card, without filling the character card. The drawer starts
+     * drawing from ({@code startingHeight}, {@code startingLength}).
+     *
+     * @param template       the template which contains all the character cards in use
+     * @param id             the id of the character card
+     * @param startingHeight the index of the initial row
+     * @param startingLength the index of the initial column
+     */
 
     private static void drawCharacterCard(String[][] template, int id, int startingHeight, int startingLength) {
 
@@ -61,16 +80,29 @@ public class CharacterCardDrawer {
             template[k][startingLength + DrawersConstant.CHARACTER_CARD_LENGTH] = "|";
         }
 
-        // Write id of character card
+        // Write "id: "
         char[] idChars = "id: ".toCharArray();
         int index = 0;
         for (char c : idChars) {
             template[startingHeight + DrawersConstant.OFFSET_OF_ID_IN_CARD][startingLength + index] = String.valueOf(c);
             index++;
         }
-        template[startingHeight + 1][startingLength + index] = String.valueOf(id);
 
+        // Write the id of the character card
+        char[] number = String.valueOf(id).toCharArray();
+        for (char c : number) {
+            template[startingHeight + 1][startingLength + index] = String.valueOf(c);
+            index++;
+        }
     }
+
+    /**
+     * Fills the template with the content of each character card.
+     *
+     * @param template       the template with the representation of the character cards
+     * @param characterCards the list of character cards in use
+     * @throws IllegalStudentIdException if one of the student discs on the character cards has an invalid id
+     */
 
     public static void fillTemplate(String[][] template, ArrayList<ClientCharacterCard> characterCards) throws IllegalStudentIdException {
 
@@ -87,7 +119,8 @@ public class CharacterCardDrawer {
                 index++;
             }
             template[startingHeight + DrawersConstant.OFFSET_OF_COST_OF_CARD][currentLength + index] = String.valueOf(clientCharacterCard.getCost());
-
+            // Empty storage
+            emptyStorageOfCharacterCard(template, startingHeight + DrawersConstant.OFFSET_OF_COST_OF_CARD + 1, currentLength);
             // Add students. Pick the position randomly
             ArrayList<Integer[]> arrayOfCoordinates = generateSetOfCoordinates(startingHeight + DrawersConstant.OFFSET_OF_COST_OF_CARD + 1, currentLength);
             Random random = new Random();
@@ -96,12 +129,35 @@ public class CharacterCardDrawer {
             for (int student : clientCharacterCard.getStorage()) {
                 indexOfCoordinate = random.nextInt(arrayOfCoordinates.size());
                 coordinates = arrayOfCoordinates.remove(indexOfCoordinate);
-                template[coordinates[0]][coordinates[1]] = IdToColorConverter.getRepresentationOfStudentDisc(student);
+                template[coordinates[0]][coordinates[1]] = UtilityFunctions.getRepresentationOfStudentDisc(student);
             }
 
             currentLength += DrawersConstant.CHARACTER_CARD_LENGTH + DrawersConstant.SPACE_BETWEEN_CHARACTER_CARDS;
         }
     }
+
+    /**
+     * Empties the storage of the character card.
+     * @param template the template that represents the character cards
+     * @param startingHeight the starting height of the storage
+     * @param startingLength the starting length of the storage
+     */
+
+    private static void emptyStorageOfCharacterCard(String[][] template, int startingHeight, int startingLength) {
+        for (int i = startingHeight; i < DrawersConstant.CHARACTER_CARD_HEIGHT - 1; i++)
+            for (int j = startingLength; j < startingLength + DrawersConstant.CHARACTER_CARD_LENGTH; j++)
+                template[i][j] = " ";
+    }
+
+    /**
+     * Generates a set of coordinates starting from ({@code firstAvailableRow}, {@code firstAvailableColumn}). The possible
+     * cells are contained in a portion of the character card. The coordinates are used to distribute the student discs of
+     * the storage randomly.
+     *
+     * @param firstAvailableRow    the first available row
+     * @param firstAvailableColumn the first available column
+     * @return a set of coordinates that represents the possible locations for the student discs
+     */
 
     private static ArrayList<Integer[]> generateSetOfCoordinates(int firstAvailableRow, int firstAvailableColumn) {
 
@@ -114,4 +170,3 @@ public class CharacterCardDrawer {
         return arrayOfCoordinates;
     }
 }
-
