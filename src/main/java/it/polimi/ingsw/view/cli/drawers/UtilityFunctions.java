@@ -14,6 +14,7 @@ public class UtilityFunctions {
 
     /**
      * Converts the id of the character card to the name of the card.
+     *
      * @param id the id of the character card
      * @return the name of the character card
      * @throws IllegalCharacterIdException if the id of the card is invalid
@@ -52,20 +53,22 @@ public class UtilityFunctions {
 
     /**
      * Gets the color of the student using the student id.
+     *
      * @param studentId the id of the student
      * @return the color of the student
      */
 
     public static PawnColor getStudentColorById(int studentId) {
-        if(studentId < ModelConstants.MIN_ID_OF_STUDENT_DISC || studentId > PawnColor.values().length * ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR)
+        if (studentId < ModelConstants.MIN_ID_OF_STUDENT_DISC || studentId > PawnColor.values().length * ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR)
             throw new IllegalArgumentException("Student id not valid");
-        int colorIndex = (int) floor((studentId-ModelConstants.MIN_ID_OF_STUDENT_DISC)/ ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR);
+        int colorIndex = (int) floor((studentId - ModelConstants.MIN_ID_OF_STUDENT_DISC) / ModelConstants.INITIAL_NUMBER_OF_STUDENTS_PER_COLOR);
         return PawnColor.values()[colorIndex];
     }
 
     /**
      * Gets the String which represents a student disc. The string contains the ANSI codes for the color of the student
      * disc. The student disc is represented as follows: "o".
+     *
      * @param studentId the id of the student disc
      * @return the String which represents the student disc
      * @throws IllegalStudentIdException if the id of the student disc is invalid
@@ -89,6 +92,7 @@ public class UtilityFunctions {
     /**
      * Gets the String which represents a professor pawn. The string contains the ANSI codes for the color of the professor
      * pawn. The professor pawn is represented as follows: "P".
+     *
      * @param professorId the id of the professor pawn
      * @return the String which represents the professor pawn
      * @throws IllegalProfessorIdException if the id of the professor pawn is invalid
@@ -112,6 +116,7 @@ public class UtilityFunctions {
     /**
      * Gets the String which represents a tower. The string contains the ANSI codes for the color of the tower.
      * The tower is represented as follows: "T".
+     *
      * @param clientTowerColor the color of the tower
      * @return the String which represents the tower
      * @throws TowerNotSetException if the tower has not been set
@@ -130,6 +135,7 @@ public class UtilityFunctions {
 
     /**
      * Replaces null pointers with " " in {@code template}.
+     *
      * @param template the matrix of Strings
      */
 
@@ -143,6 +149,7 @@ public class UtilityFunctions {
 
     /**
      * Replaces null pointers with "  " in {@code template}.
+     *
      * @param template the matrix of Strings
      */
 
@@ -160,19 +167,20 @@ public class UtilityFunctions {
      * @param template            the matrix containing the school boards
      * @param startingIndexLength the starting length
      * @param startingIndexHeight the starting height
-     * @param heightOfSection the height of the section that must be cleared
-     * @param lengthOfSection the length of the section that must be cleared
-     * @param pawns a boolean which tells the method if it has to clear a section with pawns (true) or towers (false)
+     * @param heightOfSection     the height of the section that must be cleared
+     * @param lengthOfSection     the length of the section that must be cleared
+     * @param choice              an integer which tells the method if it has to clear a section with pawns (0), towers (1) or professor pawns(2)
      */
 
-    public static void emptySectionWithPawnsOrTowers(String[][] template, int startingIndexLength, int startingIndexHeight, int heightOfSection, int lengthOfSection, boolean pawns) {
+    public static void emptySectionWithPawnsOrTowers(String[][] template, int startingIndexLength, int startingIndexHeight, int heightOfSection, int lengthOfSection, int choice) {
         for (int j = startingIndexLength; j < startingIndexLength + lengthOfSection + 1; j++)
             for (int i = startingIndexHeight; i < startingIndexHeight + heightOfSection; i++) {
-                if (pawns)
-                    if (template[i][j].contains("o"))
-                        template[i][j] = " ";
-                    else if (template[i][j].contains("T"))
-                        template[i][j] = " ";
+                if (choice == 0 && template[i][j].contains("o"))
+                    template[i][j] = " ";
+                else if (choice == 1 && template[i][j].contains("T"))
+                    template[i][j] = " ";
+                else if (choice == 2 && template[i][j].contains("P"))
+                    template[i][j] = " ";
             }
     }
 }

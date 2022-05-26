@@ -118,7 +118,7 @@ public class CloudTilesDrawer {
         for (ClientCloudTile clientCloudTile : cloudTiles) {
             // Empty cloud tile
             UtilityFunctions.emptySectionWithPawnsOrTowers(template,  currentLength, height, DrawersConstant.VERTICAL_LINE_LENGTH_CLOUD,
-                    (DrawersConstant.SPACE_BETWEEN_PLUS_HORIZONTAL_LINE + 1) * DrawersConstant.HORIZONTAL_LINE_LENGTH_CLOUD, true);
+                    (DrawersConstant.SPACE_BETWEEN_PLUS_HORIZONTAL_LINE + 1) * DrawersConstant.HORIZONTAL_LINE_LENGTH_CLOUD, 0);
 
             arrayOfCoordinates = generateSetOfCoordinates(height, currentLength);
             for (int student : clientCloudTile.getStudents()) {
