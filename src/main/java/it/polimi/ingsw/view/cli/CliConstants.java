@@ -4,6 +4,7 @@ public class CliConstants {
 
     public static String ESCAPE_CODE_TO_CLEAR_TERMINAL = "\033[H\033[2J\33[H";
 
+    public static int MAX_LENGTH_OF_USERNAME = 22;
 
     // Descriptions of actions
     public static String ACTION_ON_SELECTION_OF_WIZARD_ID_DESCRIPTION = "Selection of wizard.";

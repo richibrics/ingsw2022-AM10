@@ -177,8 +177,8 @@ public class Cli implements ViewInterface {
             this.bufferOut.write("Select a username: ");
             this.bufferOut.flush();
             String username = this.bufferIn.readLine();
-            while (username.length() > DrawersConstant.SCHOOL_BOARD_LENGTH) {
-                this.showError(String.format("The username exceeds the limit of %d characters. ",DrawersConstant.SCHOOL_BOARD_LENGTH));
+            while (username.length() > CliConstants.MAX_LENGTH_OF_USERNAME) {
+                this.showError(String.format("The username exceeds the limit of %d characters. ", CliConstants.MAX_LENGTH_OF_USERNAME));
                 this.bufferOut.write("Please select a new username: ");
                 this.bufferOut.flush();
                 username = this.bufferIn.readLine();
