@@ -25,19 +25,6 @@ public class SplashscreenSceneController extends SceneController {
         layout.setBackground(new Background(new BackgroundImage(new Image(UserFormSceneController.class.getResource(GUIConstants.SCENE_SPLASHSCREEN_BACKGROUND_IMAGE_PATH).toExternalForm(),GUIConstants.SCENE_SPLASHSCREEN_WIDTH,GUIConstants.SCENE_SPLASHSCREEN_HEIGHT,false,true),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                 BackgroundSize.DEFAULT)));
-        Button button = new Button("Play");
-        button.getStyleClass().add(GUIConstants.SCENE_SPLASHSCREEN_STYLE_PLAY_BUTTON_CLASS);
-        button.setOnAction(e -> {
-            System.out.println("Good luck !");
-            try {
-                StageController.getStageController().showScene(SceneType.USER_FORM_SCENE);
-            } catch (SceneControllerNotRegisteredException  | StageNotSetException ex) {
-                System.out.println("Error occurred: " + ex.getMessage());
-                System.exit(1);
-            }
-        });
-        layout.getChildren().add(button);
-        layout.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(layout, GUIConstants.SCENE_SPLASHSCREEN_WIDTH, GUIConstants.SCENE_SPLASHSCREEN_HEIGHT);
         scene.getStylesheets().add(UserFormSceneController.class.getResource(GUIConstants.SCENE_SPLASHSCREEN_STYLESHEET_PATH).toExternalForm());

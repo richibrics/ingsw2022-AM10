@@ -7,7 +7,6 @@ public class GUIConstants {
     public static final String SCENE_SPLASHSCREEN_BACKGROUND_IMAGE_PATH = "/images/splashscreen.png";
     public static final String SCENE_SPLASHSCREEN_STYLESHEET_PATH = "/CSS/splashscreen_scene.css";
     public static final String SCENE_SPLASHSCREEN_STYLE_MAIN_LAYOUT_CLASS = "main_layout";
-    public static final String SCENE_SPLASHSCREEN_STYLE_PLAY_BUTTON_CLASS = "play_button";
 
 
     // USER_MENU

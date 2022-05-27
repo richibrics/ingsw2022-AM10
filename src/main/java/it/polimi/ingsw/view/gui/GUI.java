@@ -10,10 +10,20 @@ import it.polimi.ingsw.view.game_objects.ClientTeams;
 
 import java.util.ArrayList;
 
+import static javafx.application.Application.launch;
+
 public class GUI implements ViewInterface {
+
+    /**
+     * When GUI starts, show the Splashscreen
+     */
+    public GUI() {
+        launch(LaunchGUI.class);
+    }
+
     @Override
     public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
-        
+
     }
 
     @Override
@@ -28,7 +38,7 @@ public class GUI implements ViewInterface {
 
     @Override
     public void askForUser() {
-
+        System.out.println("SI HAI RAGIONE");
     }
 
     @Override
