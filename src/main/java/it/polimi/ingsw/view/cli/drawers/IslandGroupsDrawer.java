@@ -194,10 +194,10 @@ public class IslandGroupsDrawer {
         for (int i = 0; i < oldTemplate.length; i++) {
             for (int j = 0; j < oldTemplate[0].length; j++) {
                 if (oldTemplate[i][j].equals("_") && !flagStartingHeight) {
-                    newStartingHeight = i;
+                    newStartingHeight = i - 1;
                     flagStartingHeight = true;
                 } else if (oldTemplate[oldTemplate.length - i - 1][j].equals("_") && !flagEndingHeight) {
-                    newEndingHeight = oldTemplate.length - i - 1;
+                    newEndingHeight = oldTemplate.length - i;
                     flagEndingHeight = true;
                 }
             }
@@ -207,10 +207,10 @@ public class IslandGroupsDrawer {
         for (int j = 0; j < oldTemplate[0].length; j++) {
             for (int i = 0; i < oldTemplate.length; i++) {
                 if ((oldTemplate[i][j].equals("/") || oldTemplate[i][j].equals("\\")) && !flagStartingLength) {
-                    newStartingLength = j - 1;
+                    newStartingLength = j - 2;
                     flagStartingLength = true;
                 } else if ((oldTemplate[i][oldTemplate[0].length - j - 1].equals("/") || oldTemplate[i][oldTemplate[0].length - j - 1].equals("\\")) && !flagEndingLength) {
-                    newEndingLength = oldTemplate[0].length - j - 1;
+                    newEndingLength = oldTemplate[0].length - j;
                     flagEndingLength = true;
                 }
             }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public interface ViewInterface {
 
-    void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams);
+    void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams, int playerId);
 
     void displayLobby(ClientLobby clientLobby);
 

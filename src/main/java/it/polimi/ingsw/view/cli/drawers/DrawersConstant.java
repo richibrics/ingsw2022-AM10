@@ -109,4 +109,13 @@ public class DrawersConstant {
     |________||________||________|
 
     */
+
+    // Assistant card
+    public static int SPACE_BETWEEN_ASSISTANT_CARDS = 0;
+    public static int LENGTH_OF_ASSISTANT_CARD = 25;
+    public static int SPACE_BETWEEN_LAST_CARD_OF_PLAYER_AND_ACTIVE_CARDS = 3;
+    public static int SPACE_BETWEEN_USERNAME_AND_ACTIVE_CARD = 0;
+    public static int SPACE_BETWEEN_ACTIVE_ASSISTANT_CARDS = 1;
+    public static int SPACE_BETWEEN_LABELS = 2;
+    public static int SPACE_BETWEEN_TITLE_AND_FIRST_ACTIVE_CARD = 1;
 }

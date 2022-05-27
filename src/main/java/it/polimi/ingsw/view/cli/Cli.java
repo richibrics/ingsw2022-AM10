@@ -27,6 +27,7 @@ public class Cli implements ViewInterface {
     private String[][] characterCardsTemplate;
     private String[][] islandGroupsTemplate;
     private String[][] cloudTilesTemplate;
+    private String[][] assistantCardsTemplate;
     private ClientServerConnection clientServerConnection;
     private User user;
     private ActionMessage actionMessage;
@@ -52,7 +53,7 @@ public class Cli implements ViewInterface {
     }
 
     @Override
-    public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams) {
+    public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
         try {
             // Clear terminal
             this.clearTerminal();
@@ -69,21 +70,32 @@ public class Cli implements ViewInterface {
             CharacterCardDrawer.fillTemplate(this.characterCardsTemplate, clientTable.getActiveCharacterCards());
             this.islandGroupsTemplate = IslandGroupsDrawer.generateAndFillTemplate(clientTable.getIslandTiles(), clientTable.getMotherNature());
             CloudTilesDrawer.fillTemplate(this.cloudTilesTemplate, clientTable.getCloudTiles());
+            // Determine index of team and of player with id == playerId
+            int indexOfTeam = clientTeams.getTeams().indexOf(clientTeams.getTeams().
+                    stream().
+                    filter(clientTeam -> clientTeam.getPlayers().
+                            stream().
+                            filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1).
+                    toList().get(0));
+
+            int indexOfPlayer = clientTeams.getTeams().get(indexOfTeam).getPlayers().indexOf(clientTeams.getTeams().get(indexOfTeam).getPlayers().
+                    stream().
+                    filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).
+                    toList().get(0));
+
+            this.assistantCardsTemplate = AssistantCardDrawer.generateAndFillTemplate(clientTeams, indexOfTeam, indexOfPlayer);
 
             // Generate template that represents the entire state of the game
-            int height = Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length) +
+            int height = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), this.assistantCardsTemplate.length) +
                     Math.max(this.characterCardsTemplate.length, this.cloudTilesTemplate.length) + this.SPACE_BETWEEN_ELEMENTS;
-            int length = Math.max(this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length,
-                    this.characterCardsTemplate[0].length + this.cloudTilesTemplate[0].length) + this.SPACE_BETWEEN_ELEMENTS;
+            int length = Math.max(this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length + (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0) +
+                    2 * this.SPACE_BETWEEN_ELEMENTS, this.characterCardsTemplate[0].length + this.cloudTilesTemplate[0].length) + this.SPACE_BETWEEN_ELEMENTS;
 
             String[][] template = new String[height][length];
 
             UtilityFunctions.removeNullAndAddSingleSpace(template);
             // Insert all the elements into the template
             this.positionElementsInTemplate(template);
-
-            // Clear the content of the cli
-            //this.clearTerminal();
 
             // Print the state of the game
             for (int i = 0; i < template.length; i++) {
@@ -100,17 +112,17 @@ public class Cli implements ViewInterface {
     }
 
     private void positionElementsInTemplate(String[][] template) {
-        // Insert school boards and island groups into template
+        // Insert school boards, island groups and assistant cards into template
         this.insertTemplateInTemplate(template, this.schoolBoardsTemplate, 0, 0);
         this.insertTemplateInTemplate(template, this.islandGroupsTemplate, 0,
                 this.schoolBoardsTemplate[0].length + this.SPACE_BETWEEN_ELEMENTS);
+        if (this.assistantCardsTemplate.length != 0)
+            this.insertTemplateInTemplate(template, this.assistantCardsTemplate, 0,
+                    this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length + 2 * this.SPACE_BETWEEN_ELEMENTS);
 
         // Determine starting height of lower section (character cards and clouds)
-        int startingHeightOfLowerSection;
-        if (this.schoolBoardsTemplate.length >= this.islandGroupsTemplate.length)
-            startingHeightOfLowerSection = this.schoolBoardsTemplate.length + this.SPACE_BETWEEN_ELEMENTS;
-        else
-            startingHeightOfLowerSection = this.islandGroupsTemplate.length + this.SPACE_BETWEEN_ELEMENTS;
+        int startingHeightOfLowerSection = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0))
+                + this.SPACE_BETWEEN_ELEMENTS;
         this.insertTemplateInTemplate(template, this.characterCardsTemplate, startingHeightOfLowerSection, 0);
         this.insertTemplateInTemplate(template, this.cloudTilesTemplate, startingHeightOfLowerSection,
                 this.characterCardsTemplate[0].length + this.SPACE_BETWEEN_ELEMENTS);

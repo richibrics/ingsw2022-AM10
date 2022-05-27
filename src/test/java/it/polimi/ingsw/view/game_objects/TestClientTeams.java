@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.game_objects;
 
+import it.polimi.ingsw.network.client.Client;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -34,11 +35,12 @@ class TestClientTeams {
         ClientAssistantCard clientAssistantCard1 = new ClientAssistantCard(value + 2, value / 3, value + 3);
         ClientAssistantCard clientAssistantCard2 = new ClientAssistantCard(value + 3, value / 4, value + 2);
         ClientAssistantCard clientAssistantCard3 = new ClientAssistantCard(value + 4, value / 5, value + 1);
+        ClientAssistantCard lastPlayedAssistantCard = new ClientAssistantCard(value + 5, value / 6, value);
         assistantCards.add(clientAssistantCard);
         assistantCards.add(clientAssistantCard1);
         assistantCards.add(clientAssistantCard2);
         assistantCards.add(clientAssistantCard3);
-        ClientPlayer clientPlayer = new ClientPlayer(user, playerId, coins, wizard, assistantCards);
+        ClientPlayer clientPlayer = new ClientPlayer(user, playerId, coins, wizard, assistantCards, lastPlayedAssistantCard);
         players.add(clientPlayer);
         ClientTeam clientTeam = new ClientTeam(clientTowerColor, professorPawns, numberOfTowers, players);
         teams.add(clientTeam);
@@ -57,11 +59,12 @@ class TestClientTeams {
         ClientAssistantCard clientAssistantCard5 = new ClientAssistantCard(value + 2, value / 3, value + 3);
         ClientAssistantCard clientAssistantCard6 = new ClientAssistantCard(value + 3, value / 4, value + 2);
         ClientAssistantCard clientAssistantCard7 = new ClientAssistantCard(value + 4, value / 5, value + 1);
+        ClientAssistantCard lastPlayedAssistantCard2 = new ClientAssistantCard(value + 5, value / 6, value);
         assistantCards.add(clientAssistantCard4);
         assistantCards.add(clientAssistantCard5);
         assistantCards.add(clientAssistantCard6);
         assistantCards.add(clientAssistantCard7);
-        ClientPlayer clientPlayer1 = new ClientPlayer(user1, playerId1, coins1, wizard1, assistantCards1);
+        ClientPlayer clientPlayer1 = new ClientPlayer(user1, playerId1, coins1, wizard1, assistantCards1, lastPlayedAssistantCard2);
         players1.add(clientPlayer1);
         ClientTeam clientTeam1 = new ClientTeam(clientTowerColor1, professorPawns1, numberOfTowers1, players1);
         teams.add(clientTeam1);
@@ -81,11 +84,12 @@ class TestClientTeams {
         ClientAssistantCard clientAssistantCard9 = new ClientAssistantCard(value + 2, value / 3, value + 3);
         ClientAssistantCard clientAssistantCard10 = new ClientAssistantCard(value + 3, value / 4, value + 2);
         ClientAssistantCard clientAssistantCard11 = new ClientAssistantCard(value + 4, value / 5, value + 1);
+        ClientAssistantCard lastPlayedAssistantCard3 = new ClientAssistantCard(value + 5, value / 6, value);
         assistantCards.add(clientAssistantCard8);
         assistantCards.add(clientAssistantCard9);
         assistantCards.add(clientAssistantCard10);
         assistantCards.add(clientAssistantCard11);
-        ClientPlayer clientPlayer2 = new ClientPlayer(user2, playerId2, coins2, wizard2, assistantCards2);
+        ClientPlayer clientPlayer2 = new ClientPlayer(user2, playerId2, coins2, wizard2, assistantCards2, lastPlayedAssistantCard3);
         players2.add(clientPlayer2);
         ClientTeam clientTeam2 = new ClientTeam(clientTowerColor2, professorPawns2, numberOfTowers2, players2);
         teams.add(clientTeam2);

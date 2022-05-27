@@ -232,7 +232,7 @@ public class ClientServerConnection implements Runnable {
 
                     // Display the state of the game if the teams message has already been received
                     if (this.flagTableReady && this.flagTeamsReady) {
-                        this.view.displayStateOfGame(this.clientTable, this.clientTeams);
+                        this.view.displayStateOfGame(this.clientTable, this.clientTeams, this.playerId);
                         this.flagTableReady = false;
                         this.flagTeamsReady = false;
                     }
@@ -255,7 +255,7 @@ public class ClientServerConnection implements Runnable {
                     }
                     // Display the state of the game if the table message has already been received
                     if (this.flagTableReady && this.flagTeamsReady) {
-                        this.view.displayStateOfGame(this.clientTable, this.clientTeams);
+                        this.view.displayStateOfGame(this.clientTable, this.clientTeams, this.playerId);
                         this.flagTableReady = false;
                         this.flagTeamsReady = false;
                     }

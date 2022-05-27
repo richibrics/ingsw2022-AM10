@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class GUI implements ViewInterface {
     @Override
-    public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams) {
+    public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
         
     }
 
