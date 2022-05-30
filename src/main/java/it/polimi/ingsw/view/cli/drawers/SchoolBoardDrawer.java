@@ -101,22 +101,24 @@ public class SchoolBoardDrawer {
 
     public static void fillTemplate(String[][] template, ClientTable clientTable, ClientTeams clientTeams) throws Exception {
 
+        long numberOfPlayers = clientTeams.getTeams().stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).count();
+
         // Fill school boards of first team
         fillSchoolBoardsTeam(template, clientTable.getSchoolBoards(), 0, clientTeams.getTeams().get(0), 0, 0);
 
         // If the number of players equals four, fill school boards of second team. Get school boards 3 and 4
-        if (clientTeams.getTeams().size() == DrawersConstant.FOUR_PLAYERS)
+        if (numberOfPlayers == DrawersConstant.FOUR_PLAYERS)
             fillSchoolBoardsTeam(template, clientTable.getSchoolBoards(), 2, clientTeams.getTeams().get(1), 0,
                     DrawersConstant.SCHOOL_BOARD_HEIGHT + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_HEIGHT + DrawersConstant.SPACE_FOR_USERNAMES);
 
-        else if (clientTeams.getTeams().size() == DrawersConstant.TWO_PLAYERS || clientTeams.getTeams().size() == DrawersConstant.THREE_PLAYERS) {
+        else if (numberOfPlayers == DrawersConstant.TWO_PLAYERS || numberOfPlayers == DrawersConstant.THREE_PLAYERS) {
 
             // Fill school board of second team
             fillSchoolBoardsTeam(template, clientTable.getSchoolBoards(), 1, clientTeams.getTeams().get(1),
                     0, DrawersConstant.SCHOOL_BOARD_HEIGHT + DrawersConstant.SPACE_FOR_USERNAMES + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_HEIGHT);
 
             // If the number of players equals three, fill school board of third team
-            if (clientTeams.getTeams().size() == DrawersConstant.THREE_PLAYERS)
+            if (numberOfPlayers == DrawersConstant.THREE_PLAYERS)
                 fillSchoolBoardsTeam(template, clientTable.getSchoolBoards(), 2, clientTeams.getTeams().get(2),
                         DrawersConstant.SCHOOL_BOARD_LENGTH + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_LENGTH, 0);
         }
@@ -162,12 +164,12 @@ public class SchoolBoardDrawer {
         fillTowersSection(template, clientTeam, startingIndexLength + DrawersConstant.START_OF_TOWERS,
                 startingIndexHeight + DrawersConstant.SPACE_FOR_USERNAMES + 2);
 
-        // If the team is composed of two players, fill second school
+        // If the team is composed of two players, fill second school board
         if (clientTeam.getPlayers().size() == 2) {
             int startingIndexLengthSecondBoard = startingIndexLength + DrawersConstant.SCHOOL_BOARD_LENGTH + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_LENGTH;
 
             // Write username and coins
-            writeUsernameAndCoins(template, clientTeam.getPlayers().get(1).getUsername(), clientTeam.getPlayers().get(0).getCoins(),
+            writeUsernameAndCoins(template, clientTeam.getPlayers().get(1).getUsername(), clientTeam.getPlayers().get(1).getCoins(),
                     startingIndexLengthSecondBoard + 1, startingIndexHeight);
 
             // Fill entrance
