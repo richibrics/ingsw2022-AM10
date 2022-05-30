@@ -1,15 +1,16 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 
 public abstract class SceneController implements SceneControllerInterface {
     private Scene scene;
 
     /**
-     * Prepares the Scene with the layout to serve it to the Stage without creating it everytime using {@link SceneController#getScene()}.
+     * Prepares a blank scene.
      */
     public SceneController() {
-        this.scene = layout();
+        this.scene = initialBlankScene();
     }
 
     /**
@@ -29,5 +30,14 @@ public abstract class SceneController implements SceneControllerInterface {
         if (redrawLayout)
             this.scene = this.layout();
         return this.scene;
+    }
+
+    /**
+     * Get a scene to show if this scene controller should show a scene that hasn't been layout yet.
+     *
+     * @return blank scene
+     */
+    public Scene initialBlankScene() {
+        return new Scene(new VBox());
     }
 }

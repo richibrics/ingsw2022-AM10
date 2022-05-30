@@ -1,6 +1,9 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.gui.GUIConstants;
+import it.polimi.ingsw.view.gui.StageController;
+import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,6 +12,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class UserFormSceneController extends SceneController {
+    TextField textBox;
+    RadioButton twoPlayersRadioButton;
+    RadioButton threePlayersRadioButton;
+    RadioButton fourPlayersRadioButton;
 
     /**
      * Draws the layout in a scene and returns it.
@@ -38,14 +45,14 @@ public class UserFormSceneController extends SceneController {
         layout.getChildren().add(layoutBottomButtons);
 
         Label usernameLabel = new Label("Username");
-        TextField textBox = new TextField();
+        textBox = new TextField();
         layoutUsernameInput.getChildren().add(usernameLabel);
         layoutUsernameInput.getChildren().add(textBox);
 
         ToggleGroup playersSelectionGroup = new ToggleGroup(); // Prevents multi choice in the radio buttons
-        RadioButton twoPlayersRadioButton = new RadioButton();
-        RadioButton threePlayersRadioButton = new RadioButton();
-        RadioButton fourPlayersRadioButton = new RadioButton();
+        twoPlayersRadioButton = new RadioButton();
+        threePlayersRadioButton = new RadioButton();
+        fourPlayersRadioButton = new RadioButton();
         twoPlayersRadioButton.setText("2 players");
         threePlayersRadioButton.setText("3 players");
         fourPlayersRadioButton.setText("4 players");
@@ -81,12 +88,17 @@ public class UserFormSceneController extends SceneController {
      * - players number selected
      * <p>
      * Then, using the network, the message is sent.
-     * Then if the network thread changes the scene, it means everything is okay; otherwise this scene will be
-     * displayed again
+     * Then, if the network thread changes the scene, it means everything is okay; otherwise this scene will be
+     * displayed again - with an error probably
      *
-     * @param e the event happened on the button
+     * @param e the event happened in the window
      */
     void handleNextPageButton(Event e) {
-
+        try {
+            int numberOfPlayers = twoPlayersRadioButton.isSelected() ? ModelConstants.TWO_PLAYERS : threePlayersRadioButton.isSelected() ? ModelConstants.THREE_PLAYERS : ModelConstants.FOUR_PLAYERS;
+            StageController.getStageController().getGuiView().handleSendUser(textBox.getText(), numberOfPlayers);
+        } catch (GuiViewNotSet ex) {
+            StageController.getStageController().handleInternalException(ex);
+        }
     }
 }

@@ -1,0 +1,22 @@
+.players_number {
+    -fx-padding: 0px 20px 0px 20px;
+}
+
+.players_number_radio {
+    -fx-padding: 4px;
+}
+
+.lobby_button {
+    -fx-padding: 0px 20px 0px 20px;
+    -fx-alignment: bottom-right;
+}
+
+.logo_image_box {
+}
+
+.logo_image {
+}
+
+.label {
+    -fx-padding: 10px 0px 0px 20px;
+}

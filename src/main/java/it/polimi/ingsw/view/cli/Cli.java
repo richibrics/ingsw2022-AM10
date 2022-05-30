@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.network.client.ClientServerConnection;
 import it.polimi.ingsw.network.messages.ActionMessage;
+import it.polimi.ingsw.view.AbstractView;
 import it.polimi.ingsw.view.ViewInterface;
 import it.polimi.ingsw.view.cli.drawers.*;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
@@ -16,31 +17,22 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class Cli implements ViewInterface {
+public class Cli extends AbstractView {
 
     private final int SPACE_BETWEEN_ELEMENTS = 3;
     private final BufferedReader bufferIn;
     private final BufferedWriter bufferOut;
-    private final Object syncObject1;
-    private final Object syncObject2;
     private String[][] schoolBoardsTemplate;
     private String[][] characterCardsTemplate;
     private String[][] islandGroupsTemplate;
     private String[][] cloudTilesTemplate;
     private String[][] assistantCardsTemplate;
-    private ClientServerConnection clientServerConnection;
-    private User user;
-    private ActionMessage actionMessage;
-    private boolean flagUserReady;
     private Command command;
 
-
     public Cli() {
+        super();
         this.bufferIn = new BufferedReader(new InputStreamReader(System.in));
         this.bufferOut = new BufferedWriter(new OutputStreamWriter(System.out));
-        this.flagUserReady = false;
-        this.syncObject1 = new Object();
-        this.syncObject2 = new Object();
     }
 
     private void clearTerminal() {
@@ -203,18 +195,6 @@ public class Cli implements ViewInterface {
     }
 
     @Override
-    public User getUser() {
-        return new User(this.user.getId(), this.user.getPreference());
-    }
-
-    @Override
-    public boolean userReady() {
-        synchronized (this.syncObject1) {
-            return this.flagUserReady;
-        }
-    }
-
-    @Override
     public void showError(String message) {
         try {
             this.bufferOut.write(message);
@@ -224,12 +204,6 @@ public class Cli implements ViewInterface {
         }
     }
 
-    @Override
-    public void setUserReady(boolean userReady) {
-        synchronized (syncObject1) {
-            this.flagUserReady = userReady;
-        }
-    }
 
     @Override
     public void askToChangePreference() {
@@ -259,6 +233,7 @@ public class Cli implements ViewInterface {
             } while (newPreference != 2 && newPreference != 3 && newPreference != 4);
             // Update preference
             this.clientServerConnection.changePreference(newPreference);
+            this.user = new User(this.user.getId(), newPreference);
 
         } catch (IOException e) {
             this.clientServerConnection.askToCloseConnection();
@@ -337,16 +312,6 @@ public class Cli implements ViewInterface {
                 System.out.println("IOException: " + e.getMessage() + "\n");
             }
         }
-    }
-
-    @Override
-    public ActionMessage getActionMessage() {
-        return new ActionMessage(this.actionMessage.getActionId(), this.actionMessage.getOptions());
-    }
-
-    @Override
-    public void setClientServerConnection(ClientServerConnection clientServerConnection) {
-        this.clientServerConnection = clientServerConnection;
     }
 
     private String getActionDescriptionFromId(int actionId) {

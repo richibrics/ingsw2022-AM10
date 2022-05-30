@@ -144,7 +144,7 @@ public class ClientServerConnection implements Runnable {
     private void sendUser() {
         synchronized (this.syncObject5) {
             // Ask client for user
-            this.future = this.executor.submit(() -> this.view.askForUser());
+            runWithExecutor(this.view::askForUser);
             // Wait for user. In the meanwhile check if a still alive has arrived. If so, reset the timer
             while (!this.view.userReady() && this.getContinueReceiving()) {
                 this.receiveMessage();
@@ -271,7 +271,7 @@ public class ClientServerConnection implements Runnable {
                 case LOBBY -> {
                     ClientLobby clientLobby = Serializer.fromMessageToClientLobby(message);
                     this.view.displayLobby(clientLobby);
-                    this.future = this.executor.submit(() -> this.view.askToChangePreference());
+                    this.runWithExecutor(this.view::askToChangePreference);
                 }
                 case STILL_ALIVE -> {
                     this.resetTimer();
@@ -297,6 +297,12 @@ public class ClientServerConnection implements Runnable {
             this.sendMessage(new Message(MessageTypes.ERROR, e.getMessage()));
         }
 
+    }
+
+    private void runWithExecutor(Runnable task) {
+        if (this.future != null)
+            this.future.cancel(true);
+        this.future = this.executor.submit(task);
     }
 
     /**
@@ -427,12 +433,12 @@ public class ClientServerConnection implements Runnable {
         }
     }
 
-    private void askAndSendAction () {
+    private void askAndSendAction() {
         if (this.playerId == -1)
             this.askToCloseConnection();
         else if (this.lastClientRound.getCurrentPlayer() == this.playerId) {
             this.view.displayActions(this.lastClientRound.getPossibleActions());
-            this.future = this.executor.submit(() -> this.view.showMenu(this.clientTable, clientTeams, this.playerId, this.lastClientRound.getPossibleActions()));
+            this.runWithExecutor(() -> this.view.showMenu(this.clientTable, clientTeams, this.playerId, this.lastClientRound.getPossibleActions()));
             while (!this.getFlagActionMessageIsReady() && this.getContinueReceiving()) {
                 this.receiveMessage();
             }
