@@ -97,7 +97,7 @@ public class ClientServerConnection implements Runnable {
             this.closeConnection();
         } catch (IOException e) {
             System.err.println("Unable to close the connection with server");
-            return;
+            System.exit(1);
         }
     }
 

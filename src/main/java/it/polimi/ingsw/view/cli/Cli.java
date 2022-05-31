@@ -2,10 +2,7 @@ package it.polimi.ingsw.view.cli;
 
 import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.network.client.ClientServerConnection;
-import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.view.AbstractView;
-import it.polimi.ingsw.view.ViewInterface;
 import it.polimi.ingsw.view.cli.drawers.*;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.game_objects.ClientTable;
