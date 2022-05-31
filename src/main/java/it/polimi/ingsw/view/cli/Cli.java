@@ -166,8 +166,8 @@ public class Cli extends AbstractView {
             this.bufferOut.write("Select a username: ");
             this.bufferOut.flush();
             String username = this.bufferIn.readLine();
-            while (username.length() > CliConstants.MAX_LENGTH_OF_USERNAME) {
-                this.showError(String.format("The username exceeds the limit of %d characters. ", CliConstants.MAX_LENGTH_OF_USERNAME));
+            while (username.length() > CliConstants.MAX_LENGTH_OF_USERNAME || username.length() == 0)  {
+                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", CliConstants.MAX_LENGTH_OF_USERNAME));
                 this.bufferOut.write("Please select a new username: ");
                 this.bufferOut.flush();
                 username = this.bufferIn.readLine();
@@ -177,12 +177,24 @@ public class Cli extends AbstractView {
             this.bufferOut.write("Select the type of game you want to play (2 for two-players game," +
                     " 3 for three-players game and 4 for four-players game: ");
             this.bufferOut.flush();
-            int preference = Integer.valueOf(this.bufferIn.readLine());
-            while (preference != 2 && preference != 3 && preference != 4) {
-                this.bufferOut.write("You selected a wrong preference. Please try again.\nSelect preference: ");
-                this.bufferOut.flush();
-                preference = Integer.valueOf(this.bufferIn.readLine());
-            }
+
+            int preference = 0;
+            boolean flag = true;
+            do {
+                try {
+                    preference = Integer.parseInt(this.bufferIn.readLine());
+                    if (preference != 2 && preference != 3 && preference != 4) {
+                        this.bufferOut.write("You selected a wrong preference. Please try again.\nSelect preference: ");
+                        this.bufferOut.flush();
+                    }
+                    else
+                        flag = false;
+                } catch (NumberFormatException e) {
+                    this.bufferOut.write("You selected a wrong preference. Please try again.\nSelect preference: ");
+                    this.bufferOut.flush();
+                }
+            } while (flag);
+
             // Create user and allow clientServerConnection to take the newly created user
             this.user = new User(username, preference);
             this.setUserReady(true);
