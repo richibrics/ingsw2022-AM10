@@ -65,34 +65,34 @@ class TestAssignProfessorActionCook {
 
     @Test
     void checkMoveProfessorCondition() {
-        /* The condition is in the form F = A and (B or (C and D)) */
+        /* The condition is in the form F = A and (B or C) */
+        /* A = The team with the winning player does not have the professor pawn, B = the winning player is the one
+        * requesting the effect, C = the winning player has the most student discs of a particular color*/
         assignProfessorActionCookEffect.setPlayerId(1);
         Team winningTeam = gameEngine.getTeams().get(0);
+        Player winningPlayer = winningTeam.getPlayers().get(0);
         assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.GREEN)));
         assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.PINK)));
         Map<Integer, Long> studentsOfPlayer = new HashMap<>();
         studentsOfPlayer.put(1, (long) 5);
         studentsOfPlayer.put(2, (long) 4);
-        /* A = TRUE, B = TRUE, C = TRUE, D = TRUE, F = TRUE */
-        assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningTeam, studentsOfPlayer));
+        /* A = TRUE, B = TRUE, C = TRUE, F = TRUE */
+        assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer));
 
         assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
-        /* A = FALSE, B = TRUE, C = TRUE, D = TRUE, F = FALSE */
-        assertFalse(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningTeam, studentsOfPlayer));
+        /* A = FALSE, B = TRUE, C = TRUE, F = FALSE */
+        assertFalse(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer));
 
         gameEngine.getSchoolPawnManager().moveProfessor(2, 1, PawnColor.RED);
         studentsOfPlayer.put(2, (long) 5);
-        /* A = TRUE, B = FALSE, C = TRUE, D = TRUE, F = TRUE */
-        assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningTeam, studentsOfPlayer));
+        /* A = TRUE, B = TRUE, C = FALSE, F = TRUE */
+        assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer));
 
+        assignProfessorActionCookEffect.setPlayerId(2);
         Team newWinningTeam = gameEngine.getTeams().get(1);
-        /* A = TRUE, B = FALSE, C = FALSE, D = TRUE, F = FALSE */
-        assertFalse(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.GREEN, newWinningTeam, studentsOfPlayer));
-
-        studentsOfPlayer.put(1, (long) 0);
-        studentsOfPlayer.put(2, (long) 0);
-        /* A = TRUE, B = FALSE, C = TRUE, D = FALSE, F = FALSE */
-        assertFalse(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.YELLOW, winningTeam, studentsOfPlayer));
+        Player newWinningPlayer = newWinningTeam.getPlayers().get(0);
+        /* A = TRUE, B = TRUE, C = FALSE, F = TRUE */
+        assertTrue(assignProfessorActionCookEffect.checkMoveProfessorCondition(PawnColor.GREEN, newWinningPlayer, studentsOfPlayer));
     }
 
     @Test
@@ -137,7 +137,7 @@ class TestAssignProfessorActionCook {
         assertEquals(gameEngine.getTeams().get(0).getProfessorTable().get(0).getColor(), PawnColor.RED);
         /* Both players have the same number of green students. The professor should be assigned to the first team even
          * though the professor is in the professor table of the second team */
-        assertEquals(gameEngine.getTeams().get(0).getProfessorTable().get(1).getColor(), PawnColor.GREEN);
+        assertEquals(gameEngine.getTeams().get(0).getProfessorTable().get(2).getColor(), PawnColor.GREEN);
         /* The second player has 4 yellow students, while the first player has 3 yellow students. The professor
          * should be assigned to the second team */
         assertEquals(gameEngine.getTeams().get(1).getProfessorTable().get(0).getColor(), PawnColor.YELLOW);

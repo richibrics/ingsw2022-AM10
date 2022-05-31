@@ -23,10 +23,9 @@ public class ClientStillAliveChecker implements Runnable {
     public void run() {
         while (this.continueRunning) {
             try {
-                if (this.clientServerConnection.getTimer() <= 0) {
-                    this.setContinueRunning(false);
+                if (this.clientServerConnection.getTimer() <= 0)
                     this.clientServerConnection.askToCloseConnection();
-                } else {
+                else {
                     this.clientServerConnection.decrementTimer();
                     this.clientServerConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, ""));
                 }

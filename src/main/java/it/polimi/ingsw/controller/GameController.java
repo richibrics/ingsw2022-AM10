@@ -11,6 +11,7 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 import it.polimi.ingsw.network.messages.ActionMessage;
+import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class GameController {
     private GameEngine gameEngine;
     private Observer gameObserver;
-    private final Map<User, ServerClientConnection> serverClientConnections;
+    private Map<User, ServerClientConnection> serverClientConnections;
 
     public GameController(Map<User, ServerClientConnection> serverClientConnections) {
         this.serverClientConnections = new HashMap<>(serverClientConnections);
@@ -153,6 +154,7 @@ public class GameController {
 
     /**
      * Stops the game, warns all the players with a message and closes all the connections.
+     * Removes also the GameController from the active game controllers in the lobby (so the players in this game can play again).
      */
     public void interruptGame(String playersMessage) {
         for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
@@ -164,5 +166,16 @@ public class GameController {
         // TODO Destroy game
         this.gameObserver = null;
         this.gameEngine = null;
+
+        LobbyHandler.getLobbyHandler().removeActiveGame(this);
+    }
+
+    /**
+     * Gets the map of serverClientConnections.
+     * @return
+     */
+
+    public Map<User, ServerClientConnection> getServerClientConnections () {
+        return this.serverClientConnections;
     }
 }

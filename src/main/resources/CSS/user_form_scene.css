@@ -1,0 +1,27 @@
+.user_input {
+    -fx-padding: 20px 20px 5px 20px;
+}
+
+.players_number {
+    -fx-padding: 0px 20px 0px 20px;
+}
+
+.players_number_radio {
+    -fx-padding: 4px;
+}
+
+.lobby_button {
+    -fx-translate-y: -20px;
+    -fx-padding: 0px 20px 0px 20px;
+    -fx-alignment: bottom-right;
+}
+
+.main_layout {
+    -fx-alignment: center;
+}
+
+.logo_image_box {
+}
+
+.logo_image {
+}

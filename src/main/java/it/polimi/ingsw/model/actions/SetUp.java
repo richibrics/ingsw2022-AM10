@@ -46,6 +46,8 @@ public abstract class SetUp extends Action {
     /**
      * Draws three character cards and puts them in {@code characterCards}. The student discs required by some character cards
      * are taken from {@code bag}.
+     * The CharacterCards action are not instantiated here but directly in GameEngine.startGame() as they need
+     * the game actions to be generated before.
      *
      * @param characterCards the list of the newly created character cards
      * @param bag            the bag
@@ -60,7 +62,6 @@ public abstract class SetUp extends Action {
             characterCards.put(character.getId(), new CharacterCard(character));
         }
         for (CharacterCard characterCard : characterCards.values()) {
-            this.getGameEngine().getCharacterManager().generateAction(characterCard);
             this.getGameEngine().getCharacterManager().setupCardStorage(characterCard, bag);
         }
     }

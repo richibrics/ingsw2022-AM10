@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.actions.effects;
 
 import it.polimi.ingsw.controller.GameEngine;
-import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.actions.Action;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.model.managers.CommonManager;
@@ -36,19 +36,19 @@ public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect
      * Checks if the professor  of color {@code color} has to be moved to a different team.
      *
      * @param color            the color of the professor pawn
-     * @param winningTeam      the team with the player that has the highest number of students of color {@code color} in the
+     * @param winningPlayer      the player that has the highest number of students of color {@code color} in the
      *                         dining room
      * @param studentsOfPlayer the map with playerId - number of students of color {@code color} in the dining room
      * @return true if the professor  of color {@code color} has to be moved to a different team, false otherwise
      */
 
     @Override
-    public boolean checkMoveProfessorCondition(PawnColor color, Team winningTeam, Map<Integer, Long> studentsOfPlayer) {
-        return winningTeam.getProfessorTable()
+    public boolean checkMoveProfessorCondition(PawnColor color, Player winningPlayer, Map<Integer, Long> studentsOfPlayer) {
+
+        return (CommonManager.takeTeamById(this.getGameEngine(), CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), winningPlayer.getPlayerId())).getProfessorTable()
                 .stream()
-                .filter(professorPawn -> professorPawn.getColor().equals(color)).count() == 0
-                && (studentsOfPlayer.values().stream().filter(value -> value == studentsOfPlayer.get(winningTeam.getId())).count() == 1
-                || (winningTeam.getPlayers().contains(CommonManager.takePlayerById(this.getGameEngine(), this.getPlayerId()))
-                && studentsOfPlayer.get(winningTeam.getId()) != 0));
+                .filter(professorPawn -> professorPawn.getColor().equals(color)).count() == 0) &&
+                (winningPlayer.getPlayerId() == this.getPlayerId() ||
+                 studentsOfPlayer.values().stream().filter(value -> value == studentsOfPlayer.get(winningPlayer.getPlayerId())).count() == 1);
     }
 }

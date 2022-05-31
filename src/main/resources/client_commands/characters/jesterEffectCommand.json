@@ -1,0 +1,54 @@
+{
+  "action_id": 3,
+  "character_id": 7,
+  "schema": [
+    {
+      "action_key": "student_entrance1",
+      "question": "Select a student in the entrance",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": false,
+      "validation": "student_entrance"
+    },
+    {
+      "action_key": "student_storage1",
+      "question": "Select a student of the storage",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": false,
+      "validation": "student_character_card"
+    },
+    {
+      "action_key": "student_entrance2",
+      "question": "Select a student in the entrance",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": true,
+      "validation": "student_entrance"
+    },
+    {
+      "action_key": "student_storage2",
+      "question": "Select a student of the storage",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": false,
+      "validation": "student_character_card"
+    },
+    {
+      "action_key": "student_entrance3",
+      "question": "Select a student in the entrance",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": true,
+      "validation": "student_entrance"
+    },
+    {
+      "action_key": "student_storage3",
+      "question": "Select a student of the storage",
+      "cli_hint": " (type the color of the preferred student)",
+      "gui_hint": " (click on the preferred student)",
+      "optional": false,
+      "validation": "student_character_card"
+    }
+  ]
+}

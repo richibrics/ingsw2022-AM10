@@ -1,0 +1,13 @@
+{
+  "action_id": 5,
+  "schema": [
+    {
+      "action_key": "island",
+      "question": "Select the island where to move motherNature",
+      "cli_hint": " (type the number of the preferred island)",
+      "gui_hint": " (click on the preferred island)",
+      "optional": false,
+      "validation": "island"
+    }
+  ]
+}

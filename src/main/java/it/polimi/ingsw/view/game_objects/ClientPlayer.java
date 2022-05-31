@@ -9,17 +9,30 @@ public class ClientPlayer {
     private final int coins;
     private final int wizard;
     private final ArrayList<ClientAssistantCard> assistantCards;
+    private final ClientAssistantCard lastPlayedAssistantCard;
 
-    public ClientPlayer(String username, int playerId, int coins, int wizard, ArrayList<ClientAssistantCard> assistantCards) {
+    public ClientPlayer(String username, int playerId, int coins, int wizard, ArrayList<ClientAssistantCard> assistantCards,
+                        ClientAssistantCard lastPlayedAssistantCard) {
         this.username = username;
         this.playerId = playerId;
         this.coins = coins;
         this.wizard = wizard;
         this.assistantCards = assistantCards;
+        this.lastPlayedAssistantCard = lastPlayedAssistantCard;
     }
 
     /**
-     * Returns client Username
+     * Gets the last played assistant card.
+     *
+     * @return the last played assistant card
+     */
+
+    public ClientAssistantCard getLastPlayedAssistantCard() {
+        return this.lastPlayedAssistantCard;
+    }
+
+    /**
+     * Returns client Username.
      *
      * @return client Username
      */
@@ -27,6 +40,11 @@ public class ClientPlayer {
         return this.username;
     }
 
+    /**
+     * Returns client PlayerId
+     *
+     * @return client PlayerId
+     */
     public int getPlayerId() {
         return this.playerId;
     }

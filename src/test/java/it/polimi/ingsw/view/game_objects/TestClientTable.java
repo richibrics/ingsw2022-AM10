@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.game_objects;
 
-import it.polimi.ingsw.model.game_components.TowerColor;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -42,7 +41,7 @@ class TestClientTable {
         ArrayList<ClientIslandTile> islandTiles = new ArrayList<>();
         ArrayList<Integer> students1 = new ArrayList<>();
         students1.add(value);
-        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students1, true, TowerColor.BLACK);
+        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students1, true, ClientTowerColor.BLACK);
         islandTiles.add(clientIslandTile);
         islandGroups.add(islandTiles);
 

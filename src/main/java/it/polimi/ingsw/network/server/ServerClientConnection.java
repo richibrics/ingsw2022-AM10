@@ -19,10 +19,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 public class ServerClientConnection implements Runnable {
-    private Socket clientSocket;
+    private final Socket clientSocket;
     private User user;
     private Integer stillAliveTimer;
     private GameController gameController;
@@ -71,8 +72,19 @@ public class ServerClientConnection implements Runnable {
      */
     @Override
     public void run() {
-        // Send first Handshake message
-        this.sendHandshake();
+        // Send Handshake messages until a Handshake is received
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (messageReceivingStep.equals(MessageReceivingStep.STEP_HANDSHAKE)) {
+                    sendHandshake();
+                    try {
+                        Thread.sleep(NetworkConstants.TIME_BETWEEN_HANDSHAKE_MESSAGES_IN_MILLISECONDS);
+                    } catch (InterruptedException e) {}
+                }
+            }
+        }).start();
+
         // Wait for messages for a long of time
         while (this.getContinueReceiving()) {
             this.receiveMessage();
@@ -93,14 +105,20 @@ public class ServerClientConnection implements Runnable {
         String line = null;
         try {
             line = this.bufferIn.readLine();
+            // PS: if I'm here and line is null, should be because client closed the connection TODO Check and test
         } catch (SocketTimeoutException e) {
             // No message received
             line = null;
         } catch (IOException e) {
-            e.printStackTrace();
+            this.askToCloseConnection();
         }
-        if (line != null)
+
+        if (line != null) {
+            System.out.println(line);
             this.deserialize(line);
+            // I received a message from the client, so he's alive: reset his timer
+            this.resetTimer();
+        }
         try {
             Thread.sleep(NetworkConstants.SLEEP_TIME_RECEIVE_MESSAGE_IN_MILLISECONDS);
         } catch (InterruptedException e) {
@@ -113,7 +131,8 @@ public class ServerClientConnection implements Runnable {
      *
      * @param message the message that is going to be serialized and sent to the client
      */
-    public void sendMessage(Message message) {
+
+    public synchronized void sendMessage(Message message) {
         this.bufferOut.println(Serializer.fromMessageToString(message));
         this.bufferOut.flush();
     }
@@ -132,6 +151,15 @@ public class ServerClientConnection implements Runnable {
         this.bufferIn.close();
         this.bufferOut.close();
         this.clientSocket.close();
+
+        if (messageReceivingStep.equals(MessageReceivingStep.STEP_IN_GAME)) {
+            // Stops the gameController and the other game clients, if it isn't already stopped
+            if(gameController.getGameEngine()!=null)
+                gameController.interruptGame(user.getId() + " disconnected");
+        } else if (messageReceivingStep.equals(MessageReceivingStep.STEP_LOBBY)) {
+            // Removes the client from the lobby, because from the step I know where he is
+            LobbyHandler.getLobbyHandler().removeDisconnectedUser(user);
+        }
     }
 
     /**
@@ -197,7 +225,10 @@ public class ServerClientConnection implements Runnable {
                     if (this.getMessageReceivingStep() == MessageReceivingStep.STEP_IN_GAME) {
                         // Convert the payload of the Message (a Json) to an ActionMessage, then asks the GameController to run the Action.
                         ActionMessage actionMessage = Serializer.fromMessageToActionMessage(message);
-                        gameController.resumeGame(CommonManager.takePlayerIdByUserId(gameController.getGameEngine(), user.getId()), actionMessage);
+                        // Synchronize on the match Round, which is the one that is used to check which player has turn
+                        synchronized (gameController.getGameEngine().getRound()) {
+                            gameController.resumeGame(CommonManager.takePlayerIdByUserId(gameController.getGameEngine(), user.getId()), actionMessage);
+                        }
                     } else {
                         // Shouldn't receive this type of message in this step: error
                         throw new WrongMessageContentException("Action message not allowed in this communication step");
@@ -211,8 +242,6 @@ public class ServerClientConnection implements Runnable {
                     throw new WrongMessageContentException("Unknown message type");
                 }
             }
-            // If no exception is thrown, can send a Success message
-            this.notifySuccess(message.getType());
         } catch (WrongMessageContentException e) {
             this.notifyError(e.getMessage());
         } catch (InterruptedGameException e) {
@@ -231,16 +260,6 @@ public class ServerClientConnection implements Runnable {
      */
     private void sendHandshake() {
         this.sendMessage(new Message(MessageTypes.HANDSHAKE, ""));
-    }
-
-    /**
-     * Sends the success message to the client for a specific message type.
-     *
-     * @param type the type of the message that server successfully received
-     */
-    private void notifySuccess(MessageTypes type) {
-        if (type != MessageTypes.STILL_ALIVE)
-            this.sendMessage(new Message(MessageTypes.SUCCESS, type.toString()));
     }
 
     /**

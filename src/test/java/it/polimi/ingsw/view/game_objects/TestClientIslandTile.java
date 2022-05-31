@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.game_objects;
 
-import it.polimi.ingsw.model.game_components.TowerColor;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -21,10 +20,10 @@ class TestClientIslandTile {
     void testGet(int value) {
         ArrayList<Integer> students = new ArrayList<>();
         students.add(value);
-        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students, true, TowerColor.BLACK);
+        ClientIslandTile clientIslandTile = new ClientIslandTile(value + 1, students, true, ClientTowerColor.BLACK);
         assertEquals(clientIslandTile.getId(), value + 1);
         assertEquals(clientIslandTile.getStudents(), students);
         assertTrue(clientIslandTile.hasNoEntry());
-        assertEquals(clientIslandTile.getTower(), TowerColor.BLACK);
+        assertEquals(clientIslandTile.getTower(), ClientTowerColor.BLACK);
     }
 }

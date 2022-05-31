@@ -1,0 +1,13 @@
+{
+  "action_id": 2,
+  "schema": [
+    {
+      "action_key": "assistant",
+      "question": "Select the assistantCard",
+      "cli_hint": " (type the number of the preferred assistantCard)",
+      "gui_hint": " (click on the preferred assistantCard)",
+      "optional": false,
+      "validation": "assistant_card"
+    }
+  ]
+}

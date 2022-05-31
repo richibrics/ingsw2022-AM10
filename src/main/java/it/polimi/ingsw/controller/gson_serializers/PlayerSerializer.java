@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.gson_serializers;
 
 import com.google.gson.*;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
 import it.polimi.ingsw.model.exceptions.WizardNotSetException;
 import it.polimi.ingsw.model.game_components.AssistantCard;
 
@@ -34,6 +35,11 @@ public class PlayerSerializer implements JsonSerializer<Player> {
             jsonObject.add("assistantCards", jsonArray);
         } catch (WizardNotSetException e) {
             jsonObject.add("assistantCards", gson.toJsonTree(new ArrayList<>()));
+        }
+        try {
+            jsonObject.add("lastPlayedAssistantCard", gson.toJsonTree(player.getActiveAssistantCard()));
+        } catch (AssistantCardNotSetException e) {
+
         }
         return jsonObject;
     }

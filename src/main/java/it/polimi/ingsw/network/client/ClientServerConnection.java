@@ -7,6 +7,7 @@ import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
 import it.polimi.ingsw.network.exceptions.UserNotSet;
 import it.polimi.ingsw.network.messages.Message;
+import it.polimi.ingsw.view.ViewInterface;
 import it.polimi.ingsw.view.game_objects.*;
 
 import java.io.BufferedReader;
@@ -15,35 +16,60 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ClientServerConnection implements Runnable {
 
     private final Socket socket;
     private final BufferedReader bufferIn;
     private final PrintWriter bufferOut;
-    private final User user;
+    private final Object syncObject1; // For continue receiving
+    private final Object syncObject2; // For action message
+    private final Object syncObject3; // For timer
+    private final Object syncObject4; // For game not started
+    private final Object syncObject5; // for user
+    private final ViewInterface view;
+    private final ExecutorService executor;
+    private User user;
     private boolean continueReceiving;
+    private boolean gameNotStarted;
     private boolean teamsFlag;
+    private boolean flagActionMessageIsReady;
+    private boolean flagTableReady;
+    private boolean flagTeamsReady;
     private ClientRound lastClientRound;
+    private ClientTable clientTable;
+    private ClientTeams clientTeams;
     private int playerId;
     private int timer;
-    private final Object syncObject1;
-    private final Object syncObject2;
-    private final Object syncObject3;
+    private Future future;
 
-    public ClientServerConnection(Socket socket) throws IOException {
+    public ClientServerConnection(Socket socket, ViewInterface view) throws IOException {
         this.socket = socket;
         this.socket.setSoTimeout(NetworkConstants.SOCKET_SO_TIMEOUT_IN_MILLISECONDS);
         this.bufferIn = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         this.bufferOut = new PrintWriter(socket.getOutputStream(), true);
+        this.view = view;
         this.user = null;
         this.continueReceiving = true;
+        this.gameNotStarted = true;
         this.playerId = -1;
         this.teamsFlag = false;
+        this.flagActionMessageIsReady = false;
+        this.flagTableReady = false;
+        this.flagTeamsReady = false;
+        this.lastClientRound = null;
+        this.clientTable = null;
+        this.clientTeams = null;
         this.timer = NetworkConstants.INITIAL_STILL_ALIVE_TIMER_VALUE;
         this.syncObject1 = new Object();
         this.syncObject2 = new Object();
         this.syncObject3 = new Object();
+        this.syncObject4 = new Object();
+        this.syncObject5 = new Object();
+        this.executor = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -55,10 +81,13 @@ public class ClientServerConnection implements Runnable {
     public void run() {
         // Wait for the handshake message.
         this.waitForHandshake();
-        // Send the handshake back to the server. Initial phase completed.
-        this.sendHandshake();
-        // Send the user to the server.
-        this.sendUser();
+        if (this.getContinueReceiving()) {
+            // Send the handshake back to the server. Initial phase completed.
+            this.sendHandshake();
+            // Send the user to the server.
+            this.sendUser();
+        }
+
         // Get messages sent by the server.
         while (this.getContinueReceiving())
             this.receiveMessage();
@@ -68,7 +97,7 @@ public class ClientServerConnection implements Runnable {
             this.closeConnection();
         } catch (IOException e) {
             System.err.println("Unable to close the connection with server");
-            return;
+            System.exit(1);
         }
     }
 
@@ -87,13 +116,14 @@ public class ClientServerConnection implements Runnable {
                 line = this.bufferIn.readLine();
                 // Serialize to check type in while
                 message = Serializer.fromStringToMessage(line);
+                // If a still alive message is received, the timer is
+                if (message.getType().equals(MessageTypes.STILL_ALIVE))
+                    this.resetTimer();
             } catch (SocketTimeoutException e) {
             } catch (IOException e) {
                 this.setContinueReceiving(false);
             } catch (WrongMessageContentException e) {
-                // The message sent had a bad format. Ask for handshake.
-                this.sendMessage(new Message(MessageTypes.ERROR, "Bad message received when waiting for handshake. Please send handshake."));
-                message = new Message(MessageTypes.DEFAULT, "");
+                this.askToCloseConnection();
             }
     }
 
@@ -112,9 +142,20 @@ public class ClientServerConnection implements Runnable {
      */
 
     private void sendUser() {
-        // TODO Ask username and preference to client via CLI or GUI. The following line is temporary.
-        // Serialize user and send it to the server
-        this.sendMessage(Serializer.fromUserToMessage(this.user));
+        synchronized (this.syncObject5) {
+            // Ask client for user
+            runWithExecutor(this.view::askForUser);
+            // Wait for user. In the meanwhile check if a still alive has arrived. If so, reset the timer
+            while (!this.view.userReady() && this.getContinueReceiving()) {
+                this.receiveMessage();
+            }
+            // If everything has gone well get the user and send it to the server
+            if (this.getContinueReceiving()) {
+                this.user = this.view.getUser();
+                // Serialize user and send it to the server
+                this.sendMessage(Serializer.fromUserToMessage(this.user));
+            }
+        }
     }
 
     /**
@@ -124,7 +165,7 @@ public class ClientServerConnection implements Runnable {
      */
 
     private void receiveMessage() {
-        String line = null;
+        String line;
         try {
             // Try to read a line from the buffer
             line = this.bufferIn.readLine();
@@ -135,7 +176,7 @@ public class ClientServerConnection implements Runnable {
         } catch (SocketTimeoutException e) {
             return;
         } catch (IOException e) {
-            this.setContinueReceiving(false);
+            this.askToCloseConnection();
             return;
         } catch (InterruptedException e) {
             return;
@@ -181,53 +222,87 @@ public class ClientServerConnection implements Runnable {
             Message message = Serializer.fromStringToMessage(string);
             switch (message.getType()) {
                 case TABLE -> {
-                    ClientTable clientTable = Serializer.fromMessageToClientTable(message);
-                    // TODO
-                    // Display content
+                    // Cancel Thread execution
+                    if (future != null) {
+                        this.future.cancel(true);
+                    }
+                    // Get ClientTable object
+                    this.clientTable = Serializer.fromMessageToClientTable(message);
+                    this.flagTableReady = true;
+
+                    // Display the state of the game if the teams message has already been received
+                    if (this.flagTableReady && this.flagTeamsReady) {
+                        this.view.displayStateOfGame(this.clientTable, this.clientTeams, this.playerId);
+                        this.flagTableReady = false;
+                        this.flagTeamsReady = false;
+                    }
+
+                    // Check flag gameStarted. If it is true, set it to false
+                    if (this.getGameNotStarted())
+                        this.setGameNotStarted(false);
                 }
                 case TEAMS -> {
-                    ClientTeams clientTeams = Serializer.fromMessageToClientTeams(message);
+                    if (future != null) {
+                        this.future.cancel(true);
+                    }
+
+                    this.clientTeams = Serializer.fromMessageToClientTeams(message);
+                    this.flagTeamsReady = true;
+                    // Save the player id of the client
                     if (!this.teamsFlag) {
-                        this.storePlayerId(clientTeams);
+                        this.storePlayerId(this.clientTeams);
                         this.teamsFlag = true;
                     }
-                    // TODO
-                    // Display content
+                    // Display the state of the game if the table message has already been received
+                    if (this.flagTableReady && this.flagTeamsReady) {
+                        this.view.displayStateOfGame(this.clientTable, this.clientTeams, this.playerId);
+                        this.flagTableReady = false;
+                        this.flagTeamsReady = false;
+                    }
+
+                    // Check flag gameStarted. If it is true, set it to false
+                    if (this.getGameNotStarted())
+                        this.setGameNotStarted(false);
                 }
                 case ROUND -> {
                     this.lastClientRound = Serializer.fromMessageToClientRound(message);
-                    if (this.playerId == -1)
-                        this.askToCloseConnection();
-                    else if (this.lastClientRound.getCurrentPlayer() == this.playerId) {
-                        // TODO
-                        // ask the client for an action
-                    }
+                    this.askAndSendAction();
                 }
                 case LOBBY -> {
                     ClientLobby clientLobby = Serializer.fromMessageToClientLobby(message);
-                    // TODO
-                    // Display content
+                    this.view.displayLobby(clientLobby);
+                    this.runWithExecutor(this.view::askToChangePreference);
                 }
                 case STILL_ALIVE -> {
                     this.resetTimer();
                 }
                 case END_GAME -> {
-                    // TODO
-                    // Display content
+                    this.view.displayWinners(message.getPayload());
                     this.askToCloseConnection();
                 }
                 case ERROR -> {
-                    // TODO
-                    // display the content of error message and ask the client for a new action
+                    this.view.showError(message.getPayload());
+                    if (this.getGameNotStarted()) {
+                        // User error
+                        this.view.setUserReady(false);
+                        this.sendUser();
+                    } else {
+                        this.askAndSendAction();
+                    }
                 }
                 default -> {
                 }
             }
-        } catch (
-                WrongMessageContentException e) {
+        } catch (WrongMessageContentException e) {
             this.sendMessage(new Message(MessageTypes.ERROR, e.getMessage()));
         }
 
+    }
+
+    private void runWithExecutor(Runnable task) {
+        if (this.future != null)
+            this.future.cancel(true);
+        this.future = this.executor.submit(task);
     }
 
     /**
@@ -237,11 +312,11 @@ public class ClientServerConnection implements Runnable {
      * @throws UserNotSet if the user has not been created yet
      */
 
-    public void changePreference(int newPreference) throws UserNotSet {
-        if (this.user == null)
-            throw new UserNotSet("User has not been set yet...");
-        this.user.changePreference(newPreference);
-        this.sendMessage(Serializer.fromUserToMessage(this.user));
+    public void changePreference(int newPreference) {
+        synchronized (this.syncObject5) {
+            this.user.changePreference(newPreference);
+            this.sendMessage(Serializer.fromUserToMessage(this.user));
+        }
     }
 
     /**
@@ -252,13 +327,16 @@ public class ClientServerConnection implements Runnable {
      */
 
     private void storePlayerId(ClientTeams clientTeams) {
-        for (ClientTeam clientTeam : clientTeams.getTeams())
-            for (ClientPlayer clientPlayer : clientTeam.getPlayers())
-                if (clientPlayer.getUsername().equals(this.user.getId())) {
-                    this.playerId = clientPlayer.getPlayerId();
-                    return;
-                }
+        synchronized (this.syncObject5) {
+            for (ClientTeam clientTeam : clientTeams.getTeams())
+                for (ClientPlayer clientPlayer : clientTeam.getPlayers())
+                    if (clientPlayer.getUsername().equals(this.user.getId())) {
+                        this.playerId = clientPlayer.getPlayerId();
+                        return;
+                    }
+        }
     }
+
 
     /**
      * Sets to false the flag that controls the while that checks if a new message has been received by the client.
@@ -278,6 +356,7 @@ public class ClientServerConnection implements Runnable {
         this.bufferOut.close();
         this.bufferIn.close();
         this.socket.close();
+        System.exit(0);
     }
 
     /**
@@ -333,6 +412,49 @@ public class ClientServerConnection implements Runnable {
     private void resetTimer() {
         synchronized (this.syncObject3) {
             this.timer = NetworkConstants.INITIAL_STILL_ALIVE_TIMER_VALUE;
+        }
+    }
+
+    private boolean getGameNotStarted() {
+        synchronized (syncObject4) {
+            return this.gameNotStarted;
+        }
+    }
+
+    private void setGameNotStarted(boolean gameNotStarted) {
+        synchronized (syncObject4) {
+            this.gameNotStarted = gameNotStarted;
+        }
+    }
+
+    private boolean getFlagActionMessageIsReady() {
+        synchronized (syncObject2) {
+            return this.flagActionMessageIsReady;
+        }
+    }
+
+    private void askAndSendAction() {
+        if (this.playerId == -1)
+            this.askToCloseConnection();
+        else if (this.lastClientRound.getCurrentPlayer() == this.playerId) {
+            this.view.displayActions(this.lastClientRound.getPossibleActions());
+            this.runWithExecutor(() -> this.view.showMenu(this.clientTable, clientTeams, this.playerId, this.lastClientRound.getPossibleActions()));
+            while (!this.getFlagActionMessageIsReady() && this.getContinueReceiving()) {
+                this.receiveMessage();
+            }
+            // Send action message to the server
+            if (this.getContinueReceiving())
+                this.sendMessage(Serializer.fromActionMessageToMessage(this.view.getActionMessage()));
+        }
+
+        // Check flag gameStarted. If it is true, set it to false
+        if (this.getGameNotStarted())
+            this.setGameNotStarted(false);
+    }
+
+    public void setFlagActionMessageIsReady(boolean newValue) {
+        synchronized (syncObject2) {
+            this.flagActionMessageIsReady = newValue;
         }
     }
 }

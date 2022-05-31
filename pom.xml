@@ -30,6 +30,16 @@
             <version>2.9.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>18-ea+6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>18-ea+6</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -80,7 +90,6 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.0.0</version>
                 </plugin>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
@@ -89,6 +98,26 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <!-- Default configuration for running with: mvn clean javafx:run -->
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>com.example.ex_01/com.example.ex_01.HelloApplication</mainClass>
+                            <launcher>app</launcher>
+                            <jlinkZipName>app</jlinkZipName>
+                            <jlinkImageName>app</jlinkImageName>
+                            <noManPages>true</noManPages>
+                            <stripDebug>true</stripDebug>
+                            <noHeaderFiles>true</noHeaderFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -119,7 +148,6 @@
                 <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <id>server-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
@@ -129,32 +157,10 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>
-                                        it.polimi.ingsw.network.server.ServerMain
+                                        it.polimi.ingsw.Launcher
                                     </mainClass>
                                 </transformer>
                             </transformers>
-                            <finalName>AM10-server</finalName>
-                            <createDependencyReducedPom>
-                                false
-                            </createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>client-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>
-                                        it.polimi.ingsw.network.client.ClientMain
-                                    </mainClass>
-                                </transformer>
-                            </transformers>
-                            <finalName>AM10-client</finalName>
                             <createDependencyReducedPom>
                                 false
                             </createDependencyReducedPom>

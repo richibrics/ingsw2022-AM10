@@ -24,16 +24,24 @@ public class ServerStillAliveChecker implements Runnable {
 
     @Override
     public void run() {
-
         while (this.continueRunning) {
             synchronized (this.listOfServerClientConnections) {
-                for (ServerClientConnection serverClientConnection : this.listOfServerClientConnections) {
-                    if (serverClientConnection.getTimer() <= 0)
-                        serverClientConnection.askToCloseConnection();
-                    else {
-                        serverClientConnection.decrementTimer();
-                        serverClientConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, ""));
+                for (int j = 0; j < this.listOfServerClientConnections.size(); j++) {
+                    ServerClientConnection serverClientConnection = this.listOfServerClientConnections.get(j);
+                    if (!serverClientConnection.getContinueReceiving()) {
+                        // If connection with client ended, remove it from the StillAliveChecker clients list
+                        this.listOfServerClientConnections.remove(j);
+                        j--;
+                    } else {
+                        // Else do the timer calculations
+                        if (serverClientConnection.getTimer() <= 0) {
+                            serverClientConnection.askToCloseConnection();
+                        } else {
+                            serverClientConnection.decrementTimer();
+                            serverClientConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, ""));
+                        }
                     }
+
                 }
             }
             try {

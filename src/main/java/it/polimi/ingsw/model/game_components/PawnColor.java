@@ -13,40 +13,61 @@ public enum PawnColor {
 
     final private int id;
 
-    PawnColor(int id)
-    {
+    PawnColor(int id) {
         this.id = id;
     }
 
     /**
      * Returns the id of the Color value in the enumeration
      *
-     * @return      Color id
+     * @return Color id
      */
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
     /**
      * Checks if the id of the object equals the id of color.
+     *
      * @param color instance of PawnColor. this is compared to color
      * @return true if the ids are equal, false otherwise
      */
 
-    public boolean equals(PawnColor color) { return this.getId() == color.getId(); }
+    public boolean equals(PawnColor color) {
+        return this.getId() == color.getId();
+    }
 
     /**
      * Gets a string and converts it to a PawnColor.
-     * @param color the name of the color
+     *
+     * @param color the name of the color or the first letter
      * @return the color corresponding to {@code color}
      * @throws WrongMessageContentException if {@code color} is invalid
      */
 
-    public static PawnColor convertStringToPawnColor (String color) throws  WrongMessageContentException {
+    public static PawnColor convertStringToPawnColor(String color) throws WrongMessageContentException {
 
         PawnColor returnColor = null;
+
+        if (color.length() == 1) // From first letter
+            switch (color.substring(0,1).toUpperCase(Locale.ROOT)) {
+                case "Y":
+                    returnColor = PawnColor.YELLOW;
+                    break;
+                case "B":
+                    returnColor = PawnColor.BLUE;
+                    break;
+                case "G":
+                    returnColor = PawnColor.GREEN;
+                    break;
+                case "R":
+                    returnColor = PawnColor.RED;
+                    break;
+                case "P":
+                    returnColor = PawnColor.PINK;
+                    break;
+            }
 
         switch (color.toUpperCase(Locale.ROOT)) {
             case "YELLOW":
@@ -64,12 +85,12 @@ public enum PawnColor {
             case "PINK":
                 returnColor = PawnColor.PINK;
                 break;
-            }
+        }
 
-            if (returnColor == null)
-                throw new WrongMessageContentException("Error while converting the color");
+        if (returnColor == null)
+            throw new WrongMessageContentException("Error while converting the color");
 
-            else
-                return returnColor;
+        else
+            return returnColor;
     }
 }

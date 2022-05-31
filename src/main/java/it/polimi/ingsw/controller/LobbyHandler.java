@@ -4,10 +4,15 @@ import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
 import it.polimi.ingsw.controller.exceptions.UserNotFoundException;
 import it.polimi.ingsw.controller.observers.LobbyObserver;
 import it.polimi.ingsw.controller.observers.Observer;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Team;
+import it.polimi.ingsw.model.managers.CommonManager;
+import it.polimi.ingsw.network.MessageTypes;
+import it.polimi.ingsw.network.NetworkConstants;
+import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LobbyHandler {
 
@@ -15,13 +20,18 @@ public class LobbyHandler {
     private static LobbyHandler lobbyHandler;
     private Observer lobbyObserver;
 
+    // TODO: remove completed games from this
+    private List<GameController> activeGames;
+
     private LobbyHandler() {
         this.clientsWaiting = new HashMap<>();
         this.lobbyObserver = new LobbyObserver(this.clientsWaiting);
+        this.activeGames = new ArrayList<>();
     }
 
     /**
      * Returns the instance of the LobbyHandler.
+     *
      * @return the instance of LobbyHandler
      */
 
@@ -34,7 +44,8 @@ public class LobbyHandler {
     /**
      * Adds a user to the list of clients waiting for a game to start. After the addition of the user this method starts
      * a game if the number of users with same preference equals the preference.
-     * @param user the user to add
+     *
+     * @param user                   the user to add
      * @param serverClientConnection the server-client connection associated with the user
      * @throws IllegalArgumentException if the preference of the user is invalid
      * @throws InterruptedGameException if an error was encountered during match creation.
@@ -89,10 +100,11 @@ public class LobbyHandler {
 
     /**
      * Changes the preference of the user with username {@code userId}.
-     * @param userId the username of the user
+     *
+     * @param userId        the username of the user
      * @param newPreference the new preference
      * @throws IllegalArgumentException if the preference is invalid
-     * @throws UserNotFoundException if the user with username {@code userId} could not be found
+     * @throws UserNotFoundException    if the user with username {@code userId} could not be found
      * @see User
      */
 
@@ -117,6 +129,7 @@ public class LobbyHandler {
 
     /**
      * Gets the user with {@code userId}.
+     *
      * @param userId the username of the user
      * @return the user with username {@code userId}
      * @throws UserNotFoundException if the user could not be found
@@ -125,7 +138,7 @@ public class LobbyHandler {
 
     private User getUserById(String userId) throws UserNotFoundException {
         User userToReturn = null;
-        for (User user : this.clientsWaiting.values().stream().flatMap(map->map.keySet().stream()).toList())
+        for (User user : this.clientsWaiting.values().stream().flatMap(map -> map.keySet().stream()).toList())
             if (user.getId().equals(userId))
                 userToReturn = user;
         if (userToReturn == null)
@@ -136,6 +149,9 @@ public class LobbyHandler {
     /**
      * Generates the game when the number of users with same preference equals the preference. This method is called by
      * addUser.
+     * The generated game then is added to the active games list, which is used to check
+     * if a User's name is already in use.
+     *
      * @param preference the number of players participating in the game
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
@@ -148,25 +164,38 @@ public class LobbyHandler {
         for (ServerClientConnection serverClientConnection : map.values())
             serverClientConnection.setGameController(gameController);
 
+        this.activeGames.add(gameController);
         gameController.startGame();
     }
 
     /**
      * Checks if a username is used by a user.
+     *
      * @param userId the username
      * @return true if the username is used by a user, false otherwise
      * @see User
      */
 
     public boolean checkIfUsernameIsUsed(String userId) {
-        for (User user : this.clientsWaiting.values().stream().flatMap(map->map.keySet().stream()).toList())
+        // Search in lobby
+        for (User user : this.clientsWaiting.values().stream().flatMap(map -> map.keySet().stream()).toList())
             if (user.getId().equals(userId))
                 return true;
+        // Search in active games
+        for (GameController gameController: this.activeGames) {
+            for (Team team: gameController.getGameEngine().getTeams()) {
+                for (Player player: team.getPlayers()) {
+                    if (player.getUsername().equals(userId))
+                            return true;
+                }
+            }
+        }
         return false;
     }
 
     /**
      * Gets a copy of the map with the clients waiting for a game to start.
+     *
      * @return the map with the clients waiting
      */
 
@@ -174,11 +203,79 @@ public class LobbyHandler {
         return new HashMap<>(this.clientsWaiting);
     }
 
-     /**
-      * Clears the map. Method used by tests in TestSerializer.
-      */
-      public void emptyMap() {
+    /**
+     * Clears the map. Method used by tests in TestSerializer.
+     */
+    public void emptyMap() {
         for (Map<User, ServerClientConnection> map : this.clientsWaiting.values())
             map.clear();
     }
+
+    /**
+     * Removes the active game from the activeGames list (if present: this could be called for an error during game
+     * start when I don't have the game in the list yet), because it ended.
+     * The interruptGame in GameController calls this.
+     *
+     * @param gameController the game controller of the match
+     */
+    public void removeActiveGame(GameController gameController) {
+        activeGames.remove(gameController);
+    }
+
+    /**
+     * Removes the active game from the activeGames list, because it ended.
+     * Will be called by the CheckEndMatchCondition when the match ends (that action can only pass a username, doesn't know
+     * what a GameController is, so this method is necessary).
+     *
+     * @param username the username of a player in that game.
+     * @throws NoSuchElementException if the username could not be found in any active game
+     */
+
+    public void removeActiveGameAndCommunicateWinners(String username, Integer[] winners) throws NoSuchElementException {
+        GameController gameController = null;
+        for (int i = 0; i < this.activeGames.size(); i++) {
+            for (Team team : this.activeGames.get(i).getGameEngine().getTeams()) {
+                for (Player player : team.getPlayers()) {
+                    if (player.getUsername().equals(username))
+                        gameController = this.activeGames.get(i);
+                }
+            }
+        }
+        if (gameController == null)
+            throw new NoSuchElementException("The requested Game could not be found");
+
+        // Communicate winners
+        for (Map.Entry<User, ServerClientConnection> entry : gameController.getServerClientConnections().entrySet()) {
+            GameController finalGameController = gameController;
+            if (Arrays.stream(winners).filter(id -> id == CommonManager.getTeamIdByUsername(finalGameController.getGameEngine(), username)).count() == 1) {
+                entry.getValue().sendMessage(new Message(MessageTypes.END_GAME, NetworkConstants.MESSAGE_FOR_WINNERS));
+            }
+            else
+                entry.getValue().sendMessage(new Message(MessageTypes.END_GAME, NetworkConstants.MESSAGE_FOR_LOSERS));
+        }
+
+        // Remove the game controller
+        activeGames.remove(gameController);
+    }
+
+    /**
+     * Removes the user and his ServerClientConnection from the users in lobby.
+     * Clients in lobby are notified for this lobby edit.
+     *
+     * @param user the user that has to be removed
+     * @throws NoSuchElementException if the User could not be found in waiting users
+     * @see User
+     */
+    public void removeDisconnectedUser(User user) throws NoSuchElementException {
+        for (Map<User, ServerClientConnection> lobby : this.clientsWaiting.values()) {
+            if (lobby.containsKey(user)) {
+                lobby.remove(user);
+                lobbyObserver.notifyClients();
+                return;
+            }
+        }
+        throw new NoSuchElementException("The requested User could not be found in the lobby");
+    }
+
+
 }
