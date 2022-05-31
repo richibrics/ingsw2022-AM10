@@ -16,4 +16,6 @@ public class CliConstants {
     public static String ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID_DESCRIPTION = "Selection of cloud tile. The students on the cloud are then moved to your entrance.";
     public static String TERMINATE_ACTION_INPUT_OPTIONAL_STRING = "N";
     public static String CANCEL_ACTION_INPUT_STRING = "cancel";
+    public static String DINING_ROOM_CAPITAL_D = "D";
+    public static String DINING_ROOM_LOWER_CASE_D = "d";
 }

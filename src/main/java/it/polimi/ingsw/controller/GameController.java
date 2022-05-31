@@ -75,7 +75,6 @@ public class GameController {
      * @return the success value, useful to avoid warning the client of a success if I had an error
      */
     public void resumeGame(int playerId, ActionMessage actionMessage) throws InterruptedGameException, IllegalGameActionException, WrongMessageContentException {
-        // TODO Error management
         // Player with turn check
         try {
             if (playerId != gameEngine.getRound().getCurrentPlayer())
@@ -163,7 +162,6 @@ public class GameController {
                 serverClientConnection.askToCloseConnection();
             }
         }
-        // TODO Destroy game
         this.gameObserver = null;
         this.gameEngine = null;
 

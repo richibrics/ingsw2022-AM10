@@ -105,7 +105,6 @@ public class ServerClientConnection implements Runnable {
         String line = null;
         try {
             line = this.bufferIn.readLine();
-            // PS: if I'm here and line is null, should be because client closed the connection TODO Check and test
         } catch (SocketTimeoutException e) {
             // No message received
             line = null;

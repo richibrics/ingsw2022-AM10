@@ -9,7 +9,6 @@ import java.util.Map;
 public class ActionManager extends Manager {
 
     private Action[] actions = new Action[ModelConstants.NUMBER_OF_STANDARD_ACTIONS];
-    //TODO observers
 
     public ActionManager(GameEngine gameEngine) {
         super(gameEngine);
@@ -105,14 +104,5 @@ public class ActionManager extends Manager {
         actions[actionId].act();
         if (runModifyRoundAndActionList)
             actions[actionId].modifyRoundAndActionList();
-    }
-
-    /**
-     * Notifies all the observers attached to the ActionManager.
-     */
-
-    //TODO
-    public void notifyAllObservers() {
-
     }
 }

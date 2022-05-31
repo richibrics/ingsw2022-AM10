@@ -116,15 +116,6 @@ public class AssistantManager extends Manager {
         CommonManager.takePlayerById(this.getGameEngine(), playerId).setLastPlayedAssistantCard(CommonManager.takePlayerById(this.getGameEngine(), playerId).popActiveAssistantCard());
     }
 
-    /*
-    TODO
-    Needs round to verify first player that chooses the assistant card (important in case two players can't play different assistant cards)
-    public ArrayList<Integer> getPlayersPlayOrder () throws AssistantCardNotSetException {
-
-    }
-    */
-
-
     /**
      * Takes the id of the assistant card and retrieves the card value (useful to check if the card is selectable)
      * @param assistantCardId the id of the assistant card

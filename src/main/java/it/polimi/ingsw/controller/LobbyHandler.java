@@ -20,7 +20,6 @@ public class LobbyHandler {
     private static LobbyHandler lobbyHandler;
     private Observer lobbyObserver;
 
-    // TODO: remove completed games from this
     private List<GameController> activeGames;
 
     private LobbyHandler() {
@@ -247,7 +246,7 @@ public class LobbyHandler {
         // Communicate winners
         for (Map.Entry<User, ServerClientConnection> entry : gameController.getServerClientConnections().entrySet()) {
             GameController finalGameController = gameController;
-            if (Arrays.stream(winners).filter(id -> id == CommonManager.getTeamIdByUsername(finalGameController.getGameEngine(), username)).count() == 1) {
+            if (Arrays.stream(winners).filter(id -> id == CommonManager.getTeamIdByUsername(finalGameController.getGameEngine(), entry.getKey().getId())).count() == 1) {
                 entry.getValue().sendMessage(new Message(MessageTypes.END_GAME, NetworkConstants.MESSAGE_FOR_WINNERS));
             }
             else
@@ -276,6 +275,4 @@ public class LobbyHandler {
         }
         throw new NoSuchElementException("The requested User could not be found in the lobby");
     }
-
-
 }
