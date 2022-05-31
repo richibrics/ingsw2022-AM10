@@ -177,7 +177,7 @@ public class CommonManager {
         for (Team team : gameEngine.getTeams())
             for (Player player : team.getPlayers())
                 if (player.getUsername().equals(username))
-                    teamId = -1;
+                    teamId = team.getId();
 
         if (teamId == -1)
             throw new NoSuchElementException("The team could not be found");

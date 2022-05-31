@@ -136,4 +136,10 @@ class TestCommonManager {
         assertEquals(1, assertDoesNotThrow(()->CommonManager.takePlayerIdByUserId(gameEngine, gameEngine.getTeams().get(0).getPlayers().get(0).getUsername())));
         assertThrows(NoSuchElementException.class, ()->CommonManager.takePlayerIdByUserId(gameEngine,"ciao"));
     }
+
+    @Test
+    void getTeamIdByUsername() {
+        assertEquals(1, CommonManager.getTeamIdByUsername(gameEngine, "1"));
+        assertEquals(2, CommonManager.getTeamIdByUsername(gameEngine, "2"));
+    }
 }
