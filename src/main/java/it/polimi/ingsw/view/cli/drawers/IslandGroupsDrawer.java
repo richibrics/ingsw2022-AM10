@@ -28,7 +28,7 @@ public class IslandGroupsDrawer {
         int length = 2 * (DrawersConstant.ISLAND_TILE_LENGTH + (DrawersConstant.MAX_DIM_OF_ISLAND_GROUP - 1) * (DrawersConstant.ISLAND_TILE_LENGTH - DrawersConstant.ISLAND_GROUP_LENGTH_OFFSET)) + 1;
         String[][] template = new String[height][length];
         // Remove nulls from the template
-        UtilityFunctions.removeNullAndAddTwoSpaces(template);
+        CliDrawersUtilityFunctions.removeNullAndAddTwoSpaces(template);
         // Fill the template
         fillTemplate(template, islandGroups, clientMotherNature);
         return resizeTemplateAndCopyIslands(template);

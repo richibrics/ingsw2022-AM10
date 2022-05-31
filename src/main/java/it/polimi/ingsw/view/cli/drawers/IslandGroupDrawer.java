@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.view.cli.exceptions.IllegalStudentIdException;
 import it.polimi.ingsw.view.game_objects.ClientIslandTile;
 import it.polimi.ingsw.view.game_objects.ClientMotherNature;
-import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -54,7 +53,7 @@ public class IslandGroupDrawer {
             }
         }
         // Remove null from matrix
-        UtilityFunctions.
+        CliDrawersUtilityFunctions.
                 removeNullAndAddSingleSpace(template);
         return template;
     }
@@ -129,7 +128,7 @@ public class IslandGroupDrawer {
         for (Integer studentId : clientIslandTile.getStudents()) {
             indexOfRandomCoordinate = random.nextInt(arrayOfCoordinates.size());
             randomCoordinates = arrayOfCoordinates.remove(indexOfRandomCoordinate);
-            template[randomCoordinates[0]][randomCoordinates[1]] = UtilityFunctions.getRepresentationOfStudentDisc(studentId);
+            template[randomCoordinates[0]][randomCoordinates[1]] = CliDrawersUtilityFunctions.getRepresentationOfStudentDisc(studentId);
         }
 
         // Add tower to island tile
@@ -137,7 +136,7 @@ public class IslandGroupDrawer {
             if (clientIslandTile.getTower() != null) {
                 indexOfRandomCoordinate = random.nextInt(arrayOfCoordinates.size());
                 randomCoordinates = arrayOfCoordinates.remove(indexOfRandomCoordinate);
-                template[randomCoordinates[0]][randomCoordinates[1]] = UtilityFunctions.getRepresentationOfTower(clientIslandTile.getTower());
+                template[randomCoordinates[0]][randomCoordinates[1]] = CliDrawersUtilityFunctions.getRepresentationOfTower(clientIslandTile.getTower());
             }
         } catch (TowerNotSetException e) { /* No tower on the island */ }
 

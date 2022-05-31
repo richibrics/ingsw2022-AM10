@@ -30,7 +30,7 @@ public class CloudTilesDrawer {
             currentLength += DrawersConstant.CLOUD_TILE_LENGTH + DrawersConstant.SPACE_BETWEEN_CLOUD_TILES;
         }
 
-        UtilityFunctions.removeNullAndAddSingleSpace(template);
+        CliDrawersUtilityFunctions.removeNullAndAddSingleSpace(template);
         return template;
     }
 
@@ -117,14 +117,14 @@ public class CloudTilesDrawer {
 
         for (ClientCloudTile clientCloudTile : cloudTiles) {
             // Empty cloud tile
-            UtilityFunctions.emptySectionWithPawnsOrTowers(template,  currentLength, height, DrawersConstant.VERTICAL_LINE_LENGTH_CLOUD,
+            CliDrawersUtilityFunctions.emptySectionWithPawnsOrTowers(template,  currentLength, height, DrawersConstant.VERTICAL_LINE_LENGTH_CLOUD,
                     (DrawersConstant.SPACE_BETWEEN_PLUS_HORIZONTAL_LINE + 1) * DrawersConstant.HORIZONTAL_LINE_LENGTH_CLOUD, 0);
 
             arrayOfCoordinates = generateSetOfCoordinates(height, currentLength);
             for (int student : clientCloudTile.getStudents()) {
                 index = random.nextInt(arrayOfCoordinates.size());
                 coordinates = arrayOfCoordinates.remove(index);
-                template[coordinates[0]][coordinates[1]] = UtilityFunctions.getRepresentationOfStudentDisc(student);
+                template[coordinates[0]][coordinates[1]] = CliDrawersUtilityFunctions.getRepresentationOfStudentDisc(student);
             }
             currentLength += (DrawersConstant.SPACE_BETWEEN_PLUS_HORIZONTAL_LINE + 1)   * (DrawersConstant.HORIZONTAL_LINE_LENGTH_CLOUD - 1) + 2 * DrawersConstant.SPACE_BETWEEN_LAST_PLUS_OBLIQUE_AND_FIRST_PLUS_HORIZONTAL +
                     2 * DrawersConstant.DISTANCE_BETWEEN_POINTS_OBLIQUE_LINE * DrawersConstant.OBLIQUE_LINE_LENGTH_CLOUD + DrawersConstant.SPACE_BETWEEN_CLOUD_TILES + 1;

@@ -52,7 +52,7 @@ public class CharacterCardDrawer {
 
             // Write name of character card
             int lengthOffset = 3;
-            char[] chars = UtilityFunctions.idToNameConverter(clientCharacterCard.getId()).toCharArray();
+            char[] chars = CliDrawersUtilityFunctions.idToNameConverter(clientCharacterCard.getId()).toCharArray();
             for (char c : chars) {
                 template[currentHeight][currentLength + lengthOffset] = String.valueOf(c);
                 lengthOffset++;
@@ -60,7 +60,7 @@ public class CharacterCardDrawer {
             currentHeight++;
         }
 
-        UtilityFunctions.removeNullAndAddSingleSpace(template);
+        CliDrawersUtilityFunctions.removeNullAndAddSingleSpace(template);
         return template;
     }
 
@@ -137,7 +137,7 @@ public class CharacterCardDrawer {
             for (int student : clientCharacterCard.getStorage()) {
                 indexOfCoordinate = random.nextInt(arrayOfCoordinates.size());
                 coordinates = arrayOfCoordinates.remove(indexOfCoordinate);
-                template[coordinates[0]][coordinates[1]] = UtilityFunctions.getRepresentationOfStudentDisc(student);
+                template[coordinates[0]][coordinates[1]] = CliDrawersUtilityFunctions.getRepresentationOfStudentDisc(student);
             }
 
             currentLength += DrawersConstant.CHARACTER_CARD_LENGTH + DrawersConstant.SPACE_BETWEEN_CHARACTER_CARDS;

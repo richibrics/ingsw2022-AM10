@@ -80,9 +80,9 @@ public class ModelConstants {
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_THREE_PLAYERS_STUDENTS_NUMBER = 4;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_FOUR_PLAYERS_STUDENTS_NUMBER = 3;
 
-    public static int TWO_PLAYERS = 2;
-    public static int THREE_PLAYERS = 3;
-    public static int FOUR_PLAYERS = 4;
+    public static final int TWO_PLAYERS = 2;
+    public static final int THREE_PLAYERS = 3;
+    public static final int FOUR_PLAYERS = 4;
 
     public static int NO_PLAYER = -1;
 }

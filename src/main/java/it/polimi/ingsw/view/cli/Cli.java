@@ -82,7 +82,7 @@ public class Cli extends AbstractView {
 
             String[][] template = new String[height][length];
 
-            UtilityFunctions.removeNullAndAddSingleSpace(template);
+            CliDrawersUtilityFunctions.removeNullAndAddSingleSpace(template);
             // Insert all the elements into the template
             this.positionElementsInTemplate(template);
 

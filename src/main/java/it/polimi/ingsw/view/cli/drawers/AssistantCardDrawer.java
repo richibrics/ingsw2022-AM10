@@ -20,7 +20,7 @@ public class AssistantCardDrawer {
 
         // Determine dimension of template
         int height = clientTeams.getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getAssistantCards().size() *
-                (DrawersConstant.SPACE_BETWEEN_ASSISTANT_CARDS + 1) + DrawersConstant.SPACE_BETWEEN_LAST_CARD_OF_PLAYER_AND_ACTIVE_CARDS + 1;
+                (DrawersConstant.SPACE_BETWEEN_ASSISTANT_CARDS + 1) + DrawersConstant.SPACE_BETWEEN_LAST_CARD_OF_PLAYER_AND_ACTIVE_CARDS + 4;
 
         int numOfPlayersWithActiveAssistantCard = 0;
         for (ClientTeam clientTeam : clientTeams.getTeams())
@@ -34,7 +34,7 @@ public class AssistantCardDrawer {
                     (numOfPlayersWithActiveAssistantCard - 1) * DrawersConstant.SPACE_BETWEEN_ACTIVE_ASSISTANT_CARDS;
 
         String[][] template = new String[height][DrawersConstant.LENGTH_OF_ASSISTANT_CARD];
-        UtilityFunctions.removeNullAndAddSingleSpace(template);
+        CliDrawersUtilityFunctions.removeNullAndAddSingleSpace(template);
         fillTemplate(template, clientTeams, indexOfTeam, indexOfPlayer);
         return template;
     }
@@ -50,8 +50,10 @@ public class AssistantCardDrawer {
 
     private static void fillTemplate(String[][] template, ClientTeams clientTeams, int indexOfTeam, int indexOfPlayer) {
 
-        int heightOffset = 0;
+        int heightOffset = 1;
         int lengthOffset;
+        writeString(template, "Available assistant cards:".toCharArray(), heightOffset, 0);
+        heightOffset+=2;
         for (ClientAssistantCard clientAssistantCard : clientTeams.getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getAssistantCards()) {
             lengthOffset = 0;
 

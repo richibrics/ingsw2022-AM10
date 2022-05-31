@@ -10,7 +10,7 @@ import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 
 import static java.lang.Math.floor;
 
-public class UtilityFunctions {
+public class CliDrawersUtilityFunctions {
 
     /**
      * Converts the id of the character card to the name of the card.

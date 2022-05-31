@@ -26,7 +26,7 @@ public class SchoolBoardDrawer {
                     [DrawersConstant.SCHOOL_BOARD_LENGTH];
             schoolBoardTemplate(schoolBoards, 0, DrawersConstant.SPACE_FOR_USERNAMES);
             schoolBoardTemplate(schoolBoards, 0, 2 * DrawersConstant.SPACE_FOR_USERNAMES + DrawersConstant.SCHOOL_BOARD_HEIGHT + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_HEIGHT);
-            UtilityFunctions.removeNullAndAddSingleSpace(schoolBoards);
+            CliDrawersUtilityFunctions.removeNullAndAddSingleSpace(schoolBoards);
             return schoolBoards;
         }
 
@@ -46,7 +46,7 @@ public class SchoolBoardDrawer {
                 schoolBoardTemplate(schoolBoards, DrawersConstant.SCHOOL_BOARD_LENGTH + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_LENGTH,
                         2 * DrawersConstant.SPACE_FOR_USERNAMES + DrawersConstant.SCHOOL_BOARD_HEIGHT + DrawersConstant.SPACE_BETWEEN_SCHOOL_BOARDS_HEIGHT);
             }
-            UtilityFunctions.removeNullAndAddSingleSpace(schoolBoards);
+            CliDrawersUtilityFunctions.removeNullAndAddSingleSpace(schoolBoards);
             return schoolBoards;
         } else
             throw new WrongNumberOfPlayersException();
@@ -206,16 +206,16 @@ public class SchoolBoardDrawer {
         int j = startingIndexLength;
 
         // Empty entrance
-        UtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight, DrawersConstant.SCHOOL_BOARD_HEIGHT - 1, DrawersConstant.SPACE_BETWEEN_STUDENTS, 0);
+        CliDrawersUtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight, DrawersConstant.SCHOOL_BOARD_HEIGHT - 1, DrawersConstant.SPACE_BETWEEN_STUDENTS, 0);
 
         // Fill entrance
         for (int studentId : clientSchoolBoard.getEntrance()) {
             if (i == startingIndexHeight + DrawersConstant.SCHOOL_BOARD_HEIGHT - 1) {
                 j += DrawersConstant.SPACE_BETWEEN_STUDENTS;
-                template[startingIndexHeight][j] = UtilityFunctions.getRepresentationOfStudentDisc(studentId);
+                template[startingIndexHeight][j] = CliDrawersUtilityFunctions.getRepresentationOfStudentDisc(studentId);
                 i = startingIndexHeight + DrawersConstant.SPACE_BETWEEN_STUDENTS;
             } else {
-                template[i][j] = UtilityFunctions.getRepresentationOfStudentDisc(studentId);
+                template[i][j] = CliDrawersUtilityFunctions.getRepresentationOfStudentDisc(studentId);
                 i += DrawersConstant.SPACE_BETWEEN_STUDENTS;
             }
         }
@@ -238,7 +238,7 @@ public class SchoolBoardDrawer {
 
         for (ArrayList<Integer> lane : clientSchoolBoard.getDiningRoom()) {
             for (int id : lane) {
-                template[i][j] = UtilityFunctions.getRepresentationOfStudentDisc(id);
+                template[i][j] = CliDrawersUtilityFunctions.getRepresentationOfStudentDisc(id);
                 j += DrawersConstant.SPACE_BETWEEN_STUDENTS;
             }
             i += DrawersConstant.SPACE_BETWEEN_STUDENTS;
@@ -262,11 +262,11 @@ public class SchoolBoardDrawer {
         int j = startingIndexLength;
 
         // Empty professor pawns section
-        UtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight, DrawersConstant.SCHOOL_BOARD_HEIGHT - 1, DrawersConstant.SPACE_BETWEEN_PROFESSORS_IN_LENGTH, 2);
+        CliDrawersUtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight, DrawersConstant.SCHOOL_BOARD_HEIGHT - 1, DrawersConstant.SPACE_BETWEEN_PROFESSORS_IN_LENGTH, 2);
 
         for (ClientPawnColor professor : clientTeam.getProfessorPawns()) {
             i = startingIndexHeight + DrawersConstant.SPACE_BETWEEN_PROFESSORS_IN_HEIGHT * professor.getId();
-            template[i][j] = UtilityFunctions.getRepresentationOfProfessorPawn(professor.getId());
+            template[i][j] = CliDrawersUtilityFunctions.getRepresentationOfProfessorPawn(professor.getId());
         }
     }
 
@@ -286,10 +286,10 @@ public class SchoolBoardDrawer {
         int j = startingIndexLength;
 
         // Empty section with towers
-        UtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight,DrawersConstant.SCHOOL_BOARD_HEIGHT - 3 , DrawersConstant.SPACE_BETWEEN_TOWERS, 1);
+        CliDrawersUtilityFunctions.emptySectionWithPawnsOrTowers(template, startingIndexLength, startingIndexHeight,DrawersConstant.SCHOOL_BOARD_HEIGHT - 3 , DrawersConstant.SPACE_BETWEEN_TOWERS, 1);
 
         // Get representation of tower
-        String tower = UtilityFunctions.getRepresentationOfTower(clientTeam.getTowersColor());
+        String tower = CliDrawersUtilityFunctions.getRepresentationOfTower(clientTeam.getTowersColor());
 
         // Calculate ending height for towers
         int halfNumberOfTowers;

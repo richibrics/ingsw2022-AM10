@@ -4,7 +4,8 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.network.messages.ActionMessage;
-import it.polimi.ingsw.view.cli.drawers.UtilityFunctions;
+import it.polimi.ingsw.view.ViewUtilityFunctions;
+import it.polimi.ingsw.view.cli.drawers.CliDrawersUtilityFunctions;
 import it.polimi.ingsw.view.game_objects.*;
 import javafx.event.Event;
 
@@ -44,7 +45,7 @@ public class Command {
      *
      * @param input the string typed by the user in the CLI
      * @throws IllegalArgumentException if the input is not valid
-     * @throws RuntimeException if the client player can't be found in any team
+     * @throws RuntimeException         if the client player can't be found in any team
      */
     public void parseCLIString(String input) throws IllegalArgumentException, RuntimeException {
         String finalValue = "null";
@@ -83,12 +84,14 @@ public class Command {
             } catch (WrongMessageContentException e) {
                 throw new IllegalArgumentException("Unknown color inserted");
             }
+            // Get the id of the player's schoolboard through the player id
+            int indexOfPlayerSchoolboard = ViewUtilityFunctions.getPlayerSchoolboardIndex(this.playerId, clientTeams);
             // Now I have the color, get the id of the student using it. Here I do it from entrance of the User
-            ArrayList<Integer> entrance = this.clientTable.getSchoolBoards().get(this.playerId - 1).getEntrance();
+            ArrayList<Integer> entrance = this.clientTable.getSchoolBoards().get(indexOfPlayerSchoolboard).getEntrance();
             // Get last student from the table, if there's one
             int selectedStudent = -1;
             for (Integer student : entrance) {
-                if (UtilityFunctions.getStudentColorById(student).equals(color)) {
+                if (CliDrawersUtilityFunctions.getStudentColorById(student).equals(color)) {
                     selectedStudent = student;
                     break;
                 }
@@ -104,8 +107,10 @@ public class Command {
             } catch (WrongMessageContentException e) {
                 throw new IllegalArgumentException("Unknown color inserted");
             }
+            // Get the id of the player's schoolboard through the player id
+            int indexOfPlayerSchoolboard = ViewUtilityFunctions.getPlayerSchoolboardIndex(this.playerId, clientTeams);
             // Now I have the color, get the id of the student using it. Here I do it from dining room of the User
-            ArrayList<Integer> table = this.clientTable.getSchoolBoards().get(this.playerId - 1).getDiningRoom().get(color.getId());
+            ArrayList<Integer> table = this.clientTable.getSchoolBoards().get(indexOfPlayerSchoolboard).getDiningRoom().get(color.getId());
             // Get last student from the table, if there's one
             if (table.size() > 0) {
                 finalValue = String.valueOf(table.get(table.size() - 1));
@@ -135,7 +140,7 @@ public class Command {
             // Get a student with the specified color from there, if there's one
             int selectedStudent = -1;
             for (Integer student : storage) {
-                if (UtilityFunctions.getStudentColorById(student).equals(color)) {
+                if (CliDrawersUtilityFunctions.getStudentColorById(student).equals(color)) {
                     selectedStudent = student;
                     break;
                 }
@@ -158,11 +163,9 @@ public class Command {
 
             // Check on the table
             for (ClientCharacterCard characterCard : this.clientTable.getActiveCharacterCards())
-                if (intInput == characterCard.getId())
-                    askedCard = characterCard;
+                if (intInput == characterCard.getId()) askedCard = characterCard;
 
-            if (askedCard == null)
-                throw new IllegalArgumentException("Character card not available");
+            if (askedCard == null) throw new IllegalArgumentException("Character card not available");
 
             // Use the card: set in the message
             finalValue = String.valueOf(intInput); // Set in the ActionMessage options
@@ -177,7 +180,7 @@ public class Command {
                 throw new IllegalArgumentException("Invalid Assistant number");
 
             // Now using the assistant card value, get the correct id for the card of this student
-            intInput = intInput + ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD * (this.getWizardNumber()-1);
+            intInput = intInput + ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD * (this.getWizardNumber() - 1);
             finalValue = String.valueOf(intInput);
         } else if (validation.equals(CommandDataEntryValidationSet.WIZARD)) {
             try {
@@ -206,8 +209,7 @@ public class Command {
             } catch (WrongMessageContentException e) {
                 throw new IllegalArgumentException("Unknown color inserted");
             }
-        } else
-            throw new IllegalArgumentException("I'm expecting a " + validation);
+        } else throw new IllegalArgumentException("I'm expecting a " + validation);
 
         this.addValueToActionMessage(finalValue);
 
@@ -288,14 +290,14 @@ public class Command {
 
     /**
      * Returns the number of the wizard previously selected by the player.
+     *
      * @return the number of the wizard of the player
      * @throws RuntimeException if the player can't be found
      */
     private Integer getWizardNumber() throws RuntimeException {
-        for (ClientTeam clientTeam: this.clientTeams.getTeams()) {
-            for (ClientPlayer clientPlayer: clientTeam.getPlayers())
-                if (clientPlayer.getPlayerId() == this.playerId)
-                    return clientPlayer.getWizard();
+        for (ClientTeam clientTeam : this.clientTeams.getTeams()) {
+            for (ClientPlayer clientPlayer : clientTeam.getPlayers())
+                if (clientPlayer.getPlayerId() == this.playerId) return clientPlayer.getWizard();
         }
         throw new RuntimeException("Can't find this client player in the teams");
     }
