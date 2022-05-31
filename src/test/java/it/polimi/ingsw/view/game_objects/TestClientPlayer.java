@@ -32,9 +32,11 @@ class TestClientPlayer {
         assistantCards.add(clientAssistantCard2);
         assistantCards.add(clientAssistantCard3);
         ClientPlayer clientPlayer = new ClientPlayer(user, player, coins, wizard, assistantCards, lastPlayedAssistantCard);
+        assertEquals(clientPlayer.getPlayerId(), player);
         assertEquals(clientPlayer.getUsername(), user);
         assertEquals(clientPlayer.getCoins(), coins);
         assertEquals(clientPlayer.getWizard(), wizard);
         assertEquals(clientPlayer.getAssistantCards(), assistantCards);
+        assertEquals(clientPlayer.getLastPlayedAssistantCard(), lastPlayedAssistantCard);
     }
 }

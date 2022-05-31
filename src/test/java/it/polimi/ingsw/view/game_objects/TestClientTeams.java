@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.game_objects;
 
-import it.polimi.ingsw.network.client.Client;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

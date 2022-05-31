@@ -23,6 +23,7 @@ public class ClientPlayer {
 
     /**
      * Gets the last played assistant card.
+     *
      * @return the last played assistant card
      */
 
@@ -39,6 +40,11 @@ public class ClientPlayer {
         return this.username;
     }
 
+    /**
+     * Returns client PlayerId
+     *
+     * @return client PlayerId
+     */
     public int getPlayerId() {
         return this.playerId;
     }
