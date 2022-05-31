@@ -20,7 +20,7 @@ Functionality | State
 -- | --
 Basic rules | 🟢
 Complete rules | 🟢
-CLI | 🟡
+CLI | 🟢
 GUI | 🟡
 Socket | 🟡
 12 character cards | 🟢
