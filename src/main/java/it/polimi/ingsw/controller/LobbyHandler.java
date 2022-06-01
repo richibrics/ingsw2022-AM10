@@ -14,6 +14,11 @@ import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.*;
 
+
+/*
+Aggiungi mappa per gioco normale e modifica addClient
+ */
+
 public class LobbyHandler {
 
     private Map<Integer, Map<User, ServerClientConnection>> clientsWaiting;
@@ -154,6 +159,8 @@ public class LobbyHandler {
      * @param preference the number of players participating in the game
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
+
+    // Passa il booleano gameMode al GameController
 
     private void generateGame(int preference) throws InterruptedGameException {
         Map<User, ServerClientConnection> map = new HashMap<>(this.clientsWaiting.get(preference));

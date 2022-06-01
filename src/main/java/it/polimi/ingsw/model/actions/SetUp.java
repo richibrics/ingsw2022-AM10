@@ -37,6 +37,7 @@ public abstract class SetUp extends Action {
         this.setUpCloudTiles(cloudTiles);
         this.setUpProfessors(professorPawns);
         this.setUpSchoolBoards(schoolBoards);
+        // TODO non fare se expertGame è false. Prendere boolean con this.getGameEngine().getExpertGame()
         this.drawCharacters(characterCards, bag);
         this.setUpTowers();
         this.drawStudentsAndPlaceOnEntrance(bag);

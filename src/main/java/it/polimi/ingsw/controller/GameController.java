@@ -11,7 +11,6 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 import it.polimi.ingsw.network.messages.ActionMessage;
-import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.ArrayList;
@@ -51,7 +50,11 @@ public class GameController {
      *
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
+
+    // TODO Aggiungere parametro expertGame
+
     public void startGame() throws InterruptedGameException {
+        // TODO pssare boolean al costruttore della game engine
         this.gameEngine = new GameEngine(this.createPlayersAndTeams());
         this.gameObserver = new GameObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
         try {

@@ -21,6 +21,8 @@ public class GameEngine {
     private IslandManager islandManager;
     private CharacterManager characterManager;
 
+    // TODO aggiungi expertGame al costruttore
+
     public GameEngine(ArrayList<Team> teams) {
         this.actionManager = new ActionManager(this);
         this.schoolPawnManager = new SchoolPawnManager(this);
@@ -157,9 +159,12 @@ public class GameEngine {
     /**
      * Asks the ActionManager to generate all the Actions, run the setup, and prepare the character cards actions.
      */
+    // TODO Passa boolean expertGame all'action manager. Evita seconda riga
     public void startGame() throws Exception {
         this.getActionManager().generateActions();
         this.getCharacterManager().prepareCharacterCardsActions(this.table.getCharacterCards().values().stream().toList());
     }
+
+    // TODO aggiungi public boolean getExpertGame()
 
 }
