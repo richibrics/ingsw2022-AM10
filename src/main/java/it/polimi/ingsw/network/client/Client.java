@@ -7,6 +7,8 @@ import it.polimi.ingsw.view.gui.GUI;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client {
 
@@ -31,7 +33,7 @@ public class Client {
     public void start() {
         try {
             ViewInterface view;
-            System.out.println("Connecting to server...");
+            Logger.getAnonymousLogger().log(Level.INFO, "Connecting to server...");
             Socket serverSocket = new Socket(this.serverIp, this.port);
 
             view = this.isCli ? new Cli() : new GUI();
@@ -43,10 +45,10 @@ public class Client {
 
 
         } catch (UnknownHostException e) {
-            System.err.println("Unable to connect to server");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Unable to connect to server");
             e.printStackTrace();
         } catch (IOException e) {
-            System.err.println("Error when connecting to server " + this.serverIp);
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error when connecting to server " + this.serverIp);
             e.printStackTrace();
         }
     }

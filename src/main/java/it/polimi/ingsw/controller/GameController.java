@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -84,7 +86,7 @@ public class GameController {
                 throw new IllegalGameActionException("The player hasn't the rights to perform the requested Action");
         } catch (NullPointerException e) {
             // Game engine unavailable, was destroyed from this.interruptGame()
-            System.out.println("Error during game resume: game engine not available anymore");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: game engine not available anymore");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
@@ -110,14 +112,14 @@ public class GameController {
             throw e;
         } catch (IllegalGameStateException e) {
             // Local error print
-            System.out.println("Error during game resume: game state error during action run");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: game state error during action run");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
             throw new InterruptedGameException();
         } catch (Exception e) {
             // Unknown exception - debug purposes, in fact this is unreachable from tests.
-            System.out.println("Error during game resume: action error");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: action error");
             e.printStackTrace();
             return;
         }

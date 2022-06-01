@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -114,7 +116,7 @@ public class CommandFilesReader {
 
         } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
             // Ignore, can't have errors in reading of a file whose path is automatically generated
-            System.out.println("Error while reading CommandData file: " + e.getMessage());
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error while reading CommandData file: " + e.getMessage());
         }
         return results;
     }

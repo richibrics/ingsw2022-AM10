@@ -356,10 +356,10 @@ class TestSerializer {
         assertTrue(clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.BLACK) ||
                 clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.WHITE) ||
                 clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.GREY));
-        assertEquals(6, clientTeams.getTeams().get(0).getNumberOfTowers());
+        assertEquals(ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS, clientTeams.getTeams().get(0).getNumberOfTowers());
         assertEquals(0, clientTeams.getTeams().get(0).getProfessorPawns().size());
         assertEquals("steph", clientTeams.getTeams().get(1).getPlayers().get(0).getUsername());
-        assertEquals(3, clientTeams.getTeams().get(2).getPlayers().get(0).getCoins());
+        assertEquals(ModelConstants.INITIAL_PLAYER_COINS, clientTeams.getTeams().get(2).getPlayers().get(0).getCoins());
         assertEquals(1, clientTeams.getTeams().get(0).getPlayers().get(0).getWizard());
         assertEquals(1, clientTeams.getTeams().get(0).getPlayers().get(0).getAssistantCards().size());
         assertEquals(1, clientTeams.getTeams().get(0).getPlayers().get(0).getAssistantCards().get(0).getId());

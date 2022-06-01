@@ -5,6 +5,9 @@ import it.polimi.ingsw.network.client.ClientMain;
 import it.polimi.ingsw.network.server.ServerMain;
 import it.polimi.ingsw.view.gui.LaunchGUI;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static javafx.application.Application.launch;
 
 /**
@@ -22,11 +25,11 @@ public class Launcher {
     public static void main(String[] args) {
         if (args.length >= 2) {
             // Client
-            System.out.println("Client mode.");
+            Logger.getAnonymousLogger().log(Level.INFO, "Client mode.");
             ClientMain.main(args);
         } else {
             // Server
-            System.out.println("Server mode.");
+            Logger.getAnonymousLogger().log(Level.INFO, "Server mode.");
             ServerMain.main(args);
         }
     }

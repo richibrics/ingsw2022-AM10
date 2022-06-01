@@ -13,6 +13,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Cli extends AbstractView {
 
@@ -318,7 +320,7 @@ public class Cli extends AbstractView {
                 }
             } catch (IOException e) {
                 this.clientServerConnection.askToCloseConnection();
-                System.out.println("IOException: " + e.getMessage() + "\n");
+                Logger.getAnonymousLogger().log(Level.SEVERE, "IOException: " + e.getMessage() + "\n");
             }
         }
     }
