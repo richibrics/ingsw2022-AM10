@@ -51,11 +51,10 @@ public class GameController {
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
 
-    // TODO Aggiungere parametro expertGame
-
-    public void startGame() throws InterruptedGameException {
-        // TODO pssare boolean al costruttore della game engine
+    public void startGame(boolean expertMode) throws InterruptedGameException {
         this.gameEngine = new GameEngine(this.createPlayersAndTeams());
+        // Set boolean that tells if the game is an expert game or an easy game
+        this.gameEngine.setExpertMode(expertMode);
         this.gameObserver = new GameObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
         try {
             this.gameEngine.startGame();
@@ -77,6 +76,7 @@ public class GameController {
      * @param actionMessage
      * @return the success value, useful to avoid warning the client of a success if I had an error
      */
+
     public void resumeGame(int playerId, ActionMessage actionMessage) throws InterruptedGameException, IllegalGameActionException, WrongMessageContentException {
         // Player with turn check
         try {

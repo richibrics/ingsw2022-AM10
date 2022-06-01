@@ -98,8 +98,8 @@ public class OnSelectionOfAssistantsCardAction extends Action {
             nextActions.remove(Integer.valueOf(this.getId()));
             // No more assistant selection
 
-            // TODO non aggiungere ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID se expertMode
-            nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
+            if (this.getGameEngine().getExpertMode())
+                nextActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
             nextActions.add(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
             this.getGameEngine().getRound().setPossibleActions(nextActions);
         }

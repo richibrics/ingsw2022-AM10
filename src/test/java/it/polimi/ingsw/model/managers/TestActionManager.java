@@ -4,15 +4,10 @@ import it.polimi.ingsw.controller.GameEngine;
 import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
-import it.polimi.ingsw.model.game_components.CharacterCard;
-import it.polimi.ingsw.model.game_components.IslandTile;
-import it.polimi.ingsw.model.game_components.PawnColor;
-import it.polimi.ingsw.model.game_components.SchoolBoard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 

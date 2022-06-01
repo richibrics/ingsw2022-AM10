@@ -15,10 +15,6 @@ import it.polimi.ingsw.network.server.ServerClientConnection;
 import java.util.*;
 
 
-/*
-Aggiungi mappa per gioco normale e modifica addClient
- */
-
 public class LobbyHandler {
 
     private Map<Integer, Map<User, ServerClientConnection>> clientsWaiting;
@@ -52,47 +48,35 @@ public class LobbyHandler {
      * @param user                   the user to add
      * @param serverClientConnection the server-client connection associated with the user
      * @throws IllegalArgumentException if the preference of the user is invalid
-     * @throws InterruptedGameException if an error was encountered during match creation.
+     * @throws InterruptedGameException if something bad happens during match creation
      * @see User
      * @see ServerClientConnection
      */
 
     public void addClient(User user, ServerClientConnection serverClientConnection) throws IllegalArgumentException, InterruptedGameException {
         switch (user.getPreference()) {
-            case ControllerConstants.TWO_PLAYERS_PREFERENCE:
-                if (!this.clientsWaiting.containsKey(ControllerConstants.TWO_PLAYERS_PREFERENCE)) {
-                    Map<User, ServerClientConnection> clients = new HashMap<>();
-                    clients.put(user, serverClientConnection);
-                    this.clientsWaiting.put(ControllerConstants.TWO_PLAYERS_PREFERENCE, clients);
-                } else {
-                    this.clientsWaiting.get(ControllerConstants.TWO_PLAYERS_PREFERENCE).put(user, serverClientConnection);
-                    if (this.clientsWaiting.get(ControllerConstants.TWO_PLAYERS_PREFERENCE).size() == ControllerConstants.TWO_PLAYERS_PREFERENCE)
-                        this.generateGame(ControllerConstants.TWO_PLAYERS_PREFERENCE);
-                }
+            case ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT:
+                this.checkStateOfClientsWaiting(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT, user, serverClientConnection);
                 break;
 
-            case ControllerConstants.THREE_PLAYERS_PREFERENCE:
-                if (!this.clientsWaiting.containsKey(ControllerConstants.THREE_PLAYERS_PREFERENCE)) {
-                    Map<User, ServerClientConnection> clients = new HashMap<>();
-                    clients.put(user, serverClientConnection);
-                    this.clientsWaiting.put(ControllerConstants.THREE_PLAYERS_PREFERENCE, clients);
-                } else {
-                    this.clientsWaiting.get(ControllerConstants.THREE_PLAYERS_PREFERENCE).put(user, serverClientConnection);
-                    if (this.clientsWaiting.get(ControllerConstants.THREE_PLAYERS_PREFERENCE).size() == ControllerConstants.THREE_PLAYERS_PREFERENCE)
-                        this.generateGame(ControllerConstants.THREE_PLAYERS_PREFERENCE);
-                }
+            case ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT:
+                this.checkStateOfClientsWaiting(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT, user, serverClientConnection);
                 break;
 
-            case ControllerConstants.FOUR_PLAYERS_PREFERENCE:
-                if (!this.clientsWaiting.containsKey(ControllerConstants.FOUR_PLAYERS_PREFERENCE)) {
-                    Map<User, ServerClientConnection> clients = new HashMap<>();
-                    clients.put(user, serverClientConnection);
-                    this.clientsWaiting.put(ControllerConstants.FOUR_PLAYERS_PREFERENCE, clients);
-                } else {
-                    this.clientsWaiting.get(ControllerConstants.FOUR_PLAYERS_PREFERENCE).put(user, serverClientConnection);
-                    if (this.clientsWaiting.get(ControllerConstants.FOUR_PLAYERS_PREFERENCE).size() == ControllerConstants.FOUR_PLAYERS_PREFERENCE)
-                        this.generateGame(ControllerConstants.FOUR_PLAYERS_PREFERENCE);
-                }
+            case ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT:
+                this.checkStateOfClientsWaiting(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT, user, serverClientConnection);
+                break;
+
+            case ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY:
+                this.checkStateOfClientsWaiting(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY, user, serverClientConnection);
+                break;
+
+            case ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY:
+                this.checkStateOfClientsWaiting(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY, user, serverClientConnection);
+                break;
+
+            case ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY:
+                this.checkStateOfClientsWaiting(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY, user, serverClientConnection);
                 break;
 
             default:
@@ -100,6 +84,30 @@ public class LobbyHandler {
         }
         // Arrived here, the user has been added: notify all the clients about the new lobby state
         this.lobbyObserver.notifyClients();
+    }
+
+    /**
+     * Checks if the key {@code gameMode} is already in the map which contains the clients waiting for a game to start.
+     * If the key is not present, {@code gameMode} is added to the map; if the key is in the map, {@code user} is added to
+     * the lobby. After the addition of the user, this method starts a game if the number of users with same preference
+     * matches the game mode.
+     *
+     * @param gameMode the game mode
+     * @param user the user
+     * @param serverClientConnection the server-client connection associated with the user
+     * @throws InterruptedGameException if something bad happens during match creation
+     */
+
+    private void checkStateOfClientsWaiting(int gameMode, User user, ServerClientConnection serverClientConnection) throws InterruptedGameException {
+        if (!this.clientsWaiting.containsKey(gameMode)) {
+            Map<User, ServerClientConnection> clients = new HashMap<>();
+            clients.put(user, serverClientConnection);
+            this.clientsWaiting.put(gameMode, clients);
+        } else {
+            this.clientsWaiting.get(gameMode).put(user, serverClientConnection);
+            if (this.clientsWaiting.get(gameMode).size() == (gameMode > 0 ? gameMode : - gameMode))
+                this.generateGame(gameMode);
+        }
     }
 
     /**
@@ -113,9 +121,12 @@ public class LobbyHandler {
      */
 
     public void changePreference(String userId, int newPreference) throws IllegalArgumentException, UserNotFoundException, InterruptedGameException {
-        if (newPreference != ControllerConstants.TWO_PLAYERS_PREFERENCE
-                && newPreference != ControllerConstants.THREE_PLAYERS_PREFERENCE
-                && newPreference != ControllerConstants.FOUR_PLAYERS_PREFERENCE)
+        if (newPreference != ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT
+                && newPreference != ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT
+                && newPreference != ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT
+                && newPreference != ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY
+                && newPreference != ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY
+                && newPreference != ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY)
             throw new IllegalArgumentException("Invalid preference");
         else {
             // Get from clientsWaiting the original user
@@ -160,8 +171,6 @@ public class LobbyHandler {
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
 
-    // Passa il booleano gameMode al GameController
-
     private void generateGame(int preference) throws InterruptedGameException {
         Map<User, ServerClientConnection> map = new HashMap<>(this.clientsWaiting.get(preference));
         this.clientsWaiting.get(preference).clear();
@@ -171,7 +180,14 @@ public class LobbyHandler {
             serverClientConnection.setGameController(gameController);
 
         this.activeGames.add(gameController);
-        gameController.startGame();
+        // Determine if the game is an expert game or an easy game
+        boolean expertGame;
+        if (preference > 0 )
+            expertGame = true;
+        else
+            expertGame = false;
+
+        gameController.startGame(expertGame);
     }
 
     /**

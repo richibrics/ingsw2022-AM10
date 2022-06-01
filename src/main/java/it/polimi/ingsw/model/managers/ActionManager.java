@@ -65,8 +65,8 @@ public class ActionManager extends Manager {
         else if (this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 3)
             this.actions[ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID] = new DrawFromBagToCloudThreePlayersAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID] = new OnSelectionOfAssistantsCardAction(this.getGameEngine());
-        // TODO non creare se this.getGameEngine().getExpertGame() è true
-        this.actions[ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID] = new OnSelectionOfCharacterCardAction(this.getGameEngine());
+        if (this.getGameEngine().getExpertMode())
+            this.actions[ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID] = new OnSelectionOfCharacterCardAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID] = new MoveStudentsFromEntranceAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID] = new MoveMotherNatureAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID] = new FromCloudTileToEntranceAction(this.getGameEngine());

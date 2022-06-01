@@ -20,8 +20,7 @@ public class GameEngine {
     private AssistantManager assistantManager;
     private IslandManager islandManager;
     private CharacterManager characterManager;
-
-    // TODO aggiungi expertGame al costruttore
+    private boolean expertMode;
 
     public GameEngine(ArrayList<Team> teams) {
         this.actionManager = new ActionManager(this);
@@ -32,6 +31,7 @@ public class GameEngine {
 
         this.teams = new ArrayList<>(teams);
         this.round = new Round(teams.stream().flatMap(team -> team.getPlayers().stream()).toList().size());
+        this.expertMode = true;
     }
 
     /**
@@ -157,14 +157,31 @@ public class GameEngine {
     }
 
     /**
-     * Asks the ActionManager to generate all the Actions, run the setup, and prepare the character cards actions.
+     * Asks the ActionManager to generate all the Actions, run the setup, and prepare the character cards actions if the
+     * game being played is an expert game.
      */
-    // TODO Passa boolean expertGame all'action manager. Evita seconda riga
+
     public void startGame() throws Exception {
         this.getActionManager().generateActions();
-        this.getCharacterManager().prepareCharacterCardsActions(this.table.getCharacterCards().values().stream().toList());
+        if (this.expertMode)
+            this.getCharacterManager().prepareCharacterCardsActions(this.table.getCharacterCards().values().stream().toList());
     }
 
-    // TODO aggiungi public boolean getExpertGame()
+    /**
+     * Sets the boolean which tells whether the game being played is an expert game.
+     * @param expertMode a boolean
+     */
 
+    public void setExpertMode(boolean expertMode) {
+        this.expertMode = expertMode;
+    }
+
+    /**
+     * Gets the boolean which tells whether the game being played is an expert game.
+     * @return true if the game being played is an expert game
+     */
+
+    public boolean getExpertMode() {
+        return this.expertMode;
+    }
 }
