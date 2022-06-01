@@ -3,9 +3,9 @@ package it.polimi.ingsw.view.cli.drawers;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
 import it.polimi.ingsw.model.game_components.PawnColor;
-import it.polimi.ingsw.view.cli.exceptions.IllegalCharacterIdException;
-import it.polimi.ingsw.view.cli.exceptions.IllegalProfessorIdException;
-import it.polimi.ingsw.view.cli.exceptions.IllegalStudentIdException;
+import it.polimi.ingsw.view.exceptions.IllegalCharacterIdException;
+import it.polimi.ingsw.view.exceptions.IllegalProfessorIdException;
+import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
 import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 
 import static java.lang.Math.floor;

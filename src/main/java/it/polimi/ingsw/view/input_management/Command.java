@@ -87,7 +87,7 @@ public class Command {
                 throw new IllegalArgumentException("Unknown color inserted");
             }
             // Get the id of the player's school board through the player id
-            int indexOfPlayerSchoolBoard = ViewUtilityFunctions.getPlayerSchoolboardIndex(this.playerId, clientTeams);
+            int indexOfPlayerSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(this.playerId, clientTeams);
             // Now I have the color, get the id of the student using it. Here I do it from entrance of the User
             ArrayList<Integer> entrance = this.clientTable.getSchoolBoards().get(indexOfPlayerSchoolBoard).getEntrance();
             // Get last student from the table, if there's one
@@ -110,7 +110,7 @@ public class Command {
                 throw new IllegalArgumentException("Unknown color inserted");
             }
             // Get the id of the player's school board through the player id
-            int indexOfPlayerSchoolBoard = ViewUtilityFunctions.getPlayerSchoolboardIndex(this.playerId, clientTeams);
+            int indexOfPlayerSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(this.playerId, clientTeams);
             // Now I have the color, get the id of the student using it. Here I do it from dining room of the User
             ArrayList<Integer> table = this.clientTable.getSchoolBoards().get(indexOfPlayerSchoolBoard).getDiningRoom().get(color.getId());
             // Get last student from the table, if there's one

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.view.cli.drawers;
 
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
-import it.polimi.ingsw.view.cli.exceptions.IllegalProfessorIdException;
-import it.polimi.ingsw.view.cli.exceptions.IllegalStudentIdException;
-import it.polimi.ingsw.view.cli.exceptions.WrongNumberOfPlayersException;
+import it.polimi.ingsw.view.exceptions.IllegalProfessorIdException;
+import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
+import it.polimi.ingsw.view.exceptions.WrongNumberOfPlayersException;
 import it.polimi.ingsw.view.game_objects.*;
 
 import java.util.ArrayList;
