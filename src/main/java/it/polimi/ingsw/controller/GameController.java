@@ -11,13 +11,14 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 import it.polimi.ingsw.network.messages.ActionMessage;
-import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +52,11 @@ public class GameController {
      *
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
-    public void startGame() throws InterruptedGameException {
+
+    public void startGame(boolean expertMode) throws InterruptedGameException {
         this.gameEngine = new GameEngine(this.createPlayersAndTeams());
+        // Set boolean that tells if the game is an expert game or an easy game
+        this.gameEngine.setExpertMode(expertMode);
         this.gameObserver = new GameObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
         try {
             this.gameEngine.startGame();
@@ -74,6 +78,7 @@ public class GameController {
      * @param actionMessage
      * @return the success value, useful to avoid warning the client of a success if I had an error
      */
+
     public void resumeGame(int playerId, ActionMessage actionMessage) throws InterruptedGameException, IllegalGameActionException, WrongMessageContentException {
         // Player with turn check
         try {
@@ -81,7 +86,7 @@ public class GameController {
                 throw new IllegalGameActionException("The player hasn't the rights to perform the requested Action");
         } catch (NullPointerException e) {
             // Game engine unavailable, was destroyed from this.interruptGame()
-            System.out.println("Error during game resume: game engine not available anymore");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: game engine not available anymore");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
@@ -107,14 +112,14 @@ public class GameController {
             throw e;
         } catch (IllegalGameStateException e) {
             // Local error print
-            System.out.println("Error during game resume: game state error during action run");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: game state error during action run");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
             throw new InterruptedGameException();
         } catch (Exception e) {
             // Unknown exception - debug purposes, in fact this is unreachable from tests.
-            System.out.println("Error during game resume: action error");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: action error");
             e.printStackTrace();
             return;
         }

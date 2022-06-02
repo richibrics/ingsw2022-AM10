@@ -4,6 +4,9 @@ import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
 import it.polimi.ingsw.network.messages.Message;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ClientStillAliveChecker implements Runnable {
 
     private ClientServerConnection clientServerConnection;
@@ -31,7 +34,7 @@ public class ClientStillAliveChecker implements Runnable {
                 }
                 Thread.sleep(NetworkConstants.SLEEP_TIME_IN_MILLISECONDS);
             } catch (InterruptedException e) {
-                System.err.println("Thread interrupted");
+                Logger.getAnonymousLogger().log(Level.SEVERE, "Thread interrupted");
                 e.printStackTrace();
             }
         }

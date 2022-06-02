@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.cli.exceptions;
+package it.polimi.ingsw.view.exceptions;
 
 public class NoSpaceForIslandGroupException extends Exception {
 

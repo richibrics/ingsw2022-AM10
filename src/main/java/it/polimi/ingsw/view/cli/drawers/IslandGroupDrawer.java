@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view.cli.drawers;
 
 import it.polimi.ingsw.model.exceptions.TowerNotSetException;
-import it.polimi.ingsw.view.cli.exceptions.IllegalStudentIdException;
+import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
 import it.polimi.ingsw.view.game_objects.ClientIslandTile;
 import it.polimi.ingsw.view.game_objects.ClientMotherNature;
 

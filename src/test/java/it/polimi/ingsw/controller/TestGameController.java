@@ -37,7 +37,7 @@ class TestGameController {
         connections.put(new User("2", 2), null);
         GameController gameController = new GameController(connections);
         assertNull(gameController.getGameEngine());
-        assertDoesNotThrow(gameController::startGame);
+        assertDoesNotThrow(()->gameController.startGame(false));
         assertNotNull(gameController.getGameEngine());
         assertEquals(2, gameController.getGameEngine().getNumberOfPlayers());
         assertEquals(2, gameController.getGameEngine().getTeams().size());
@@ -52,7 +52,7 @@ class TestGameController {
         connections.put(new User("5", 6), null);
         connections.put(new User("6", 6), null);
         GameController gameController1 = new GameController(connections);
-        assertThrows(InterruptedGameException.class, gameController1::startGame);
+        assertThrows(InterruptedGameException.class, ()-> gameController1.startGame(false));
         // Also checks game is destroyed
         assertThrows(InterruptedGameException.class, ()-> gameController1.resumeGame(0,null));
     }
@@ -69,7 +69,7 @@ class TestGameController {
         connections.put(new User("3", 3), null);
         GameController gameController = new GameController(connections);
         assertNull(gameController.getGameEngine());
-        assertDoesNotThrow(gameController::startGame);
+        assertDoesNotThrow(()->gameController.startGame(false));
         assertNotNull(gameController.getGameEngine());
         assertEquals(3, gameController.getGameEngine().getNumberOfPlayers());
         assertEquals(3, gameController.getGameEngine().getTeams().size());
@@ -89,7 +89,7 @@ class TestGameController {
         connections.put(new User("4", 4), null);
         GameController gameController = new GameController(connections);
         assertNull(gameController.getGameEngine());
-        assertDoesNotThrow(gameController::startGame);
+        assertDoesNotThrow(()->gameController.startGame(false));
         assertNotNull(gameController.getGameEngine());
         assertEquals(4, gameController.getGameEngine().getNumberOfPlayers());
         assertEquals(2, gameController.getGameEngine().getTeams().size());
@@ -108,7 +108,7 @@ class TestGameController {
         connections.put(new User("1", 2), null);
         connections.put(new User("2", 2), null);
         GameController gameController = new GameController(connections);
-        assertDoesNotThrow(gameController::startGame);
+        assertDoesNotThrow(()->gameController.startGame(false));
 
         HashMap<String, String> options = new HashMap<>();
         options.put(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD, "2");
@@ -162,7 +162,7 @@ class TestGameController {
         connections.put(new User("1", 2), null);
         connections.put(new User("2", 2), null);
         GameController gameController = new GameController(connections);
-        assertDoesNotThrow(gameController::startGame);
+        assertDoesNotThrow(()->gameController.startGame(false));
 
         // WrongMessageContentException: player with turn asks to move wizard, with wrong options (wizard not set)
         ActionMessage selectWizard1 = new ActionMessage(ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID, new HashMap<>());

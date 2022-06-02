@@ -18,4 +18,9 @@ public class CliConstants {
     public static String CANCEL_ACTION_INPUT_STRING = "cancel";
     public static String DINING_ROOM_CAPITAL_D = "D";
     public static String DINING_ROOM_LOWER_CASE_D = "d";
+    public static final String EXPERT_GAME = "e";
+    public static final String BASIC_GAME = "b";
+    public static final String GAME_MODE_NOT_USED = " ";
+    public static final String EXPERT_GAME_COMPLETE = "expert";
+    public static final String BASIC_GAME_COMPLETE = "basic";
 }

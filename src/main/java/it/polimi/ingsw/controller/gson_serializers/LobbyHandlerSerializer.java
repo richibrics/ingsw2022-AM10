@@ -16,30 +16,57 @@ public class LobbyHandlerSerializer implements JsonSerializer<LobbyHandler> {
         JsonObject jsonObject = new JsonObject();
         // Send the two player lobby if the map is available, else send it as empty
         if (lobbyHandler.getClientsWaiting()
-                .get(ControllerConstants.TWO_PLAYERS_PREFERENCE) != null) {
-            jsonObject.addProperty(Integer.toString(ControllerConstants.TWO_PLAYERS_PREFERENCE), lobbyHandler.getClientsWaiting()
-                    .get(ControllerConstants.TWO_PLAYERS_PREFERENCE)
+                .get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY) != null) {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY), lobbyHandler.getClientsWaiting()
+                    .get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY)
                     .size());
         } else {
-            jsonObject.addProperty(Integer.toString(ControllerConstants.TWO_PLAYERS_PREFERENCE), 0);
+            jsonObject.addProperty(Integer.toString(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY), 0);
         }
 
         if (lobbyHandler.getClientsWaiting()
-                .get(ControllerConstants.THREE_PLAYERS_PREFERENCE) != null) {
-            jsonObject.addProperty(Integer.toString(ControllerConstants.THREE_PLAYERS_PREFERENCE), lobbyHandler.getClientsWaiting()
-                    .get(ControllerConstants.THREE_PLAYERS_PREFERENCE)
+                .get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT) != null) {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT), lobbyHandler.getClientsWaiting()
+                    .get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT)
                     .size());
         } else {
-            jsonObject.addProperty(Integer.toString(ControllerConstants.THREE_PLAYERS_PREFERENCE), 0);
+            jsonObject.addProperty(Integer.toString(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT), 0);
         }
 
         if (lobbyHandler.getClientsWaiting()
-                .get(ControllerConstants.FOUR_PLAYERS_PREFERENCE) != null) {
-            jsonObject.addProperty(Integer.toString(ControllerConstants.FOUR_PLAYERS_PREFERENCE), lobbyHandler.getClientsWaiting()
-                    .get(ControllerConstants.FOUR_PLAYERS_PREFERENCE)
+                .get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY) != null) {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY), lobbyHandler.getClientsWaiting()
+                    .get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY)
                     .size());
         } else {
-            jsonObject.addProperty(Integer.toString(ControllerConstants.FOUR_PLAYERS_PREFERENCE), 0);
+            jsonObject.addProperty(Integer.toString(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY), 0);
+        }
+
+        if (lobbyHandler.getClientsWaiting()
+                .get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT) != null) {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT), lobbyHandler.getClientsWaiting()
+                    .get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT)
+                    .size());
+        } else {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT), 0);
+        }
+
+        if (lobbyHandler.getClientsWaiting()
+                .get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY) != null) {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY), lobbyHandler.getClientsWaiting()
+                    .get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY)
+                    .size());
+        } else {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY), 0);
+        }
+
+        if (lobbyHandler.getClientsWaiting()
+                .get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT) != null) {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT), lobbyHandler.getClientsWaiting()
+                    .get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT)
+                    .size());
+        } else {
+            jsonObject.addProperty(Integer.toString(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT), 0);
         }
         return jsonObject;
     }

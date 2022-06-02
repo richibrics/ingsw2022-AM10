@@ -19,6 +19,8 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientServerConnection implements Runnable {
 
@@ -96,7 +98,7 @@ public class ClientServerConnection implements Runnable {
         try {
             this.closeConnection();
         } catch (IOException e) {
-            System.err.println("Unable to close the connection with server");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Unable to close the connection with server");
             System.exit(1);
         }
     }

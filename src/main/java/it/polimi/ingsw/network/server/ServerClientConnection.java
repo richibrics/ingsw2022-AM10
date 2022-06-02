@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerClientConnection implements Runnable {
     private final Socket clientSocket;
@@ -93,7 +95,7 @@ public class ServerClientConnection implements Runnable {
         try {
             this.closeConnection();
         } catch (IOException e) {
-            System.err.println("Error while closing the client socket");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error while closing the client socket");
             e.printStackTrace();
         }
     }
@@ -113,7 +115,7 @@ public class ServerClientConnection implements Runnable {
         }
 
         if (line != null) {
-            System.out.println(line);
+            Logger.getAnonymousLogger().log(Level.INFO, line);
             this.deserialize(line);
             // I received a message from the client, so he's alive: reset his timer
             this.resetTimer();

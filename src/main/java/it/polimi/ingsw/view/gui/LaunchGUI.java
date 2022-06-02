@@ -7,6 +7,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Here we manage the GUI thread, changing/updating scenes when an update is needed.
@@ -21,7 +23,7 @@ public class LaunchGUI extends Application {
         sceneChangeRequested = false;
         sceneUpdateRequested = false;
 
-        System.out.println("Starting GUI...");
+        Logger.getAnonymousLogger().log(Level.INFO, "Starting GUI...");
         List<String> parameters = getParameters().getRaw();
         primaryStage.setTitle("Eriantys");
         StageController.getStageController().setStage(primaryStage);

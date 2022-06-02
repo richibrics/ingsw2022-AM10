@@ -124,4 +124,13 @@ class TestGameEngine {
     void startGame() {
 
     }
+
+    @Test
+    void setGetExpertMode() {
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        gameEngine.setExpertMode(true);
+        assertTrue(gameEngine.getExpertMode());
+        gameEngine.setExpertMode(false);
+        assertFalse(gameEngine.getExpertMode());
+    }
 }

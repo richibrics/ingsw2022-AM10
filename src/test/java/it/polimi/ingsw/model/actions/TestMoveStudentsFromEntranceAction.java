@@ -10,7 +10,6 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.game_components.StudentDisc;
 import it.polimi.ingsw.model.managers.CommonManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
