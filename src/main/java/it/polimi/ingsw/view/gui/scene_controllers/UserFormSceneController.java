@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
+import it.polimi.ingsw.controller.ControllerConstants;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
@@ -13,9 +14,12 @@ import javafx.scene.layout.VBox;
 
 public class UserFormSceneController extends SceneController {
     TextField textBox;
-    RadioButton twoPlayersRadioButton;
-    RadioButton threePlayersRadioButton;
-    RadioButton fourPlayersRadioButton;
+    RadioButton twoPlayersEasyRadioButton;
+    RadioButton threePlayersEasyRadioButton;
+    RadioButton fourPlayersEasyRadioButton;
+    RadioButton twoPlayersExpertRadioButton;
+    RadioButton threePlayersExpertRadioButton;
+    RadioButton fourPlayersExpertRadioButton;
 
     /**
      * Draws the layout in a scene and returns it.
@@ -50,26 +54,41 @@ public class UserFormSceneController extends SceneController {
         layoutUsernameInput.getChildren().add(textBox);
 
         ToggleGroup playersSelectionGroup = new ToggleGroup(); // Prevents multi choice in the radio buttons
-        twoPlayersRadioButton = new RadioButton();
-        threePlayersRadioButton = new RadioButton();
-        fourPlayersRadioButton = new RadioButton();
-        twoPlayersRadioButton.setText("2 players");
-        threePlayersRadioButton.setText("3 players");
-        fourPlayersRadioButton.setText("4 players");
-        twoPlayersRadioButton.setToggleGroup(playersSelectionGroup);
-        threePlayersRadioButton.setToggleGroup(playersSelectionGroup);
-        fourPlayersRadioButton.setToggleGroup(playersSelectionGroup);
+        twoPlayersEasyRadioButton = new RadioButton();
+        threePlayersEasyRadioButton = new RadioButton();
+        fourPlayersEasyRadioButton = new RadioButton();
+        twoPlayersExpertRadioButton = new RadioButton();
+        threePlayersExpertRadioButton = new RadioButton();
+        fourPlayersExpertRadioButton = new RadioButton();
+        twoPlayersEasyRadioButton.setText("2 players easy");
+        threePlayersEasyRadioButton.setText("3 players easy");
+        fourPlayersEasyRadioButton.setText("4 players easy");
+        twoPlayersExpertRadioButton.setText("2 players expert");
+        threePlayersExpertRadioButton.setText("3 players expert");
+        fourPlayersExpertRadioButton.setText("4 players expert");
+        twoPlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        threePlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        fourPlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        twoPlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
+        threePlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
+        fourPlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
 
-        layoutRadioButtons.getChildren().add(twoPlayersRadioButton);
-        layoutRadioButtons.getChildren().add(threePlayersRadioButton);
-        layoutRadioButtons.getChildren().add(fourPlayersRadioButton);
+        layoutRadioButtons.getChildren().add(twoPlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(threePlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(fourPlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(twoPlayersExpertRadioButton);
+        layoutRadioButtons.getChildren().add(threePlayersExpertRadioButton);
+        layoutRadioButtons.getChildren().add(fourPlayersExpertRadioButton);
 
 
         layoutUsernameInput.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_USER_INPUT_BOX_CLASS);
         layoutRadioButtons.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_NUMBER_SELECTION_BOX_CLASS);
-        twoPlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
-        threePlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
-        fourPlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        twoPlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        threePlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        fourPlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        twoPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        threePlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        fourPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
 
         Button nextButton = new Button("Enter in Lobby");
         nextButton.setOnAction(this::handleNextPageButton);
@@ -95,8 +114,13 @@ public class UserFormSceneController extends SceneController {
      */
     void handleNextPageButton(Event e) {
         try {
-            int numberOfPlayers = twoPlayersRadioButton.isSelected() ? ModelConstants.TWO_PLAYERS : threePlayersRadioButton.isSelected() ? ModelConstants.THREE_PLAYERS : ModelConstants.FOUR_PLAYERS;
-            StageController.getStageController().getGuiView().handleSendUser(textBox.getText(), numberOfPlayers);
+            int selectedPreference =
+                    twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
+                            threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
+                                    fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
+                                            twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
+                                                    threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
+            StageController.getStageController().getGuiView().handleSendUser(textBox.getText(), selectedPreference);
         } catch (GuiViewNotSet ex) {
             StageController.getStageController().handleInternalException(ex);
         }

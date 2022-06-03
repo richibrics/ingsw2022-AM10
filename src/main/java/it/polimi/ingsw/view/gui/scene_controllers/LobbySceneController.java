@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
+import it.polimi.ingsw.controller.ControllerConstants;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.gui.GUIConstants;
@@ -16,9 +17,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class LobbySceneController extends SceneController {
-    RadioButton twoPlayersRadioButton;
-    RadioButton threePlayersRadioButton;
-    RadioButton fourPlayersRadioButton;
+    RadioButton twoPlayersEasyRadioButton;
+    RadioButton threePlayersEasyRadioButton;
+    RadioButton fourPlayersEasyRadioButton;
+    RadioButton twoPlayersExpertRadioButton;
+    RadioButton threePlayersExpertRadioButton;
+    RadioButton fourPlayersExpertRadioButton;
 
     /**
      * Draws the layout in a scene and returns it.
@@ -50,9 +54,12 @@ public class LobbySceneController extends SceneController {
         layout.getChildren().add(layoutBottomButtons);
 
         ToggleGroup playersSelectionGroup = new ToggleGroup(); // Prevents multi choice in the radio buttons
-        twoPlayersRadioButton = new RadioButton();
-        threePlayersRadioButton = new RadioButton();
-        fourPlayersRadioButton = new RadioButton();
+        twoPlayersEasyRadioButton = new RadioButton();
+        threePlayersEasyRadioButton = new RadioButton();
+        fourPlayersEasyRadioButton = new RadioButton();
+        twoPlayersExpertRadioButton = new RadioButton();
+        threePlayersExpertRadioButton = new RadioButton();
+        fourPlayersExpertRadioButton = new RadioButton();
 
         // Set the radio buttons with
         // - current preference as disabled and as selected
@@ -60,18 +67,27 @@ public class LobbySceneController extends SceneController {
         this.setRadiosProperties();
 
         // Use toggle group to avoid more than preference at time
-        twoPlayersRadioButton.setToggleGroup(playersSelectionGroup);
-        threePlayersRadioButton.setToggleGroup(playersSelectionGroup);
-        fourPlayersRadioButton.setToggleGroup(playersSelectionGroup);
+        twoPlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        threePlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        fourPlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        twoPlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
+        threePlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
+        fourPlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
 
-        layoutRadioButtons.getChildren().add(twoPlayersRadioButton);
-        layoutRadioButtons.getChildren().add(threePlayersRadioButton);
-        layoutRadioButtons.getChildren().add(fourPlayersRadioButton);
+        layoutRadioButtons.getChildren().add(twoPlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(threePlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(fourPlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(twoPlayersExpertRadioButton);
+        layoutRadioButtons.getChildren().add(threePlayersExpertRadioButton);
+        layoutRadioButtons.getChildren().add(fourPlayersExpertRadioButton);
 
         layoutRadioButtons.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_NUMBER_SELECTION_BOX_CLASS);
-        twoPlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
-        threePlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
-        fourPlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        twoPlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        threePlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        fourPlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        twoPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        threePlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        fourPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_LOBBY_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
 
         Button nextButton = new Button("Change preference");
         nextButton.setOnAction(this::handleButton);
@@ -93,21 +109,36 @@ public class LobbySceneController extends SceneController {
         try {
             this.setRadiosTextWithLobby();
             int currentPreference = StageController.getStageController().getGuiView().getUser().getPreference();
-            twoPlayersRadioButton.setDisable(false);
-            twoPlayersRadioButton.setSelected(false);
-            threePlayersRadioButton.setDisable(false);
-            threePlayersRadioButton.setSelected(false);
-            fourPlayersRadioButton.setDisable(false);
-            fourPlayersRadioButton.setSelected(false);
-            if (currentPreference == ModelConstants.TWO_PLAYERS) {
-                twoPlayersRadioButton.setDisable(true);
-                twoPlayersRadioButton.setSelected(true);
-            } else if (currentPreference == ModelConstants.THREE_PLAYERS) {
-                threePlayersRadioButton.setDisable(true);
-                threePlayersRadioButton.setSelected(true);
+            twoPlayersEasyRadioButton.setDisable(false);
+            twoPlayersEasyRadioButton.setSelected(false);
+            threePlayersEasyRadioButton.setDisable(false);
+            threePlayersEasyRadioButton.setSelected(false);
+            fourPlayersEasyRadioButton.setDisable(false);
+            fourPlayersEasyRadioButton.setSelected(false);
+            twoPlayersExpertRadioButton.setDisable(false);
+            twoPlayersExpertRadioButton.setSelected(false);
+            threePlayersExpertRadioButton.setDisable(false);
+            threePlayersExpertRadioButton.setSelected(false);
+            fourPlayersExpertRadioButton.setDisable(false);
+            fourPlayersExpertRadioButton.setSelected(false);
+            if (currentPreference == ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY) {
+                twoPlayersEasyRadioButton.setDisable(true);
+                twoPlayersEasyRadioButton.setSelected(true);
+            } else if (currentPreference == ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY) {
+                threePlayersEasyRadioButton.setDisable(true);
+                threePlayersEasyRadioButton.setSelected(true);
+            } else if (currentPreference == ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY) {
+                fourPlayersEasyRadioButton.setDisable(true);
+                fourPlayersEasyRadioButton.setSelected(true);
+            } else if (currentPreference == ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT) {
+                twoPlayersExpertRadioButton.setDisable(true);
+                twoPlayersExpertRadioButton.setSelected(true);
+            } else if (currentPreference == ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT) {
+                threePlayersExpertRadioButton.setDisable(true);
+                threePlayersExpertRadioButton.setSelected(true);
             } else {
-                fourPlayersRadioButton.setDisable(true);
-                fourPlayersRadioButton.setSelected(true);
+                fourPlayersExpertRadioButton.setDisable(true);
+                fourPlayersExpertRadioButton.setSelected(true);
             }
         } catch (GuiViewNotSet e) {
             StageController.getStageController().handleInternalException(e);
@@ -116,20 +147,29 @@ public class LobbySceneController extends SceneController {
 
     // Sets the radio buttons text with the current lobby status
     private void setRadiosTextWithLobby() {
-        String twoPlayersText = "2 players";
-        String threePlayersText = "3 players";
-        String fourPlayersText = "4 players";
+        String twoEasyPlayersText = "2 players easy";
+        String threeEasyPlayersText = "3 players easy";
+        String fourEasyPlayersText = "4 players easy";
+        String twoExpertPlayersText = "2 players expert";
+        String threeExpertPlayersText = "3 players expert";
+        String fourExpertPlayersText = "4 players expert";
 
         ClientLobby clientLobby = StageController.getStageController().getClientLobby();
         if (clientLobby != null) { // Already have it
-            twoPlayersText = twoPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ModelConstants.TWO_PLAYERS), ModelConstants.TWO_PLAYERS);
-            threePlayersText = threePlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ModelConstants.THREE_PLAYERS), ModelConstants.THREE_PLAYERS);
-            fourPlayersText = fourPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ModelConstants.FOUR_PLAYERS), ModelConstants.FOUR_PLAYERS);
+            twoEasyPlayersText = twoEasyPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY), ModelConstants.TWO_PLAYERS);
+            threeEasyPlayersText = threeEasyPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY), ModelConstants.THREE_PLAYERS);
+            fourEasyPlayersText = fourEasyPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY), ModelConstants.FOUR_PLAYERS);
+            twoExpertPlayersText = twoExpertPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT), ModelConstants.TWO_PLAYERS);
+            threeExpertPlayersText = threeExpertPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT), ModelConstants.THREE_PLAYERS);
+            fourExpertPlayersText = fourExpertPlayersText + String.format(" - %d/%d ready", clientLobby.getLobbyStatus().get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT), ModelConstants.FOUR_PLAYERS);
         }
 
-        twoPlayersRadioButton.setText(twoPlayersText);
-        threePlayersRadioButton.setText(threePlayersText);
-        fourPlayersRadioButton.setText(fourPlayersText);
+        twoPlayersEasyRadioButton.setText(twoEasyPlayersText);
+        threePlayersEasyRadioButton.setText(threeEasyPlayersText);
+        fourPlayersEasyRadioButton.setText(fourEasyPlayersText);
+        twoPlayersExpertRadioButton.setText(twoExpertPlayersText);
+        threePlayersExpertRadioButton.setText(threeExpertPlayersText);
+        fourPlayersExpertRadioButton.setText(fourExpertPlayersText);
     }
 
     // Handles the click of the Change preference button
@@ -137,7 +177,12 @@ public class LobbySceneController extends SceneController {
         // If current radio button selected is the current preference, doesn't do anything
         try {
             int currentPreference = StageController.getStageController().getGuiView().getUser().getPreference();
-            int selectedPreference = twoPlayersRadioButton.isSelected() ? ModelConstants.TWO_PLAYERS : threePlayersRadioButton.isSelected() ? ModelConstants.THREE_PLAYERS : ModelConstants.FOUR_PLAYERS;
+            int selectedPreference =
+                    twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
+                    threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
+                    fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
+                    twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
+                    threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
 
             // Sends the new preference to the GUI object that will warn the server
             if (selectedPreference != currentPreference) {
