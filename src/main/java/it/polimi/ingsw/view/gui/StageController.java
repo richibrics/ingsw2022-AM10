@@ -57,6 +57,9 @@ public class StageController {
      * @param sceneController the sceneController that is going to be registered
      */
     public void registerSceneController(SceneType sceneType, SceneController sceneController) {
+        // TODO modify
+        if (sceneType.equals(SceneType.DECK_SCENE) || sceneType.equals(SceneType.TABLE_SCENE))
+            sceneController.getScene(true);
         sceneControllers.put(sceneType, sceneController);
     }
 

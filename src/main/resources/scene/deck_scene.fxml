@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" styleClass="background" stylesheets="@../CSS/table_background.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.scene_controllers.DeckSceneController">
+   <children>
+      <ImageView fx:id="assistant1" fitHeight="411.0" fitWidth="280.0" layoutX="50.0" layoutY="75.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_1.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant2" fitHeight="411.0" fitWidth="280.0" layoutX="435.0" layoutY="75.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_2.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant6" fitHeight="411.0" fitWidth="280.0" layoutX="50.0" layoutY="536.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_6.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant7" fitHeight="411.0" fitWidth="280.0" layoutX="435.0" layoutY="536.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_7.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant3" fitHeight="411.0" fitWidth="280.0" layoutX="820.0" layoutY="75.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_3.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant8" fitHeight="411.0" fitWidth="280.0" layoutX="820.0" layoutY="536.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_8.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant4" fitHeight="411.0" fitWidth="280.0" layoutX="1205.0" layoutY="75.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_4.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant5" fitHeight="411.0" fitWidth="280.0" layoutX="1590.0" layoutY="75.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_5.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant9" fitHeight="411.0" fitWidth="280.0" layoutX="1205.0" layoutY="536.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_9.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <ImageView fx:id="assistant10" fitHeight="402.0" fitWidth="312.0" layoutX="1590.0" layoutY="536.0" onMouseClicked="#onSelectionOfAssistant" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/assistants/assistant_10.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <Button layoutX="917.0" layoutY="993.0" mnemonicParsing="false" onAction="#switchToTable" prefHeight="43.0" prefWidth="85.0" text="Table" />
+   </children>
+</AnchorPane>

@@ -1,11 +1,13 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.view.exceptions.IllegalGameModeException;
-import it.polimi.ingsw.view.exceptions.IllegalUserPreferenceException;
+import it.polimi.ingsw.view.cli.drawers.DrawersConstant;
+import it.polimi.ingsw.view.exceptions.*;
+import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.game_objects.ClientTeams;
 import it.polimi.ingsw.view.cli.CliConstants;
 import it.polimi.ingsw.controller.ControllerConstants;
+import it.polimi.ingsw.view.gui.GUIConstants;
 
 public class ViewUtilityFunctions {
 
@@ -126,5 +128,85 @@ public class ViewUtilityFunctions {
             throw new IllegalUserPreferenceException();
 
         return returnValue;
+    }
+
+    public static String convertCharacterIdToImagePath(int id) throws IllegalCharacterIdException {
+        switch (id) {
+            case 1:
+                return GUIConstants.SCENE_TABLE_FRIAR_IMAGE_PATH;
+            case 2:
+                return GUIConstants.SCENE_TABLE_COOK_IMAGE_PATH;
+            case 3:
+                return GUIConstants.SCENE_TABLE_AMBASSADOR_IMAGE_PATH;
+            case 4:
+                return GUIConstants.SCENE_TABLE_MAILMAN_IMAGE_PATH;
+            case 5:
+                return GUIConstants.SCENE_TABLE_HERBALIST_IMAGE_PATH;
+            case 6:
+                return GUIConstants.SCENE_TABLE_CENTAUR_IMAGE_PATH;
+            case 7:
+                return GUIConstants.SCENE_TABLE_JESTER_IMAGE_PATH;
+            case 8:
+                return GUIConstants.SCENE_TABLE_KNIGHT_IMAGE_PATH;
+            case 9:
+                return GUIConstants.SCENE_TABLE_MUSHROOM_HUNTER_IMAGE_PATH;
+            case 10:
+                return GUIConstants.SCENE_TABLE_MINSTREL_IMAGE_PATH;
+            case 11:
+                return GUIConstants.SCENE_TABLE_LADY_IMAGE_PATH;
+            case 12:
+                return GUIConstants.SCENE_TABLE_THIEF_IMAGE_PATH;
+            default:
+                throw new IllegalCharacterIdException();
+        }
+    }
+
+    public static int convertAssistantStringToId (String assistant) throws  IllegalAssistantException {
+        switch (assistant) {
+            case GUIConstants.ASSISTANT_1:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD;
+            case GUIConstants.ASSISTANT_2:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_3:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 2 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_4:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 3 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_5:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 4 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_6:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 5 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_7:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 6 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_8:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 7 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_9:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 8 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            case GUIConstants.ASSISTANT_10:
+                return ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 9 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS;
+            default:
+                throw new IllegalAssistantException();
+        }
+    }
+
+    public static int convertIdOfImageOfStudentDisc(String id) {
+        return Integer.parseInt(id.replace(GUIConstants.STUDENT_DISC_NAME, ""));
+    }
+
+    public static int convertStudentIdToIdOfColor(int studentId) throws IllegalStudentIdException {
+        if (studentId >= DrawersConstant.STARTING_ID_YELLOW && studentId <= DrawersConstant.ENDING_ID_YELLOW)
+            return ClientPawnColor.YELLOW.getId();
+        else if (studentId >= DrawersConstant.STARTING_ID_BLUE && studentId <= DrawersConstant.ENDING_ID_BLUE)
+            return ClientPawnColor.BLUE.getId();
+        else if (studentId >= DrawersConstant.STARTING_ID_GREEN && studentId <= DrawersConstant.ENDING_ID_GREEN)
+            return ClientPawnColor.GREEN.getId();
+        else if (studentId >= DrawersConstant.STARTING_ID_RED && studentId <= DrawersConstant.ENDING_ID_RED)
+            return ClientPawnColor.RED.getId();
+        else if (studentId >= DrawersConstant.STARTING_ID_PINK && studentId <= DrawersConstant.ENDING_ID_PINK)
+            return ClientPawnColor.PINK.getId();
+        else throw new IllegalStudentIdException();
+    }
+
+    public static String convertStudentIdToStudentIdForImageView(int studentId) {
+        return GUIConstants.STUDENT_DISC_NAME + String.valueOf(studentId);
     }
 }
