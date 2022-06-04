@@ -15,6 +15,8 @@ import static javafx.application.Application.launch;
 
 public class GUI extends AbstractView {
 
+    private int playerId;
+
     /**
      * When GUI starts, show the Splashscreen
      */

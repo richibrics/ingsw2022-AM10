@@ -10,6 +10,7 @@ abstract public class AbstractView implements ViewInterface {
     protected ClientServerConnection clientServerConnection;
     protected User user;
     protected ActionMessage actionMessage;
+    private int playerId;
 
     public AbstractView() {
         this.syncObject1 = new Object();

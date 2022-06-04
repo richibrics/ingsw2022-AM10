@@ -100,7 +100,10 @@ public class GUIConstants {
     // Name used for no entry tile image view
     public static final String NO_ENTRY_TILE_NAME = "noEntry";
 
-    // Value for filling of island tiles
+    // Name used for professor pawn image view starts with professor
+    public static final String PROFESSOR_PAWN_NAME = "professor";
+
+    // Values for filling of island tiles
     // no entry tiles are 20x20 (same as students)
     public static final int WIDTH_OF_STUDENT_DISC = 20;
     public static final int HEIGHT_OF_STUDENT_DISC = 20;
@@ -112,6 +115,30 @@ public class GUIConstants {
     public static final int WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 120;
     public static final int HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 140;
 
+    //Values for entrance
+    public static final int LAYOUT_X_OF_FIRST_CELL_FIRST_ROW_ENTRANCE = 54;
+    public static final int LAYOUT_Y_OF_FIRST_CELL_FIRST_ROW_ENTRANCE = 704;
+    public static final int LAYOUT_X_OFFSET_CELLS_ENTRANCE = 58;
+    public static final int LAYOUT_Y_OFFSET_CELLS_ENTRANCE = 50;
+    public static final int CELLS_FIRST_ROW_ENTRANCE = 5;
+    public static final int COLUMNS_ENTRANCE = 2;
 
+    // Values for dining room
+    public static final int LAYOUT_X_OF_FIRST_CELL_FIRST_LANE_ON_LEFT_BOTTOM_DINING_ROOM = 53;
+    public static final int LAYOUT_Y_OF_FIRST_CELL_FIRST_LANE_ON_LEFT_BOTTOM_DINING_ROOM = 629;
+    public static final int LAYOUT_X_OFFSET_CELLS_DINING_ROOM = 58;
+    public static final int LAYOUT_Y_OFFSET_CELLS_DINING_ROOM = -39;
+    public static final int LANES = 5; // Must be equal to ClientPawnColor.values().length
+    public static final int INDEX_GREEN_LANE = 0;
+    public static final int INDEX_RED_LANE = 1;
+    public static final int INDEX_YELLOW_LANE = 2;
+    public static final int INDEX_PINK_LANE = 3;
+    public static final int INDEX_BLUE_LANE = 4;
 
+    // Values for professor section
+    public static final int WIDTH_OF_PROFESSOR_PAWN = 30;
+    public static final int HEIGHT_OF_PROFESSOR_PAWN = 30;
+    public static final int LAYOUT_X_OF_FIRST_CELL_PROFESSOR_SECTION = 48;
+    public static final int LAYOUT_Y_OF_FIRST_CELL_PROFESSOR_SECTION = 203;
+    public static final int LAYOUT_X_OFFSET_CELLS_PROFESSOR_SECTION = 58;
 }

@@ -209,4 +209,26 @@ public class ViewUtilityFunctions {
     public static String convertStudentIdToStudentIdForImageView(int studentId) {
         return GUIConstants.STUDENT_DISC_NAME + String.valueOf(studentId);
     }
+
+    public static int convertPawnColorIndexToLaneIndex(int pawnColorIndex) throws IllegalLaneException {
+        if (pawnColorIndex == ClientPawnColor.YELLOW.getId())
+            return GUIConstants.INDEX_YELLOW_LANE;
+        else if (pawnColorIndex == ClientPawnColor.BLUE.getId())
+            return GUIConstants.INDEX_BLUE_LANE;
+        else if (pawnColorIndex == ClientPawnColor.GREEN.getId())
+            return GUIConstants.INDEX_GREEN_LANE;
+        else if (pawnColorIndex == ClientPawnColor.RED.getId())
+            return GUIConstants.INDEX_RED_LANE;
+        else if (pawnColorIndex == ClientPawnColor.PINK.getId())
+            return GUIConstants.INDEX_PINK_LANE;
+        else throw new IllegalLaneException();
+    }
+
+    public static String convertProfessorIdToProfessorIdForImageView(int professorId) {
+        return GUIConstants.PROFESSOR_PAWN_NAME + String.valueOf(professorId);
+    }
+
+    public static int convertIdOfImageOfProfessorPawn(String id) {
+        return Integer.parseInt(id.replace(GUIConstants.PROFESSOR_PAWN_NAME, ""));
+    }
 }
