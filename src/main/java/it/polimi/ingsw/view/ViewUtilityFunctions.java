@@ -207,7 +207,7 @@ public class ViewUtilityFunctions {
     }
 
     public static String convertStudentIdToStudentIdForImageView(int studentId) {
-        return GUIConstants.STUDENT_DISC_NAME + String.valueOf(studentId);
+        return GUIConstants.STUDENT_DISC_NAME + studentId;
     }
 
     public static int convertPawnColorIndexToLaneIndex(int pawnColorIndex) throws IllegalLaneException {
@@ -225,7 +225,7 @@ public class ViewUtilityFunctions {
     }
 
     public static String convertProfessorIdToProfessorIdForImageView(int professorId) {
-        return GUIConstants.PROFESSOR_PAWN_NAME + String.valueOf(professorId);
+        return GUIConstants.PROFESSOR_PAWN_NAME + professorId;
     }
 
     public static int convertIdOfImageOfProfessorPawn(String id) {

@@ -1,12 +1,9 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.view.ViewConstants;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
-import it.polimi.ingsw.view.exceptions.IllegalCharacterIdException;
 import it.polimi.ingsw.view.exceptions.IllegalLaneException;
 import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
-import it.polimi.ingsw.view.game_objects.ClientCharacterCard;
 import it.polimi.ingsw.view.game_objects.ClientIslandTile;
 import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.gui.GUIConstants;
@@ -18,7 +15,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -30,16 +26,21 @@ import java.util.Random;
 
 public class TableSceneController extends SceneController {
 
-    private final Image[] studentDiscs;
+    // Array of panes containing island tiles
     private final Pane[] islandTiles;
+
+    // Array of coordinates
     private final ArrayList<Integer[]> coordinatesOfIslandTile;
     private final Integer[][] coordinatesOfStudentsInEntrance;
     private final Integer[][] firstAvailableCoordinatesOfDiningRoom;
     private final Integer[][] coordinatesOfProfessorPawns;
-    ArrayList<Image> characterCards;
+    private final Integer[][] coordinatesOfTowers;
+
+    // Previous state of school board
+    private final ArrayList<ArrayList<Integer>> previousDiningRoom;
+    private final ArrayList<ClientPawnColor> previousProfessorSection;
+    private final int previousNumberOfTowers;
     private Integer[] previousEntrance;
-    private ArrayList<ArrayList<Integer>> previousDiningRoom;
-    private ArrayList<ClientPawnColor> previousProfessorSection;
     @FXML
     private Pane island1;
     @FXML
@@ -66,35 +67,11 @@ public class TableSceneController extends SceneController {
     private Pane island12;
     @FXML
     private Pane schoolBoard;
-    private Image cloudTile;
-    private Image yellowStudentDisc;
-    private Image blueStudentDisc;
-    private Image greenStudentDisc;
-    private Image redStudentDisc;
-    private Image pinkStudentDisc;
-    private Image yellowProfessor;
-    private Image blueProfessor;
-    private Image greenProfessor;
-    private Image redProfessor;
-    private Image pinkProfessor;
-    private Image coin;
-    private Image blackTower;
-    private Image greyTower;
-    private Image whiteTower;
-    private Image motherNaturePawn;
-    private Image noEntryTile;
-    private Image[] professorPawns;
 
     public TableSceneController() {
 
         // Create array of Panes containing the island tiles
         islandTiles = new Pane[(ModelConstants.NUMBER_OF_ISLAND_TILES - 1) * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS + ModelConstants.MIN_ID_OF_ISLAND + 1];
-
-        // Create array of images of student discs
-        this.studentDiscs = new Image[ClientPawnColor.values().length];
-
-        // Create array of images of professor pawns
-        this.professorPawns = new Image[ClientPawnColor.values().length];
 
         // Create array of coordinates for elements in island tile
         this.coordinatesOfIslandTile = new ArrayList<>();
@@ -108,6 +85,9 @@ public class TableSceneController extends SceneController {
         // Create array of coordinates for professor pawns
         this.coordinatesOfProfessorPawns = new Integer[GUIConstants.LANES][2];
 
+        // Create array of coordinates for towers in tower section
+        this.coordinatesOfTowers = new Integer[ModelConstants.MAX_NUMBER_OF_TOWERS][2];
+
         // Create array list of lanes of previous dining room
         this.previousDiningRoom = new ArrayList<>();
         for (int i = 0; i < GUIConstants.LANES; i++)
@@ -115,6 +95,9 @@ public class TableSceneController extends SceneController {
 
         // Create array list for previous professor section
         this.previousProfessorSection = new ArrayList<>();
+
+        // Initialize previous number of towers to 0
+        this.previousNumberOfTowers = 0;
     }
 
     // MAIN METHODS
@@ -136,8 +119,7 @@ public class TableSceneController extends SceneController {
                 }
             });
             AnchorPane root = loader.load();
-            // Load images
-            this.loadImages(true, 2);
+            // Load panes of island tiles in array of panes
             this.loadPanesInArrayOfIslandTilePanes();
             // Generate coordinates
             this.generateCoordinates();
@@ -160,7 +142,11 @@ public class TableSceneController extends SceneController {
             this.updateSchoolBoardDiningRoom(playerId);
             // Update professor section
             this.updateSchoolBoardProfessorSection(playerId);
-        } catch (IllegalStudentIdException | IllegalLaneException e) { e.printStackTrace();}
+            // Update tower section
+            this.updateSchoolBoardTowersSection(playerId);
+        } catch (IllegalStudentIdException | IllegalLaneException e) {
+            e.printStackTrace();
+        }
     }
 
     // FILLERS
@@ -199,7 +185,7 @@ public class TableSceneController extends SceneController {
                 // Put mother nature at the center of the island tile if the current island contains mother nature
                 if (motherNatureIsland == clientIslandTile.getId()) {
                     // Create mother nature image view and set properties
-                    ImageView motherNature = new ImageView(this.motherNaturePawn);
+                    ImageView motherNature = new ImageView(Images.getImages().getMotherNaturePawn());
                     motherNature.setId(GUIConstants.MOTHER_NATURE_NAME);
                     motherNature.setPreserveRatio(false);
                     motherNature.setFitHeight(GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN);
@@ -250,7 +236,7 @@ public class TableSceneController extends SceneController {
 
                 if (clientIslandTile.hasNoEntry()) {
                     coordinate = this.coordinatesOfIslandTile.remove(random.nextInt(this.coordinatesOfIslandTile.size()));
-                    ImageView noEntry = new ImageView(this.noEntryTile);
+                    ImageView noEntry = new ImageView(Images.getImages().getNoEntryTile());
                     noEntry.setId(GUIConstants.NO_ENTRY_TILE_NAME);
                     noEntry.setPreserveRatio(false);
                     noEntry.setFitWidth(GUIConstants.WIDTH_OF_STUDENT_DISC);
@@ -408,7 +394,7 @@ public class TableSceneController extends SceneController {
             // Add professors to scene
             for (ClientPawnColor professor : professorsToAdd) {
                 // Create image view
-                ImageView professorPawn = new ImageView(this.professorPawns[professor.getId()]);
+                ImageView professorPawn = new ImageView(Images.getImages().getProfessorPawns()[professor.getId()]);
                 professorPawn.setId(ViewUtilityFunctions.convertProfessorIdToProfessorIdForImageView(professor.getId()));
                 professorPawn.setPreserveRatio(false);
                 professorPawn.setFitWidth(GUIConstants.WIDTH_OF_PROFESSOR_PAWN);
@@ -467,8 +453,55 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    private void updateSchoolBoardTowersSection(int playerId) {
+
+        // Determine index of team from player id
+        int indexOfTeam = StageController.getStageController().getClientTeams().getTeams()
+                .indexOf(StageController.getStageController().getClientTeams().getTeams()
+                        .stream()
+                        .filter(clientTeam -> clientTeam.getPlayers().
+                                stream().
+                                filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1)
+                        .toList().get(0));
+
+        // Save current number of towers and towers color for simplicity
+        int currentNumberOfTowers = StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getNumberOfTowers();
+        int idOfColorOfTowers = StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getTowersColor().getId();
+
+
+        // Case 1: Add towers to tower section
+        if (this.previousNumberOfTowers < currentNumberOfTowers) {
+            for (int i = this.previousNumberOfTowers; i < currentNumberOfTowers; i++) {
+                ImageView tower = new ImageView(Images.getImages().getTowers()[idOfColorOfTowers]);
+                tower.setId(GUIConstants.TOWER_NAME + (idOfColorOfTowers * ModelConstants.MAX_NUMBER_OF_TOWERS + i + 1));
+                tower.setPreserveRatio(false);
+                tower.setFitWidth(GUIConstants.WIDTH_OF_TOWER);
+                tower.setFitHeight(GUIConstants.HEIGHT_OF_TOWER);
+                tower.setLayoutX(this.coordinatesOfTowers[i][1]);
+                tower.setLayoutY(this.coordinatesOfTowers[i][0]);
+                tower.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+                this.schoolBoard.getChildren().add(tower);
+            }
+        }
+
+        // Case 2: Remove towers to tower section
+        if (this.previousNumberOfTowers > currentNumberOfTowers) {
+            for (int i = currentNumberOfTowers; i < this.previousNumberOfTowers; i++) {
+                // Get node at this.coordinatesOfTowers[i]
+                int finalI = i;
+                Node node = this.schoolBoard.getChildren()
+                        .stream()
+                        .filter(n -> n.getLayoutX() == this.coordinatesOfTowers[finalI][1]
+                                && n.getLayoutY() == this.coordinatesOfTowers[finalI][0]).toList().get(0);
+
+                // Remove node
+                this.schoolBoard.getChildren().remove(node);
+            }
+        }
+    }
+
     private ImageView createImageViewOfStudent(int studentId, int layoutX, int layoutY) throws IllegalStudentIdException {
-        ImageView student = new ImageView(this.studentDiscs[ViewUtilityFunctions.convertStudentIdToIdOfColor(studentId)]);
+        ImageView student = new ImageView(Images.getImages().getStudentDiscs()[ViewUtilityFunctions.convertStudentIdToIdOfColor(studentId)]);
         student.setId(ViewUtilityFunctions.convertStudentIdToStudentIdForImageView(studentId));
         student.setPreserveRatio(false);
         student.setFitWidth(GUIConstants.WIDTH_OF_STUDENT_DISC);
@@ -485,6 +518,7 @@ public class TableSceneController extends SceneController {
         this.generateCoordinatesOfStudentsInEntrance();
         this.initializeCoordinatesOfDiningRoom();
         this.generateCoordinatesForProfessors();
+        this.generateCoordinatesForTowers();
     }
 
     private void regenerateCoordinatesForGameComponentsOfIslandTile() {
@@ -532,54 +566,19 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    // IMAGES LOADERS
-
-    public void loadImages(boolean expertMode, int numberOfPlayers) {
-
-        this.loadPanesInArrayOfIslandTilePanes();
-
-        // Create images of students
-        // this.yellowStudentDisc = new Image(GUIConstants.SCENE_TABLE_YELLOW_STUDENT_DISC_IMAGE_PATH);
-        this.yellowStudentDisc = new Image(GUIConstants.SCENE_TABLE_YELLOW_STUDENT_DISC_IMAGE_PATH);
-        this.blueStudentDisc = new Image(GUIConstants.SCENE_TABLE_BLUE_STUDENT_DISC_IMAGE_PATH);
-        this.greenStudentDisc = new Image(GUIConstants.SCENE_TABLE_GREEN_STUDENT_DISC_IMAGE_PATH);
-        this.redStudentDisc = new Image(GUIConstants.SCENE_TABLE_RED_STUDENT_DISC_IMAGE_PATH);
-        this.pinkStudentDisc = new Image(GUIConstants.SCENE_TABLE_PINK_STUDENT_DISC_IMAGE_PATH);
-
-        // Load images in array
-        this.loadImagesOfStudentsInArrayOfImages();
-
-        this.yellowProfessor = new Image(GUIConstants.SCENE_TABLE_YELLOW_PROFESSOR_IMAGE_PATH);
-        this.blueProfessor = new Image(GUIConstants.SCENE_TABLE_BLUE_PROFESSOR_IMAGE_PATH);
-        this.greenProfessor = new Image(GUIConstants.SCENE_TABLE_GREEN_PROFESSOR_IMAGE_PATH);
-        this.redProfessor = new Image(GUIConstants.SCENE_TABLE_RED_PROFESSOR_IMAGE_PATH);
-        this.pinkProfessor = new Image(GUIConstants.SCENE_TABLE_PINK_PROFESSOR_IMAGE_PATH);
-
-        // Load images in array
-        this.loadImagesOfProfessorsInArrayOfImages();
-
-        this.blackTower = new Image(GUIConstants.SCENE_TABLE_BLACK_TOWER_IMAGE_PATH);
-        this.whiteTower = new Image(GUIConstants.SCENE_TABLE_WHITE_TOWER_IMAGE_PATH);
-        this.motherNaturePawn = new Image(GUIConstants.SCENE_TABLE_MOTHER_NATURE_IMAGE_PATH);
-
-        if (numberOfPlayers == ViewConstants.THREE_PLAYERS_GAME)
-            this.greyTower = new Image(GUIConstants.SCENE_TABLE_GREY_TOWER_IMAGE_PATH);
-
-        if (numberOfPlayers == ViewConstants.THREE_PLAYERS_GAME || numberOfPlayers == ViewConstants.FOUR_PLAYERS_GAME)
-            this.cloudTile = new Image(GUIConstants.SCENE_TABLE_CLOUD_IMAGE_PATH);
-
-        if (expertMode) {
-            this.coin = new Image(GUIConstants.SCENE_TABLE_COIN_IMAGE_PATH);
-            this.characterCards = new ArrayList<>();
-            try {
-                for (ClientCharacterCard clientCharacterCard : StageController.getStageController().getClientTable().getActiveCharacterCards())
-                    this.characterCards.add(new Image(ViewUtilityFunctions.convertCharacterIdToImagePath(clientCharacterCard.getId())));
-            } catch (IllegalCharacterIdException e) {
-
+    private void generateCoordinatesForTowers() {
+        int indexOfCoordinate = 0;
+        for (int i = GUIConstants.LAYOUT_Y_OF_FIRST_CELL_TOWERS; i > GUIConstants.LAYOUT_Y_OF_FIRST_CELL_TOWERS
+                + GUIConstants.NUMBER_OF_ROWS_OF_TOWERS * GUIConstants.LAYOUT_Y_OFFSET_TOWERS; i += GUIConstants.LAYOUT_Y_OFFSET_TOWERS)
+            for (int j = GUIConstants.LAYOUT_X_OF_FIRST_CELL_TOWERS; j < GUIConstants.LAYOUT_X_OF_FIRST_CELL_TOWERS
+                    + GUIConstants.NUMBER_OF_TOWERS_IN_ROW * GUIConstants.LAYOUT_X_OFFSET_TOWERS; j += GUIConstants.LAYOUT_X_OFFSET_TOWERS) {
+                this.coordinatesOfTowers[indexOfCoordinate][1] = j;
+                this.coordinatesOfTowers[indexOfCoordinate][0] = i;
+                indexOfCoordinate++;
             }
-            this.noEntryTile = new Image(GUIConstants.SCENE_TABLE_NO_ENTRY_PATH);
-        }
     }
+
+    // PANES LOADER
 
     private void loadPanesInArrayOfIslandTilePanes() {
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND] = this.island1;
@@ -594,22 +593,6 @@ public class TableSceneController extends SceneController {
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 9 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island10;
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 10 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island11;
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 11 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island12;
-    }
-
-    private void loadImagesOfStudentsInArrayOfImages() {
-        this.studentDiscs[ClientPawnColor.YELLOW.getId()] = this.yellowStudentDisc;
-        this.studentDiscs[ClientPawnColor.BLUE.getId()] = this.blueStudentDisc;
-        this.studentDiscs[ClientPawnColor.GREEN.getId()] = this.greenStudentDisc;
-        this.studentDiscs[ClientPawnColor.RED.getId()] = this.redStudentDisc;
-        this.studentDiscs[ClientPawnColor.PINK.getId()] = this.pinkStudentDisc;
-    }
-
-    private void loadImagesOfProfessorsInArrayOfImages() {
-        this.professorPawns[ClientPawnColor.YELLOW.getId()] = this.yellowProfessor;
-        this.professorPawns[ClientPawnColor.BLUE.getId()] = this.blueProfessor;
-        this.professorPawns[ClientPawnColor.GREEN.getId()] = this.greenProfessor;
-        this.professorPawns[ClientPawnColor.RED.getId()] = this.redProfessor;
-        this.professorPawns[ClientPawnColor.PINK.getId()] = this.pinkProfessor;
     }
 
     // EVENTS HANDLERS

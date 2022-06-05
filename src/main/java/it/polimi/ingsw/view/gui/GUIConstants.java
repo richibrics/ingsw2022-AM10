@@ -103,6 +103,10 @@ public class GUIConstants {
     // Name used for professor pawn image view starts with professor
     public static final String PROFESSOR_PAWN_NAME = "professor";
 
+    // Name used for towers
+    public static final String TOWER_NAME = "towerColor";
+
+
     // Values for filling of island tiles
     // no entry tiles are 20x20 (same as students)
     public static final int WIDTH_OF_STUDENT_DISC = 20;
@@ -112,6 +116,8 @@ public class GUIConstants {
     // The following values must be divisible by WIDTH_OF_STUDENT_DISC and HEIGHT_OF_STUDENT_DISC respectively
     public static final int WIDTH_OF_MOTHER_NATURE = 40;
     public static final int HEIGHT_OF_MOTHER_NATURE_PAWN = 40;// The following values must be divisible by WIDTH_OF_STUDENT_DISC and HEIGHT_OF_STUDENT_DISC respectively
+    public static final int WIDTH_OF_TOWER = 50;
+    public static final int HEIGHT_OF_TOWER = 50;
     public static final int WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 120;
     public static final int HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 140;
 
@@ -141,4 +147,12 @@ public class GUIConstants {
     public static final int LAYOUT_X_OF_FIRST_CELL_PROFESSOR_SECTION = 48;
     public static final int LAYOUT_Y_OF_FIRST_CELL_PROFESSOR_SECTION = 203;
     public static final int LAYOUT_X_OFFSET_CELLS_PROFESSOR_SECTION = 58;
+
+    // Values for towers section
+    public static final int LAYOUT_X_OF_FIRST_CELL_TOWERS = 66;
+    public static final int LAYOUT_Y_OF_FIRST_CELL_TOWERS = 108;
+    public static final int LAYOUT_X_OFFSET_TOWERS = 50;
+    public static final int LAYOUT_Y_OFFSET_TOWERS = -60;
+    public static final int NUMBER_OF_ROWS_OF_TOWERS = 2;
+    public static final int NUMBER_OF_TOWERS_IN_ROW = 4;
 }
