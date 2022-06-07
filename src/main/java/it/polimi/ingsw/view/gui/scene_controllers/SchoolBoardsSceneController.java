@@ -43,6 +43,8 @@ public class SchoolBoardsSceneController extends SceneController{
 
     private Image schoolBoard;
 
+    // ARRAYS GENERATORS
+
     private void generateArraysOfCoordinates() {
         int numberOfSchoolBoards = StageController.getStageController().getClientTable().getSchoolBoards().size() - 1;
         this.coordinatesOfStudentsInEntrances = new Integer[numberOfSchoolBoards][ GUIConstants.COLUMNS_ENTRANCE * GUIConstants.CELLS_FIRST_ROW_ENTRANCE - 1][3];
@@ -67,9 +69,11 @@ public class SchoolBoardsSceneController extends SceneController{
         Arrays.fill(this.previousNumberOfTowers, 0);
     }
 
+    // MAIN METHODS
+
     @Override
     protected Scene layout() {
-        // Call for scene creation, that call updateScene to update the content of the table
+        // Call for scene creation, that call updateScene to update the content of the school boards
         // The scene cannot be created if clientTable and clientTeams have not been set.
         try {
             if (StageController.getStageController().getClientTable() == null)
@@ -144,7 +148,7 @@ public class SchoolBoardsSceneController extends SceneController{
             return new Scene(root);
         } catch (SceneLayoutException | GuiViewNotSet e) {
             e.printStackTrace();
-            // TODO DO SOMETHING WITH EXCEPTIONS
+            // TODO do something
             return null;
         }
     }
@@ -201,6 +205,8 @@ public class SchoolBoardsSceneController extends SceneController{
         }
     }
 
+    // NODES GENERATORS
+
     private Pane addPaneOfSchoolBoardAndImageOfSchoolBoardToRoot(AnchorPane root, int layoutXOfPane, int layoutYOfPane) {
         // Create pane for school board
         Pane paneForSchoolBoard = new Pane();
@@ -237,6 +243,8 @@ public class SchoolBoardsSceneController extends SceneController{
         // Add label to root
         root.getChildren().add(label);
     }
+
+    // EVENT HANDLERS
 
     class SwitchToTable implements EventHandler<ActionEvent> {
 

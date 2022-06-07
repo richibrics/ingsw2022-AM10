@@ -9,6 +9,7 @@ import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
+import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -107,6 +108,7 @@ public class TableSceneController extends SceneController {
     @Override
     protected Scene layout() {
         // Call for scene creation, that call updateScene to update the content of the table
+        // The scene cannot be created if clientTable and clientTeams have not been set.
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scene/table_scene.fxml"));
             loader.setControllerFactory(type -> {
@@ -126,21 +128,28 @@ public class TableSceneController extends SceneController {
             // Generate coordinates
             SchoolBoardsFunction.generateCoordinates(this.coordinatesOfStudentsInEntrance, this.firstAvailableCoordinatesOfDiningRoom,
                     this.coordinatesOfProfessorPawns, this.coordinatesOfTowers);
-            // Fill scene with missing game objects // TODO MOVE TO UPDATE SCENE AND CHANGE FILLING SYSTEM
-            this.addStudentsMotherNatureAndNoEntryToIslandTiles();
-            // TODO Remove 1 as player id
-            this.updateScene(1);
+
+            // Fill the game objects
+            this.updateScene();
+            // Return the newly created scene
             return new Scene(root);
-        } catch (IOException | IllegalStudentIdException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            // TODO do something
             return null;
         }
     }
 
-    // TODO remove player id and get it from gui
-    public void updateScene(int playerId) {
+    public void updateScene() {
 
-        // Update school board
         try {
+            // Fill islands
+            this.addStudentsMotherNatureAndNoEntryToIslandTiles();
+            // Move islands to create island groups
+            // TODO method for island movements
+
+            // Update school board
+            int playerId = StageController.getStageController().getGuiView().getPlayerId();
             // Get index of school board of client
             int indexOfSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(playerId, StageController.getStageController().getClientTeams());
 
@@ -166,12 +175,13 @@ public class TableSceneController extends SceneController {
             this.previousNumberOfTowers = SchoolBoardsFunction.updateSchoolBoardTowersSection(indexOfTeam, this.schoolBoard, this.coordinatesOfTowers,
                     this.previousNumberOfTowers);
 
-        } catch (IllegalStudentIdException | IllegalLaneException e) {
+        } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
             e.printStackTrace();
+            // TODO do something
         }
     }
 
-    // FILLERS
+    // METHODS FOR SCENE UPDATE
 
     private void addStudentsMotherNatureAndNoEntryToIslandTiles() throws IllegalStudentIdException {
 
@@ -268,6 +278,10 @@ public class TableSceneController extends SceneController {
                     this.islandTiles[clientIslandTile.getId()].getChildren().add(noEntry);
                 }
             }
+    }
+
+    private void moveIslandTiles() {
+
     }
 
     // COORDINATES GENERATOR

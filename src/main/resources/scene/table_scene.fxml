@@ -26,7 +26,7 @@
                   <Image url="@../images/school_board.png" />
                </image>
                <effect>
-                  <ColorAdjust contrast="-0.15" brightness="-0.2" />
+                  <ColorAdjust brightness="-0.2" contrast="-0.15" />
                </effect>
             </ImageView>
          </children>
@@ -37,24 +37,6 @@
          </font>
       </Button>
       <Button fx:id="deck" layoutX="469.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" text="Deck" />
-      <Pane layoutX="246.0" layoutY="863.0" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <ImageView fx:id="cloud2" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/cloud_tile.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
-      <Pane layoutX="31.0" layoutY="863.0" prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <ImageView fx:id="cloud1" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/cloud_tile.png" />
-               </image>
-            </ImageView>
-         </children>
-      </Pane>
       <Pane fx:id="island3" layoutX="920.0" layoutY="10.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile3" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true">
