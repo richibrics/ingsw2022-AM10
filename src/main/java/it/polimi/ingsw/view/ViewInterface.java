@@ -36,4 +36,8 @@ public interface ViewInterface {
     void setUserReady(boolean newValue);
 
     void showError(String message);
+
+    int getPlayerId();
+
+    void setPlayerId(int playerId);
 }

@@ -20,6 +20,8 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// TODO remove player id passed as argument to methods. Player id can be retrieved using this.getPlayerId()
+
 public class Cli extends AbstractView {
 
     private final int SPACE_BETWEEN_ELEMENTS = 3;

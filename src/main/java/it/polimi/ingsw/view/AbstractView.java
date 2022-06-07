@@ -69,4 +69,12 @@ abstract public class AbstractView implements ViewInterface {
     public ActionMessage getActionMessage() {
         return new ActionMessage(this.actionMessage.getActionId(), this.actionMessage.getOptions());
     }
+
+    public int getPlayerId() {
+        return this.playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
 }

@@ -128,6 +128,7 @@ public class GUIConstants {
     public static final int LAYOUT_Y_OFFSET_CELLS_ENTRANCE = 50;
     public static final int CELLS_FIRST_ROW_ENTRANCE = 5;
     public static final int COLUMNS_ENTRANCE = 2;
+    public static final int MAX_NUMBER_OF_STUDENTS_IN_ENTRANCE = 9;
 
     // Values for dining room
     public static final int LAYOUT_X_OF_FIRST_CELL_FIRST_LANE_ON_LEFT_BOTTOM_DINING_ROOM = 53;
@@ -155,4 +156,25 @@ public class GUIConstants {
     public static final int LAYOUT_Y_OFFSET_TOWERS = -60;
     public static final int NUMBER_OF_ROWS_OF_TOWERS = 2;
     public static final int NUMBER_OF_TOWERS_IN_ROW = 4;
+
+    // Values for scene with school boards
+    public static final double WIDTH_OF_SCENE = 1920.0;
+    public static final double HEIGHT_OF_SCENE = 1060.0;
+    public static final double WIDTH_OF_PANE_FOR_SCHOOL_BOARD = 360.0;
+    public static final double HEIGHT_OF_PANE_FOR_SCHOOL_BOARD = 805.0;
+    public static final double WIDTH_OF_IMAGE_VIEW_OF_SCHOOL_BOARD = 805.0;
+    public static final double HEIGHT_OF_IMAGE_VIEW_OF_SCHOOL_BOARD = 360.0;
+    public static final int LAYOUT_X_OF_FIRST_SCHOOL_BOARD = 40;
+    public static final int LAYOUT_Y_OF_SCHOOL_BOARDS = 100;
+    public static final int LAYOUT_X_OF_SCHOOL_BOARD_IN_PANE_FOR_SCHOOL_BOARD = -222;
+    public static final int LAYOUT_Y_OF_SCHOOL_BOARD_IN_PANE_FOR_SCHOOL_BOARD = 223;
+    public static final int ROTATION_OF_SCHOOL_BOARD_IN_PANE_FOR_SCHOOL_BOARD = -90;
+    public static final int LAYOUT_X_OFFSET_BETWEEN_SCHOOL_BOARDS = 420;
+    public static final String SCENE_TABLE_SCHOOL_BOARD_PATH = "/images/school_board.png";
+    public static final double WIDTH_OF_LABEL_FOR_USERNAMES = 360.0;
+    public static final double HEIGHT_OF_LABEL_FOR_USERNAMES = 50.0;
+    public static final int LAYOUT_Y_OF_LABELS_FOR_USERNAMES = 50;
+    public static final int FONT_SIZE = 16;
+    public static final String FONT = "Algerian";
+    public static final String LABEL_FOR_USERNAME_START = "Username: ";
 }

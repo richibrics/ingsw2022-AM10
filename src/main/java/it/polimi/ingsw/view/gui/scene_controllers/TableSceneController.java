@@ -14,14 +14,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class TableSceneController extends SceneController {
@@ -37,10 +35,11 @@ public class TableSceneController extends SceneController {
     private final Integer[][] coordinatesOfTowers;
 
     // Previous state of school board
+    private Integer[] previousEntrance;
     private final ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
-    private final int previousNumberOfTowers;
-    private Integer[] previousEntrance;
+    private int previousNumberOfTowers;
+
     @FXML
     private Pane island1;
     @FXML
@@ -88,6 +87,9 @@ public class TableSceneController extends SceneController {
         // Create array of coordinates for towers in tower section
         this.coordinatesOfTowers = new Integer[ModelConstants.MAX_NUMBER_OF_TOWERS][2];
 
+        // Create array for previous entrance
+        this.previousEntrance = new Integer[0];
+
         // Create array list of lanes of previous dining room
         this.previousDiningRoom = new ArrayList<>();
         for (int i = 0; i < GUIConstants.LANES; i++)
@@ -104,7 +106,7 @@ public class TableSceneController extends SceneController {
 
     @Override
     protected Scene layout() {
-
+        // Call for scene creation, that call updateScene to update the content of the table
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scene/table_scene.fxml"));
             loader.setControllerFactory(type -> {
@@ -122,8 +124,9 @@ public class TableSceneController extends SceneController {
             // Load panes of island tiles in array of panes
             this.loadPanesInArrayOfIslandTilePanes();
             // Generate coordinates
-            this.generateCoordinates();
-            // Fill scene with missing game objects
+            SchoolBoardsFunction.generateCoordinates(this.coordinatesOfStudentsInEntrance, this.firstAvailableCoordinatesOfDiningRoom,
+                    this.coordinatesOfProfessorPawns, this.coordinatesOfTowers);
+            // Fill scene with missing game objects // TODO MOVE TO UPDATE SCENE AND CHANGE FILLING SYSTEM
             this.addStudentsMotherNatureAndNoEntryToIslandTiles();
             // TODO Remove 1 as player id
             this.updateScene(1);
@@ -133,17 +136,36 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    // TODO remove player id and get it from gui
     public void updateScene(int playerId) {
+
         // Update school board
         try {
+            // Get index of school board of client
+            int indexOfSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(playerId, StageController.getStageController().getClientTeams());
+
+            // Determine index of team from player id
+            int indexOfTeam = StageController.getStageController().getClientTeams().getTeams()
+                    .indexOf(StageController.getStageController().getClientTeams().getTeams()
+                            .stream()
+                            .filter(clientTeam -> clientTeam.getPlayers().
+                                    stream().
+                                    filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1)
+                            .toList().get(0));
+
             // Update entrance
-            this.updateSchoolBoardEntrance(playerId);
+            this.previousEntrance = SchoolBoardsFunction.updateSchoolBoardEntrance(indexOfSchoolBoard, this.schoolBoard,
+                    this.coordinatesOfStudentsInEntrance, this.previousEntrance);
             // Update dining room
-            this.updateSchoolBoardDiningRoom(playerId);
+            SchoolBoardsFunction.updateSchoolBoardDiningRoom(indexOfSchoolBoard, this.schoolBoard,
+                    this.firstAvailableCoordinatesOfDiningRoom, this.previousDiningRoom);
             // Update professor section
-            this.updateSchoolBoardProfessorSection(playerId);
+            SchoolBoardsFunction.updateSchoolBoardProfessorSection(indexOfTeam, this.schoolBoard, this.coordinatesOfProfessorPawns,
+                    this.previousProfessorSection);
             // Update tower section
-            this.updateSchoolBoardTowersSection(playerId);
+            this.previousNumberOfTowers = SchoolBoardsFunction.updateSchoolBoardTowersSection(indexOfTeam, this.schoolBoard, this.coordinatesOfTowers,
+                    this.previousNumberOfTowers);
+
         } catch (IllegalStudentIdException | IllegalLaneException e) {
             e.printStackTrace();
         }
@@ -227,7 +249,7 @@ public class TableSceneController extends SceneController {
                         student.setLayoutY(coordinate[0]);
                         this.islandTiles[clientIslandTile.getId()].getChildren().add(student);
                     } else {
-                        ImageView student = this.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
+                        ImageView student = SchoolBoardsFunction.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
                         this.islandTiles[clientIslandTile.getId()].getChildren().add(student);
                     }
                 }
@@ -248,278 +270,7 @@ public class TableSceneController extends SceneController {
             }
     }
 
-    private void updateSchoolBoardEntrance(int playerId) throws IllegalStudentIdException {
-
-        // Important: this method is based on the assumption that the only operations applied to the entrance are additions and removals of
-        // student discs. No replacement should take place. This is true at the moment.
-
-        int indexOfSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(playerId, StageController.getStageController().getClientTeams());
-        // Get current entrance of school board of client. The content of the current entrance is compared to the content of the previous entrance
-        Integer[] currentEntrance = StageController.getStageController().getClientTable().getSchoolBoards().get(indexOfSchoolBoard).getEntrance().toArray(new Integer[0]);
-        int indexOfCoordinate = 0;
-        // Case 1: no students in the previous entrance. Add all the students.
-        if (this.previousEntrance == null) {
-            for (int studentId : currentEntrance) {
-                // Create image view
-                ImageView student = this.createImageViewOfStudent(studentId, this.coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
-                        this.coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
-                // Add image view to pane with school board
-                this.schoolBoard.getChildren().add(student);
-                // The coordinate has been used, set to -1
-                this.coordinatesOfStudentsInEntrance[indexOfCoordinate][2] = 1;
-                indexOfCoordinate++;
-            }
-            // Update previous entrance
-            this.previousEntrance = currentEntrance;
-        }
-
-        // Case 2: Add the new students to the entrance
-        else if (this.previousEntrance.length < currentEntrance.length) {
-            Integer[] newStudents = Arrays
-                    .stream(currentEntrance)
-                    .filter(id1 -> Arrays
-                            .stream(this.previousEntrance).noneMatch(id2 -> id2 == id1))
-                    .toArray(Integer[]::new);
-
-            for (int i = 0; i < this.coordinatesOfStudentsInEntrance.length; i++) {
-                // Check if coordinates is not taken
-                if (this.coordinatesOfStudentsInEntrance[i][2] == 0) {
-                    // Create image view
-                    ImageView student = this.createImageViewOfStudent(newStudents[i], this.coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
-                            this.coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
-                    // Add image view to pane with school board
-                    this.schoolBoard.getChildren().add(student);
-                    // The coordinate has been used, set third element to 1
-                    this.coordinatesOfStudentsInEntrance[indexOfCoordinate][2] = 1;
-                }
-                indexOfCoordinate++;
-            }
-            // Update previous entrance
-            this.previousEntrance = currentEntrance;
-        }
-        // Case 3: Remove students from entrance and update array of coordinates
-        else if (this.previousEntrance.length > currentEntrance.length) {
-            Integer[] studentsToRemove = Arrays
-                    .stream(this.previousEntrance)
-                    .filter(id1 -> Arrays
-                            .stream(currentEntrance).noneMatch(id2 -> id2 == id1))
-                    .toArray(Integer[]::new);
-
-            for (int i = 0; i < this.coordinatesOfStudentsInEntrance.length; i++) {
-                // Get node at this.coordinatesOfStudentsInEntrance[i] if present
-                int finalI = i;
-                if (this.schoolBoard.getChildren()
-                        .stream()
-                        .filter(n -> n.getLayoutX() == this.coordinatesOfStudentsInEntrance[finalI][1]
-                                && n.getLayoutY() == this.coordinatesOfStudentsInEntrance[finalI][0])
-                        .count() == 1) {
-                    Node node = this.schoolBoard.getChildren()
-                            .stream()
-                            .filter(n -> n.getLayoutX() == this.coordinatesOfStudentsInEntrance[finalI][1]
-                                    && n.getLayoutY() == this.coordinatesOfStudentsInEntrance[finalI][0]).toList().get(0);
-                    // Check if the node must be removed
-                    if (Arrays.stream(studentsToRemove)
-                            .filter(id -> id == ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()))
-                            .count() == 1) {
-                        // Remove node
-                        this.schoolBoard.getChildren().remove(node);
-                        // The coordinate is not used, set third element to 0
-                        this.coordinatesOfStudentsInEntrance[1][2] = 0;
-                    }
-                }
-            }
-            // Update previous entrance
-            this.previousEntrance = currentEntrance;
-        }
-    }
-
-    private void updateSchoolBoardDiningRoom(int playerId) throws IllegalLaneException, IllegalStudentIdException {
-
-        // Important: this method is based on the assumption that the only operation applied to the dining room is the addition of
-        // student discs. This is true at the moment.
-
-        int indexOfSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(playerId, StageController.getStageController().getClientTeams());
-        int indexOfLaneInClientTable = 0;
-        for (ArrayList<Integer> lane : StageController.getStageController().getClientTable().getSchoolBoards().get(indexOfSchoolBoard).getDiningRoom()) {
-            // The index of color x differs from the corresponding lane in the image, thus a mapping is required
-            int indexOfLaneInImage = ViewUtilityFunctions.convertPawnColorIndexToLaneIndex(indexOfLaneInClientTable);
-
-            // Add new students to dining room
-            if (lane.size() > this.previousDiningRoom.get(indexOfLaneInClientTable).size()) {
-                int finalIndexOfLaneInClientTable = indexOfLaneInClientTable;
-                Integer[] newStudents = lane
-                        .stream()
-                        .filter(id1 -> this.previousDiningRoom.get(finalIndexOfLaneInClientTable)
-                                .stream().noneMatch(id2 -> id2 == id1))
-                        .toArray(Integer[]::new);
-                for (int studentId : newStudents) {
-                    // Create image view of student
-                    ImageView student = this.createImageViewOfStudent(studentId, this.firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][1],
-                            this.firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][0]);
-                    // Add image view to pane with school board
-                    this.schoolBoard.getChildren().add(student);
-                    // Update first available coordinate
-                    this.firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][0] += GUIConstants.LAYOUT_Y_OFFSET_CELLS_DINING_ROOM;
-                }
-                // Update content of previous dining room
-                this.previousDiningRoom.get(indexOfLaneInClientTable).clear();
-                this.previousDiningRoom.get(indexOfLaneInClientTable).addAll(lane);
-            }
-            // Increment lane index
-            indexOfLaneInClientTable++;
-        }
-    }
-
-    private void updateSchoolBoardProfessorSection(int playerId) throws IllegalLaneException {
-
-        // Determine index of team from player id
-        int indexOfTeam = StageController.getStageController().getClientTeams().getTeams()
-                .indexOf(StageController.getStageController().getClientTeams().getTeams()
-                        .stream()
-                        .filter(clientTeam -> clientTeam.getPlayers().
-                                stream().
-                                filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1)
-                        .toList().get(0));
-        // Case 1: Add professor pawns
-        if (this.previousProfessorSection.size() < StageController.getStageController().getClientTeams()
-                .getTeams().get(indexOfTeam).getProfessorPawns().size()) {
-
-            // Find professors to add
-            ClientPawnColor[] professorsToAdd = StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getProfessorPawns()
-                    .stream()
-                    .filter(professor1 -> this.previousProfessorSection
-                            .stream().noneMatch(professor2 -> professor2 == professor1))
-                    .toArray(ClientPawnColor[]::new);
-
-            // Add professors to scene
-            for (ClientPawnColor professor : professorsToAdd) {
-                // Create image view
-                ImageView professorPawn = new ImageView(Images.getImages().getProfessorPawns()[professor.getId()]);
-                professorPawn.setId(ViewUtilityFunctions.convertProfessorIdToProfessorIdForImageView(professor.getId()));
-                professorPawn.setPreserveRatio(false);
-                professorPawn.setFitWidth(GUIConstants.WIDTH_OF_PROFESSOR_PAWN);
-                professorPawn.setFitHeight(GUIConstants.HEIGHT_OF_PROFESSOR_PAWN);
-                // Get index of coordinates of professor pawn image view
-                int indexOfProfessorInSchoolBoardImage = ViewUtilityFunctions.convertPawnColorIndexToLaneIndex(professor.getId());
-                // Set layout
-                professorPawn.setLayoutX(this.coordinatesOfProfessorPawns[indexOfProfessorInSchoolBoardImage][1]);
-                professorPawn.setLayoutY(this.coordinatesOfProfessorPawns[indexOfProfessorInSchoolBoardImage][0]);
-                // Set effect
-                professorPawn.setEffect(new ColorAdjust(0, 0, 0.1, 0));
-                // Add professor pawn
-                this.schoolBoard.getChildren().add(professorPawn);
-            }
-
-            this.previousProfessorSection.clear();
-            this.previousProfessorSection.addAll(StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getProfessorPawns());
-        }
-
-        // Case 2: Remove professor pawns
-        else if (this.previousProfessorSection.size() > StageController.getStageController().getClientTeams()
-                .getTeams().get(indexOfTeam).getProfessorPawns().size()) {
-
-            // Find professors to remove
-            ClientPawnColor[] professorsToRemove = this.previousProfessorSection
-                    .stream()
-                    .filter(professor1 -> StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getProfessorPawns()
-                            .stream().noneMatch(professor2 -> professor2 == professor1))
-                    .toArray(ClientPawnColor[]::new);
-
-            for (int i = 0; i < this.coordinatesOfProfessorPawns.length; i++) {
-                // Get node at this.coordinatesOfProfessorPawns[i] if present
-                int finalI = i;
-                if (this.schoolBoard.getChildren()
-                        .stream()
-                        .filter(n -> n.getLayoutX() == this.coordinatesOfProfessorPawns[finalI][1]
-                                && n.getLayoutY() == this.coordinatesOfProfessorPawns[finalI][0])
-                        .count() == 1) {
-                    Node node = this.schoolBoard.getChildren()
-                            .stream()
-                            .filter(n -> n.getLayoutX() == this.coordinatesOfProfessorPawns[finalI][1]
-                                    && n.getLayoutY() == this.coordinatesOfProfessorPawns[finalI][0]).toList().get(0);
-
-                    // Check if the node must be removed
-                    if (Arrays.stream(professorsToRemove)
-                            .filter(prof -> prof.getId() == ViewUtilityFunctions.convertIdOfImageOfProfessorPawn(node.getId()))
-                            .count() == 1) {
-                        // Remove node
-                        this.schoolBoard.getChildren().remove(node);
-                    }
-                }
-            }
-
-            this.previousProfessorSection.clear();
-            this.previousProfessorSection.addAll(StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getProfessorPawns());
-        }
-    }
-
-    private void updateSchoolBoardTowersSection(int playerId) {
-
-        // Determine index of team from player id
-        int indexOfTeam = StageController.getStageController().getClientTeams().getTeams()
-                .indexOf(StageController.getStageController().getClientTeams().getTeams()
-                        .stream()
-                        .filter(clientTeam -> clientTeam.getPlayers().
-                                stream().
-                                filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1)
-                        .toList().get(0));
-
-        // Save current number of towers and towers color for simplicity
-        int currentNumberOfTowers = StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getNumberOfTowers();
-        int idOfColorOfTowers = StageController.getStageController().getClientTeams().getTeams().get(indexOfTeam).getTowersColor().getId();
-
-
-        // Case 1: Add towers to tower section
-        if (this.previousNumberOfTowers < currentNumberOfTowers) {
-            for (int i = this.previousNumberOfTowers; i < currentNumberOfTowers; i++) {
-                ImageView tower = new ImageView(Images.getImages().getTowers()[idOfColorOfTowers]);
-                tower.setId(GUIConstants.TOWER_NAME + (idOfColorOfTowers * ModelConstants.MAX_NUMBER_OF_TOWERS + i + 1));
-                tower.setPreserveRatio(false);
-                tower.setFitWidth(GUIConstants.WIDTH_OF_TOWER);
-                tower.setFitHeight(GUIConstants.HEIGHT_OF_TOWER);
-                tower.setLayoutX(this.coordinatesOfTowers[i][1]);
-                tower.setLayoutY(this.coordinatesOfTowers[i][0]);
-                tower.setEffect(new ColorAdjust(0, 0, -0.4, 0));
-                this.schoolBoard.getChildren().add(tower);
-            }
-        }
-
-        // Case 2: Remove towers to tower section
-        if (this.previousNumberOfTowers > currentNumberOfTowers) {
-            for (int i = currentNumberOfTowers; i < this.previousNumberOfTowers; i++) {
-                // Get node at this.coordinatesOfTowers[i]
-                int finalI = i;
-                Node node = this.schoolBoard.getChildren()
-                        .stream()
-                        .filter(n -> n.getLayoutX() == this.coordinatesOfTowers[finalI][1]
-                                && n.getLayoutY() == this.coordinatesOfTowers[finalI][0]).toList().get(0);
-
-                // Remove node
-                this.schoolBoard.getChildren().remove(node);
-            }
-        }
-    }
-
-    private ImageView createImageViewOfStudent(int studentId, int layoutX, int layoutY) throws IllegalStudentIdException {
-        ImageView student = new ImageView(Images.getImages().getStudentDiscs()[ViewUtilityFunctions.convertStudentIdToIdOfColor(studentId)]);
-        student.setId(ViewUtilityFunctions.convertStudentIdToStudentIdForImageView(studentId));
-        student.setPreserveRatio(false);
-        student.setFitWidth(GUIConstants.WIDTH_OF_STUDENT_DISC);
-        student.setFitHeight(GUIConstants.HEIGHT_OF_STUDENT_DISC);
-        student.setLayoutX(layoutX);
-        student.setLayoutY(layoutY);
-        student.setEffect(new ColorAdjust(0, 0, 0.1, 0));
-        return student;
-    }
-
-    // COORDINATE GENERATORS
-
-    private void generateCoordinates() {
-        this.generateCoordinatesOfStudentsInEntrance();
-        this.initializeCoordinatesOfDiningRoom();
-        this.generateCoordinatesForProfessors();
-        this.generateCoordinatesForTowers();
-    }
+    // COORDINATES GENERATOR
 
     private void regenerateCoordinatesForGameComponentsOfIslandTile() {
 
@@ -533,49 +284,6 @@ public class TableSceneController extends SceneController {
                          + GUIConstants.WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND;
                  j += GUIConstants.WIDTH_OF_STUDENT_DISC)
                 this.coordinatesOfIslandTile.add(new Integer[]{i, j});
-    }
-
-    private void generateCoordinatesOfStudentsInEntrance() {
-        int coordinateIndex = 0;
-        for (int i = GUIConstants.LAYOUT_Y_OF_FIRST_CELL_FIRST_ROW_ENTRANCE;
-             i < GUIConstants.LAYOUT_Y_OF_FIRST_CELL_FIRST_ROW_ENTRANCE + GUIConstants.COLUMNS_ENTRANCE * GUIConstants.LAYOUT_Y_OFFSET_CELLS_ENTRANCE; i += GUIConstants.LAYOUT_Y_OFFSET_CELLS_ENTRANCE)
-            for (int j = GUIConstants.LAYOUT_X_OF_FIRST_CELL_FIRST_ROW_ENTRANCE;
-                 j < GUIConstants.LAYOUT_X_OF_FIRST_CELL_FIRST_ROW_ENTRANCE + GUIConstants.CELLS_FIRST_ROW_ENTRANCE * GUIConstants.LAYOUT_X_OFFSET_CELLS_ENTRANCE; j += GUIConstants.LAYOUT_X_OFFSET_CELLS_ENTRANCE)
-                if ((i != GUIConstants.LAYOUT_Y_OF_FIRST_CELL_FIRST_ROW_ENTRANCE + GUIConstants.LAYOUT_Y_OFFSET_CELLS_ENTRANCE)
-                        || (j != GUIConstants.LAYOUT_X_OF_FIRST_CELL_FIRST_ROW_ENTRANCE)) {
-                    this.coordinatesOfStudentsInEntrance[coordinateIndex][0] = i;
-                    this.coordinatesOfStudentsInEntrance[coordinateIndex][1] = j;
-                    // The coordinate is not used, set third element to 0
-                    this.coordinatesOfStudentsInEntrance[coordinateIndex][2] = 0;
-                    coordinateIndex++;
-                }
-    }
-
-    private void initializeCoordinatesOfDiningRoom() {
-        for (int i = 0; i < GUIConstants.LANES; i++) {
-            this.firstAvailableCoordinatesOfDiningRoom[i][0] = GUIConstants.LAYOUT_Y_OF_FIRST_CELL_FIRST_LANE_ON_LEFT_BOTTOM_DINING_ROOM;
-            this.firstAvailableCoordinatesOfDiningRoom[i][1] = GUIConstants.LAYOUT_X_OF_FIRST_CELL_FIRST_LANE_ON_LEFT_BOTTOM_DINING_ROOM +
-                    i * GUIConstants.LAYOUT_X_OFFSET_CELLS_DINING_ROOM;
-        }
-    }
-
-    private void generateCoordinatesForProfessors() {
-        for (int i = 0; i < GUIConstants.LANES; i++) {
-            this.coordinatesOfProfessorPawns[i][0] = GUIConstants.LAYOUT_Y_OF_FIRST_CELL_PROFESSOR_SECTION;
-            this.coordinatesOfProfessorPawns[i][1] = GUIConstants.LAYOUT_X_OF_FIRST_CELL_PROFESSOR_SECTION + i * GUIConstants.LAYOUT_X_OFFSET_CELLS_PROFESSOR_SECTION;
-        }
-    }
-
-    private void generateCoordinatesForTowers() {
-        int indexOfCoordinate = 0;
-        for (int i = GUIConstants.LAYOUT_Y_OF_FIRST_CELL_TOWERS; i > GUIConstants.LAYOUT_Y_OF_FIRST_CELL_TOWERS
-                + GUIConstants.NUMBER_OF_ROWS_OF_TOWERS * GUIConstants.LAYOUT_Y_OFFSET_TOWERS; i += GUIConstants.LAYOUT_Y_OFFSET_TOWERS)
-            for (int j = GUIConstants.LAYOUT_X_OF_FIRST_CELL_TOWERS; j < GUIConstants.LAYOUT_X_OF_FIRST_CELL_TOWERS
-                    + GUIConstants.NUMBER_OF_TOWERS_IN_ROW * GUIConstants.LAYOUT_X_OFFSET_TOWERS; j += GUIConstants.LAYOUT_X_OFFSET_TOWERS) {
-                this.coordinatesOfTowers[indexOfCoordinate][1] = j;
-                this.coordinatesOfTowers[indexOfCoordinate][0] = i;
-                indexOfCoordinate++;
-            }
     }
 
     // PANES LOADER
@@ -610,8 +318,4 @@ public class TableSceneController extends SceneController {
 
         }
     }
-
-    // UTILITY FUNCTIONS
-
-
 }
