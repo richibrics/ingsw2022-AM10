@@ -29,7 +29,7 @@ public class DeckSceneController extends SceneController {
     }
 
     @FXML
-    public void switchToTable(ActionEvent e) {
+    private void switchToTable(ActionEvent e) {
         try {
             StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
         } catch (Exception exception) {
@@ -38,7 +38,7 @@ public class DeckSceneController extends SceneController {
     }
 
     @FXML
-    public void onSelectionOfAssistant(MouseEvent e) {
+    private void onSelectionOfAssistant(MouseEvent e) {
         // Get the clicked assistant card
         ImageView clickedAssistantCard = (ImageView) e.getSource();
         // TODO Pass clickedAssistantCard.getId() to Gui and then to server

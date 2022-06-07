@@ -7,11 +7,15 @@ import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
 import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.game_objects.ClientPlayer;
 import it.polimi.ingsw.view.gui.GUIConstants;
+import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import it.polimi.ingsw.view.gui.exceptions.SceneLayoutException;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
@@ -76,6 +80,14 @@ public class SchoolBoardsSceneController extends SceneController{
             // Set background
             root.getStyleClass().add("background");
             root.getStylesheets().add("/CSS/table_background.css");
+
+            // Add button to return to table
+            Button button = new Button(GUIConstants.NAME_OF_BUTTON);
+            button.setLayoutX(GUIConstants.LAYOUT_X_OF_BUTTON_FOR_TABLE);
+            button.setLayoutY(GUIConstants.LAYOUT_Y_OF_BUTTON_FOR_TABLE);
+            button.setPrefSize(GUIConstants.WIDTH_OF_BUTTON_FOR_TABLE, GUIConstants.HEIGHT_OF_BUTTON_FOR_TABLE);
+            button.setOnAction(new SwitchToTable());
+            root.getChildren().add(button);
 
             root.setPrefSize(GUIConstants.WIDTH_OF_SCENE, GUIConstants.HEIGHT_OF_SCENE);
             // Generate arrays of coordinates
@@ -224,5 +236,17 @@ public class SchoolBoardsSceneController extends SceneController{
         label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE));
         // Add label to root
         root.getChildren().add(label);
+    }
+
+    class SwitchToTable implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent actionEvent) {
+            try {
+                StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
+            } catch (Exception exception) {
+
+            }
+        }
     }
 }

@@ -159,7 +159,7 @@ public class GUIConstants {
 
     // Values for scene with school boards
     public static final double WIDTH_OF_SCENE = 1920.0;
-    public static final double HEIGHT_OF_SCENE = 1060.0;
+    public static final double HEIGHT_OF_SCENE = 1080.0;
     public static final double WIDTH_OF_PANE_FOR_SCHOOL_BOARD = 360.0;
     public static final double HEIGHT_OF_PANE_FOR_SCHOOL_BOARD = 805.0;
     public static final double WIDTH_OF_IMAGE_VIEW_OF_SCHOOL_BOARD = 805.0;
@@ -177,4 +177,11 @@ public class GUIConstants {
     public static final int FONT_SIZE = 16;
     public static final String FONT = "Algerian";
     public static final String LABEL_FOR_USERNAME_START = "Username: ";
+
+    public static final double WIDTH_OF_BUTTON_FOR_TABLE = 85.0;
+    public static final double HEIGHT_OF_BUTTON_FOR_TABLE = 43.0;
+    public static final int LAYOUT_X_OF_BUTTON_FOR_TABLE = 917;
+    public static final int LAYOUT_Y_OF_BUTTON_FOR_TABLE = 993;
+    public static final String NAME_OF_BUTTON = "Table";
+
 }

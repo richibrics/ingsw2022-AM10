@@ -307,7 +307,11 @@ public class TableSceneController extends SceneController {
 
     @FXML
     private void switchToOtherSchoolBoards(ActionEvent e) {
+        try {
+            StageController.getStageController().showScene(SceneType.SCHOOL_BOARD_SCENE, false);
+        } catch (Exception exception) {
 
+        }
     }
 
     @FXML
