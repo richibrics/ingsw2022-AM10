@@ -24,6 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +88,11 @@ public class SchoolBoardsSceneController extends SceneController{
 
             // Add button to return to table
             Button button = new Button(GUIConstants.NAME_OF_BUTTON);
+            button.getStyleClass().add("button_style");
+            button.getStylesheets().add("/CSS/buttons.css");
+            button.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_BUTTON));
+            button.setTextAlignment(TextAlignment.CENTER);
+            button.setAlignment(Pos.CENTER);
             button.setLayoutX(GUIConstants.LAYOUT_X_OF_BUTTON_FOR_TABLE);
             button.setLayoutY(GUIConstants.LAYOUT_Y_OF_BUTTON_FOR_TABLE);
             button.setPrefSize(GUIConstants.WIDTH_OF_BUTTON_FOR_TABLE, GUIConstants.HEIGHT_OF_BUTTON_FOR_TABLE);
@@ -239,7 +245,7 @@ public class SchoolBoardsSceneController extends SceneController{
         label.setLayoutX(layoutX);
         label.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABELS_FOR_USERNAMES);
         label.setAlignment(Pos.CENTER_LEFT);
-        label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE));
+        label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_USERNAME));
         // Add label to root
         root.getChildren().add(label);
     }

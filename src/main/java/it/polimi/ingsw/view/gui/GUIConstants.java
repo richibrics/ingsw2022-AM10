@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.gui;
 
+import java.util.ArrayList;
+
 public class GUIConstants {
     // GUI General
     public static final int SLEEP_TIME_WAIT_FOR_STAGECONTROLLER_TO_BE_READY_IN_MILLISECONDS = 500;
@@ -23,7 +25,7 @@ public class GUIConstants {
     public static final String SCENE_USER_FORM_STYLE_PLAYER_NUMBER_SELECTION_BOX_CLASS = "players_number";
     public static final String SCENE_USER_FORM_STYLE_MAIN_LAYOUT_CLASS = "main_layout";
     public static final String SCENE_USER_FORM_STYLE_BUTTON_CLASS = "lobby_button";
-    public static final String SCENE_USER_FORM_ERIANTYS_LOGO_IMAGE_PATH = "/images/eriantys_text_logo5.png";
+    public static final String SCENE_USER_FORM_ERIANTYS_LOGO_IMAGE_PATH = "/images/eriantys_text_logo.png";
     public static final String SCENE_USER_FORM_ERIANTYS_LOGO_IMAGE_CLASS = "logo_image";
     public static final String SCENE_USER_FORM_ERIANTYS_LOGO_BOX_CLASS = "logo_image_box";
     public static final int SCENE_USER_FORM_ERIANTYS_LOGO_IMAGE_HEIGHT = SCENE_USER_FORM_HEIGHT*2/5; // in pixel
@@ -38,14 +40,18 @@ public class GUIConstants {
     public static final String SCENE_LOBBY_STYLE_PLAYER_NUMBER_SELECTION_BOX_CLASS = "players_number";
     public static final String SCENE_LOBBY_STYLE_MAIN_LAYOUT_CLASS = "main_layout";
     public static final String SCENE_LOBBY_STYLE_BUTTON_CLASS = "lobby_button";
-    public static final String SCENE_LOBBY_ERIANTYS_LOGO_IMAGE_PATH = "/images/eriantys_text_logo5.png";
+    public static final String SCENE_LOBBY_ERIANTYS_LOGO_IMAGE_PATH = "/images/eriantys_text_logo.png";
     public static final String SCENE_LOBBY_ERIANTYS_LOGO_IMAGE_CLASS = "logo_image";
     public static final String SCENE_LOBBY_ERIANTYS_LOGO_BOX_CLASS = "logo_image_box";
     public static final int SCENE_LOBBY_ERIANTYS_LOGO_IMAGE_HEIGHT = SCENE_LOBBY_HEIGHT*2/5; // in pixel
     public static final String SCENE_LOBBY_LABEL_BOX_CLASS = "label";
 
     //Images paths for table
-    public static final String SCENE_TABLE_CLOUD_IMAGE_PATH = "/images/cloud_tile.png";
+    public static final String SCENE_TABLE_CLOUD_WITH_DRAGON_IMAGE_PATH = "/images/clouds/cloud_tile_dragon.png";
+    public static final String SCENE_TABLE_CLOUD_WITH_BEAR_IMAGE_PATH = "/images/clouds/cloud_tile_bear.png";
+    public static final String SCENE_TABLE_CLOUD_WITH_CASTLE_IMAGE_PATH = "/images/clouds/cloud_tile_castle.png";
+    public static final String SCENE_TABLE_CLOUD_WITH_SPORTS_IMAGE_PATH = "/images/clouds/cloud_tile_sports.png";
+    public static final String SCENE_TABLE_CLOUD_WITH_THREE_PLACES_IMAGE_PATH = "/images/clouds/cloud_tile_three_spaces.png";
     public static final String SCENE_TABLE_COIN_IMAGE_PATH = "/images/coin.png";
     public static final String SCENE_TABLE_NO_ENTRY_PATH = "/images/islands/no_entry_tile.png";
     public static final String SCENE_TABLE_BLACK_TOWER_IMAGE_PATH = "/images/towers/black_tower.png";
@@ -106,8 +112,23 @@ public class GUIConstants {
     // Name used for towers
     public static final String TOWER_NAME = "towerColor";
 
+    // Name used for character cards panes
+    public static final String CHARACTER_CARD_PANE_NAME = "characterPane";
 
-    // Values for filling of island tiles
+    // Name used for character card images
+    public static final String CHARACTER_CARD_IMAGE_NAME = "character";
+
+    // Name used for cloud tile pane
+    public static final String CLOUD_TILE_PANE_NAME = "cloudName";
+
+    // Name used for cloud tile image
+    public static final String CLOUD_TILE_NAME = "cloud";
+
+    // Name used for coin
+    public static final String COIN_NAME = "coin";
+
+
+    // Values for filling island tiles
     // no entry tiles are 20x20 (same as students)
     public static final int WIDTH_OF_STUDENT_DISC = 20;
     public static final int HEIGHT_OF_STUDENT_DISC = 20;
@@ -121,6 +142,28 @@ public class GUIConstants {
     public static final int WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 120;
     public static final int HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 140;
 
+    // Values for cloud tiles
+    public static final int LAYOUT_X_CENTER_OF_ISLAND_CIRCLE = 1170;
+    public static final int LAYOUT_Y_OF_CLOUD_TILES = 400;
+    public static final int WIDTH_OF_CLOUD_TILE = 100;
+    public static final int HEIGHT_OF_CLOUD_TILE = 100;
+    public static final int LAYOUT_X_OFFSET_BETWEEN_CLOUD_TILES = 110;
+    public static final Integer[][] POSITIONS_OF_STUDENTS_CLOUD_WITH_FOUR_SPACES = {{22, 9}, {12, 54}, {68, 20}, {57, 64}};
+    public static final Integer[][] POSITIONS_OF_STUDENTS_CLOUD_WITH_THREE_SPACES = {{38, 12}, {19, 54}, {69, 52}};
+
+    // Values for character cards
+    public static final double WIDTH_OF_CHARACTER_CARD = 130.0;
+    public static final double HEIGHT_OF_CHARACTER_CARD = 190.0;
+    public static final int LAYOUT_X_OF_FIRST_CHARACTER_CARD_ON_LEFT = 925;
+    public static final int LAYOUT_Y_OF_CHARACTER_CARDS = 560;
+    public static final int LAYOUT_X_OFFSET_BETWEEN_CHARACTER_CARDS = 180;
+    public static final int LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD = 25; // In respect to the pane containing the character card
+    public static final int LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD = 105;
+    public static final int WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_CHARACTER_CARD = 80;
+    public static final int HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_CHARACTER_CARD = 80;
+    public static final int WIDTH_OF_COIN = 20;
+    public static final int HEIGHT_OF_COIN = 20;
+
     //Values for entrance
     public static final int LAYOUT_X_OF_FIRST_CELL_FIRST_ROW_ENTRANCE = 54;
     public static final int LAYOUT_Y_OF_FIRST_CELL_FIRST_ROW_ENTRANCE = 704;
@@ -128,7 +171,6 @@ public class GUIConstants {
     public static final int LAYOUT_Y_OFFSET_CELLS_ENTRANCE = 50;
     public static final int CELLS_FIRST_ROW_ENTRANCE = 5;
     public static final int COLUMNS_ENTRANCE = 2;
-    public static final int MAX_NUMBER_OF_STUDENTS_IN_ENTRANCE = 9;
 
     // Values for dining room
     public static final int LAYOUT_X_OF_FIRST_CELL_FIRST_LANE_ON_LEFT_BOTTOM_DINING_ROOM = 53;
@@ -174,7 +216,8 @@ public class GUIConstants {
     public static final double WIDTH_OF_LABEL_FOR_USERNAMES = 360.0;
     public static final double HEIGHT_OF_LABEL_FOR_USERNAMES = 50.0;
     public static final int LAYOUT_Y_OF_LABELS_FOR_USERNAMES = 50;
-    public static final int FONT_SIZE = 16;
+    public static final int FONT_SIZE_USERNAME = 16;
+    public static final int FONT_SIZE_BUTTON = 12;
     public static final String FONT = "Algerian";
     public static final String LABEL_FOR_USERNAME_START = "Username: ";
 
@@ -183,5 +226,4 @@ public class GUIConstants {
     public static final int LAYOUT_X_OF_BUTTON_FOR_TABLE = 917;
     public static final int LAYOUT_Y_OF_BUTTON_FOR_TABLE = 993;
     public static final String NAME_OF_BUTTON = "Table";
-
 }

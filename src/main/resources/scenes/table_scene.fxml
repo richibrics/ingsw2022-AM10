@@ -31,12 +31,16 @@
             </ImageView>
          </children>
       </Pane>
-      <Button fx:id="buttonSchoolBoards" layoutX="469.0" layoutY="40.0" mnemonicParsing="false" onAction="#switchToOtherSchoolBoards" prefHeight="37.0" prefWidth="103.0" text="Other boards">
+      <Button fx:id="buttonSchoolBoards" alignment="CENTER" layoutX="469.0" layoutY="40.0" mnemonicParsing="false" onAction="#switchToOtherSchoolBoards" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Other boards" textAlignment="CENTER">
          <font>
-            <Font name="System Italic" size="12.0" />
+            <Font name="Algerian" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="deck" layoutX="469.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" text="Deck" />
+      <Button fx:id="deck" alignment="CENTER" layoutX="469.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Deck" textAlignment="CENTER">
+         <font>
+            <Font name="Algerian" size="12.0" />
+         </font>
+      </Button>
       <Pane fx:id="island3" layoutX="920.0" layoutY="10.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile3" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true">

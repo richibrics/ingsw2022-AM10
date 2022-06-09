@@ -10,12 +10,14 @@ import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Images {
 
     private static Images images;
 
     // Images
-    private final Image cloudTile;
     private final Image yellowStudentDisc;
     private final Image blueStudentDisc;
     private final Image greenStudentDisc;
@@ -32,11 +34,16 @@ public class Images {
     private final Image whiteTower;
     private final Image motherNaturePawn;
     private final Image noEntryTile;
-
+    private final Image cloudTileDragon;
+    private final Image cloudTileBear;
+    private final Image cloudTileCastle;
+    private final Image cloudTileSports;
+    private final Image cloudTileThreePlaces;
+    private final Image[] characterCards;
     private Image[] studentDiscs;
     private Image[] professorPawns;
     private Image[] towers;
-    private Image[] characterCards;
+    private Image[] cloudTiles;
 
     private Images() {
         // Create images of students
@@ -50,6 +57,7 @@ public class Images {
         // Load images in array
         this.loadImagesOfStudentsInArrayOfImages();
 
+        // Create images of professor pawns
         this.yellowProfessor = new Image(GUIConstants.SCENE_TABLE_YELLOW_PROFESSOR_IMAGE_PATH);
         this.blueProfessor = new Image(GUIConstants.SCENE_TABLE_BLUE_PROFESSOR_IMAGE_PATH);
         this.greenProfessor = new Image(GUIConstants.SCENE_TABLE_GREEN_PROFESSOR_IMAGE_PATH);
@@ -59,6 +67,7 @@ public class Images {
         // Load images in array
         this.loadImagesOfProfessorsInArrayOfImages();
 
+        // Create images of towers
         this.blackTower = new Image(GUIConstants.SCENE_TABLE_BLACK_TOWER_IMAGE_PATH);
         this.whiteTower = new Image(GUIConstants.SCENE_TABLE_WHITE_TOWER_IMAGE_PATH);
         this.greyTower = new Image(GUIConstants.SCENE_TABLE_GREY_TOWER_IMAGE_PATH);
@@ -66,10 +75,28 @@ public class Images {
         // Load images in array
         this.loadImagesOfTowersInArrayOfImages();
 
+        // Create image of mother nature
         this.motherNaturePawn = new Image(GUIConstants.SCENE_TABLE_MOTHER_NATURE_IMAGE_PATH);
 
-        this.cloudTile = new Image(GUIConstants.SCENE_TABLE_CLOUD_IMAGE_PATH);
+        // Create images of cloud for 2 and four players
+        this.cloudTileDragon = new Image(GUIConstants.SCENE_TABLE_CLOUD_WITH_DRAGON_IMAGE_PATH);
+        this.cloudTileBear = new Image(GUIConstants.SCENE_TABLE_CLOUD_WITH_BEAR_IMAGE_PATH);
+        this.cloudTileCastle = new Image(GUIConstants.SCENE_TABLE_CLOUD_WITH_CASTLE_IMAGE_PATH);
+        this.cloudTileSports = new Image(GUIConstants.SCENE_TABLE_CLOUD_WITH_SPORTS_IMAGE_PATH);
+        this.cloudTileThreePlaces = new Image(GUIConstants.SCENE_TABLE_CLOUD_WITH_THREE_PLACES_IMAGE_PATH);
 
+        // Get number of players
+        int numberOfPlayers = (int) StageController.getStageController().getClientTeams().getTeams()
+                .stream()
+                .mapToLong(clientTeam -> clientTeam.getPlayers().size())
+                .sum();
+
+        // Load images of cloud tiles
+        if (numberOfPlayers == ModelConstants.TWO_PLAYERS || numberOfPlayers == ModelConstants.FOUR_PLAYERS)
+            this.loadImagesOfCloudTilesTwoFourPlayers();
+
+        else if (numberOfPlayers == ModelConstants.THREE_PLAYERS)
+            this.loadImagesOfCloudTilesThreePlayers();
 
         this.coin = new Image(GUIConstants.SCENE_TABLE_COIN_IMAGE_PATH);
 
@@ -81,16 +108,17 @@ public class Images {
                 this.characterCards[index] = new Image(ViewUtilityFunctions.convertCharacterIdToImagePath(clientCharacterCard.getId()));
                 index++;
             }
-        } catch (IllegalCharacterIdException e) { }
+        } catch (IllegalCharacterIdException e) {
+        }
 
         this.noEntryTile = new Image(GUIConstants.SCENE_TABLE_NO_ENTRY_PATH);
     }
 
     public static Images getImages() {
-        if (images == null)
-            return new Images();
-        else
-            return images;
+        if (images == null) {
+            images = new Images();
+        }
+        return images;
     }
 
     public void loadImagesOfStudentsInArrayOfImages() {
@@ -118,9 +146,26 @@ public class Images {
         this.towers[ClientTowerColor.GREY.getId()] = this.greyTower;
     }
 
-    public Image getCloudTile() {
-        return cloudTile;
+    private void loadImagesOfCloudTilesTwoFourPlayers() {
+        this.cloudTiles = new Image[1];
+        this.cloudTiles[0] = this.cloudTileThreePlaces;
     }
+
+    private void loadImagesOfCloudTilesThreePlayers() {
+        this.cloudTiles = new Image[ModelConstants.THREE_PLAYERS];
+        ArrayList<Image> temp = new ArrayList<>();
+        temp.add(this.cloudTileDragon);
+        temp.add(this.cloudTileBear);
+        temp.add(this.cloudTileCastle);
+        temp.add(this.cloudTileSports);
+
+        // Select three images randomly
+        Random rand = new Random();
+        for (int i = 0; i < this.cloudTiles.length; i++) {
+            this.cloudTiles[i] = temp.remove(rand.nextInt(temp.size()));
+        }
+    }
+
 
     public Image getCoin() {
         return coin;
@@ -148,5 +193,9 @@ public class Images {
 
     public Image[] getCharacterCards() {
         return characterCards;
+    }
+
+    public Image[] getCloudTiles() {
+        return this.cloudTiles;
     }
 }

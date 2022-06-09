@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.exceptions.IllegalLaneException;
 import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
+import it.polimi.ingsw.view.game_objects.ClientCharacterCard;
+import it.polimi.ingsw.view.game_objects.ClientCloudTile;
 import it.polimi.ingsw.view.game_objects.ClientIslandTile;
 import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.gui.GUIConstants;
@@ -15,31 +17,38 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class TableSceneController extends SceneController {
 
     // Array of panes containing island tiles
     private final Pane[] islandTiles;
-
+    // Array of panes of character cards
+    private final Pane[] characterCards;
     // Array of coordinates
     private final ArrayList<Integer[]> coordinatesOfIslandTile;
     private final Integer[][] coordinatesOfStudentsInEntrance;
     private final Integer[][] firstAvailableCoordinatesOfDiningRoom;
     private final Integer[][] coordinatesOfProfessorPawns;
     private final Integer[][] coordinatesOfTowers;
-
-    // Previous state of school board
-    private Integer[] previousEntrance;
+    private final ArrayList<Integer[]> coordinatesOfStudentsInCharacterCards;
+    private final ArrayList<Integer[]> coordinatesOfStudentsOnCloud;
     private final ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
+    // Array of panes containing cloud tiles
+    private Pane[] cloudTiles;
+    // Previous state of school board
+    private Integer[] previousEntrance;
     private int previousNumberOfTowers;
+    private int[] previousPricesOfCharacterCards;
 
     @FXML
     private Pane island1;
@@ -71,7 +80,10 @@ public class TableSceneController extends SceneController {
     public TableSceneController() {
 
         // Create array of Panes containing the island tiles
-        islandTiles = new Pane[(ModelConstants.NUMBER_OF_ISLAND_TILES - 1) * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS + ModelConstants.MIN_ID_OF_ISLAND + 1];
+        this.islandTiles = new Pane[(ModelConstants.NUMBER_OF_ISLAND_TILES - 1) * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS + ModelConstants.MIN_ID_OF_ISLAND + 1];
+
+        // Create array of Panes of character cards
+        this.characterCards = new Pane[ModelConstants.NUMBER_OF_CHARACTER_CARDS];
 
         // Create array of coordinates for elements in island tile
         this.coordinatesOfIslandTile = new ArrayList<>();
@@ -88,6 +100,12 @@ public class TableSceneController extends SceneController {
         // Create array of coordinates for towers in tower section
         this.coordinatesOfTowers = new Integer[ModelConstants.MAX_NUMBER_OF_TOWERS][2];
 
+        // Create array list of coordinates of storage of character card
+        this.coordinatesOfStudentsInCharacterCards = new ArrayList<>();
+
+        // Create array list of coordinates of students on cloud tile
+        this.coordinatesOfStudentsOnCloud = new ArrayList<>();
+
         // Create array for previous entrance
         this.previousEntrance = new Integer[0];
 
@@ -101,6 +119,9 @@ public class TableSceneController extends SceneController {
 
         // Initialize previous number of towers to 0
         this.previousNumberOfTowers = 0;
+
+        // Create array of previous prices of character cards
+        this.previousPricesOfCharacterCards = new int[ModelConstants.NUMBER_OF_CHARACTER_CARDS];
     }
 
     // MAIN METHODS
@@ -110,7 +131,7 @@ public class TableSceneController extends SceneController {
         // Call for scene creation, that call updateScene to update the content of the table
         // The scene cannot be created if clientTable and clientTeams have not been set.
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scene/table_scene.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/table_scene.fxml"));
             loader.setControllerFactory(type -> {
                 if (type == TableSceneController.class) {
                     return this;
@@ -129,11 +150,19 @@ public class TableSceneController extends SceneController {
             SchoolBoardsFunction.generateCoordinates(this.coordinatesOfStudentsInEntrance, this.firstAvailableCoordinatesOfDiningRoom,
                     this.coordinatesOfProfessorPawns, this.coordinatesOfTowers);
 
+            // Add cloud tiles to root
+            this.addCloudTiles(root);
+
+            // Add character cards if needed
+            if (StageController.getStageController().getGuiView().getUser().getPreference() > 0)
+                this.addCharacterCards(root);
+
             // Fill the game objects
             this.updateScene();
             // Return the newly created scene
             return new Scene(root);
-        } catch (IOException e) {
+        }
+        catch (IOException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
             return null;
@@ -149,6 +178,7 @@ public class TableSceneController extends SceneController {
             // TODO method for island movements
 
             // Update school board
+            // Get player id
             int playerId = StageController.getStageController().getGuiView().getPlayerId();
             // Get index of school board of client
             int indexOfSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(playerId, StageController.getStageController().getClientTeams());
@@ -175,7 +205,14 @@ public class TableSceneController extends SceneController {
             this.previousNumberOfTowers = SchoolBoardsFunction.updateSchoolBoardTowersSection(indexOfTeam, this.schoolBoard, this.coordinatesOfTowers,
                     this.previousNumberOfTowers);
 
-        } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
+            // Update cloud tiles
+            this.fillCloudTiles();
+
+            // Update character cards
+            if (StageController.getStageController().getGuiView().getUser().getPreference() > 0)
+                this.fillCharacterCards();
+        }
+        catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
         }
@@ -284,6 +321,128 @@ public class TableSceneController extends SceneController {
 
     }
 
+    private void fillCloudTiles() throws IllegalStudentIdException {
+        // This method works even if clouds are half full. Based on the current implementation this cannot happen.
+
+        int indexOfCloud = 0;
+        for (ClientCloudTile clientCloudTile : StageController.getStageController().getClientTable().getCloudTiles()) {
+
+            // Regenerate coordinates
+            this.regenerateCoordinatesForStudentDiscsOfCloudTile();
+
+            // Get all the children of the pane containing the cloud tile which are not the cloud tile and put them
+            // in a list
+            ArrayList<Node> children = new ArrayList<>();
+            for (Node node : this.cloudTiles[indexOfCloud].getChildren())
+                if (node.getId().contains(GUIConstants.STUDENT_DISC_NAME))
+                    children.add(node);
+
+            // Add student discs
+            Integer[] coordinate;
+            Random random = new Random();
+            for (int studentId : clientCloudTile.getStudents()) {
+                // Case 1: the student disc is still on the cloud tile
+                if (children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).count() == 1) {
+                    // Get corresponding node and remove it from children
+                    Node student = children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).toList().get(0);
+                    children.remove(student);
+                    // Remove coordinate of the node from the list of coordinates
+                    this.coordinatesOfStudentsOnCloud.remove(this.coordinatesOfStudentsOnCloud
+                            .stream()
+                            .filter(coordinateOfStudent -> coordinateOfStudent[0] == student.getLayoutY() && coordinateOfStudent[1] == student.getLayoutX())
+                            .toList().get(0));
+                    // Add the node to the list of children of the characterCardsPane
+                    this.cloudTiles[indexOfCloud].getChildren().add(student);
+                }
+                // Case 1: the student disc is not on the cloud tile
+                else {
+                    coordinate = this.coordinatesOfStudentsOnCloud.remove(random.nextInt(this.coordinatesOfStudentsOnCloud.size()));
+                    ImageView student = SchoolBoardsFunction.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
+                    this.cloudTiles[indexOfCloud].getChildren().add(student);
+                }
+            }
+
+            // Remove remaining children from cloud tile
+            while (children.size() != 0) {
+                this.cloudTiles[indexOfCloud].getChildren().remove(children.get(0));
+                children.remove(0);
+            }
+
+            // Update index of cloud tile
+            indexOfCloud++;
+        }
+    }
+
+    private void fillCharacterCards() throws IllegalStudentIdException {
+
+        int indexOfCharacterCard = 0;
+        for (ClientCharacterCard clientCharacterCard : StageController.getStageController().getClientTable().getActiveCharacterCards()) {
+            // In this case it is necessary to "empty" the storage because the students in the storage could be substituted between consecutive
+            // calls (i.e. no change in the size of the storage but change in the content)
+
+            // Regenerate coordinates
+            this.regenerateCoordinatesForCharacterCardsStorage();
+
+            // Get all the children of the pane containing the character card which are not the character card and put them
+            // in a list
+            ArrayList<Node> children = new ArrayList<>();
+            for (Node node : this.characterCards[indexOfCharacterCard].getChildren())
+                if (node.getId().contains(GUIConstants.STUDENT_DISC_NAME))
+                    children.add(node);
+
+            // Add student discs
+            Integer[] coordinate;
+            Random random = new Random();
+            for (int studentId : clientCharacterCard.getStorage()) {
+                // Case 1: the student disc is still in the storage
+                if (children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).count() == 1) {
+                    // Get corresponding node and remove it from children
+                    Node student = children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).toList().get(0);
+                    children.remove(student);
+                    // Remove coordinate of the node from the list of coordinates
+                    this.coordinatesOfStudentsInCharacterCards.remove(this.coordinatesOfStudentsInCharacterCards
+                            .stream()
+                            .filter(coordinateOfCard -> coordinateOfCard[0] == student.getLayoutY() && coordinateOfCard[1] == student.getLayoutX())
+                            .toList().get(0));
+                    // Add the node to the list of children of the characterCardsPane
+                    this.characterCards[indexOfCharacterCard].getChildren().add(student);
+                }
+                // Case 1: the student disc is not in the storage
+                else {
+                    coordinate = this.coordinatesOfStudentsInCharacterCards.remove(random.nextInt(this.coordinatesOfStudentsInCharacterCards.size()));
+                    ImageView student = SchoolBoardsFunction.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
+                    this.characterCards[indexOfCharacterCard].getChildren().add(student);
+                }
+            }
+
+            // Remove remaining children from character card storage
+            while (children.size() != 0) {
+                this.characterCards[indexOfCharacterCard].getChildren().remove(children.get(0));
+                children.remove(0);
+            }
+
+            // Add coin if the price of the character card has changed
+            if (this.previousPricesOfCharacterCards[indexOfCharacterCard] == 0)
+                this.previousPricesOfCharacterCards[indexOfCharacterCard] = clientCharacterCard.getCost();
+
+            if (clientCharacterCard.getCost() > this.previousPricesOfCharacterCards[indexOfCharacterCard]) {
+                coordinate = this.coordinatesOfStudentsInCharacterCards.remove(random.nextInt(this.coordinatesOfStudentsInCharacterCards.size()));
+                ImageView coin = new ImageView(Images.getImages().getCoin());
+                coin.setId(GUIConstants.COIN_NAME + clientCharacterCard.getId());
+                coin.setPreserveRatio(false);
+                coin.setFitWidth(GUIConstants.WIDTH_OF_COIN);
+                coin.setFitHeight(GUIConstants.HEIGHT_OF_COIN);
+                coin.setLayoutX(coordinate[1]);
+                coin.setLayoutY(coordinate[0]);
+                this.characterCards[indexOfCharacterCard].getChildren().add(coin);
+                this.previousPricesOfCharacterCards[indexOfCharacterCard] = clientCharacterCard.getCost();
+            }
+
+            // Update index of character card
+            indexOfCharacterCard++;
+        }
+    }
+
     // COORDINATES GENERATOR
 
     private void regenerateCoordinatesForGameComponentsOfIslandTile() {
@@ -300,7 +459,113 @@ public class TableSceneController extends SceneController {
                 this.coordinatesOfIslandTile.add(new Integer[]{i, j});
     }
 
-    // PANES LOADER
+    private void regenerateCoordinatesForCharacterCardsStorage() {
+
+        this.coordinatesOfStudentsInCharacterCards.clear();
+        for (int i = GUIConstants.LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD;
+             i < GUIConstants.LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD
+                     + GUIConstants.HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_CHARACTER_CARD;
+             i += GUIConstants.HEIGHT_OF_STUDENT_DISC)
+            for (int j = GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD;
+                 j < GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD
+                         + GUIConstants.WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_CHARACTER_CARD;
+                 j += GUIConstants.WIDTH_OF_STUDENT_DISC)
+
+                this.coordinatesOfStudentsInCharacterCards.add(new Integer[]{i, j});
+
+    }
+
+    private void regenerateCoordinatesForStudentDiscsOfCloudTile() {
+        this.coordinatesOfStudentsOnCloud.clear();
+        // Get number of players
+        int numberOfPlayers = (int) StageController.getStageController().getClientTeams().getTeams()
+                .stream()
+                .mapToLong(clientTeam -> clientTeam.getPlayers().size())
+                .sum();
+        if (numberOfPlayers % 2 == 0)
+            Collections.addAll(this.coordinatesOfStudentsOnCloud, GUIConstants.POSITIONS_OF_STUDENTS_CLOUD_WITH_THREE_SPACES);
+        else
+            Collections.addAll(this.coordinatesOfStudentsOnCloud, GUIConstants.POSITIONS_OF_STUDENTS_CLOUD_WITH_FOUR_SPACES);
+    }
+
+    // PANES GENERATORS AND LOADERS
+
+    private void addCloudTiles(AnchorPane root) {
+
+        // Get number of cloud tiles
+        int numberOfCloudTiles = StageController.getStageController().getClientTable().getCloudTiles().size();
+
+        // Create array of Panes containing the cloud tiles
+        this.cloudTiles = new Pane[numberOfCloudTiles];
+
+        // Get cloud tiles images
+        Image[] imagesOfClouds = Images.getImages().getCloudTiles();
+
+        // Get layout x of first cloud on the left
+        int layoutXOfFirstCloud;
+        int offsetBetweenClouds = GUIConstants.LAYOUT_X_OFFSET_BETWEEN_CLOUD_TILES - GUIConstants.WIDTH_OF_CLOUD_TILE;
+
+        if (numberOfCloudTiles % 2 == 0)
+            layoutXOfFirstCloud = GUIConstants.LAYOUT_X_CENTER_OF_ISLAND_CIRCLE - (numberOfCloudTiles / 2)
+                    * GUIConstants.WIDTH_OF_CLOUD_TILE - (numberOfCloudTiles / 2 - 1) * offsetBetweenClouds - offsetBetweenClouds / 2;
+
+        else
+            layoutXOfFirstCloud = GUIConstants.LAYOUT_X_CENTER_OF_ISLAND_CIRCLE - Math.floorDiv(numberOfCloudTiles, 2)
+                    * (GUIConstants.WIDTH_OF_CLOUD_TILE + offsetBetweenClouds) - GUIConstants.WIDTH_OF_CLOUD_TILE / 2;
+
+        // Add cloud tiles images to scene
+        int indexOfImage = 0;
+        for (int indexOfCloudTile = 0; indexOfCloudTile < numberOfCloudTiles; indexOfCloudTile++) {
+            // Create pane
+            Pane cloudPane = new Pane();
+            cloudPane.setPrefSize(GUIConstants.WIDTH_OF_CLOUD_TILE, GUIConstants.HEIGHT_OF_CLOUD_TILE);
+            cloudPane.setLayoutX(layoutXOfFirstCloud +
+                    indexOfCloudTile * GUIConstants.LAYOUT_X_OFFSET_BETWEEN_CLOUD_TILES);
+            cloudPane.setLayoutY(GUIConstants.LAYOUT_Y_OF_CLOUD_TILES);
+            cloudPane.setId(GUIConstants.CLOUD_TILE_PANE_NAME + (indexOfCloudTile + 1));
+            // Create image view and add to pane
+            ImageView cloudTileImageView = new ImageView(imagesOfClouds[indexOfImage]);
+            cloudTileImageView.setId(GUIConstants.CLOUD_TILE_NAME
+                    + StageController.getStageController().getClientTable().getCloudTiles().get(indexOfCloudTile).getId());
+            cloudTileImageView.setPreserveRatio(false);
+            cloudTileImageView.setFitWidth(GUIConstants.WIDTH_OF_CLOUD_TILE);
+            cloudTileImageView.setFitHeight(GUIConstants.HEIGHT_OF_CLOUD_TILE);
+            cloudPane.getChildren().add(cloudTileImageView);
+            // Add pane to root and to array of panes of character cards
+            root.getChildren().add(cloudPane);
+            this.cloudTiles[indexOfCloudTile] = cloudPane;
+
+            // Update index of image if the number of players equals 3, i.e. if the number of cloud tiles cannot be divided by 2
+            if (numberOfCloudTiles % 2 != 0)
+                indexOfImage++;
+        }
+    }
+
+    private void addCharacterCards(AnchorPane root) {
+        int indexCharacterCard = 0;
+
+        for (Image characterCardImage : Images.getImages().getCharacterCards()) {
+            // Create pane
+            Pane characterCardPane = new Pane();
+            characterCardPane.setPrefSize(GUIConstants.WIDTH_OF_CHARACTER_CARD, GUIConstants.HEIGHT_OF_CHARACTER_CARD);
+            characterCardPane.setLayoutX(GUIConstants.LAYOUT_X_OF_FIRST_CHARACTER_CARD_ON_LEFT +
+                    indexCharacterCard * GUIConstants.LAYOUT_X_OFFSET_BETWEEN_CHARACTER_CARDS);
+            characterCardPane.setLayoutY(GUIConstants.LAYOUT_Y_OF_CHARACTER_CARDS);
+            characterCardPane.setId(GUIConstants.CHARACTER_CARD_PANE_NAME + (indexCharacterCard + 1));
+            // Create image view and add to pane
+            ImageView characterCardImageView = new ImageView(characterCardImage);
+            characterCardImageView.setId(GUIConstants.CHARACTER_CARD_IMAGE_NAME
+                    + StageController.getStageController().getClientTable().getActiveCharacterCards().get(indexCharacterCard).getId());
+            characterCardImageView.setPreserveRatio(false);
+            characterCardImageView.setFitWidth(GUIConstants.WIDTH_OF_CHARACTER_CARD);
+            characterCardImageView.setFitHeight(GUIConstants.HEIGHT_OF_CHARACTER_CARD);
+            characterCardPane.getChildren().add(characterCardImageView);
+            // Add pane to root and to array of panes of character cards
+            root.getChildren().add(characterCardPane);
+            this.characterCards[indexCharacterCard] = characterCardPane;
+            indexCharacterCard++;
+        }
+    }
 
     private void loadPanesInArrayOfIslandTilePanes() {
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND] = this.island1;

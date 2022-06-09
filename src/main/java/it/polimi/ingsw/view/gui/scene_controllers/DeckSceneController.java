@@ -20,7 +20,7 @@ public class DeckSceneController extends SceneController {
     @Override
     protected Scene layout() {
         try {
-            this.root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/scene/deck_scene.fxml")));
+            this.root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/scenes/deck_scene.fxml")));
             Scene scene = new Scene(this.root);
             return scene;
         } catch (IOException e) {
