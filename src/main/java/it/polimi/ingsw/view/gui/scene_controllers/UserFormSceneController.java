@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
 import it.polimi.ingsw.controller.ControllerConstants;
-import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;

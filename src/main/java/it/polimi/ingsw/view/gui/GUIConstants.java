@@ -110,7 +110,7 @@ public class GUIConstants {
     public static final String PROFESSOR_PAWN_NAME = "professor";
 
     // Name used for towers
-    public static final String TOWER_NAME = "towerColor";
+    public static final String TOWER_NAME = "tower";
 
     // Name used for character cards panes
     public static final String CHARACTER_CARD_PANE_NAME = "characterPane";
@@ -137,8 +137,10 @@ public class GUIConstants {
     // The following values must be divisible by WIDTH_OF_STUDENT_DISC and HEIGHT_OF_STUDENT_DISC respectively
     public static final int WIDTH_OF_MOTHER_NATURE = 40;
     public static final int HEIGHT_OF_MOTHER_NATURE_PAWN = 40;// The following values must be divisible by WIDTH_OF_STUDENT_DISC and HEIGHT_OF_STUDENT_DISC respectively
-    public static final int WIDTH_OF_TOWER = 50;
-    public static final int HEIGHT_OF_TOWER = 50;
+    public static final int WIDTH_OF_TOWER_ISLAND_TILE = 40;
+    public static final int HEIGHT_OF_TOWER_ISLAND_TILE = 40;
+    public static final int WIDTH_OF_NO_ENTRY = 40;
+    public static final int HEIGHT_OF_NO_ENTRY = 40;
     public static final int WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 120;
     public static final int HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 140;
 
@@ -192,6 +194,8 @@ public class GUIConstants {
     public static final int LAYOUT_X_OFFSET_CELLS_PROFESSOR_SECTION = 58;
 
     // Values for towers section
+    public static final int WIDTH_OF_TOWER_SCHOOL_BOARD = 50;
+    public static final int HEIGHT_OF_TOWER_SCHOOL_BOARD = 50;
     public static final int LAYOUT_X_OF_FIRST_CELL_TOWERS = 66;
     public static final int LAYOUT_Y_OF_FIRST_CELL_TOWERS = 108;
     public static final int LAYOUT_X_OFFSET_TOWERS = 50;

@@ -29,7 +29,7 @@ import javafx.scene.text.TextAlignment;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SchoolBoardsSceneController extends SceneController{
+public class SchoolBoardsSceneController extends SceneController {
 
     private Pane[] panesForSchoolBoards;
     private Integer[][][] coordinatesOfStudentsInEntrances;
@@ -48,7 +48,7 @@ public class SchoolBoardsSceneController extends SceneController{
 
     private void generateArraysOfCoordinates() {
         int numberOfSchoolBoards = StageController.getStageController().getClientTable().getSchoolBoards().size() - 1;
-        this.coordinatesOfStudentsInEntrances = new Integer[numberOfSchoolBoards][ GUIConstants.COLUMNS_ENTRANCE * GUIConstants.CELLS_FIRST_ROW_ENTRANCE - 1][3];
+        this.coordinatesOfStudentsInEntrances = new Integer[numberOfSchoolBoards][GUIConstants.COLUMNS_ENTRANCE * GUIConstants.CELLS_FIRST_ROW_ENTRANCE - 1][3];
         this.firstAvailableCoordinatesOfDiningRooms = new Integer[numberOfSchoolBoards][GUIConstants.LANES][2];
         this.coordinatesOfProfessorPawns = new Integer[GUIConstants.LANES][2];
         this.coordinatesOfTowers = new Integer[ModelConstants.MAX_NUMBER_OF_TOWERS][2];

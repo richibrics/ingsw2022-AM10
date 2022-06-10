@@ -4,10 +4,7 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.exceptions.IllegalLaneException;
 import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
-import it.polimi.ingsw.view.game_objects.ClientCharacterCard;
-import it.polimi.ingsw.view.game_objects.ClientCloudTile;
-import it.polimi.ingsw.view.game_objects.ClientIslandTile;
-import it.polimi.ingsw.view.game_objects.ClientPawnColor;
+import it.polimi.ingsw.view.game_objects.*;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
@@ -17,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -41,14 +39,17 @@ public class TableSceneController extends SceneController {
     private final Integer[][] coordinatesOfTowers;
     private final ArrayList<Integer[]> coordinatesOfStudentsInCharacterCards;
     private final ArrayList<Integer[]> coordinatesOfStudentsOnCloud;
+    // Previous state of character cards
+    private final int[] previousPricesOfCharacterCards;
+    // Previous state of school board
     private final ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
     // Array of panes containing cloud tiles
     private Pane[] cloudTiles;
-    // Previous state of school board
     private Integer[] previousEntrance;
     private int previousNumberOfTowers;
-    private int[] previousPricesOfCharacterCards;
+    // Previous state of island tiles
+    private boolean[][] previousStateOfIslandTiles;
 
     @FXML
     private Pane island1;
@@ -161,8 +162,7 @@ public class TableSceneController extends SceneController {
             this.updateScene();
             // Return the newly created scene
             return new Scene(root);
-        }
-        catch (IOException | GuiViewNotSet e) {
+        } catch (IOException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
             return null;
@@ -172,12 +172,12 @@ public class TableSceneController extends SceneController {
     public void updateScene() {
 
         try {
-            // Fill islands
-            this.addStudentsMotherNatureAndNoEntryToIslandTiles();
+            // FILL ISLANDS
+            this.addSGameObjectsToIslandTiles();
             // Move islands to create island groups
             // TODO method for island movements
 
-            // Update school board
+            // FILL SCHOOL BOARD
             // Get player id
             int playerId = StageController.getStageController().getGuiView().getPlayerId();
             // Get index of school board of client
@@ -205,14 +205,13 @@ public class TableSceneController extends SceneController {
             this.previousNumberOfTowers = SchoolBoardsFunction.updateSchoolBoardTowersSection(indexOfTeam, this.schoolBoard, this.coordinatesOfTowers,
                     this.previousNumberOfTowers);
 
-            // Update cloud tiles
+            // FILL CLOUD TILES
             this.fillCloudTiles();
 
-            // Update character cards
+            // FILL CHARACTER CARDS
             if (StageController.getStageController().getGuiView().getUser().getPreference() > 0)
                 this.fillCharacterCards();
-        }
-        catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
+        } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
         }
@@ -220,7 +219,12 @@ public class TableSceneController extends SceneController {
 
     // METHODS FOR SCENE UPDATE
 
-    private void addStudentsMotherNatureAndNoEntryToIslandTiles() throws IllegalStudentIdException {
+    private void addSGameObjectsToIslandTiles() throws IllegalStudentIdException {
+
+        // Create array of state of island tiles if it has not been already created
+        if (this.previousStateOfIslandTiles == null)
+            this.previousStateOfIslandTiles = new boolean[(ModelConstants.NUMBER_OF_ISLAND_TILES - 1)
+                    * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS + ModelConstants.MIN_ID_OF_ISLAND + 1][3];
 
         // Get mother nature island id
         int motherNatureIsland = StageController.getStageController().getClientTable().getMotherNature().getIsland();
@@ -228,93 +232,147 @@ public class TableSceneController extends SceneController {
         for (ArrayList<ClientIslandTile> islandGroups : StageController.getStageController().getClientTable().getIslandTiles())
             for (ClientIslandTile clientIslandTile : islandGroups) {
 
-                // REMOVE CHILDREN FROM PANE CONTAINING ISLAND TILE
+                // Divide island tile in 40x40 cells. A 1 x 6 matrix of 20 x 20 cells remains unused in this phase
+                int height = GUIConstants.HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND - GUIConstants.HEIGHT_OF_STUDENT_DISC;
+                int length = GUIConstants.WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND;
+                this.getCoordinatesOfCellsForMotherNatureNoEntryAndTower(height, length);
 
-                // Remove all the children of the pane containing the island tile which are not the island tile and put them
-                // in a list
+                // Get all the children currently on the island tile which are not the island tile image view
                 ArrayList<Node> children = new ArrayList<>();
                 for (Node node : this.islandTiles[clientIslandTile.getId()].getChildren())
-                    if (!node.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                        int indexOfNode = this.islandTiles[clientIslandTile.getId()].getChildren().indexOf(node);
-                        if (!node.getId().contains(GUIConstants.MOTHER_NATURE_NAME))
-                            children.add(this.islandTiles[clientIslandTile.getId()].getChildren().get(indexOfNode));
-                        else
-                            this.islandTiles[clientIslandTile.getId()].getChildren().remove(node);
-                    }
+                    if (!node.getId().contains(GUIConstants.ISLAND_TILE_NAME))
+                        children.add(node);
 
-                for (Node node : children)
-                    this.islandTiles[clientIslandTile.getId()].getChildren().remove(node);
+                // Check change in presence of mother nature or no entry tile or tower (no color change, only presence)
+                // occupancyHasChanged is true when there has been a change in the occupancy of the island tile
+                boolean occupancyHasChanged;
+                boolean result;
+                // Case 1: mother nature
+                occupancyHasChanged = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, motherNatureIsland == clientIslandTile.getId(),
+                        this.previousStateOfIslandTiles[clientIslandTile.getId()][0], children, GUIConstants.MOTHER_NATURE_NAME, Images.getImages().getMotherNaturePawn(),
+                        GUIConstants.WIDTH_OF_MOTHER_NATURE, GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN, false, null);
 
-                // Generate coordinates for game objects placement
-                this.regenerateCoordinatesForGameComponentsOfIslandTile();
-                Integer[] coordinate;
+                // Case 2: no entry tile
+                result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, clientIslandTile.hasNoEntry(),
+                        this.previousStateOfIslandTiles[clientIslandTile.getId()][1], children, GUIConstants.NO_ENTRY_TILE_NAME, Images.getImages().getNoEntryTile(),
+                        GUIConstants.WIDTH_OF_NO_ENTRY, GUIConstants.HEIGHT_OF_NO_ENTRY, false, null);
+                occupancyHasChanged = occupancyHasChanged || result;
 
-                // ADD MOTHER NATURE PAWN
+                // Case 3: tower
+                // Get tower image if possible
+                Image imageOfTower = null;
+                if (clientIslandTile.getTower() != null)
+                    imageOfTower = Images.getImages().getTowers()[clientIslandTile.getTower().getId()];
+                // A null image does not create problems since the image is not accessed
+                result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, clientIslandTile.getTower() != null,
+                        this.previousStateOfIslandTiles[clientIslandTile.getId()][2], children, GUIConstants.TOWER_NAME, imageOfTower,
+                        GUIConstants.WIDTH_OF_TOWER_ISLAND_TILE, GUIConstants.HEIGHT_OF_TOWER_ISLAND_TILE, true, clientIslandTile.getTower());
+                occupancyHasChanged = occupancyHasChanged || result;
 
-                // Put mother nature at the center of the island tile if the current island contains mother nature
-                if (motherNatureIsland == clientIslandTile.getId()) {
-                    // Create mother nature image view and set properties
-                    ImageView motherNature = new ImageView(Images.getImages().getMotherNaturePawn());
-                    motherNature.setId(GUIConstants.MOTHER_NATURE_NAME);
-                    motherNature.setPreserveRatio(false);
-                    motherNature.setFitHeight(GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN);
-                    motherNature.setFitWidth(GUIConstants.WIDTH_OF_MOTHER_NATURE);
-                    // Get number of columns and rows of matrix containing the game objects
-                    int numberOfColumns = GUIConstants.HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND / GUIConstants.HEIGHT_OF_STUDENT_DISC;
-                    int numberOfRows = GUIConstants.WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND / GUIConstants.WIDTH_OF_STUDENT_DISC;
-                    // Calculate index of first coordinate and of coordinates that must be removed from the list of coordinates
-                    int indexOfFirstCoordinate = Math.floorDiv(numberOfColumns, 2) * numberOfRows + Math.floorDiv(numberOfRows, 2);
-                    ArrayList<Integer> listOfIndexesOfCoordinatesToRemove = new ArrayList<>();
-                    for (int i = 0; i < GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN / GUIConstants.HEIGHT_OF_STUDENT_DISC; i++)
-                        for (int j = 0; j < GUIConstants.WIDTH_OF_MOTHER_NATURE / GUIConstants.WIDTH_OF_STUDENT_DISC; j++)
-                            listOfIndexesOfCoordinatesToRemove.add(indexOfFirstCoordinate + i * numberOfColumns + j + (i > 0 ? -1 : 0));
-                    // Get first coordinate and set layout of mother nature
-                    listOfIndexesOfCoordinatesToRemove.remove(0);
-                    coordinate = this.coordinatesOfIslandTile.remove(indexOfFirstCoordinate);
-                    motherNature.setX(coordinate[1]);
-                    motherNature.setY(coordinate[0]);
-                    // Add mother nature to pane
-                    this.islandTiles[clientIslandTile.getId()].getChildren().add(motherNature);
-                    // Remove other coordinate used for the mother nature pawn
-                    int offsetRemoval = 1;
-                    for (int index : listOfIndexesOfCoordinatesToRemove) {
-                        this.coordinatesOfIslandTile.remove(index - offsetRemoval);
-                        offsetRemoval++;
-                    }
-                }
+                // Update previous state
+                this.previousStateOfIslandTiles[clientIslandTile.getId()][0] = motherNatureIsland == clientIslandTile.getId();
+                this.previousStateOfIslandTiles[clientIslandTile.getId()][1] = clientIslandTile.hasNoEntry();
+                this.previousStateOfIslandTiles[clientIslandTile.getId()][2] = clientIslandTile.getTower() != null;
 
-                // ADD STUDENT DISCS
+                // Divide remaining coordinates in 20x20 cells
+                this.divideCoordinatesInSmallerCellsForStudents();
+                // Add remaining cells
+                for (int j = GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND;
+                     j < GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND + GUIConstants.WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND;
+                     j += GUIConstants.WIDTH_OF_STUDENT_DISC)
+                    this.coordinatesOfIslandTile.add(new Integer[]{height, j});
+
+                // At this point children contains only student discs
+                // If occupancy has changed the layout of the student discs must be modified
 
                 Random random = new Random();
+                Integer[] coordinate;
                 for (int studentId : clientIslandTile.getStudents()) {
-                    // Get coordinate for student disc placement
-                    coordinate = this.coordinatesOfIslandTile.remove(random.nextInt(this.coordinatesOfIslandTile.size()));
+                    // Case 1: the student disc is already on the island tile
                     if (children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).count() == 1) {
-                        // Get corresponding node and add it to the list of children
+                        // Get corresponding node and remove it from children
                         Node student = children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).toList().get(0);
-                        student.setLayoutX(coordinate[1]);
-                        student.setLayoutY(coordinate[0]);
-                        this.islandTiles[clientIslandTile.getId()].getChildren().add(student);
-                    } else {
+                        children.remove(student);
+                        // If occupancy has changed get new coordinates for student disc
+                        if (occupancyHasChanged) {
+                            coordinate = this.coordinatesOfIslandTile.remove(random.nextInt(this.coordinatesOfIslandTile.size()));
+                            student.setLayoutX(coordinate[1]);
+                            student.setLayoutY(coordinate[0]);
+                        }
+                        // If occupancy has not changed do not move student disc and remove its coordinates from the list of available
+                        // coordinates
+                        else
+                            // Remove coordinate of node from the list of coordinates
+                            this.coordinatesOfStudentsOnCloud.remove(this.coordinatesOfStudentsOnCloud
+                                    .stream()
+                                    .filter(coordinateOfStudent -> coordinateOfStudent[0] == student.getLayoutY() && coordinateOfStudent[1] == student.getLayoutX())
+                                    .toList().get(0));
+                    }
+                    // Case 2: the student disc is not on the island tile
+                    else {
+                        coordinate = this.coordinatesOfIslandTile.remove(random.nextInt(this.coordinatesOfIslandTile.size()));
                         ImageView student = SchoolBoardsFunction.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
                         this.islandTiles[clientIslandTile.getId()].getChildren().add(student);
                     }
                 }
-
-                // ADD NO ENTRY TILES
-
-                if (clientIslandTile.hasNoEntry()) {
-                    coordinate = this.coordinatesOfIslandTile.remove(random.nextInt(this.coordinatesOfIslandTile.size()));
-                    ImageView noEntry = new ImageView(Images.getImages().getNoEntryTile());
-                    noEntry.setId(GUIConstants.NO_ENTRY_TILE_NAME);
-                    noEntry.setPreserveRatio(false);
-                    noEntry.setFitWidth(GUIConstants.WIDTH_OF_STUDENT_DISC);
-                    noEntry.setFitHeight(GUIConstants.HEIGHT_OF_STUDENT_DISC);
-                    noEntry.setLayoutX(coordinate[1]);
-                    noEntry.setLayoutY(coordinate[0]);
-                    this.islandTiles[clientIslandTile.getId()].getChildren().add(noEntry);
-                }
             }
+    }
+
+    private boolean checkMotherNatureOrNoEntryOrTowerPresence(ClientIslandTile islandTile, boolean currentStateOfIsland, boolean prevStateOfIsland, ArrayList<Node> children,
+                                                              String gameObjectName, Image image, int width, int height, boolean tower, ClientTowerColor color) {
+
+        // Case 1: Game object on the island in previous state
+        if (prevStateOfIsland) {
+            // Get node of game object
+            Node node = children.stream().filter(n -> n.getId().contains(gameObjectName)).toList().get(0);
+            // Case 1.1: Game object still on island. Keep it where it is and remove coordinate from array
+            if (currentStateOfIsland) {
+                // Remove coordinate of object
+                this.coordinatesOfIslandTile.remove(this.coordinatesOfIslandTile.stream()
+                        .filter(c -> c[0] == node.getLayoutY() && c[1] == node.getLayoutX()).toList().get(0));
+                if (tower) {
+                    // The color of the tower could have changed
+                    ImageView towerImageView = (ImageView) node;
+                    towerImageView.setImage(image);
+                }
+                // Remove node from list of children
+                children.remove(node);
+                return false;
+            }
+            // Case 1.2: Game object not on island. Remove it from island
+            else {
+                // Remove node
+                this.islandTiles[islandTile.getId()].getChildren().remove(node);
+                // Remove node from list of children
+                children.remove(node);
+                return true;
+            }
+        }
+        // Case 2: Game object not on the island in previous state
+        else {
+            // Case 2.1: Game object on the island now. Create new image view of object
+            if (currentStateOfIsland) {
+                Integer[] coordinate = this.coordinatesOfIslandTile.remove(new Random().nextInt(this.coordinatesOfIslandTile.size()));
+                ImageView imageView = new ImageView(image);
+                imageView.setId(gameObjectName + islandTile.getId());
+                imageView.setPreserveRatio(false);
+                imageView.setFitWidth(width);
+                imageView.setFitHeight(height);
+                imageView.setLayoutX(coordinate[1]);
+                imageView.setLayoutY(coordinate[0]);
+                if (tower) {
+                    if (color.equals(ClientTowerColor.BLACK))
+                        imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+                    else if (color.equals(ClientTowerColor.WHITE))
+                        imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
+                }
+                this.islandTiles[islandTile.getId()].getChildren().add(imageView);
+                return true;
+            }
+            // Case 2.2: Game object not on the island
+            else
+                return false;
+        }
     }
 
     private void moveIslandTiles() {
@@ -351,8 +409,6 @@ public class TableSceneController extends SceneController {
                             .stream()
                             .filter(coordinateOfStudent -> coordinateOfStudent[0] == student.getLayoutY() && coordinateOfStudent[1] == student.getLayoutX())
                             .toList().get(0));
-                    // Add the node to the list of children of the characterCardsPane
-                    this.cloudTiles[indexOfCloud].getChildren().add(student);
                 }
                 // Case 1: the student disc is not on the cloud tile
                 else {
@@ -404,8 +460,6 @@ public class TableSceneController extends SceneController {
                             .stream()
                             .filter(coordinateOfCard -> coordinateOfCard[0] == student.getLayoutY() && coordinateOfCard[1] == student.getLayoutX())
                             .toList().get(0));
-                    // Add the node to the list of children of the characterCardsPane
-                    this.characterCards[indexOfCharacterCard].getChildren().add(student);
                 }
                 // Case 1: the student disc is not in the storage
                 else {
@@ -445,18 +499,28 @@ public class TableSceneController extends SceneController {
 
     // COORDINATES GENERATOR
 
-    private void regenerateCoordinatesForGameComponentsOfIslandTile() {
-
+    private void getCoordinatesOfCellsForMotherNatureNoEntryAndTower(int height, int length) {
+        // The first coordinate is the one of the cell in the top left corner
         this.coordinatesOfIslandTile.clear();
         for (int i = GUIConstants.LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND;
-             i < GUIConstants.LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND
-                     + GUIConstants.HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND;
-             i += GUIConstants.HEIGHT_OF_STUDENT_DISC)
+             i < GUIConstants.LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND + height; i += GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN)
             for (int j = GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND;
-                 j < GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND
-                         + GUIConstants.WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND;
-                 j += GUIConstants.WIDTH_OF_STUDENT_DISC)
+                 j < GUIConstants.LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_ISLAND + length; j += GUIConstants.WIDTH_OF_MOTHER_NATURE)
                 this.coordinatesOfIslandTile.add(new Integer[]{i, j});
+    }
+
+    private void divideCoordinatesInSmallerCellsForStudents() {
+        // Divide 40x40 cells in 20x20 cells
+        ArrayList<Integer[]> newCoordinates = new ArrayList<>();
+        for (Integer[] coordinate : this.coordinatesOfIslandTile) {
+            newCoordinates.add(coordinate);
+            newCoordinates.add(new Integer[]{coordinate[0], coordinate[1] + GUIConstants.WIDTH_OF_STUDENT_DISC});
+            newCoordinates.add(new Integer[]{coordinate[0] + GUIConstants.HEIGHT_OF_STUDENT_DISC, coordinate[1]});
+            newCoordinates.add(new Integer[]{coordinate[0] + GUIConstants.HEIGHT_OF_STUDENT_DISC, coordinate[1] + GUIConstants.WIDTH_OF_STUDENT_DISC});
+        }
+        // Add new coordinates to array of coordinates
+        this.coordinatesOfIslandTile.clear();
+        this.coordinatesOfIslandTile.addAll(newCoordinates);
     }
 
     private void regenerateCoordinatesForCharacterCardsStorage() {
@@ -489,6 +553,21 @@ public class TableSceneController extends SceneController {
     }
 
     // PANES GENERATORS AND LOADERS
+
+    private void loadPanesInArrayOfIslandTilePanes() {
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND] = this.island1;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island2;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 2 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island3;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 3 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island4;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 4 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island5;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 5 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island6;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 6 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island7;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 7 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island8;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 8 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island9;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 9 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island10;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 10 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island11;
+        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 11 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island12;
+    }
 
     private void addCloudTiles(AnchorPane root) {
 
@@ -565,21 +644,6 @@ public class TableSceneController extends SceneController {
             this.characterCards[indexCharacterCard] = characterCardPane;
             indexCharacterCard++;
         }
-    }
-
-    private void loadPanesInArrayOfIslandTilePanes() {
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND] = this.island1;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island2;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 2 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island3;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 3 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island4;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 4 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island5;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 5 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island6;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 6 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island7;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 7 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island8;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 8 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island9;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 9 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island10;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 10 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island11;
-        this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND + 11 * ModelConstants.OFFSET_BETWEEN_ISLAND_IDS] = this.island12;
     }
 
     // EVENTS HANDLERS

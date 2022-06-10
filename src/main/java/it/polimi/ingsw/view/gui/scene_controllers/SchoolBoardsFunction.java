@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.exceptions.IllegalLaneException;
 import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
 import it.polimi.ingsw.view.game_objects.ClientPawnColor;
+import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
 import javafx.scene.Node;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 public class SchoolBoardsFunction {
 
     public static Integer[] updateSchoolBoardEntrance(int indexOfSchoolBoard, Pane schoolBoard, Integer[][] coordinatesOfStudentsInEntrance,
-                                           Integer[] previousEntrance) throws IllegalStudentIdException {
+                                                      Integer[] previousEntrance) throws IllegalStudentIdException {
 
         // Important: this method is based on the assumption that the only operations applied to the entrance are additions and removals of
         // student discs. No replacement should take place. This is true at the moment.
@@ -104,7 +105,7 @@ public class SchoolBoardsFunction {
     }
 
     public static void updateSchoolBoardDiningRoom(int indexOfSchoolBoard, Pane schoolBoard, Integer[][] firstAvailableCoordinatesOfDiningRoom,
-                                             ArrayList<ArrayList<Integer>> previousDiningRoom) throws IllegalLaneException, IllegalStudentIdException {
+                                                   ArrayList<ArrayList<Integer>> previousDiningRoom) throws IllegalLaneException, IllegalStudentIdException {
 
         // Important: this method is based on the assumption that the only operation applied to the dining room is the addition of
         // student discs. This is true at the moment.
@@ -141,7 +142,7 @@ public class SchoolBoardsFunction {
     }
 
     public static void updateSchoolBoardProfessorSection(int indexOfTeam, Pane schoolBoard, Integer[][] coordinatesOfProfessorPawns,
-                                                   ArrayList<ClientPawnColor> previousProfessorSection) throws IllegalLaneException {
+                                                         ArrayList<ClientPawnColor> previousProfessorSection) throws IllegalLaneException {
 
         // Case 1: Add professor pawns
         if (previousProfessorSection.size() < StageController.getStageController().getClientTeams()
@@ -229,11 +230,14 @@ public class SchoolBoardsFunction {
                 ImageView tower = new ImageView(Images.getImages().getTowers()[idOfColorOfTowers]);
                 tower.setId(GUIConstants.TOWER_NAME + (idOfColorOfTowers * ModelConstants.MAX_NUMBER_OF_TOWERS + i + 1));
                 tower.setPreserveRatio(false);
-                tower.setFitWidth(GUIConstants.WIDTH_OF_TOWER);
-                tower.setFitHeight(GUIConstants.HEIGHT_OF_TOWER);
+                tower.setFitWidth(GUIConstants.WIDTH_OF_TOWER_SCHOOL_BOARD);
+                tower.setFitHeight(GUIConstants.HEIGHT_OF_TOWER_SCHOOL_BOARD);
                 tower.setLayoutX(coordinatesOfTowers[i][1]);
                 tower.setLayoutY(coordinatesOfTowers[i][0]);
-                tower.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+                if (idOfColorOfTowers == ClientTowerColor.BLACK.getId())
+                    tower.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+                else if (idOfColorOfTowers == ClientTowerColor.WHITE.getId())
+                    tower.setEffect(new ColorAdjust(0, 0, 0.3, 0));
                 schoolBoard.getChildren().add(tower);
             }
         }
