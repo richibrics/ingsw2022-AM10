@@ -143,6 +143,8 @@ public class GUIConstants {
     public static final int HEIGHT_OF_NO_ENTRY = 40;
     public static final int WIDTH_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 120;
     public static final int HEIGHT_OF_RECTANGLE_CONTAINING_GAME_OBJECTS_IN_ISLAND = 140;
+    public static final int HALF_DIM_ISLAND_TILE_PANE = 125; // The island tile pane is a square
+    public static final int RADIUS_OF_ISLAND_TILE = 90;
 
     // Values for cloud tiles
     public static final int LAYOUT_X_CENTER_OF_ISLAND_CIRCLE = 1170;

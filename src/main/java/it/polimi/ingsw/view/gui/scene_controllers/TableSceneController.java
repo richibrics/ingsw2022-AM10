@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class TableSceneController extends SceneController {
 
@@ -50,6 +51,7 @@ public class TableSceneController extends SceneController {
     private int previousNumberOfTowers;
     // Previous state of island tiles
     private boolean[][] previousStateOfIslandTiles;
+    private final ArrayList<Integer> previousCompositionOfIslandGroups;
 
     @FXML
     private Pane island1;
@@ -106,6 +108,9 @@ public class TableSceneController extends SceneController {
 
         // Create array list of coordinates of students on cloud tile
         this.coordinatesOfStudentsOnCloud = new ArrayList<>();
+
+        // Create array for previous composition of island groups
+        this.previousCompositionOfIslandGroups = new ArrayList<>();
 
         // Create array for previous entrance
         this.previousEntrance = new Integer[0];
@@ -175,7 +180,7 @@ public class TableSceneController extends SceneController {
             // FILL ISLANDS
             this.addSGameObjectsToIslandTiles();
             // Move islands to create island groups
-            // TODO method for island movements
+            this.moveIslandTiles();
 
             // FILL SCHOOL BOARD
             // Get player id
@@ -376,7 +381,115 @@ public class TableSceneController extends SceneController {
     }
 
     private void moveIslandTiles() {
+        // This method is based on the assumption that two islands cannot be separated once they are unified. This is true
+        // according to the current set of rules.
 
+        // Find islands that must be moved
+        // Case 1: the method is called for the first time
+        if (this.previousCompositionOfIslandGroups.size() == 0) {
+            for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles())
+                // Unify islands if the size of the group is bigger than 1
+                if (islandGroup.size() > 1) {
+                    int indexOfCentralTile = Math.floorDiv(islandGroup.size(), 2);
+                    for (int i = indexOfCentralTile; i < islandGroup.size() - 1; i++)
+                        this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
+                                this.islandTiles[islandGroup.get(i + 1).getId()]);
+                    for (int i = indexOfCentralTile; i > 0; i--)
+                        this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
+                                this.islandTiles[islandGroup.get(i - 1).getId()]);
+                }
+        }
+        // Case 2: Check if the composition of the island groups has changed. In this case move the islands
+        else {
+            // If the size of the new list of island group is smaller that the size of the previous list of island groups a change
+            // has occurred
+            if (StageController.getStageController().getClientTable().getIslandTiles().size() < this.previousCompositionOfIslandGroups.size()) {
+                // Find group that has changed
+                int index = 0;
+                for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles()) {
+                    if (islandGroup.size() > this.previousCompositionOfIslandGroups.get(index)) {
+                        // Increment index in order to skip unified groups
+                        int size = this.previousCompositionOfIslandGroups.get(index);
+                        while (size != islandGroup.size()) {
+                            index++;
+                            size += this.previousCompositionOfIslandGroups.get(index);
+                        }
+                        // Unify islands in islandGroup
+                        int indexOfCentralTile = Math.floorDiv(islandGroup.size(), 2);
+                        for (int i = indexOfCentralTile; i < islandGroup.size() - 1; i++)
+                            this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
+                                    this.islandTiles[islandGroup.get(i + 1).getId()]);
+                        for (int i = indexOfCentralTile; i > 0; i--)
+                            this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
+                                    this.islandTiles[islandGroup.get(i - 1).getId()]);
+                    }
+                    else
+                        index ++;
+                }
+            }
+        }
+        // Fill previous composition of groups
+        this.previousCompositionOfIslandGroups.clear();
+        this.previousCompositionOfIslandGroups.addAll(StageController.getStageController().getClientTable().getIslandTiles()
+                .stream()
+                .map(ArrayList::size)
+                .collect(Collectors.toCollection(ArrayList::new)));
+    }
+
+    private void unifyIslandTiles(Pane fixedIsland, Pane islandToMove) {
+
+        // Layout x and y of island tile to move
+        double x = islandToMove.getLayoutX();
+        double y = islandToMove.getLayoutY();
+        // Useful values
+        double alfa;
+        double beta;
+        double gamma;
+        double delta;
+
+        if (fixedIsland.getLayoutX() != islandToMove.getLayoutX() && fixedIsland.getLayoutY() != islandToMove.getLayoutY()) {
+            double m = (-fixedIsland.getLayoutY() + islandToMove.getLayoutY()) / (fixedIsland.getLayoutX() - islandToMove.getLayoutX());
+            alfa = Math.pow(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutX(), 2)
+                    + Math.pow(-islandToMove.getLayoutY() + fixedIsland.getLayoutY() - m * islandToMove.getLayoutX() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE * m, 2)
+                    - Math.pow(2 * GUIConstants.RADIUS_OF_ISLAND_TILE, 2);
+            beta = fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE + m * (islandToMove.getLayoutY() - fixedIsland.getLayoutY()
+                    + m * islandToMove.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE * m);
+            gamma = 1 + Math.pow(m, 2);
+
+            // Calculate new layout x
+            delta = Math.pow(beta, 2) - alfa * gamma;
+            double x1 = (beta + Math.sqrt(delta)) / gamma;
+            double x2 = (beta - Math.sqrt(delta)) / gamma;
+            x = Math.abs(islandToMove.getLayoutX() - x1) < Math.abs(islandToMove.getLayoutX() - x2) ? x1 : x2;
+            // Calculate new layout y
+            y = -(- islandToMove.getLayoutY() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE + m * (x - islandToMove.getLayoutX() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE));
+        }
+        else if (fixedIsland.getLayoutX() == islandToMove.getLayoutX()) {
+            alfa = Math.pow(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutY(), 2)
+                    - Math.pow(2 * GUIConstants.RADIUS_OF_ISLAND_TILE, 2);
+            beta = - (GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutY());
+            gamma = 1;
+            delta = Math.pow(beta, 2) - alfa * gamma;
+            double y1 = - ((beta + Math.sqrt(delta)) / gamma);
+            double y2 = - ((beta - Math.sqrt(delta)) / gamma);
+            y = Math.abs(islandToMove.getLayoutY() - y1) < Math.abs(islandToMove.getLayoutY() - y2) ? y1 : y2;
+            x = fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE;
+        }
+        else if (fixedIsland.getLayoutY() == islandToMove.getLayoutY()) {
+            alfa = Math.pow(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutX(), 2)
+                    - Math.pow(2 * GUIConstants.RADIUS_OF_ISLAND_TILE, 2);
+            beta = (GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutX());
+            gamma = 1;
+            delta = Math.pow(beta, 2) - alfa * gamma;
+            double x1 = (beta + Math.sqrt(delta)) / gamma;
+            double x2 = (beta - Math.sqrt(delta)) / gamma;
+            x = Math.abs(islandToMove.getLayoutX() - x1) < Math.abs(islandToMove.getLayoutX() - x2) ? x1 : x2;
+            y = fixedIsland.getLayoutY() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE;
+        }
+
+        // Change layout of island
+        islandToMove.setLayoutX(x - GUIConstants.HALF_DIM_ISLAND_TILE_PANE);
+        islandToMove.setLayoutY(y - GUIConstants.HALF_DIM_ISLAND_TILE_PANE);
     }
 
     private void fillCloudTiles() throws IllegalStudentIdException {
