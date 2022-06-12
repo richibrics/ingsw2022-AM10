@@ -9,7 +9,9 @@ import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
+import javafx.animation.*;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -17,13 +19,17 @@ import javafx.scene.Scene;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TableSceneController extends SceneController {
@@ -487,7 +493,6 @@ public class TableSceneController extends SceneController {
             y = fixedIsland.getLayoutY() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE;
         }
 
-        // Change layout of island
         islandToMove.setLayoutX(x - GUIConstants.HALF_DIM_ISLAND_TILE_PANE);
         islandToMove.setLayoutY(y - GUIConstants.HALF_DIM_ISLAND_TILE_PANE);
     }
@@ -776,6 +781,94 @@ public class TableSceneController extends SceneController {
             StageController.getStageController().showScene(SceneType.DECK_SCENE, false);
         } catch (Exception exception) {
 
+        }
+    }
+
+    public void onSelectionOfIslandTile() {
+
+        // Stop transitions of islands and school board
+        for (Pane island : Arrays.stream(this.islandTiles).filter(Objects::nonNull).toList())
+            for (Node node : island.getChildren())
+                if (node.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
+                    Animation animation = (Animation) node.getProperties().get(GUIConstants.ANIMATION_KEY);
+                    animation.jumpTo(Duration.ZERO);
+                    animation.stop();
+            }
+
+        for (Node node : this.schoolBoard.getChildren())
+            if (node.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)){
+                Animation animation = (Animation) node.getProperties().get(GUIConstants.ANIMATION_KEY);
+                animation.jumpTo(Duration.ZERO);
+                animation.stop();
+            }
+    }
+
+    public void onSelectionOfDiningRoom() {
+
+    }
+}
+
+class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
+
+    @Override
+    public void handle(MouseEvent mouseEvent) {
+        // Make island tiles and school board pulse and hide other objects
+        AnchorPane root = (AnchorPane) StageController.getStageController().getSceneControllers(SceneType.TABLE_SCENE)
+                .getScene(false).getRoot();
+
+        for (Node node : root.getChildren()) {
+            if (node.getId().contains(GUIConstants.ISLAND_PANE_NAME)) {
+                Pane pane = (Pane) node;
+                for (Node innerNode : pane.getChildren()) {
+                    ImageView imageView = (ImageView) innerNode;
+
+                    if (!innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME))
+                        imageView.setOpacity(0.8);
+
+                    else {
+                        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1), imageView);
+                        imageView.getProperties().put(GUIConstants.ANIMATION_KEY, scaleTransition);
+                        scaleTransition.setFromX(1);
+                        scaleTransition.setFromY(1);
+                        scaleTransition.setToX(1.05);
+                        scaleTransition.setToY(1.05);
+                        scaleTransition.setAutoReverse(true);
+                        scaleTransition.setCycleCount(Timeline.INDEFINITE);
+                        scaleTransition.play();
+                    }
+                }
+            }
+            else if (node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME)) {
+                Pane pane = (Pane) node;
+                for (Node innerNode : pane.getChildren()) {
+                    ImageView imageView = (ImageView) innerNode;
+
+                    if (!innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME))
+                        imageView.setOpacity(0.8);
+
+                    else {
+                        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1), imageView);
+                        imageView.getProperties().put(GUIConstants.ANIMATION_KEY, scaleTransition);
+                        scaleTransition.setFromX(1);
+                        scaleTransition.setFromY(1);
+                        scaleTransition.setToX(1.02);
+                        scaleTransition.setToY(1.02);
+                        scaleTransition.setAutoReverse(true);
+                        scaleTransition.setCycleCount(Timeline.INDEFINITE);
+                        scaleTransition.play();
+                    }
+                }
+            }
+            else {
+                if (!node.getId().contains("button")) {
+                    Pane pane = (Pane) node;
+                    for (Node innerNode : pane.getChildren()) {
+                        // Make image tile less visible
+                        ImageView imageView = (ImageView) innerNode;
+                        imageView.setOpacity(0);
+                    }
+                }
+            }
         }
     }
 }

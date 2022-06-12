@@ -97,6 +97,15 @@ public class GUIConstants {
     // Name used for island tile image view starts with tile
     public static final String ISLAND_TILE_NAME = "tile";
 
+    // Name used for island tile pane
+    public static final String ISLAND_PANE_NAME = "island";
+
+    // Name of schoolBoardPane
+    public static final String SCHOOL_BOARD_PANE_NAME = "schoolBoard";
+
+    // Name of school board image view
+    public static final String SCHOOL_BOARD_NAME = "imageBoard";
+
     // Name used for mother nature image view is mother
     public static final String MOTHER_NATURE_NAME = "mother";
 
@@ -232,4 +241,6 @@ public class GUIConstants {
     public static final int LAYOUT_X_OF_BUTTON_FOR_TABLE = 917;
     public static final int LAYOUT_Y_OF_BUTTON_FOR_TABLE = 993;
     public static final String NAME_OF_BUTTON = "Table";
+
+    public static final String ANIMATION_KEY = "animation";
 }

@@ -8,9 +8,11 @@ import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class SchoolBoardsFunction {
                 // Create image view
                 ImageView student = createImageViewOfStudent(studentId, coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
                         coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
+                // Add event handler
+                student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInEntranceEventHandler().handle(event));
                 // Add image view to pane with school board
                 schoolBoard.getChildren().add(student);
                 // The coordinate has been used, set to -1
@@ -59,6 +63,8 @@ public class SchoolBoardsFunction {
                     // Create image view
                     ImageView student = createImageViewOfStudent(newStudents[i], coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
                             coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
+                    // Add event handler
+                    student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInEntranceEventHandler().handle(event));
                     // Add image view to pane with school board
                     schoolBoard.getChildren().add(student);
                     // The coordinate has been used, set third element to 1

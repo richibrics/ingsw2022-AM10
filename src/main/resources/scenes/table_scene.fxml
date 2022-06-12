@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,21 +12,24 @@
    <children>
       <Pane fx:id="island6" layoutX="1670.0" layoutY="300.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile6" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile6" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island1.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="schoolBoard" layoutX="40.0" layoutY="40.0" prefHeight="805.0" prefWidth="360.0">
          <children>
-            <ImageView fitHeight="360.0" fitWidth="805.0" layoutX="-222.0" layoutY="223.0" pickOnBounds="true" rotate="-90.0">
+            <ImageView fx:id="imageBoard" fitHeight="360.0" fitWidth="805.0" layoutX="-222.0" layoutY="223.0" pickOnBounds="true" rotate="-90.0">
                <image>
                   <Image url="@../images/school_board.png" />
                </image>
                <effect>
-                  <ColorAdjust brightness="-0.2" contrast="-0.15" />
+                  <Blend mode="MULTIPLY" opacity="0.2" />
                </effect>
             </ImageView>
          </children>
@@ -36,107 +39,140 @@
             <Font name="Algerian" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="deck" alignment="CENTER" layoutX="469.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Deck" textAlignment="CENTER">
+      <Button fx:id="buttonDeck" alignment="CENTER" layoutX="469.0" layoutY="101.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Deck" textAlignment="CENTER">
          <font>
             <Font name="Algerian" size="12.0" />
          </font>
       </Button>
       <Pane fx:id="island3" layoutX="920.0" layoutY="10.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile3" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true">
+            <ImageView fx:id="tile3" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true">
                <image>
                   <Image url="@../images/islands/island1.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island7" layoutX="1670.0" layoutY="550.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile7" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile7" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island2.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island1" layoutX="440.0" layoutY="300.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile1" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile1" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island2.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island2" layoutX="670.0" layoutY="110.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile2" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile2" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island3.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island4" layoutX="1170.0" layoutY="10.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile4" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile4" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island2.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island12" layoutX="440.0" layoutY="550.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile12" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile12" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island1.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island11" layoutX="690.0" layoutY="740.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile11" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile11" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island3.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island10" layoutX="920.0" layoutY="850.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile10" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile10" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island2.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island9" layoutX="1170.0" layoutY="850.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile9" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile9" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island1.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island8" layoutX="1420.0" layoutY="740.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile8" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile8" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island3.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>
       <Pane fx:id="island5" layoutX="1420.0" layoutY="110.0" prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="tile5" fitHeight="250.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="tile5" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/islands/island3.png" />
                </image>
+               <effect>
+                  <Blend mode="MULTIPLY" opacity="0.8" />
+               </effect>
             </ImageView>
          </children>
       </Pane>

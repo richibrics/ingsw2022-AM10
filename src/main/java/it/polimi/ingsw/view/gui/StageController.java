@@ -221,6 +221,10 @@ public class StageController {
         this.clientLobby = clientLobby;
     }
 
+    public SceneControllerInterface getSceneControllers(SceneType type) {
+        return this.sceneControllers.get(type);
+    }
+
 
     /**
      * Handles the Exception occurred in a Scene.
