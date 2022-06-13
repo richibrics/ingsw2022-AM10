@@ -24,7 +24,7 @@
       </Pane>
       <Pane fx:id="schoolBoard" layoutX="40.0" layoutY="40.0" prefHeight="805.0" prefWidth="360.0">
          <children>
-            <ImageView fx:id="imageBoard" fitHeight="360.0" fitWidth="805.0" layoutX="-222.0" layoutY="223.0" pickOnBounds="true" rotate="-90.0">
+            <ImageView fx:id="imageBoard" onMouseClicked="#onSelectionOfDiningRoom" fitHeight="360.0" fitWidth="805.0" layoutX="-222.0" layoutY="223.0" pickOnBounds="true" rotate="-90.0">
                <image>
                   <Image url="@../images/school_board.png" />
                </image>

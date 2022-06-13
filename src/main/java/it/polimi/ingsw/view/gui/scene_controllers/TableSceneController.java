@@ -9,8 +9,9 @@ import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
-import javafx.animation.*;
+import javafx.animation.Animation;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,14 +23,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class TableSceneController extends SceneController {
@@ -51,14 +50,13 @@ public class TableSceneController extends SceneController {
     // Previous state of school board
     private final ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
+    private final ArrayList<Integer> previousCompositionOfIslandGroups;
     // Array of panes containing cloud tiles
     private Pane[] cloudTiles;
     private Integer[] previousEntrance;
     private int previousNumberOfTowers;
     // Previous state of island tiles
     private boolean[][] previousStateOfIslandTiles;
-    private final ArrayList<Integer> previousCompositionOfIslandGroups;
-
     @FXML
     private Pane island1;
     @FXML
@@ -261,12 +259,12 @@ public class TableSceneController extends SceneController {
                 // Case 1: mother nature
                 occupancyHasChanged = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, motherNatureIsland == clientIslandTile.getId(),
                         this.previousStateOfIslandTiles[clientIslandTile.getId()][0], children, GUIConstants.MOTHER_NATURE_NAME, Images.getImages().getMotherNaturePawn(),
-                        GUIConstants.WIDTH_OF_MOTHER_NATURE, GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN, false, null);
+                        GUIConstants.WIDTH_OF_MOTHER_NATURE, GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN, 0, null);
 
                 // Case 2: no entry tile
                 result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, clientIslandTile.hasNoEntry(),
                         this.previousStateOfIslandTiles[clientIslandTile.getId()][1], children, GUIConstants.NO_ENTRY_TILE_NAME, Images.getImages().getNoEntryTile(),
-                        GUIConstants.WIDTH_OF_NO_ENTRY, GUIConstants.HEIGHT_OF_NO_ENTRY, false, null);
+                        GUIConstants.WIDTH_OF_NO_ENTRY, GUIConstants.HEIGHT_OF_NO_ENTRY, 1, null);
                 occupancyHasChanged = occupancyHasChanged || result;
 
                 // Case 3: tower
@@ -277,7 +275,7 @@ public class TableSceneController extends SceneController {
                 // A null image does not create problems since the image is not accessed
                 result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, clientIslandTile.getTower() != null,
                         this.previousStateOfIslandTiles[clientIslandTile.getId()][2], children, GUIConstants.TOWER_NAME, imageOfTower,
-                        GUIConstants.WIDTH_OF_TOWER_ISLAND_TILE, GUIConstants.HEIGHT_OF_TOWER_ISLAND_TILE, true, clientIslandTile.getTower());
+                        GUIConstants.WIDTH_OF_TOWER_ISLAND_TILE, GUIConstants.HEIGHT_OF_TOWER_ISLAND_TILE, 2, clientIslandTile.getTower());
                 occupancyHasChanged = occupancyHasChanged || result;
 
                 // Update previous state
@@ -330,7 +328,9 @@ public class TableSceneController extends SceneController {
     }
 
     private boolean checkMotherNatureOrNoEntryOrTowerPresence(ClientIslandTile islandTile, boolean currentStateOfIsland, boolean prevStateOfIsland, ArrayList<Node> children,
-                                                              String gameObjectName, Image image, int width, int height, boolean tower, ClientTowerColor color) {
+                                                              String gameObjectName, Image image, int width, int height, int type, ClientTowerColor color) {
+
+        // IMPORTANT: type is 0 for mother nature, 1 for a no entry tile and 2 for a tower
 
         // Case 1: Game object on the island in previous state
         if (prevStateOfIsland) {
@@ -341,7 +341,7 @@ public class TableSceneController extends SceneController {
                 // Remove coordinate of object
                 this.coordinatesOfIslandTile.remove(this.coordinatesOfIslandTile.stream()
                         .filter(c -> c[0] == node.getLayoutY() && c[1] == node.getLayoutX()).toList().get(0));
-                if (tower) {
+                if (type == 2) {
                     // The color of the tower could have changed
                     ImageView towerImageView = (ImageView) node;
                     towerImageView.setImage(image);
@@ -371,12 +371,15 @@ public class TableSceneController extends SceneController {
                 imageView.setFitHeight(height);
                 imageView.setLayoutX(coordinate[1]);
                 imageView.setLayoutY(coordinate[0]);
-                if (tower) {
+                if (type == 2) {
                     if (color.equals(ClientTowerColor.BLACK))
                         imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
                     else if (color.equals(ClientTowerColor.WHITE))
                         imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
                 }
+                else if (type == 0)
+                    imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfMotherNature);
+
                 this.islandTiles[islandTile.getId()].getChildren().add(imageView);
                 return true;
             }
@@ -428,9 +431,8 @@ public class TableSceneController extends SceneController {
                         for (int i = indexOfCentralTile; i > 0; i--)
                             this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
                                     this.islandTiles[islandGroup.get(i - 1).getId()]);
-                    }
-                    else
-                        index ++;
+                    } else
+                        index++;
                 }
             }
         }
@@ -468,20 +470,18 @@ public class TableSceneController extends SceneController {
             double x2 = (beta - Math.sqrt(delta)) / gamma;
             x = Math.abs(islandToMove.getLayoutX() - x1) < Math.abs(islandToMove.getLayoutX() - x2) ? x1 : x2;
             // Calculate new layout y
-            y = -(- islandToMove.getLayoutY() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE + m * (x - islandToMove.getLayoutX() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE));
-        }
-        else if (fixedIsland.getLayoutX() == islandToMove.getLayoutX()) {
+            y = -(-islandToMove.getLayoutY() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE + m * (x - islandToMove.getLayoutX() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE));
+        } else if (fixedIsland.getLayoutX() == islandToMove.getLayoutX()) {
             alfa = Math.pow(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutY(), 2)
                     - Math.pow(2 * GUIConstants.RADIUS_OF_ISLAND_TILE, 2);
-            beta = - (GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutY());
+            beta = -(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutY());
             gamma = 1;
             delta = Math.pow(beta, 2) - alfa * gamma;
-            double y1 = - ((beta + Math.sqrt(delta)) / gamma);
-            double y2 = - ((beta - Math.sqrt(delta)) / gamma);
+            double y1 = -((beta + Math.sqrt(delta)) / gamma);
+            double y2 = -((beta - Math.sqrt(delta)) / gamma);
             y = Math.abs(islandToMove.getLayoutY() - y1) < Math.abs(islandToMove.getLayoutY() - y2) ? y1 : y2;
             x = fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE;
-        }
-        else if (fixedIsland.getLayoutY() == islandToMove.getLayoutY()) {
+        } else if (fixedIsland.getLayoutY() == islandToMove.getLayoutY()) {
             alfa = Math.pow(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutX(), 2)
                     - Math.pow(2 * GUIConstants.RADIUS_OF_ISLAND_TILE, 2);
             beta = (GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutX());
@@ -767,7 +767,7 @@ public class TableSceneController extends SceneController {
     // EVENTS HANDLERS
 
     @FXML
-    private void switchToOtherSchoolBoards(ActionEvent e) {
+    private void switchToOtherSchoolBoards(ActionEvent event) {
         try {
             StageController.getStageController().showScene(SceneType.SCHOOL_BOARD_SCENE, false);
         } catch (Exception exception) {
@@ -776,7 +776,7 @@ public class TableSceneController extends SceneController {
     }
 
     @FXML
-    public void switchToDeck(ActionEvent e) {
+    public void switchToDeck(ActionEvent event) {
         try {
             StageController.getStageController().showScene(SceneType.DECK_SCENE, false);
         } catch (Exception exception) {
@@ -785,26 +785,93 @@ public class TableSceneController extends SceneController {
     }
 
     public void onSelectionOfIslandTile() {
-
-        // Stop transitions of islands and school board
-        for (Pane island : Arrays.stream(this.islandTiles).filter(Objects::nonNull).toList())
-            for (Node node : island.getChildren())
-                if (node.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                    Animation animation = (Animation) node.getProperties().get(GUIConstants.ANIMATION_KEY);
-                    animation.jumpTo(Duration.ZERO);
-                    animation.stop();
-            }
-
-        for (Node node : this.schoolBoard.getChildren())
-            if (node.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)){
-                Animation animation = (Animation) node.getProperties().get(GUIConstants.ANIMATION_KEY);
-                animation.jumpTo(Duration.ZERO);
-                animation.stop();
-            }
+        this.removePulsesAndResetOpacity();
     }
 
     public void onSelectionOfDiningRoom() {
+        this.removePulsesAndResetOpacity();
+    }
 
+    public void onSelectionOfMotherNature(MouseEvent event) {
+        // Get index of team and of player
+        try {
+            // Get client teams
+            ClientTeams clientTeams = StageController.getStageController().getClientTeams();
+            // Get player id
+            int playerId = StageController.getStageController().getGuiView().getPlayerId();
+
+            // Get index of team and of player within team
+            int indexOfTeam = clientTeams.getTeams().indexOf(clientTeams.getTeams().
+                    stream().
+                    filter(clientTeam -> clientTeam.getPlayers().
+                            stream().
+                            filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1).
+                    toList().get(0));
+
+            int indexOfPlayer = clientTeams.getTeams().get(indexOfTeam).getPlayers().indexOf(clientTeams.getTeams().get(indexOfTeam).getPlayers().
+                    stream().
+                    filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).
+                    toList().get(0));
+
+            // Get movements of mother nature from assistant card played by the player
+            int movements = clientTeams.getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getLastPlayedAssistantCard().getMovements();
+            // Get index of group containing mother nature
+            int indexOfIslandGroupWIthMotherNature = StageController.getStageController().getClientTable().getIslandTiles().indexOf(StageController.getStageController().getClientTable().getIslandTiles()
+                    .stream()
+                    .filter(islandGroup -> islandGroup.stream()
+                            .filter(islandTile -> islandTile.getId() == StageController.getStageController().getClientTable().getMotherNature().getIsland())
+                            .count() == 1)
+                    .toList().get(0));
+            // Make islands pulse
+            int offset = 1;
+            while (offset < movements + 1) {
+                if (StageController.getStageController().getClientTable().getIslandTiles().size() == indexOfIslandGroupWIthMotherNature + offset)
+                    indexOfIslandGroupWIthMotherNature = -offset;
+                for (ClientIslandTile islandTile : StageController.getStageController().getClientTable().getIslandTiles().get(indexOfIslandGroupWIthMotherNature + offset)) {
+                    for (Node innerNode : this.islandTiles[islandTile.getId()].getChildren()) {
+                        ImageView imageView = (ImageView) innerNode;
+                        if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
+                            ViewUtilityFunctions.createAnimationPulses(imageView);
+                            break;
+                        }
+                    }
+                }
+                offset++;
+            }
+
+        } catch (GuiViewNotSet e) {
+            // TODO do something (close connection?)
+        }
+    }
+
+    private void removePulsesAndResetOpacity() {
+        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
+
+        for (Node node : root.getChildren()) {
+            if (node.getId().contains(GUIConstants.ISLAND_PANE_NAME)) {
+                Pane pane = (Pane) node;
+                for (Node innerNode : pane.getChildren())
+                    if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
+                        if (innerNode.getProperties().containsKey(GUIConstants.ANIMATION_KEY)) {
+                            Animation animation = (Animation) innerNode.getProperties().get(GUIConstants.ANIMATION_KEY);
+                            animation.jumpTo(Duration.ZERO);
+                            animation.stop();
+                        }
+                        break;
+                    }
+            } else if (node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME)) {
+                Pane pane = (Pane) node;
+                for (Node innerNode : pane.getChildren())
+                    if (innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)) {
+                        if (innerNode.getProperties().containsKey(GUIConstants.ANIMATION_KEY)) {
+                            Animation animation = (Animation) innerNode.getProperties().get(GUIConstants.ANIMATION_KEY);
+                            animation.jumpTo(Duration.ZERO);
+                            animation.stop();
+                        }
+                        break;
+                    }
+            }
+        }
     }
 }
 
@@ -817,55 +884,25 @@ class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
                 .getScene(false).getRoot();
 
         for (Node node : root.getChildren()) {
+
             if (node.getId().contains(GUIConstants.ISLAND_PANE_NAME)) {
                 Pane pane = (Pane) node;
                 for (Node innerNode : pane.getChildren()) {
                     ImageView imageView = (ImageView) innerNode;
 
-                    if (!innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME))
-                        imageView.setOpacity(0.8);
-
-                    else {
-                        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1), imageView);
-                        imageView.getProperties().put(GUIConstants.ANIMATION_KEY, scaleTransition);
-                        scaleTransition.setFromX(1);
-                        scaleTransition.setFromY(1);
-                        scaleTransition.setToX(1.05);
-                        scaleTransition.setToY(1.05);
-                        scaleTransition.setAutoReverse(true);
-                        scaleTransition.setCycleCount(Timeline.INDEFINITE);
-                        scaleTransition.play();
+                    if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
+                        ViewUtilityFunctions.createAnimationPulses(imageView);
+                        break;
                     }
                 }
-            }
-            else if (node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME)) {
+            } else if (node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME)) {
                 Pane pane = (Pane) node;
                 for (Node innerNode : pane.getChildren()) {
                     ImageView imageView = (ImageView) innerNode;
 
-                    if (!innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME))
-                        imageView.setOpacity(0.8);
-
-                    else {
-                        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1), imageView);
-                        imageView.getProperties().put(GUIConstants.ANIMATION_KEY, scaleTransition);
-                        scaleTransition.setFromX(1);
-                        scaleTransition.setFromY(1);
-                        scaleTransition.setToX(1.02);
-                        scaleTransition.setToY(1.02);
-                        scaleTransition.setAutoReverse(true);
-                        scaleTransition.setCycleCount(Timeline.INDEFINITE);
-                        scaleTransition.play();
-                    }
-                }
-            }
-            else {
-                if (!node.getId().contains("button")) {
-                    Pane pane = (Pane) node;
-                    for (Node innerNode : pane.getChildren()) {
-                        // Make image tile less visible
-                        ImageView imageView = (ImageView) innerNode;
-                        imageView.setOpacity(0);
+                    if (innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)) {
+                        ViewUtilityFunctions.createAnimationPulses(imageView);
+                        break;
                     }
                 }
             }
