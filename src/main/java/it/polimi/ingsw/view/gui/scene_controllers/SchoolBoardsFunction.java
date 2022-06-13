@@ -21,7 +21,7 @@ import java.util.Arrays;
 public class SchoolBoardsFunction {
 
     public static Integer[] updateSchoolBoardEntrance(int indexOfSchoolBoard, Pane schoolBoard, Integer[][] coordinatesOfStudentsInEntrance,
-                                                      Integer[] previousEntrance) throws IllegalStudentIdException {
+                                                      Integer[] previousEntrance, boolean schoolBoardOfPlayer) throws IllegalStudentIdException {
 
         // Important: this method is based on the assumption that the only operations applied to the entrance are additions and removals of
         // student discs. No replacement should take place. This is true at the moment.
@@ -39,7 +39,8 @@ public class SchoolBoardsFunction {
                 ImageView student = createImageViewOfStudent(studentId, coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
                         coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
                 // Add event handler
-                student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInEntranceEventHandler().handle(event));
+                if (schoolBoardOfPlayer)
+                    student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInEntranceEventHandler().handle(event));
                 // Add image view to pane with school board
                 schoolBoard.getChildren().add(student);
                 // The coordinate has been used, set to -1
@@ -64,7 +65,8 @@ public class SchoolBoardsFunction {
                     ImageView student = createImageViewOfStudent(newStudents[i], coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
                             coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
                     // Add event handler
-                    student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInEntranceEventHandler().handle(event));
+                    if (schoolBoardOfPlayer)
+                        student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInEntranceEventHandler().handle(event));
                     // Add image view to pane with school board
                     schoolBoard.getChildren().add(student);
                     // The coordinate has been used, set third element to 1

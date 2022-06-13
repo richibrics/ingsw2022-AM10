@@ -11,18 +11,21 @@ import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import javafx.animation.Animation;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -58,6 +61,8 @@ public class TableSceneController extends SceneController {
     // Previous state of island tiles
     private boolean[][] previousStateOfIslandTiles;
     @FXML
+    private AnchorPane mainPane;
+    @FXML
     private Pane island1;
     @FXML
     private Pane island2;
@@ -83,6 +88,8 @@ public class TableSceneController extends SceneController {
     private Pane island12;
     @FXML
     private Pane schoolBoard;
+
+    private Label coin;
 
     public TableSceneController() {
 
@@ -201,9 +208,12 @@ public class TableSceneController extends SceneController {
                                     filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1)
                             .toList().get(0));
 
+            // Write amount of coins over school board
+            if (StageController.getStageController().getGuiView().getUser().getPreference() > 0)
+                this.updateAmountOfCoins(indexOfTeam);
             // Update entrance
             this.previousEntrance = SchoolBoardsFunction.updateSchoolBoardEntrance(indexOfSchoolBoard, this.schoolBoard,
-                    this.coordinatesOfStudentsInEntrance, this.previousEntrance);
+                    this.coordinatesOfStudentsInEntrance, this.previousEntrance, true);
             // Update dining room
             SchoolBoardsFunction.updateSchoolBoardDiningRoom(indexOfSchoolBoard, this.schoolBoard,
                     this.firstAvailableCoordinatesOfDiningRoom, this.previousDiningRoom);
@@ -227,6 +237,36 @@ public class TableSceneController extends SceneController {
     }
 
     // METHODS FOR SCENE UPDATE
+
+    private void updateAmountOfCoins(int indexOfTeam) throws GuiViewNotSet {
+        // Determine index of player
+        ClientTeams clientTeams = StageController.getStageController().getClientTeams();
+        int playerId = StageController.getStageController().getGuiView().getPlayerId();
+        int indexOfPlayer = clientTeams.getTeams().get(indexOfTeam).getPlayers().indexOf(clientTeams.getTeams().get(indexOfTeam).getPlayers().
+                stream().
+                filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).
+                toList().get(0));
+
+        if (this.coin == null) {
+            // Create label
+            Label label = new Label(GUIConstants.LABEL_FOR_COIN_START + StageController.getStageController().getClientTeams()
+                    .getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getCoins());
+            // Set properties
+            label.setId(GUIConstants.LABEL_ID);
+            label.setPrefSize(GUIConstants.WIDTH_OF_LABEL_FOR_USERNAMES, GUIConstants.HEIGHT_OF_LABEL_FOR_USERNAMES);
+            label.setLayoutX(GUIConstants.LAYOUT_X_OF_SCHOOL_BOARD_IN_TABLE_SCENE);
+            label.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABELS_FOR_USERNAMES);
+            label.setAlignment(Pos.CENTER_LEFT);
+            label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_USERNAME));
+            // Add label to root
+            this.mainPane.getChildren().add(label);
+            this.coin = label;
+        }
+        else {
+            this.coin.setText(GUIConstants.LABEL_FOR_COIN_START + StageController.getStageController().getClientTeams()
+                    .getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getCoins());
+        }
+    }
 
     private void addSGameObjectsToIslandTiles() throws IllegalStudentIdException {
 
@@ -722,6 +762,7 @@ public class TableSceneController extends SceneController {
             cloudPane.setId(GUIConstants.CLOUD_TILE_PANE_NAME + (indexOfCloudTile + 1));
             // Create image view and add to pane
             ImageView cloudTileImageView = new ImageView(imagesOfClouds[indexOfImage]);
+            cloudTileImageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfCloudTile);
             cloudTileImageView.setId(GUIConstants.CLOUD_TILE_NAME
                     + StageController.getStageController().getClientTable().getCloudTiles().get(indexOfCloudTile).getId());
             cloudTileImageView.setPreserveRatio(false);
@@ -751,6 +792,7 @@ public class TableSceneController extends SceneController {
             characterCardPane.setId(GUIConstants.CHARACTER_CARD_PANE_NAME + (indexCharacterCard + 1));
             // Create image view and add to pane
             ImageView characterCardImageView = new ImageView(characterCardImage);
+            characterCardImageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfCharacterCard);
             characterCardImageView.setId(GUIConstants.CHARACTER_CARD_IMAGE_NAME
                     + StageController.getStageController().getClientTable().getActiveCharacterCards().get(indexCharacterCard).getId());
             characterCardImageView.setPreserveRatio(false);
@@ -784,15 +826,18 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    public void onSelectionOfIslandTile() {
+    public void onSelectionOfIslandTile(MouseEvent event) {
         this.removePulsesAndResetOpacity();
+        // TODO handle two cases: click for student movement and click for mother nature movement
     }
 
-    public void onSelectionOfDiningRoom() {
+    public void onSelectionOfDiningRoom(MouseEvent event) {
         this.removePulsesAndResetOpacity();
+        // TODO handle single case of click for movement of student disc from entrance to dining room
     }
 
     public void onSelectionOfMotherNature(MouseEvent event) {
+        this.removePulsesAndResetOpacity();
         // Get index of team and of player
         try {
             // Get client teams
@@ -842,6 +887,15 @@ public class TableSceneController extends SceneController {
         } catch (GuiViewNotSet e) {
             // TODO do something (close connection?)
         }
+    }
+
+    public void onSelectionOfCloudTile(MouseEvent event) {
+
+    }
+
+    public void onSelectionOfCharacterCard(MouseEvent event) {
+
+
     }
 
     private void removePulsesAndResetOpacity() {

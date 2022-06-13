@@ -17,7 +17,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -42,7 +43,9 @@ public class SchoolBoardsSceneController extends SceneController {
     private ArrayList<ClientPawnColor>[] previousProfessorSections;
     private Integer[] previousNumberOfTowers;
 
+    private AnchorPane root;
     private Image schoolBoard;
+    private Label[] labelsOfSchoolBoards;
 
     // ARRAYS GENERATORS
 
@@ -80,11 +83,11 @@ public class SchoolBoardsSceneController extends SceneController {
             if (StageController.getStageController().getClientTable() == null)
                 throw new SceneLayoutException("The scene cannot be created before client table has been set");
 
-            AnchorPane root = new AnchorPane();
+            this.root = new AnchorPane();
 
             // Set background
-            root.getStyleClass().add("background");
-            root.getStylesheets().add("/CSS/table_background.css");
+            this.root.getStyleClass().add("background");
+            this.root.getStylesheets().add("/CSS/table_background.css");
 
             // Add button to return to table
             Button button = new Button(GUIConstants.NAME_OF_BUTTON);
@@ -97,9 +100,9 @@ public class SchoolBoardsSceneController extends SceneController {
             button.setLayoutY(GUIConstants.LAYOUT_Y_OF_BUTTON_FOR_TABLE);
             button.setPrefSize(GUIConstants.WIDTH_OF_BUTTON_FOR_TABLE, GUIConstants.HEIGHT_OF_BUTTON_FOR_TABLE);
             button.setOnAction(new SwitchToTable());
-            root.getChildren().add(button);
+            this.root.getChildren().add(button);
 
-            root.setPrefSize(GUIConstants.WIDTH_OF_SCENE, GUIConstants.HEIGHT_OF_SCENE);
+            this.root.setPrefSize(GUIConstants.WIDTH_OF_SCENE, GUIConstants.HEIGHT_OF_SCENE);
             // Generate arrays of coordinates
             this.generateArraysOfCoordinates();
             // Generate arrays for previous states of school boards
@@ -121,37 +124,11 @@ public class SchoolBoardsSceneController extends SceneController {
                         + i * GUIConstants.LAYOUT_X_OFFSET_BETWEEN_SCHOOL_BOARDS, GUIConstants.LAYOUT_Y_OF_SCHOOL_BOARDS);
             }
 
-            // Create association between players and school boards
-            // Note that player and school boards have the same order in client teams and client table, thus given the
-            // array of school boards and the array of players, obtained as clientTeams.getTeams()
-            // .stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).toArray(ClientPlayer[]::new), the elements
-            // at position i of the arrays are associated with the same client.
-            // The players' usernames are written near the school boards.
-            // Step 1: Get array of client players (without the client):
-            ClientPlayer[] players = StageController.getStageController().getClientTeams().getTeams()
-                    .stream()
-                    .flatMap(clientTeam -> clientTeam.getPlayers().stream())
-                    .filter(clientPlayer -> {
-                        try {
-                            return clientPlayer.getPlayerId() != StageController.getStageController().getGuiView().getPlayerId();
-                        } catch (GuiViewNotSet e) {
-                            return clientPlayer.getPlayerId() != -1;
-                        }
-                    })
-                    .toArray(ClientPlayer[]::new);
-
-            if (players.length == 0)
-                throw new GuiViewNotSet();
-
-            // Step 2: Write usernames over school boards
-            for (int i = 0; i < players.length; i++)
-                this.writeLabelForUsername(root, players[i].getUsername(), GUIConstants.LAYOUT_X_OF_FIRST_SCHOOL_BOARD + i * GUIConstants.LAYOUT_X_OFFSET_BETWEEN_SCHOOL_BOARDS);
-
             // Update scene, i.e. add elements to school boards
             this.updateScene();
 
             // Return new scene
-            return new Scene(root);
+            return new Scene(this.root);
         } catch (SceneLayoutException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
@@ -186,9 +163,12 @@ public class SchoolBoardsSceneController extends SceneController {
                                             filter(clientPlayer -> clientPlayer.getPlayerId() == players[finalI].getPlayerId()).count() == 1)
                                     .toList().get(0));
 
+                    // Update coins
+                    this.updateUsernameAndCoin();
+
                     // Update entrance
                     this.previousEntrances[indexOfPaneWithSchoolBoard] = SchoolBoardsFunction.updateSchoolBoardEntrance(i, this.panesForSchoolBoards[indexOfPaneWithSchoolBoard],
-                            this.coordinatesOfStudentsInEntrances[indexOfPaneWithSchoolBoard], this.previousEntrances[indexOfPaneWithSchoolBoard]);
+                            this.coordinatesOfStudentsInEntrances[indexOfPaneWithSchoolBoard], this.previousEntrances[indexOfPaneWithSchoolBoard], false);
                     // Update dining room
                     SchoolBoardsFunction.updateSchoolBoardDiningRoom(i, this.panesForSchoolBoards[indexOfPaneWithSchoolBoard],
                             this.firstAvailableCoordinatesOfDiningRooms[indexOfPaneWithSchoolBoard], this.previousDiningRooms[indexOfPaneWithSchoolBoard]);
@@ -222,6 +202,9 @@ public class SchoolBoardsSceneController extends SceneController {
         // Create image of school board
         if (this.schoolBoard == null)
             this.schoolBoard = new Image(GUIConstants.SCENE_TABLE_SCHOOL_BOARD_PATH);
+        // Create effect for school board image view
+        Blend blend = new Blend(BlendMode.MULTIPLY);
+        blend.setOpacity(0.2);
         // Create image view of school board
         ImageView imageViewOfSchoolBoard = new ImageView(this.schoolBoard);
         imageViewOfSchoolBoard.setFitWidth(GUIConstants.WIDTH_OF_IMAGE_VIEW_OF_SCHOOL_BOARD);
@@ -229,7 +212,7 @@ public class SchoolBoardsSceneController extends SceneController {
         imageViewOfSchoolBoard.setLayoutX(GUIConstants.LAYOUT_X_OF_SCHOOL_BOARD_IN_PANE_FOR_SCHOOL_BOARD);
         imageViewOfSchoolBoard.setLayoutY(GUIConstants.LAYOUT_Y_OF_SCHOOL_BOARD_IN_PANE_FOR_SCHOOL_BOARD);
         imageViewOfSchoolBoard.setRotate(GUIConstants.ROTATION_OF_SCHOOL_BOARD_IN_PANE_FOR_SCHOOL_BOARD);
-        imageViewOfSchoolBoard.setEffect(new ColorAdjust(0, 0, -0.2, -0.15));
+        imageViewOfSchoolBoard.setEffect(blend);
         // Add image view to children of Pane for school board
         paneForSchoolBoard.getChildren().add(imageViewOfSchoolBoard);
         // Add pane for school board to root
@@ -237,17 +220,53 @@ public class SchoolBoardsSceneController extends SceneController {
         return paneForSchoolBoard;
     }
 
-    private void writeLabelForUsername(AnchorPane root, String username, int layoutX) {
-        // Create label
-        Label label = new Label(GUIConstants.LABEL_FOR_USERNAME_START + username);
-        // Set properties
-        label.setPrefSize(GUIConstants.WIDTH_OF_LABEL_FOR_USERNAMES, GUIConstants.HEIGHT_OF_LABEL_FOR_USERNAMES);
-        label.setLayoutX(layoutX);
-        label.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABELS_FOR_USERNAMES);
-        label.setAlignment(Pos.CENTER_LEFT);
-        label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_USERNAME));
-        // Add label to root
-        root.getChildren().add(label);
+    // METHODS FOR USERNAME AND COINS UPDATE
+
+    private void updateUsernameAndCoin() throws GuiViewNotSet{
+        // Create association between players and school boards
+        // Note that player and school boards have the same order in client teams and client table, thus given the
+        // array of school boards and the array of players, obtained as clientTeams.getTeams()
+        // .stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).toArray(ClientPlayer[]::new), the elements
+        // at position i of the arrays are associated with the same client.
+        // The players' usernames are written near the school boards.
+        // Step 1: Get array of client players (without the client):
+        ClientPlayer[] players = StageController.getStageController().getClientTeams().getTeams()
+                .stream()
+                .flatMap(clientTeam -> clientTeam.getPlayers().stream())
+                .filter(clientPlayer -> {
+                    try {
+                        return clientPlayer.getPlayerId() != StageController.getStageController().getGuiView().getPlayerId();
+                    } catch (GuiViewNotSet e) {
+                        return clientPlayer.getPlayerId() != -1;
+                    }
+                })
+                .toArray(ClientPlayer[]::new);
+
+        if (players.length == 0)
+            throw new GuiViewNotSet();
+
+        // Step 2: Write usernames over school boards
+        if (this.labelsOfSchoolBoards == null)
+            this.labelsOfSchoolBoards = new Label[players.length];
+
+        for (int i = 0; i < players.length; i++)
+            this.writeLabelForUsernameAndCoins(i, players[i].getUsername(), players[i].getCoins(), GUIConstants.LAYOUT_X_OF_FIRST_SCHOOL_BOARD + i * GUIConstants.LAYOUT_X_OFFSET_BETWEEN_SCHOOL_BOARDS);
+    }
+
+    private void writeLabelForUsernameAndCoins(int indexOfLabel, String username, int coins, int layoutX) {
+        if (this.labelsOfSchoolBoards[indexOfLabel] == null) {
+            // Create label and add to array of labels and to root childSet
+            this.labelsOfSchoolBoards[indexOfLabel] = new Label();
+            this.root.getChildren().add(this.labelsOfSchoolBoards[indexOfLabel]);
+            // Set properties
+            this.labelsOfSchoolBoards[indexOfLabel].setPrefSize(GUIConstants.WIDTH_OF_LABEL_FOR_USERNAMES, GUIConstants.HEIGHT_OF_LABEL_FOR_USERNAMES);
+            this.labelsOfSchoolBoards[indexOfLabel].setLayoutX(layoutX);
+            this.labelsOfSchoolBoards[indexOfLabel].setLayoutY(GUIConstants.LAYOUT_Y_OF_LABELS_FOR_USERNAMES);
+            this.labelsOfSchoolBoards[indexOfLabel].setAlignment(Pos.CENTER_LEFT);
+            this.labelsOfSchoolBoards[indexOfLabel].setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_USERNAME));
+        }
+        // Set text
+        this.labelsOfSchoolBoards[indexOfLabel].setText(GUIConstants.LABEL_FOR_USERNAME_START + username + "  " + GUIConstants.LABEL_FOR_COIN_START + coins);
     }
 
     // EVENT HANDLERS

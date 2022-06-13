@@ -235,6 +235,9 @@ public class GUIConstants {
     public static final int FONT_SIZE_BUTTON = 12;
     public static final String FONT = "Algerian";
     public static final String LABEL_FOR_USERNAME_START = "Username: ";
+    public static final String LABEL_ID = "coins";
+    public static final String LABEL_FOR_COIN_START = "Coins: ";
+    public static final int LAYOUT_X_OF_SCHOOL_BOARD_IN_TABLE_SCENE = 40;
 
     public static final double WIDTH_OF_BUTTON_FOR_TABLE = 85.0;
     public static final double HEIGHT_OF_BUTTON_FOR_TABLE = 43.0;
