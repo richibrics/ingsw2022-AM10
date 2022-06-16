@@ -80,6 +80,17 @@ public class GUIConstants {
     public static final String SCENE_TABLE_MINSTREL_IMAGE_PATH = "/images/characters/minstrel.png";
     public static final String SCENE_TABLE_LADY_IMAGE_PATH = "/images/characters/lady.png";
     public static final String SCENE_TABLE_THIEF_IMAGE_PATH = "/images/characters/thief.png";
+    public static final String SCENE_TABLE_ASSISTANT1_IMAGE_PATH = "/images/assistants/assistant_1.png";
+    public static final String SCENE_TABLE_ASSISTANT2_IMAGE_PATH = "/images/assistants/assistant_2.png";
+    public static final String SCENE_TABLE_ASSISTANT3_IMAGE_PATH = "/images/assistants/assistant_3.png";
+    public static final String SCENE_TABLE_ASSISTANT4_IMAGE_PATH = "/images/assistants/assistant_4.png";
+    public static final String SCENE_TABLE_ASSISTANT5_IMAGE_PATH = "/images/assistants/assistant_5.png";
+    public static final String SCENE_TABLE_ASSISTANT6_IMAGE_PATH = "/images/assistants/assistant_6.png";
+    public static final String SCENE_TABLE_ASSISTANT7_IMAGE_PATH = "/images/assistants/assistant_7.png";
+    public static final String SCENE_TABLE_ASSISTANT8_IMAGE_PATH = "/images/assistants/assistant_8.png";
+    public static final String SCENE_TABLE_ASSISTANT9_IMAGE_PATH = "/images/assistants/assistant_9.png";
+    public static final String SCENE_TABLE_ASSISTANT10_IMAGE_PATH = "/images/assistants/assistant_10.png";
+
 
 
     // Names used for assistant cards in fxml file of deck
@@ -214,7 +225,7 @@ public class GUIConstants {
     public static final int NUMBER_OF_ROWS_OF_TOWERS = 2;
     public static final int NUMBER_OF_TOWERS_IN_ROW = 4;
 
-    // Values for scene with school boards
+    // Values for school boards and scene with school boards
     public static final double WIDTH_OF_SCENE = 1920.0;
     public static final double HEIGHT_OF_SCENE = 1080.0;
     public static final double WIDTH_OF_PANE_FOR_SCHOOL_BOARD = 360.0;
@@ -238,6 +249,8 @@ public class GUIConstants {
     public static final String LABEL_ID = "coins";
     public static final String LABEL_FOR_COIN_START = "Coins: ";
     public static final int LAYOUT_X_OF_SCHOOL_BOARD_IN_TABLE_SCENE = 40;
+    public static final int LAYOUT_Y_OF_LABEL_FOR_COINS_IN_TABLE_SCENE = 0;
+
 
     public static final double WIDTH_OF_BUTTON_FOR_TABLE = 85.0;
     public static final double HEIGHT_OF_BUTTON_FOR_TABLE = 43.0;
@@ -246,4 +259,22 @@ public class GUIConstants {
     public static final String NAME_OF_BUTTON = "Table";
 
     public static final String ANIMATION_KEY = "animation";
+
+    // Constants for assistant cards in table scene
+    public static final String ASSISTANT_CARD_PANE_NAME_TABLE_SCENE = "paneAssistant";
+    public static final double WIDTH_OF_ASSISTANT_CARD_PANE_TABLE_SCENE = 100.;
+    public static final double HEIGHT_OF_ASSISTANT_CARD_PANE_TABLE_SCENE = 170.;
+    public static final int LAYOUT_X_OF_FIRST_ASSISTANT_CARD_PANE_TABLE_SCENE = 40;
+    public static final int LAYOUT_Y_OF_ASSISTANT_CARD_PANES_TABLE_SCENE = 880;
+    public static final int LAYOUT_X_OFFSET_BETWEEN_ASSISTANT_CARD_PANES_TABLE_SCENE = 120;
+    public static final String ASSISTANT_CARD_NAME_TABLE_SCENE = "assistant";
+    public static final double WIDTH_OF_ASSISTANT_CARD_TABLE_SCENE = 100.;
+    public static final double HEIGHT_OF_ASSISTANT_CARD_TABLE_SCENE = 150.;
+    public static final int LAYOUT_X_OF_ASSISTANT_CARD_AND_LABEL_IN_PANE_TABLE_SCENE = 0;
+    public static final int LAYOUT_Y_OF_ASSISTANT_CARD_IN_PANE_TABLE_SCENE = 20;
+    public static final String LABEL_ID_FOR_ASSISTANT_CARDS = "labelAssistant";
+    public static final double HEIGHT_OF_LABEL_FOR_ASSISTANT_CARDS = 20.;
+    public static final int LAYOUT_Y_OF_LABEL_IN_PANE_TABLE_SCENE = 0;
+    public static final int FONT_SIZE_LABEL_ASSISTANT_CARDS = 12;
+
 }

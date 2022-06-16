@@ -22,7 +22,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="schoolBoard" layoutX="40.0" layoutY="100.0" prefHeight="805.0" prefWidth="360.0">
+      <Pane fx:id="schoolBoard" layoutX="40.0" layoutY="50.0" prefHeight="805.0" prefWidth="360.0">
          <children>
             <ImageView fx:id="imageBoard" fitHeight="360.0" fitWidth="805.0" layoutX="-222.0" layoutY="223.0" onMouseClicked="#onSelectionOfDiningRoom" pickOnBounds="true" rotate="-90.0">
                <image>
@@ -34,12 +34,12 @@
             </ImageView>
          </children>
       </Pane>
-      <Button fx:id="buttonSchoolBoards" alignment="CENTER" layoutX="469.0" layoutY="100.0" mnemonicParsing="false" onAction="#switchToOtherSchoolBoards" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Other boards" textAlignment="CENTER">
+      <Button fx:id="buttonSchoolBoards" alignment="CENTER" layoutX="440.0" layoutY="50.0" mnemonicParsing="false" onAction="#switchToOtherSchoolBoards" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Other boards" textAlignment="CENTER">
          <font>
             <Font name="Algerian" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="buttonDeck" alignment="CENTER" layoutX="469.0" layoutY="160.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Deck" textAlignment="CENTER">
+      <Button fx:id="buttonDeck" alignment="CENTER" layoutX="440.0" layoutY="110.0" mnemonicParsing="false" onAction="#switchToDeck" prefHeight="37.0" prefWidth="103.0" styleClass="button_style" stylesheets="@../CSS/buttons.css" text="Deck" textAlignment="CENTER">
          <font>
             <Font name="Algerian" size="12.0" />
          </font>

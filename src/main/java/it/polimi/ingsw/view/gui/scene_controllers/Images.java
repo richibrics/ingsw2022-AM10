@@ -39,11 +39,25 @@ public class Images {
     private final Image cloudTileCastle;
     private final Image cloudTileSports;
     private final Image cloudTileThreePlaces;
+    private final Image assistant1;
+    private final Image assistant2;
+    private final Image assistant3;
+    private final Image assistant4;
+    private final Image assistant5;
+    private final Image assistant6;
+    private final Image assistant7;
+    private final Image assistant8;
+    private final Image assistant9;
+    private final Image assistant10;
+
+
     private final Image[] characterCards;
     private Image[] studentDiscs;
     private Image[] professorPawns;
     private Image[] towers;
     private Image[] cloudTiles;
+    private Image[] assistantCards;
+
 
     private Images() {
         // Create images of students
@@ -112,6 +126,21 @@ public class Images {
         }
 
         this.noEntryTile = new Image(GUIConstants.SCENE_TABLE_NO_ENTRY_PATH);
+
+        // Create images of assistant cards
+        this.assistant1 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT1_IMAGE_PATH);
+        this.assistant2 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT2_IMAGE_PATH);
+        this.assistant3 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT3_IMAGE_PATH);
+        this.assistant4 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT4_IMAGE_PATH);
+        this.assistant5 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT5_IMAGE_PATH);
+        this.assistant6 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT6_IMAGE_PATH);
+        this.assistant7 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT7_IMAGE_PATH);
+        this.assistant8 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT8_IMAGE_PATH);
+        this.assistant9 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT9_IMAGE_PATH);
+        this.assistant10 = new Image(GUIConstants.SCENE_TABLE_ASSISTANT10_IMAGE_PATH);
+
+        //Load images of assistants
+        this.loadImagesOfAssistantCards();
     }
 
     public static Images getImages() {
@@ -166,6 +195,19 @@ public class Images {
         }
     }
 
+    private void loadImagesOfAssistantCards() {
+        this.assistantCards = new Image[ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD + 1];
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD] = this.assistant1;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant2;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 2 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant3;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 3 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant4;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 4 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant5;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 5 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant6;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 6 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant7;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 7 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant8;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 8 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant9;
+        this.assistantCards[ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD + 9 * ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS] = this.assistant10;
+    }
 
     public Image getCoin() {
         return coin;
@@ -189,6 +231,10 @@ public class Images {
 
     public Image[] getTowers() {
         return towers;
+    }
+
+    public Image[] getAssistantCards() {
+        return assistantCards;
     }
 
     public Image[] getCharacterCards() {

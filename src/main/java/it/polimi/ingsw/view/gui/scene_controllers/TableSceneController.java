@@ -18,6 +18,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,6 +42,12 @@ public class TableSceneController extends SceneController {
     private final Pane[] islandTiles;
     // Array of panes of character cards
     private final Pane[] characterCards;
+    // Array of panes of assistant cards
+    private final Pane[] panesOfAssistantCards;
+    // Array of image views of assistant cards played by the other players
+    private ImageView[] assistantCards;
+    // Array of labels for assistant cards
+    private Label[] labelsForAssistantCards;
     // Array of coordinates
     private final ArrayList<Integer[]> coordinatesOfIslandTile;
     private final Integer[][] coordinatesOfStudentsInEntrance;
@@ -98,6 +106,9 @@ public class TableSceneController extends SceneController {
 
         // Create array of Panes of character cards
         this.characterCards = new Pane[ModelConstants.NUMBER_OF_CHARACTER_CARDS];
+
+        // Create array of Panes of assistant cards
+        this.panesOfAssistantCards = new Pane[ModelConstants.FOUR_PLAYERS - 1];
 
         // Create array of coordinates for elements in island tile
         this.coordinatesOfIslandTile = new ArrayList<>();
@@ -163,6 +174,8 @@ public class TableSceneController extends SceneController {
             AnchorPane root = loader.load();
             // Load panes of island tiles in array of panes
             this.loadPanesInArrayOfIslandTilePanes();
+            // Load panes of assistant cards in array of panes
+            this.addAssistantCards(root);
             // Generate coordinates
             SchoolBoardsFunction.generateCoordinates(this.coordinatesOfStudentsInEntrance, this.firstAvailableCoordinatesOfDiningRoom,
                     this.coordinatesOfProfessorPawns, this.coordinatesOfTowers);
@@ -189,7 +202,7 @@ public class TableSceneController extends SceneController {
 
         try {
             // FILL ISLANDS
-            this.addSGameObjectsToIslandTiles();
+            this.addGameObjectsToIslandTiles();
             // Move islands to create island groups
             this.moveIslandTiles();
 
@@ -230,6 +243,10 @@ public class TableSceneController extends SceneController {
             // FILL CHARACTER CARDS
             if (StageController.getStageController().getGuiView().getUser().getPreference() > 0)
                 this.fillCharacterCards();
+
+            // ADD ASSISTANT CARDS PLAYED BY THE OTHER PLAYERS
+            this.addAssistantCardsPlayedByOtherPlayers();
+
         } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
@@ -255,7 +272,7 @@ public class TableSceneController extends SceneController {
             label.setId(GUIConstants.LABEL_ID);
             label.setPrefSize(GUIConstants.WIDTH_OF_LABEL_FOR_USERNAMES, GUIConstants.HEIGHT_OF_LABEL_FOR_USERNAMES);
             label.setLayoutX(GUIConstants.LAYOUT_X_OF_SCHOOL_BOARD_IN_TABLE_SCENE);
-            label.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABELS_FOR_USERNAMES);
+            label.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABEL_FOR_COINS_IN_TABLE_SCENE);
             label.setAlignment(Pos.CENTER_LEFT);
             label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_USERNAME));
             // Add label to root
@@ -268,7 +285,7 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    private void addSGameObjectsToIslandTiles() throws IllegalStudentIdException {
+    private void addGameObjectsToIslandTiles() throws IllegalStudentIdException {
 
         // Create array of state of island tiles if it has not been already created
         if (this.previousStateOfIslandTiles == null)
@@ -655,6 +672,95 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    private void addAssistantCardsPlayedByOtherPlayers() {
+        // Get array of client players (without the client):
+        ClientPlayer[] players = StageController.getStageController().getClientTeams().getTeams()
+                .stream()
+                .flatMap(clientTeam -> clientTeam.getPlayers().stream())
+                .filter(clientPlayer -> {
+                    try {
+                        return clientPlayer.getPlayerId() != StageController.getStageController().getGuiView().getPlayerId();
+                    } catch (GuiViewNotSet e) {
+                        return clientPlayer.getPlayerId() != -1;
+                    }
+                })
+                .toArray(ClientPlayer[]::new);
+
+        // Add last played assistant card of each player (except the client) to the table scene
+        // Note that when the array of assistant cards changes the array of labels changes accordingly, i.e. the two
+        // arrays evolve in the same way
+        int indexOfPlayer = 0;
+        for (ClientPlayer player : players) {
+            // Case 1: the assistant card of the player is not null
+            if (player.getLastPlayedAssistantCard() != null) {
+                // Create array if needed
+                if (this.assistantCards == null) {
+                    this.assistantCards = new ImageView[players.length];
+                    this.labelsForAssistantCards = new Label[players.length];
+                }
+                // Case 1.1: No image view in array
+                if (this.assistantCards[indexOfPlayer] == null) {
+                    // Create image view
+                    ImageView assistant = new ImageView(Images.getImages().getAssistantCards()[player.getWizard() == 1
+                            ? player.getLastPlayedAssistantCard().getId()
+                            : player.getLastPlayedAssistantCard().getId() - (player.getWizard() - 1) * ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD]);
+                    assistant.setId(GUIConstants.ASSISTANT_CARD_NAME_TABLE_SCENE + player.getLastPlayedAssistantCard().getId());
+                    assistant.setPreserveRatio(false);
+                    assistant.setFitWidth(GUIConstants.WIDTH_OF_ASSISTANT_CARD_TABLE_SCENE);
+                    assistant.setFitHeight(GUIConstants.HEIGHT_OF_ASSISTANT_CARD_TABLE_SCENE);
+                    assistant.setLayoutX(GUIConstants.LAYOUT_X_OF_ASSISTANT_CARD_AND_LABEL_IN_PANE_TABLE_SCENE);
+                    assistant.setLayoutY(GUIConstants.LAYOUT_Y_OF_ASSISTANT_CARD_IN_PANE_TABLE_SCENE);
+                    Blend blend = new Blend(BlendMode.MULTIPLY);
+                    blend.setOpacity(0.8);
+                    assistant.setEffect(blend);
+                    this.assistantCards[indexOfPlayer] = assistant;
+
+                    // Create label
+                    Label labelForUsername = new Label(player.getUsername());
+                    labelForUsername.setId(GUIConstants.LABEL_ID_FOR_ASSISTANT_CARDS + player.getLastPlayedAssistantCard().getId());
+                    labelForUsername.setPrefSize(GUIConstants.WIDTH_OF_ASSISTANT_CARD_TABLE_SCENE, GUIConstants.HEIGHT_OF_LABEL_FOR_ASSISTANT_CARDS);
+                    labelForUsername.setLayoutX(GUIConstants.LAYOUT_X_OF_ASSISTANT_CARD_AND_LABEL_IN_PANE_TABLE_SCENE);
+                    labelForUsername.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABEL_IN_PANE_TABLE_SCENE);
+                    labelForUsername.setAlignment(Pos.CENTER_LEFT);
+                    labelForUsername.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_LABEL_ASSISTANT_CARDS));
+
+                    // Add image view and label to first free pane
+                    for (Pane pane : this.panesOfAssistantCards)
+                        if (pane.getChildren().size() == 0) {
+                            pane.getChildren().add(assistant);
+                            pane.getChildren().add(labelForUsername);
+                            break;
+                        }
+                }
+                // Case 1.2: Modify assistant card image view
+                else
+                    this.assistantCards[indexOfPlayer].setImage(Images.getImages().getAssistantCards()[player.getWizard() == 1
+                            ? player.getLastPlayedAssistantCard().getId()
+                            : player.getLastPlayedAssistantCard().getId() - (player.getWizard() - 1) * ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD]);
+
+            }
+            // Case 2: No last played assistant card for the current player
+            else {
+                // Case 2.1: If an assistant card is on the table remove it
+                if (this.assistantCards[indexOfPlayer] != null) {
+                    // Remove assistant card and label from the scene
+                    for (Pane pane : this.panesOfAssistantCards)
+                        if (pane.getChildren().contains(this.assistantCards[indexOfPlayer])) {
+                            pane.getChildren().remove(this.assistantCards[indexOfPlayer]);
+                            pane.getChildren().remove(this.labelsForAssistantCards[indexOfPlayer]);
+                            break;
+                        }
+
+                    // Remove assistant card and label from arrays
+                    this.assistantCards[indexOfPlayer] = null;
+                    this.labelsForAssistantCards[indexOfPlayer] = null;
+                }
+            }
+            indexOfPlayer++;
+        }
+    }
+
+
     // COORDINATES GENERATOR
 
     private void getCoordinatesOfCellsForMotherNatureNoEntryAndTower(int height, int length) {
@@ -806,6 +912,28 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    private void addAssistantCards(AnchorPane root) throws GuiViewNotSet {
+        // Get number of players that are not the client
+        int playerId = StageController.getStageController().getGuiView().getPlayerId();
+        int numberOfPlayers = (int) StageController.getStageController().getClientTeams().getTeams()
+                .stream()
+                .flatMap(clientTeam -> clientTeam.getPlayers().stream())
+                .filter(clientPlayer -> clientPlayer.getPlayerId() != playerId)
+                .count();
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            Pane pane = new Pane();
+            pane.setId(GUIConstants.ASSISTANT_CARD_PANE_NAME_TABLE_SCENE + i);
+            pane.setPrefSize(GUIConstants.WIDTH_OF_ASSISTANT_CARD_PANE_TABLE_SCENE,
+                    GUIConstants.HEIGHT_OF_ASSISTANT_CARD_PANE_TABLE_SCENE);
+            pane.setLayoutX(GUIConstants.LAYOUT_X_OF_FIRST_ASSISTANT_CARD_PANE_TABLE_SCENE +
+                    i * GUIConstants.LAYOUT_X_OFFSET_BETWEEN_ASSISTANT_CARD_PANES_TABLE_SCENE);
+            pane.setLayoutY(GUIConstants.LAYOUT_Y_OF_ASSISTANT_CARD_PANES_TABLE_SCENE);
+            this.panesOfAssistantCards[i] = pane;
+            root.getChildren().add(pane);
+        }
+    }
+
     // EVENTS HANDLERS
 
     @FXML
@@ -827,17 +955,17 @@ public class TableSceneController extends SceneController {
     }
 
     public void onSelectionOfIslandTile(MouseEvent event) {
-        this.removePulsesAndResetOpacity();
+        this.removePulses();
         // TODO handle two cases: click for student movement and click for mother nature movement
     }
 
     public void onSelectionOfDiningRoom(MouseEvent event) {
-        this.removePulsesAndResetOpacity();
+        this.removePulses();
         // TODO handle single case of click for movement of student disc from entrance to dining room
     }
 
     public void onSelectionOfMotherNature(MouseEvent event) {
-        this.removePulsesAndResetOpacity();
+        this.removePulses();
         // Get index of team and of player
         try {
             // Get client teams
@@ -898,7 +1026,7 @@ public class TableSceneController extends SceneController {
 
     }
 
-    private void removePulsesAndResetOpacity() {
+    private void removePulses() {
         AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
 
         for (Node node : root.getChildren()) {

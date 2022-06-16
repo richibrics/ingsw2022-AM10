@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
@@ -27,8 +28,10 @@ public class AssistantManager extends Manager {
 
     private ArrayList<AssistantCard> createAssistantCards (int wizardId) {
         ArrayList<AssistantCard> assistantCards = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            assistantCards.add(new AssistantCard(wizardId == 1 ? wizardId * i : 10 * (wizardId - 1) + i, i, i % 2 == 0 ? i / 2 : i / 2 + 1));
+        for (int i = ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD; i <= ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD;
+             i += ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS) {
+            assistantCards.add(new AssistantCard(wizardId == 1 ? wizardId * i : ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD
+                    * (wizardId - 1) + i, i, i % 2 == 0 ? i / 2 : i / 2 + 1));
         }
         return assistantCards;
     }
