@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" styleClass="background" stylesheets="@../CSS/table_background.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.scene_controllers.WizardSceneController">
+   <children>
+      <ImageView fx:id="wizard1" fitHeight="650.0" fitWidth="400.0" layoutX="64.0" layoutY="200.0" pickOnBounds="true">
+         <image>
+            <Image url="@../images/wizards/wizard_1.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="wizard2" fitHeight="650.0" fitWidth="400.0" layoutX="528.0" layoutY="200.0" pickOnBounds="true">
+         <image>
+            <Image url="@../images/wizards/wizard_2.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="wizard3" fitHeight="650.0" fitWidth="400.0" layoutX="992.0" layoutY="200.0" pickOnBounds="true">
+         <image>
+            <Image url="@../images/wizards/wizard_3.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="wizard4" fitHeight="650.0" fitWidth="400.0" layoutX="1456.0" layoutY="200.0" pickOnBounds="true">
+         <image>
+            <Image url="@../images/wizards/wizard_4.jpg" />
+         </image>
+      </ImageView>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="459.0" layoutY="44.0" prefHeight="115.0" prefWidth="1001.0" text="Select wizard">
+         <font>
+            <Font name="Algerian" size="55.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

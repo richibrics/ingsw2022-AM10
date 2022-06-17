@@ -15,16 +15,34 @@ import static javafx.application.Application.launch;
 
 public class GUI extends AbstractView {
 
+    boolean firstTime;
     /**
      * When GUI starts, show the Splashscreen
      */
     public GUI() {
         super();
+        this.firstTime = true;
         new Thread(() -> launch(LaunchGUI.class)).start();  // Start the GUI Thread
     }
 
     @Override
     public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
+        // Set client table , client teams and player id of the client
+        StageController.getStageController().setClientTable(clientTable);
+        StageController.getStageController().setClientTeams(clientTeams);
+        this.setPlayerId(playerId);
+
+
+
+        // Show table scene
+        Platform.runLater(() -> {
+            try {
+                StageController.getStageController().showScene(SceneType.TABLE_SCENE, firstTime);
+                firstTime = false;
+            } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
+                this.handleInternalException(e);
+            }
+        });
 
     }
 

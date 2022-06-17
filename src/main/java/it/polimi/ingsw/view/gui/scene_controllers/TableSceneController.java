@@ -156,7 +156,7 @@ public class TableSceneController extends SceneController {
 
     @Override
     protected Scene layout() {
-        // Call for scene creation, that call updateScene to update the content of the table
+        // Call for scene creation, then call updateScene to update the content of the table
         // The scene cannot be created if clientTable and clientTeams have not been set.
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/table_scene.fxml"));
@@ -1004,7 +1004,7 @@ public class TableSceneController extends SceneController {
                     for (Node innerNode : this.islandTiles[islandTile.getId()].getChildren()) {
                         ImageView imageView = (ImageView) innerNode;
                         if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                            ViewUtilityFunctions.createAnimationPulses(imageView);
+                            ViewUtilityFunctions.createAnimationPulses(imageView, 1.05);
                             break;
                         }
                     }
@@ -1073,7 +1073,7 @@ class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
                     ImageView imageView = (ImageView) innerNode;
 
                     if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                        ViewUtilityFunctions.createAnimationPulses(imageView);
+                        ViewUtilityFunctions.createAnimationPulses(imageView, 1.05);
                         break;
                     }
                 }
@@ -1083,7 +1083,7 @@ class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
                     ImageView imageView = (ImageView) innerNode;
 
                     if (innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)) {
-                        ViewUtilityFunctions.createAnimationPulses(imageView);
+                        ViewUtilityFunctions.createAnimationPulses(imageView, 1.02);
                         break;
                     }
                 }

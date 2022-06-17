@@ -277,4 +277,7 @@ public class GUIConstants {
     public static final int LAYOUT_Y_OF_LABEL_IN_PANE_TABLE_SCENE = 0;
     public static final int FONT_SIZE_LABEL_ASSISTANT_CARDS = 12;
 
+    // Constants for wizards scene
+    public static final String WIZARD_CARD_NAME = "wizard";
+
 }

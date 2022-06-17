@@ -6,6 +6,6 @@ public enum SceneType {
     LOBBY_SCENE,
     TABLE_SCENE,
     DECK_SCENE,
-    SCHOOL_BOARD_SCENE, //TODO
-    WIZARD_SCENE //TODO
+    SCHOOL_BOARD_SCENE,
+    WIZARD_SCENE 
 }

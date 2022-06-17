@@ -57,9 +57,6 @@ public class StageController {
      * @param sceneController the sceneController that is going to be registered
      */
     public void registerSceneController(SceneType sceneType, SceneController sceneController) {
-        // TODO modify
-        if (sceneType.equals(SceneType.DECK_SCENE) || sceneType.equals(SceneType.TABLE_SCENE) || sceneType.equals(SceneType.SCHOOL_BOARD_SCENE))
-            sceneController.getScene(true);
         sceneControllers.put(sceneType, sceneController);
     }
 
@@ -74,6 +71,9 @@ public class StageController {
         if (this.stage == null)
             throw new StageNotSetException("The Stage was not set in the StageController.");
         SceneControllerInterface nextSceneController = sceneControllers.get(sceneType);
+
+        // TODO do something to handle update of deck, table and school board
+
         if (nextSceneController == null)
             throw new SceneControllerNotRegisteredException("The requested SceneController could not be found (" + sceneType.toString() + ").");
         stage.setScene(nextSceneController.getScene(drawLayout));

@@ -236,13 +236,13 @@ public class ViewUtilityFunctions {
         return Integer.parseInt(id.replace(GUIConstants.PROFESSOR_PAWN_NAME, ""));
     }
 
-    public static void createAnimationPulses(ImageView imageView) {
-        ScaleTransition scaleTransition = new ScaleTransition(Duration.seconds(1), imageView);
+    public static void createAnimationPulses(ImageView imageView, double newSizeFactor) {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(800), imageView);
         imageView.getProperties().put(GUIConstants.ANIMATION_KEY, scaleTransition);
         scaleTransition.setFromX(1);
         scaleTransition.setFromY(1);
-        scaleTransition.setToX(1.05);
-        scaleTransition.setToY(1.05);
+        scaleTransition.setToX(newSizeFactor);
+        scaleTransition.setToY(newSizeFactor);
         scaleTransition.setAutoReverse(true);
         scaleTransition.setCycleCount(Timeline.INDEFINITE);
         scaleTransition.play();
