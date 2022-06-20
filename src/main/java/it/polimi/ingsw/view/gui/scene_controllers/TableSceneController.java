@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
 import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.model.game_components.IslandTile;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.exceptions.IllegalLaneException;
 import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
@@ -99,6 +100,9 @@ public class TableSceneController extends SceneController {
 
     private Label coin;
 
+    private static String idOfObjectClickedBeforeIsland;
+    private int countOfStudentsMoved;
+
     public TableSceneController() {
 
         // Create array of Panes containing the island tiles
@@ -189,6 +193,8 @@ public class TableSceneController extends SceneController {
 
             // Fill the game objects
             this.updateScene();
+            // Disable all nodes
+            this.disableAllNodes();
             // Return the newly created scene
             return new Scene(root);
         } catch (IOException | GuiViewNotSet e) {
@@ -198,7 +204,8 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    public void updateScene() {
+    @Override
+    protected void updateScene() {
 
         try {
             // FILL ISLANDS
@@ -934,6 +941,28 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    // GETTER FOR OBJECT CLICKED BEFORE ISLAND TILE
+
+    public static void setIdOfObjectClickedBeforeIsland(String id) {
+        idOfObjectClickedBeforeIsland = id;
+    }
+
+    // METHOD TO ENABLE AND DISABLE NODES
+
+    private void enableOnlyStudentsInEntranceAndCharacterCards() {
+        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
+        for (Node node : root.getChildren()) {
+            node.setDisable(!(node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME) || node.getId().contains(GUIConstants.CHARACTER_CARD_PANE_NAME)));
+        }
+    }
+
+    // Method used in the gui class to disable all nodes when it is not the turn of the client
+    public void disableAllNodes() {
+        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
+        for (Node node : root.getChildren())
+            node.setDisable(true);
+    }
+
     // EVENTS HANDLERS
 
     @FXML
@@ -957,6 +986,12 @@ public class TableSceneController extends SceneController {
     public void onSelectionOfIslandTile(MouseEvent event) {
         this.removePulses();
         // TODO handle two cases: click for student movement and click for mother nature movement
+        if (idOfObjectClickedBeforeIsland.contains(GUIConstants.MOTHER_NATURE_NAME)) {
+
+        }
+        else if (idOfObjectClickedBeforeIsland.contains(GUIConstants.STUDENT_DISC_NAME)) {
+
+        }
     }
 
     public void onSelectionOfDiningRoom(MouseEvent event) {
@@ -966,6 +1001,19 @@ public class TableSceneController extends SceneController {
 
     public void onSelectionOfMotherNature(MouseEvent event) {
         this.removePulses();
+        // The mother nature pawn has been clicked. Save id in TableSceneController.objectClickedBeforeIsland
+        idOfObjectClickedBeforeIsland = event.getPickResult().getIntersectedNode().getId();
+        // Make all images that might be clicked not clickable (except the island tiles)
+        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
+        for (Node node : root.getChildren()) {
+            if (!node.getId().equals(GUIConstants.ISLAND_PANE_NAME))
+                // setDisable disables also the sub-nodes
+                node.setDisable(true);
+        }
+        // Disable mother nature pawn
+        event.getPickResult().getIntersectedNode().setDisable(true);
+
+        // At this point only the island tiles can be clicked
         // Get index of team and of player
         try {
             // Get client teams
@@ -1011,17 +1059,34 @@ public class TableSceneController extends SceneController {
                 }
                 offset++;
             }
-
         } catch (GuiViewNotSet e) {
             // TODO do something (close connection?)
         }
     }
 
     public void onSelectionOfCloudTile(MouseEvent event) {
+        // TODO do something with the cloud tile
 
+        // Disable all nodes except for the students in the entrance and the character cards
+        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
+        for (Node node : root.getChildren()) {
+            if (!(node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME) || node.getId().contains(GUIConstants.CHARACTER_CARD_PANE_NAME)))
+                node.setDisable(true);
+            else
+                node.setDisable(false);
+        }
     }
 
     public void onSelectionOfCharacterCard(MouseEvent event) {
+        // Make all images that might be clicked not clickable (except the character card)
+        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
+        for (Node node : root.getChildren()) {
+            if (!node.getId().equals(GUIConstants.CHARACTER_CARD_PANE_NAME))
+                // setDisable disables also the sub-nodes
+                node.setDisable(true);
+        }
+
+
 
 
     }
@@ -1061,6 +1126,8 @@ class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent mouseEvent) {
+        // A student in the entrance has been clicked. Save id in TableSceneController.objectClickedBeforeIsland
+        TableSceneController.setIdOfObjectClickedBeforeIsland(mouseEvent.getPickResult().getIntersectedNode().getId());
         // Make island tiles and school board pulse and hide other objects
         AnchorPane root = (AnchorPane) StageController.getStageController().getSceneControllers(SceneType.TABLE_SCENE)
                 .getScene(false).getRoot();

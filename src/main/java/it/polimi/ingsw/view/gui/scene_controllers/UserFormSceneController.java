@@ -99,6 +99,11 @@ public class UserFormSceneController extends SceneController {
         return scene;
     }
 
+    @Override
+    protected void updateScene() {
+
+    }
+
     /**
      * When "Enter in Lobby" is clicked, this callback is called.
      * Here are performed some checks:

@@ -4,7 +4,10 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.game_objects.ClientPlayer;
 import it.polimi.ingsw.view.gui.GUIConstants;
+import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
+import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException;
+import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -21,6 +24,8 @@ public class WizardSceneController extends SceneController {
     @Override
     protected Scene layout() {
         try {
+            // TODO consider delaying the creation of the scene because the switch from the table scene to the
+            // TODO wizard scene could be really fast
             // The scene cannot be created if clientTeams has not been set.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/wizard_scene.fxml"));
             loader.setControllerFactory(type -> {
@@ -81,8 +86,18 @@ public class WizardSceneController extends SceneController {
         }
     }
 
+    @Override
+    protected void updateScene() {
+
+    }
+
     private void onSelectionOfWizard(MouseEvent event) {
-        int wizardId = Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.WIZARD_CARD_NAME, ""));
-        // TODO communicate id to server
+        try {
+            int wizardId = Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.WIZARD_CARD_NAME, ""));
+            // TODO communicate id to server
+            StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
+        } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
+            // TODO close connection
+        }
     }
 }

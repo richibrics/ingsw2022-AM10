@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.controller.User;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.AbstractView;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.game_objects.ClientTable;
@@ -37,6 +38,7 @@ public class GUI extends AbstractView {
         // Show table scene
         Platform.runLater(() -> {
             try {
+
                 StageController.getStageController().showScene(SceneType.TABLE_SCENE, firstTime);
                 firstTime = false;
             } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
@@ -92,7 +94,14 @@ public class GUI extends AbstractView {
 
     @Override
     public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId, ArrayList<Integer> possibleActions) {
+        // Case 1: the action is the selection of the wizard
+        if (possibleActions.size() == 1 && possibleActions.get(0) == ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID) {
+            // Show wizard scene, then switch back to table scene
+            this.showScene(SceneType.WIZARD_SCENE, true);
+        }
+        // TODO else show hint
 
+        // TODO use methods of TableSceneController for enabling and disabling nodes at the beginning and end of the round for the current player
     }
 
 
@@ -147,5 +156,15 @@ public class GUI extends AbstractView {
     public void handleChangePreference(int playersNumber) {
         this.clientServerConnection.changePreference(playersNumber);
         this.user = new User(this.user.getId(), playersNumber);
+    }
+
+    private void showScene(SceneType sceneType, boolean drawLayout) {
+        Platform.runLater(() -> {
+            try {
+                StageController.getStageController().showScene(sceneType, drawLayout);
+            } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
+                this.handleInternalException(e);
+            }
+        });
     }
 }

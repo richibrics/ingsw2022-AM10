@@ -72,10 +72,9 @@ public class StageController {
             throw new StageNotSetException("The Stage was not set in the StageController.");
         SceneControllerInterface nextSceneController = sceneControllers.get(sceneType);
 
-        // TODO do something to handle update of deck, table and school board
-
         if (nextSceneController == null)
             throw new SceneControllerNotRegisteredException("The requested SceneController could not be found (" + sceneType.toString() + ").");
+
         stage.setScene(nextSceneController.getScene(drawLayout));
         this.currentSceneController = nextSceneController;
         stage.show();

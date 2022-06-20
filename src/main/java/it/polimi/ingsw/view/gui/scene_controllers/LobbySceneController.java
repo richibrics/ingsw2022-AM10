@@ -99,6 +99,11 @@ public class LobbySceneController extends SceneController {
         return scene;
     }
 
+    @Override
+    protected void updateScene() {
+
+    }
+
     /**
      * The radio buttons properties are edited here:
      * - if a preference is already in user, that radio button can't be selected

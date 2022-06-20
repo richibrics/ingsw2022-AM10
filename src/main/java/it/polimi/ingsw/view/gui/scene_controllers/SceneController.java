@@ -20,6 +20,8 @@ public abstract class SceneController implements SceneControllerInterface {
      */
     protected abstract Scene layout();
 
+    protected abstract void updateScene();
+
     /**
      * Returns the Scene.
      *
@@ -29,6 +31,9 @@ public abstract class SceneController implements SceneControllerInterface {
     public Scene getScene(boolean redrawLayout) {
         if (redrawLayout)
             this.scene = this.layout();
+        else
+            this.updateScene();
+
         return this.scene;
     }
 

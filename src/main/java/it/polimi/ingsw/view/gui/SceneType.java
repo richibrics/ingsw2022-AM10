@@ -7,5 +7,5 @@ public enum SceneType {
     TABLE_SCENE,
     DECK_SCENE,
     SCHOOL_BOARD_SCENE,
-    WIZARD_SCENE 
+    WIZARD_SCENE
 }

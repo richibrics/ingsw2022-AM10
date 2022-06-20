@@ -129,14 +129,15 @@ public class SchoolBoardsSceneController extends SceneController {
 
             // Return new scene
             return new Scene(this.root);
-        } catch (SceneLayoutException | GuiViewNotSet e) {
+        } catch (SceneLayoutException e) {
             e.printStackTrace();
             // TODO do something
             return null;
         }
     }
 
-    public void updateScene() throws GuiViewNotSet {
+    @Override
+    protected void updateScene() {
         try {
             // Get index of school board of client
             int indexOfSchoolBoardOfClient = ViewUtilityFunctions.getPlayerSchoolBoardIndex(StageController.getStageController().getGuiView().getPlayerId(),
@@ -185,7 +186,7 @@ public class SchoolBoardsSceneController extends SceneController {
                 }
             }
 
-        } catch (IllegalStudentIdException | IllegalLaneException e) {
+        } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
             e.printStackTrace();
             // TODO do something
         }

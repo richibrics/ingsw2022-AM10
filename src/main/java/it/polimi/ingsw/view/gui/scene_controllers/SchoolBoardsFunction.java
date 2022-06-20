@@ -8,7 +8,6 @@ import it.polimi.ingsw.view.game_objects.ClientPawnColor;
 import it.polimi.ingsw.view.game_objects.ClientTowerColor;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;

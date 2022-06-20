@@ -24,4 +24,9 @@ public class SplashscreenSceneController extends SceneController {
         scene.getStylesheets().add(UserFormSceneController.class.getResource(GUIConstants.SCENE_SPLASHSCREEN_STYLESHEET_PATH).toExternalForm());
         return scene;
     }
+
+    @Override
+    protected void updateScene() {
+
+    }
 }

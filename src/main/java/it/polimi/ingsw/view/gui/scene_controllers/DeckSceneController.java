@@ -28,6 +28,11 @@ public class DeckSceneController extends SceneController {
         }
     }
 
+    @Override
+    protected void updateScene() {
+
+    }
+
     @FXML
     private void switchToTable(ActionEvent e) {
         try {
