@@ -8,14 +8,19 @@ import it.polimi.ingsw.view.game_objects.ClientTable;
 import it.polimi.ingsw.view.game_objects.ClientTeams;
 import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException;
 import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
+import it.polimi.ingsw.view.input_management.Command;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static javafx.application.Application.launch;
 
 public class GUI extends AbstractView {
 
+    Map<Integer, Command> availableCommands;
     boolean firstTime;
     /**
      * When GUI starts, show the Splashscreen
@@ -23,6 +28,7 @@ public class GUI extends AbstractView {
     public GUI() {
         super();
         this.firstTime = true;
+        this.availableCommands = new HashMap<>();
         new Thread(() -> launch(LaunchGUI.class)).start();  // Start the GUI Thread
     }
 
@@ -33,19 +39,9 @@ public class GUI extends AbstractView {
         StageController.getStageController().setClientTeams(clientTeams);
         this.setPlayerId(playerId);
 
-
-
         // Show table scene
-        Platform.runLater(() -> {
-            try {
-
-                StageController.getStageController().showScene(SceneType.TABLE_SCENE, firstTime);
-                firstTime = false;
-            } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
-                this.handleInternalException(e);
-            }
-        });
-
+        this.showScene(SceneType.TABLE_SCENE, firstTime);
+        firstTime = false;
     }
 
     @Override
@@ -53,13 +49,7 @@ public class GUI extends AbstractView {
         // Store lobby
         StageController.getStageController().setClientLobby(clientLobby);
         // Show lobby
-        Platform.runLater(() -> {
-            try {
-                StageController.getStageController().showScene(SceneType.LOBBY_SCENE, true);
-            } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
-                this.handleInternalException(e);
-            }
-        });
+        this.showScene(SceneType.LOBBY_SCENE, true);
     }
 
     @Override
@@ -73,13 +63,7 @@ public class GUI extends AbstractView {
         this.waitForGuiToStart();
 
         // Stage is ready: can show the user window (use the GUI thread !)
-        Platform.runLater(() -> {
-            try {
-                StageController.getStageController().showScene(SceneType.USER_FORM_SCENE, true);
-            } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
-                this.handleInternalException(e);
-            }
-        });
+        this.showScene(SceneType.USER_FORM_SCENE, true);
     }
 
     @Override
@@ -99,6 +83,12 @@ public class GUI extends AbstractView {
             // Show wizard scene, then switch back to table scene
             this.showScene(SceneType.WIZARD_SCENE, true);
         }
+
+        this.availableCommands.clear();
+        for(Integer id: possibleActions) {
+            this.availableCommands.put(id, new Command(id, this.getPlayerId(), clientTable, clientTeams));
+        }
+
         // TODO else show hint
 
         // TODO use methods of TableSceneController for enabling and disabling nodes at the beginning and end of the round for the current player
@@ -158,6 +148,12 @@ public class GUI extends AbstractView {
         this.user = new User(this.user.getId(), playersNumber);
     }
 
+    /**
+     * Changes the GUI scene using the GUI thread.
+     *
+     * @param sceneType  the type of Scene that will be drawn
+     * @param drawLayout true if the layout hasn't been created yet (first time scene is being shown) or if it has to be updated
+     */
     private void showScene(SceneType sceneType, boolean drawLayout) {
         Platform.runLater(() -> {
             try {
@@ -166,5 +162,21 @@ public class GUI extends AbstractView {
                 this.handleInternalException(e);
             }
         });
+    }
+
+    /**
+     * Returns the commands of the available actions.
+     * @return the commands of the available actions
+     */
+    public Map<Integer, Command> getAvailableCommands() {
+        return availableCommands;
+    }
+
+    /**
+     * Returns a string that explains what the user can do, using the possible actions commands.
+     * @return the string with actions hint
+     */
+    public String getAvailableActionsHint() {
+        return this.availableCommands.values().stream().map(Command::getGUIMenuMessage).collect(Collectors.joining( "\nor\n"));
     }
 }
