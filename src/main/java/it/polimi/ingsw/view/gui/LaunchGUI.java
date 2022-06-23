@@ -28,10 +28,11 @@ public class LaunchGUI extends Application {
         StageController.getStageController().registerSceneController(SceneType.SPLASHSCREEN_SCENE, new SplashscreenSceneController());
         StageController.getStageController().registerSceneController(SceneType.USER_FORM_SCENE, new UserFormSceneController());
         StageController.getStageController().registerSceneController(SceneType.LOBBY_SCENE, new LobbySceneController());
-        StageController.getStageController().showScene(SceneType.SPLASHSCREEN_SCENE, true);
+        StageController.getStageController().registerSceneController(SceneType.WIZARD_SCENE, new WizardSceneController());
         StageController.getStageController().registerSceneController(SceneType.TABLE_SCENE, new TableSceneController());
         StageController.getStageController().registerSceneController(SceneType.SCHOOL_BOARD_SCENE, new SchoolBoardsSceneController());
         StageController.getStageController().registerSceneController(SceneType.DECK_SCENE, new DeckSceneController());
+        StageController.getStageController().showScene(SceneType.SPLASHSCREEN_SCENE, true);
         StageController.getStageController().setReady(true);
     }
 }

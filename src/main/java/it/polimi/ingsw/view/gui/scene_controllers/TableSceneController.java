@@ -167,41 +167,6 @@ public class TableSceneController extends SceneController {
 
     // MAIN METHODS
 
-    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
-
-        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
-                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
-            Command command;
-            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
-                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
-                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
-                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
-                StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
-            } else
-                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
-
-            if (!motherNature)
-                command.parseCLIString(id);
-
-            if (command.canEnd()) {
-                if (command.hasQuestion()) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get().equals(ButtonType.NO)) {
-                        // Send message
-                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
-                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
-                    }
-                } else {
-                    // Send message
-                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
-                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
-                }
-            }
-        }
-    }
-
     @Override
     protected Scene layout() {
         // Call for scene creation, then call updateScene to update the content of the table
@@ -378,7 +343,7 @@ public class TableSceneController extends SceneController {
                 if (clientIslandTile.getTower() != null)
                     imageOfTower = Images.getImages().getTowers()[clientIslandTile.getTower().getId()];
                 // A null image does not create problems since the image is not accessed
-                result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, clientIslandTile.getTower() != null,
+                result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, !clientIslandTile.getTower().equals(ClientTowerColor.EMPTY),
                         this.previousStateOfIslandTiles[clientIslandTile.getId()][2], children, GUIConstants.TOWER_NAME, imageOfTower,
                         GUIConstants.WIDTH_OF_TOWER_ISLAND_TILE, GUIConstants.HEIGHT_OF_TOWER_ISLAND_TILE, 2, clientIslandTile.getTower());
                 occupancyHasChanged = occupancyHasChanged || result;
@@ -386,7 +351,7 @@ public class TableSceneController extends SceneController {
                 // Update previous state
                 this.previousStateOfIslandTiles[clientIslandTile.getId()][0] = motherNatureIsland == clientIslandTile.getId();
                 this.previousStateOfIslandTiles[clientIslandTile.getId()][1] = clientIslandTile.hasNoEntry();
-                this.previousStateOfIslandTiles[clientIslandTile.getId()][2] = clientIslandTile.getTower() != null;
+                this.previousStateOfIslandTiles[clientIslandTile.getId()][2] = !clientIslandTile.getTower().equals(ClientTowerColor.EMPTY);
 
                 // Divide remaining coordinates in 20x20 cells
                 this.divideCoordinatesInSmallerCellsForStudents();
@@ -478,7 +443,7 @@ public class TableSceneController extends SceneController {
                 imageView.setLayoutY(coordinate[0]);
                 if (type == 2) {
                     if (color.equals(ClientTowerColor.BLACK))
-                        imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+                        imageView.setEffect(new ColorAdjust(0, 0, -0.6, 0));
                     else if (color.equals(ClientTowerColor.WHITE))
                         imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
                 } else if (type == 0)
@@ -753,14 +718,14 @@ public class TableSceneController extends SceneController {
         // Note that when the array of assistant cards changes the array of labels changes accordingly, i.e. the two
         // arrays evolve in the same way
         int indexOfPlayer = 0;
+        // Create array if needed
+        if (this.assistantCards == null) {
+            this.assistantCards = new ImageView[players.length];
+            this.labelsForAssistantCards = new Label[players.length];
+        }
         for (ClientPlayer player : players) {
             // Case 1: the assistant card of the player is not null
             if (player.getLastPlayedAssistantCard() != null) {
-                // Create array if needed
-                if (this.assistantCards == null) {
-                    this.assistantCards = new ImageView[players.length];
-                    this.labelsForAssistantCards = new Label[players.length];
-                }
                 // Case 1.1: No image view in array
                 if (this.assistantCards[indexOfPlayer] == null) {
                     // Create image view
@@ -789,7 +754,7 @@ public class TableSceneController extends SceneController {
 
                     // Add image view and label to first free pane
                     for (Pane pane : this.panesOfAssistantCards)
-                        if (pane.getChildren().size() == 0) {
+                        if (pane != null && pane.getChildren().size() == 0) {
                             pane.getChildren().add(assistant);
                             pane.getChildren().add(labelForUsername);
                             break;
@@ -808,7 +773,7 @@ public class TableSceneController extends SceneController {
                 if (this.assistantCards[indexOfPlayer] != null) {
                     // Remove assistant card and label from the scene
                     for (Pane pane : this.panesOfAssistantCards)
-                        if (pane.getChildren().contains(this.assistantCards[indexOfPlayer])) {
+                        if (pane != null && pane.getChildren().contains(this.assistantCards[indexOfPlayer])) {
                             pane.getChildren().remove(this.assistantCards[indexOfPlayer]);
                             pane.getChildren().remove(this.labelsForAssistantCards[indexOfPlayer]);
                             break;
@@ -1033,9 +998,9 @@ public class TableSceneController extends SceneController {
 
         // Handle event
         if (StageController.getStageController().getGuiView().getAvailableCommands().size() == 1)
-            if (StageController.getStageController().getGuiView().getAvailableCommands().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND) ||
-                    StageController.getStageController().getGuiView().getAvailableCommands().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND_OR_DINING_ROOM))
-                handleEventWithCommand(StageController.getStageController().getGuiView().getAvailableCommands().get(0).getValidation(),
+            if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND) ||
+                    StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND_OR_DINING_ROOM))
+                handleEventWithCommand(StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0).getValidation(),
                         event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.ISLAND_TILE_NAME, ""), false);
 
 
@@ -1044,7 +1009,7 @@ public class TableSceneController extends SceneController {
     public void onSelectionOfDiningRoom(MouseEvent event) {
         this.removePulses();
         handleEventWithCommand(CommandDataEntryValidationSet.ISLAND_OR_DINING_ROOM,
-                event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.SCHOOL_BOARD_NAME, ""), false);
+                "d", false);
     }
 
     public void onSelectionOfMotherNature(MouseEvent event) {
@@ -1123,14 +1088,49 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    // ADDITIONAL METHODS
-
     private void onSelectionOfBulb(MouseEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, StageController.getStageController().getGuiView().getAvailableActionsHint());
         alert.show();
     }
 
     // STATIC METHODS
+
+    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
+
+        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
+            Command command;
+            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
+                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
+                StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
+            } else
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
+
+            if (!motherNature)
+                command.parseCLIString(id);
+
+            if (command.canEnd()) {
+                if (command.hasQuestion()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get().equals(ButtonType.NO)) {
+                        // Send message
+                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                        StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                    }
+                } else {
+                    // Send message
+                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                    StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                }
+            }
+        }
+    }
 
     private void removePulses() {
         AnchorPane root = (AnchorPane) this.getScene(false).getRoot();

@@ -57,11 +57,12 @@ public class SchoolBoardsFunction {
                             .stream(finalPreviousEntrance).noneMatch(id2 -> id2 == id1))
                     .toArray(Integer[]::new);
 
-            for (int i = 0; i < coordinatesOfStudentsInEntrance.length; i++) {
+            int newStudentIndex = 0;
+            for (int i = 0; i < coordinatesOfStudentsInEntrance.length && newStudents.length > newStudentIndex; i++) {
                 // Check if coordinates is not taken
                 if (coordinatesOfStudentsInEntrance[i][2] == 0) {
                     // Create image view
-                    ImageView student = createImageViewOfStudent(newStudents[i], coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
+                    ImageView student = createImageViewOfStudent(newStudents[newStudentIndex], coordinatesOfStudentsInEntrance[indexOfCoordinate][1],
                             coordinatesOfStudentsInEntrance[indexOfCoordinate][0]);
                     // Add event handler
                     if (schoolBoardOfPlayer)
@@ -70,6 +71,7 @@ public class SchoolBoardsFunction {
                     schoolBoard.getChildren().add(student);
                     // The coordinate has been used, set third element to 1
                     coordinatesOfStudentsInEntrance[indexOfCoordinate][2] = 1;
+                    newStudentIndex++;
                 }
                 indexOfCoordinate++;
             }
@@ -102,7 +104,7 @@ public class SchoolBoardsFunction {
                         // Remove node
                         schoolBoard.getChildren().remove(node);
                         // The coordinate is not used, set third element to 0
-                        coordinatesOfStudentsInEntrance[1][2] = 0;
+                        coordinatesOfStudentsInEntrance[i][2] = 0;
                     }
                 }
             }

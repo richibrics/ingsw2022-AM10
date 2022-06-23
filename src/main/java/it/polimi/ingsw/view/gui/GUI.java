@@ -33,7 +33,6 @@ public class GUI extends AbstractView {
     public GUI() {
         super();
         this.isErrorOpen = false;
-        this.user = new User("marco", 1);
         this.firstTime = true;
         this.availableCommands = new HashMap<>();
         StageController.getStageController().setGuiView(this);
@@ -42,11 +41,15 @@ public class GUI extends AbstractView {
 
     @Override
     public void displayStateOfGame(ClientTable clientTable, ClientTeams clientTeams, int playerId) {
-        // Set client table , client teams and player id of the client
+        // Set client table, client teams and player id of the client
         StageController.getStageController().setClientTable(clientTable);
         StageController.getStageController().setClientTeams(clientTeams);
         this.setPlayerId(playerId);
 
+        // Draw deck only the first time
+        StageController.getStageController().getSceneControllers(SceneType.DECK_SCENE).getScene(firstTime);
+        // Draw school board scene
+        StageController.getStageController().getSceneControllers(SceneType.SCHOOL_BOARD_SCENE).getScene(true);
         // Show table scene
         this.showScene(SceneType.TABLE_SCENE, firstTime);
         firstTime = false;
@@ -81,25 +84,24 @@ public class GUI extends AbstractView {
 
     @Override
     public void displayWinners(String messageForPlayer) {
-
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, messageForPlayer);
+            alert.showAndWait();
+            this.isErrorOpen = true;
+        });
     }
 
     @Override
     public void showMenu(ClientTable clientTable, ClientTeams clientTeams, int playerId, ArrayList<Integer> possibleActions) {
+        this.availableCommands.clear();
+        for (Integer id : possibleActions) {
+            this.availableCommands.put(id, new Command(id, this.getPlayerId(), clientTable, clientTeams));
+        }
         // Case 1: the action is the selection of the wizard
         if (possibleActions.size() == 1 && possibleActions.get(0) == ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID) {
             // Show wizard scene, then switch back to table scene
             this.showScene(SceneType.WIZARD_SCENE, true);
         }
-
-        this.availableCommands.clear();
-        for (Integer id : possibleActions) {
-            this.availableCommands.put(id, new Command(id, this.getPlayerId(), clientTable, clientTeams));
-        }
-
-        // TODO else show hint
-
-        // TODO use methods of TableSceneController for enabling and disabling nodes at the beginning and end of the round for the current player
     }
 
     /**
