@@ -256,6 +256,10 @@ public class SchoolBoardsSceneController extends SceneController {
             this.labelsOfSchoolBoards[indexOfLabel].setLayoutY(GUIConstants.LAYOUT_Y_OF_LABELS_FOR_USERNAMES);
             this.labelsOfSchoolBoards[indexOfLabel].setAlignment(Pos.CENTER_LEFT);
             this.labelsOfSchoolBoards[indexOfLabel].setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_USERNAME));
+        } else {
+            if(!this.root.getChildren().contains(this.labelsOfSchoolBoards[indexOfLabel]))
+                this.root.getChildren().add(this.labelsOfSchoolBoards[indexOfLabel]);
+
         }
         // Set text
         this.labelsOfSchoolBoards[indexOfLabel].setText(GUIConstants.LABEL_FOR_USERNAME_START + username + "  " + GUIConstants.LABEL_FOR_COIN_START + coins);
