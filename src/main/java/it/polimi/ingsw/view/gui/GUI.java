@@ -46,10 +46,14 @@ public class GUI extends AbstractView {
         StageController.getStageController().setClientTeams(clientTeams);
         this.setPlayerId(playerId);
 
-        // Draw deck only the first time
-        StageController.getStageController().getSceneControllers(SceneType.DECK_SCENE).getScene(firstTime);
-        // Draw school board scene
-        StageController.getStageController().getSceneControllers(SceneType.SCHOOL_BOARD_SCENE).getScene(true);
+        final boolean finalFirstTime = firstTime; // Copy of the value of firstTime (for the async call of runLater)
+        Platform.runLater(() -> {
+            // Draw deck only the first time
+            StageController.getStageController().getSceneControllers(SceneType.DECK_SCENE).getScene(finalFirstTime);
+            // Draw school board scene
+            StageController.getStageController().getSceneControllers(SceneType.SCHOOL_BOARD_SCENE).getScene(true);
+        });
+
         // Show table scene
         this.showScene(SceneType.TABLE_SCENE, firstTime);
         firstTime = false;
