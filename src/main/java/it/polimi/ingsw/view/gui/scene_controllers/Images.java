@@ -49,6 +49,7 @@ public class Images {
     private final Image assistant8;
     private final Image assistant9;
     private final Image assistant10;
+    private final Image bulb;
 
 
     private final Image[] characterCards;
@@ -141,6 +142,9 @@ public class Images {
 
         //Load images of assistants
         this.loadImagesOfAssistantCards();
+
+        //Load images
+        this.bulb = new Image(GUIConstants.SCENE_TABLE_BULB_IMAGE_PATH);
     }
 
     public static Images getImages() {
@@ -244,4 +248,6 @@ public class Images {
     public Image[] getCloudTiles() {
         return this.cloudTiles;
     }
+
+    public Image getBulb() { return bulb; }
 }

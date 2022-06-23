@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -111,42 +110,38 @@ public class LobbySceneController extends SceneController {
      * - text with lobby status
      */
     private void setRadiosProperties() {
-        try {
-            this.setRadiosTextWithLobby();
-            int currentPreference = StageController.getStageController().getGuiView().getUser().getPreference();
-            twoPlayersEasyRadioButton.setDisable(false);
-            twoPlayersEasyRadioButton.setSelected(false);
-            threePlayersEasyRadioButton.setDisable(false);
-            threePlayersEasyRadioButton.setSelected(false);
-            fourPlayersEasyRadioButton.setDisable(false);
-            fourPlayersEasyRadioButton.setSelected(false);
-            twoPlayersExpertRadioButton.setDisable(false);
-            twoPlayersExpertRadioButton.setSelected(false);
-            threePlayersExpertRadioButton.setDisable(false);
-            threePlayersExpertRadioButton.setSelected(false);
-            fourPlayersExpertRadioButton.setDisable(false);
-            fourPlayersExpertRadioButton.setSelected(false);
-            if (currentPreference == ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY) {
-                twoPlayersEasyRadioButton.setDisable(true);
-                twoPlayersEasyRadioButton.setSelected(true);
-            } else if (currentPreference == ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY) {
-                threePlayersEasyRadioButton.setDisable(true);
-                threePlayersEasyRadioButton.setSelected(true);
-            } else if (currentPreference == ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY) {
-                fourPlayersEasyRadioButton.setDisable(true);
-                fourPlayersEasyRadioButton.setSelected(true);
-            } else if (currentPreference == ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT) {
-                twoPlayersExpertRadioButton.setDisable(true);
-                twoPlayersExpertRadioButton.setSelected(true);
-            } else if (currentPreference == ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT) {
-                threePlayersExpertRadioButton.setDisable(true);
-                threePlayersExpertRadioButton.setSelected(true);
-            } else {
-                fourPlayersExpertRadioButton.setDisable(true);
-                fourPlayersExpertRadioButton.setSelected(true);
-            }
-        } catch (GuiViewNotSet e) {
-            StageController.getStageController().handleInternalException(e);
+        this.setRadiosTextWithLobby();
+        int currentPreference = StageController.getStageController().getGuiView().getUser().getPreference();
+        twoPlayersEasyRadioButton.setDisable(false);
+        twoPlayersEasyRadioButton.setSelected(false);
+        threePlayersEasyRadioButton.setDisable(false);
+        threePlayersEasyRadioButton.setSelected(false);
+        fourPlayersEasyRadioButton.setDisable(false);
+        fourPlayersEasyRadioButton.setSelected(false);
+        twoPlayersExpertRadioButton.setDisable(false);
+        twoPlayersExpertRadioButton.setSelected(false);
+        threePlayersExpertRadioButton.setDisable(false);
+        threePlayersExpertRadioButton.setSelected(false);
+        fourPlayersExpertRadioButton.setDisable(false);
+        fourPlayersExpertRadioButton.setSelected(false);
+        if (currentPreference == ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY) {
+            twoPlayersEasyRadioButton.setDisable(true);
+            twoPlayersEasyRadioButton.setSelected(true);
+        } else if (currentPreference == ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY) {
+            threePlayersEasyRadioButton.setDisable(true);
+            threePlayersEasyRadioButton.setSelected(true);
+        } else if (currentPreference == ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY) {
+            fourPlayersEasyRadioButton.setDisable(true);
+            fourPlayersEasyRadioButton.setSelected(true);
+        } else if (currentPreference == ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT) {
+            twoPlayersExpertRadioButton.setDisable(true);
+            twoPlayersExpertRadioButton.setSelected(true);
+        } else if (currentPreference == ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT) {
+            threePlayersExpertRadioButton.setDisable(true);
+            threePlayersExpertRadioButton.setSelected(true);
+        } else {
+            fourPlayersExpertRadioButton.setDisable(true);
+            fourPlayersExpertRadioButton.setSelected(true);
         }
     }
 
@@ -180,21 +175,18 @@ public class LobbySceneController extends SceneController {
     // Handles the click of the Change preference button
     void handleButton(Event e) {
         // If current radio button selected is the current preference, doesn't do anything
-        try {
-            int currentPreference = StageController.getStageController().getGuiView().getUser().getPreference();
-            int selectedPreference =
-                    twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
-                            threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
-                                    fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
-                                            twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
-                                                    threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
 
-            // Sends the new preference to the GUI object that will warn the server
-            if (selectedPreference != currentPreference) {
-                StageController.getStageController().getGuiView().handleChangePreference(selectedPreference);
-            }
-        } catch (GuiViewNotSet ex) {
-            StageController.getStageController().handleInternalException(ex);
+        int currentPreference = StageController.getStageController().getGuiView().getUser().getPreference();
+        int selectedPreference =
+                twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
+                        threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
+                                fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
+                                        twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
+                                                threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
+
+        // Sends the new preference to the GUI object that will warn the server
+        if (selectedPreference != currentPreference) {
+            StageController.getStageController().getGuiView().handleChangePreference(selectedPreference);
         }
     }
 }

@@ -90,6 +90,7 @@ public class GUIConstants {
     public static final String SCENE_TABLE_ASSISTANT8_IMAGE_PATH = "/images/assistants/assistant_8.png";
     public static final String SCENE_TABLE_ASSISTANT9_IMAGE_PATH = "/images/assistants/assistant_9.png";
     public static final String SCENE_TABLE_ASSISTANT10_IMAGE_PATH = "/images/assistants/assistant_10.png";
+    public static final String SCENE_TABLE_BULB_IMAGE_PATH = "/images/bulb.png";
 
 
 
@@ -146,6 +147,13 @@ public class GUIConstants {
 
     // Name used for coin
     public static final String COIN_NAME = "coin";
+
+    //Name used for bulb
+    public static final String BULB_NAME = "bulb";
+
+    //Name used for assistant cards
+    public static final String ASSISTANT_NAME = "assistant";
+
 
 
     // Values for filling island tiles
@@ -279,5 +287,14 @@ public class GUIConstants {
 
     // Constants for wizards scene
     public static final String WIZARD_CARD_NAME = "wizard";
+
+    // Circle radius character cards
+    public static final int CIRCLE_RADIUS = 10;
+
+    // Bulb constants
+    public static final double WIDTH_OF_BULB = 80.;
+    public static final double HEIGHT_OF_BULB = 80.;
+    public static final int LAYOUT_X_OF_BULB = 1826;
+    public static final int LAYOUT_Y_OF_BULB = 14;
 
 }

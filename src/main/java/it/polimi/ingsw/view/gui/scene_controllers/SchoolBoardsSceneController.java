@@ -9,7 +9,6 @@ import it.polimi.ingsw.view.game_objects.ClientPlayer;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import it.polimi.ingsw.view.gui.exceptions.SceneLayoutException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -172,7 +171,7 @@ public class SchoolBoardsSceneController extends SceneController {
                             this.coordinatesOfStudentsInEntrances[indexOfPaneWithSchoolBoard], this.previousEntrances[indexOfPaneWithSchoolBoard], false);
                     // Update dining room
                     SchoolBoardsFunction.updateSchoolBoardDiningRoom(i, this.panesForSchoolBoards[indexOfPaneWithSchoolBoard],
-                            this.firstAvailableCoordinatesOfDiningRooms[indexOfPaneWithSchoolBoard], this.previousDiningRooms[indexOfPaneWithSchoolBoard]);
+                            this.firstAvailableCoordinatesOfDiningRooms[indexOfPaneWithSchoolBoard], this.previousDiningRooms[indexOfPaneWithSchoolBoard], false);
                     // Update professor section
                     SchoolBoardsFunction.updateSchoolBoardProfessorSection(indexOfTeam, this.panesForSchoolBoards[indexOfPaneWithSchoolBoard],
                             this.coordinatesOfProfessorPawns, this.previousProfessorSections[indexOfPaneWithSchoolBoard]);
@@ -186,7 +185,7 @@ public class SchoolBoardsSceneController extends SceneController {
                 }
             }
 
-        } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
+        } catch (IllegalStudentIdException | IllegalLaneException e) {
             e.printStackTrace();
             // TODO do something
         }
@@ -223,7 +222,7 @@ public class SchoolBoardsSceneController extends SceneController {
 
     // METHODS FOR USERNAME AND COINS UPDATE
 
-    private void updateUsernameAndCoin() throws GuiViewNotSet{
+    private void updateUsernameAndCoin() {
         // Create association between players and school boards
         // Note that player and school boards have the same order in client teams and client table, thus given the
         // array of school boards and the array of players, obtained as clientTeams.getTeams()
@@ -234,17 +233,9 @@ public class SchoolBoardsSceneController extends SceneController {
         ClientPlayer[] players = StageController.getStageController().getClientTeams().getTeams()
                 .stream()
                 .flatMap(clientTeam -> clientTeam.getPlayers().stream())
-                .filter(clientPlayer -> {
-                    try {
-                        return clientPlayer.getPlayerId() != StageController.getStageController().getGuiView().getPlayerId();
-                    } catch (GuiViewNotSet e) {
-                        return clientPlayer.getPlayerId() != -1;
-                    }
-                })
+                .filter(clientPlayer -> clientPlayer.getPlayerId() != StageController
+                        .getStageController().getGuiView().getPlayerId())
                 .toArray(ClientPlayer[]::new);
-
-        if (players.length == 0)
-            throw new GuiViewNotSet();
 
         // Step 2: Write usernames over school boards
         if (this.labelsOfSchoolBoards == null)

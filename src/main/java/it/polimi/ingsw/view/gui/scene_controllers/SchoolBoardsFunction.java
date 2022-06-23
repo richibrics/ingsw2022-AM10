@@ -112,7 +112,8 @@ public class SchoolBoardsFunction {
     }
 
     public static void updateSchoolBoardDiningRoom(int indexOfSchoolBoard, Pane schoolBoard, Integer[][] firstAvailableCoordinatesOfDiningRoom,
-                                                   ArrayList<ArrayList<Integer>> previousDiningRoom) throws IllegalLaneException, IllegalStudentIdException {
+                                                   ArrayList<ArrayList<Integer>> previousDiningRoom, boolean schoolBoardOfPlayer)
+            throws IllegalLaneException, IllegalStudentIdException {
 
         // Important: this method is based on the assumption that the only operation applied to the dining room is the addition of
         // student discs. This is true at the moment.
@@ -134,6 +135,9 @@ public class SchoolBoardsFunction {
                     // Create image view of student
                     ImageView student = createImageViewOfStudent(studentId, firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][1],
                             firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][0]);
+                    // Add event handler to student if needed
+                    if (schoolBoardOfPlayer)
+                        student.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> new StudentInDiningEventHandler().handle(event));
                     // Add image view to pane with school board
                     schoolBoard.getChildren().add(student);
                     // Update first available coordinate

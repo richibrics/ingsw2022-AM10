@@ -1,7 +1,9 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
+import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
+import it.polimi.ingsw.view.input_management.CommandDataEntryValidationSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,21 +36,23 @@ public class DeckSceneController extends SceneController {
     }
 
     @FXML
-    private void switchToTable(ActionEvent e) {
+    private void switchToTable(ActionEvent event) {
         try {
             StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
         } catch (Exception exception) {
-
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
         }
     }
 
     @FXML
-    private void onSelectionOfAssistant(MouseEvent e) {
+    private void onSelectionOfAssistant(MouseEvent event) {
         // Get the clicked assistant card
-        ImageView clickedAssistantCard = (ImageView) e.getSource();
-        // TODO Pass clickedAssistantCard.getId() to Gui and then to server
-        // TODO If the action is selection of assistant card, remove the assistant card from the deck
+        ImageView clickedAssistantCard = (ImageView) event.getSource();
+        // Remove image view from scene
         AnchorPane root = (AnchorPane) clickedAssistantCard.getParent();
         root.getChildren().remove(clickedAssistantCard);
+        // Handle event
+        TableSceneController.handleEventWithCommand(CommandDataEntryValidationSet.ASSISTANT_CARD,
+                clickedAssistantCard.getId().replace(GUIConstants.ASSISTANT_NAME, ""), false);
     }
 }

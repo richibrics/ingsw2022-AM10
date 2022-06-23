@@ -1,7 +1,9 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
+import it.polimi.ingsw.controller.Serializer;
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.model.game_components.IslandTile;
+import it.polimi.ingsw.model.game_components.Character;
+import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.exceptions.IllegalLaneException;
 import it.polimi.ingsw.view.exceptions.IllegalStudentIdException;
@@ -9,7 +11,8 @@ import it.polimi.ingsw.view.game_objects.*;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
+import it.polimi.ingsw.view.input_management.Command;
+import it.polimi.ingsw.view.input_management.CommandDataEntryValidationSet;
 import javafx.animation.Animation;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +21,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -27,6 +32,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.util.Duration;
@@ -34,6 +41,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -45,10 +53,6 @@ public class TableSceneController extends SceneController {
     private final Pane[] characterCards;
     // Array of panes of assistant cards
     private final Pane[] panesOfAssistantCards;
-    // Array of image views of assistant cards played by the other players
-    private ImageView[] assistantCards;
-    // Array of labels for assistant cards
-    private Label[] labelsForAssistantCards;
     // Array of coordinates
     private final ArrayList<Integer[]> coordinatesOfIslandTile;
     private final Integer[][] coordinatesOfStudentsInEntrance;
@@ -63,6 +67,12 @@ public class TableSceneController extends SceneController {
     private final ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
     private final ArrayList<Integer> previousCompositionOfIslandGroups;
+    // Array of image views of assistant cards played by the other players
+    private ImageView[] assistantCards;
+    // Array of labels for assistant cards
+    private Label[] labelsForAssistantCards;
+    // Bool for character cards
+    private boolean firstFillOfCharacterCards;
     // Array of panes containing cloud tiles
     private Pane[] cloudTiles;
     private Integer[] previousEntrance;
@@ -99,9 +109,6 @@ public class TableSceneController extends SceneController {
     private Pane schoolBoard;
 
     private Label coin;
-
-    private static String idOfObjectClickedBeforeIsland;
-    private int countOfStudentsMoved;
 
     public TableSceneController() {
 
@@ -154,9 +161,46 @@ public class TableSceneController extends SceneController {
 
         // Create array of previous prices of character cards
         this.previousPricesOfCharacterCards = new int[ModelConstants.NUMBER_OF_CHARACTER_CARDS];
+
+        this.firstFillOfCharacterCards = true;
     }
 
     // MAIN METHODS
+
+    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
+
+        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
+            Command command;
+            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
+                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
+                StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
+            } else
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
+
+            if (!motherNature)
+                command.parseCLIString(id);
+
+            if (command.canEnd()) {
+                if (command.hasQuestion()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get().equals(ButtonType.NO)) {
+                        // Send message
+                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                    }
+                } else {
+                    // Send message
+                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                }
+            }
+        }
+    }
 
     @Override
     protected Scene layout() {
@@ -191,18 +235,19 @@ public class TableSceneController extends SceneController {
             if (StageController.getStageController().getGuiView().getUser().getPreference() > 0)
                 this.addCharacterCards(root);
 
+            // Add bulb for hints
+            this.addBulb(root);
             // Fill the game objects
             this.updateScene();
-            // Disable all nodes
-            this.disableAllNodes();
             // Return the newly created scene
             return new Scene(root);
-        } catch (IOException | GuiViewNotSet e) {
-            e.printStackTrace();
-            // TODO do something
+        } catch (IOException e) {
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
             return null;
         }
     }
+
+    // METHODS FOR SCENE UPDATE
 
     @Override
     protected void updateScene() {
@@ -236,7 +281,7 @@ public class TableSceneController extends SceneController {
                     this.coordinatesOfStudentsInEntrance, this.previousEntrance, true);
             // Update dining room
             SchoolBoardsFunction.updateSchoolBoardDiningRoom(indexOfSchoolBoard, this.schoolBoard,
-                    this.firstAvailableCoordinatesOfDiningRoom, this.previousDiningRoom);
+                    this.firstAvailableCoordinatesOfDiningRoom, this.previousDiningRoom, true);
             // Update professor section
             SchoolBoardsFunction.updateSchoolBoardProfessorSection(indexOfTeam, this.schoolBoard, this.coordinatesOfProfessorPawns,
                     this.previousProfessorSection);
@@ -254,15 +299,12 @@ public class TableSceneController extends SceneController {
             // ADD ASSISTANT CARDS PLAYED BY THE OTHER PLAYERS
             this.addAssistantCardsPlayedByOtherPlayers();
 
-        } catch (IllegalStudentIdException | IllegalLaneException | GuiViewNotSet e) {
-            e.printStackTrace();
-            // TODO do something
+        } catch (IllegalStudentIdException | IllegalLaneException e) {
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
         }
     }
 
-    // METHODS FOR SCENE UPDATE
-
-    private void updateAmountOfCoins(int indexOfTeam) throws GuiViewNotSet {
+    private void updateAmountOfCoins(int indexOfTeam) {
         // Determine index of player
         ClientTeams clientTeams = StageController.getStageController().getClientTeams();
         int playerId = StageController.getStageController().getGuiView().getPlayerId();
@@ -285,8 +327,7 @@ public class TableSceneController extends SceneController {
             // Add label to root
             this.mainPane.getChildren().add(label);
             this.coin = label;
-        }
-        else {
+        } else {
             this.coin.setText(GUIConstants.LABEL_FOR_COIN_START + StageController.getStageController().getClientTeams()
                     .getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getCoins());
         }
@@ -376,7 +417,7 @@ public class TableSceneController extends SceneController {
                         // coordinates
                         else
                             // Remove coordinate of node from the list of coordinates
-                            this.coordinatesOfStudentsOnCloud.remove(this.coordinatesOfStudentsOnCloud
+                            this.coordinatesOfIslandTile.remove(this.coordinatesOfIslandTile
                                     .stream()
                                     .filter(coordinateOfStudent -> coordinateOfStudent[0] == student.getLayoutY() && coordinateOfStudent[1] == student.getLayoutX())
                                     .toList().get(0));
@@ -440,8 +481,7 @@ public class TableSceneController extends SceneController {
                         imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
                     else if (color.equals(ClientTowerColor.WHITE))
                         imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
-                }
-                else if (type == 0)
+                } else if (type == 0)
                     imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfMotherNature);
 
                 this.islandTiles[islandTile.getId()].getChildren().add(imageView);
@@ -621,40 +661,56 @@ public class TableSceneController extends SceneController {
             // Regenerate coordinates
             this.regenerateCoordinatesForCharacterCardsStorage();
 
-            // Get all the children of the pane containing the character card which are not the character card and put them
-            // in a list
-            ArrayList<Node> children = new ArrayList<>();
-            for (Node node : this.characterCards[indexOfCharacterCard].getChildren())
-                if (node.getId().contains(GUIConstants.STUDENT_DISC_NAME))
-                    children.add(node);
-
-            // Add student discs
             Integer[] coordinate;
             Random random = new Random();
-            for (int studentId : clientCharacterCard.getStorage()) {
-                // Case 1: the student disc is still in the storage
-                if (children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).count() == 1) {
-                    // Get corresponding node and remove it from children
-                    Node student = children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).toList().get(0);
-                    children.remove(student);
-                    // Remove coordinate of the node from the list of coordinates
-                    this.coordinatesOfStudentsInCharacterCards.remove(this.coordinatesOfStudentsInCharacterCards
-                            .stream()
-                            .filter(coordinateOfCard -> coordinateOfCard[0] == student.getLayoutY() && coordinateOfCard[1] == student.getLayoutX())
-                            .toList().get(0));
-                }
-                // Case 1: the student disc is not in the storage
-                else {
-                    coordinate = this.coordinatesOfStudentsInCharacterCards.remove(random.nextInt(this.coordinatesOfStudentsInCharacterCards.size()));
-                    ImageView student = SchoolBoardsFunction.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
-                    this.characterCards[indexOfCharacterCard].getChildren().add(student);
-                }
-            }
 
-            // Remove remaining children from character card storage
-            while (children.size() != 0) {
-                this.characterCards[indexOfCharacterCard].getChildren().remove(children.get(0));
-                children.remove(0);
+            // If the character card is the mushroom hunter or the thief add the 5 colors to the card
+            if ((clientCharacterCard.getId() == Character.MUSHROOM_HUNTER.getId() || clientCharacterCard.getId() == Character.THIEF.getId())) {
+                if (this.firstFillOfCharacterCards)
+                    for (PawnColor color : PawnColor.values()) {
+                        Circle circle = new Circle(GUIConstants.CIRCLE_RADIUS, Paint.valueOf(color.toString()));
+                        circle.setId(color.toString());
+                        coordinate = this.coordinatesOfStudentsInCharacterCards.remove(random.nextInt(this.coordinatesOfStudentsInCharacterCards.size()));
+                        circle.setLayoutX(coordinate[1]);
+                        circle.setLayoutY(coordinate[0]);
+                        circle.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfColorOfStudentInCharacterCard);
+                        this.characterCards[indexOfCharacterCard].getChildren().add(circle);
+                    }
+            } else {
+                // Get all the children of the pane containing the character card which are not the character card and put them
+                // in a list
+                ArrayList<Node> children = new ArrayList<>();
+                for (Node node : this.characterCards[indexOfCharacterCard].getChildren())
+                    if (node.getId().contains(GUIConstants.STUDENT_DISC_NAME))
+                        children.add(node);
+
+                // Add student discs
+                for (int studentId : clientCharacterCard.getStorage()) {
+                    // Case 1: the student disc is still in the storage
+                    if (children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).count() == 1) {
+                        // Get corresponding node and remove it from children
+                        Node student = children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).toList().get(0);
+                        children.remove(student);
+                        // Remove coordinate of the node from the list of coordinates
+                        this.coordinatesOfStudentsInCharacterCards.remove(this.coordinatesOfStudentsInCharacterCards
+                                .stream()
+                                .filter(coordinateOfCard -> coordinateOfCard[0] == student.getLayoutY() && coordinateOfCard[1] == student.getLayoutX())
+                                .toList().get(0));
+                    }
+                    // Case 1: the student disc is not in the storage
+                    else {
+                        coordinate = this.coordinatesOfStudentsInCharacterCards.remove(random.nextInt(this.coordinatesOfStudentsInCharacterCards.size()));
+                        ImageView student = SchoolBoardsFunction.createImageViewOfStudent(studentId, coordinate[1], coordinate[0]);
+                        student.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfStudentInCharacterCard);
+                        this.characterCards[indexOfCharacterCard].getChildren().add(student);
+                    }
+                }
+
+                // Remove remaining children from character card storage
+                while (children.size() != 0) {
+                    this.characterCards[indexOfCharacterCard].getChildren().remove(children.get(0));
+                    children.remove(0);
+                }
             }
 
             // Add coin if the price of the character card has changed
@@ -677,20 +733,20 @@ public class TableSceneController extends SceneController {
             // Update index of character card
             indexOfCharacterCard++;
         }
+
+        // Set false when first fill is completed
+        this.firstFillOfCharacterCards = false;
     }
+
+    // COORDINATES GENERATOR
 
     private void addAssistantCardsPlayedByOtherPlayers() {
         // Get array of client players (without the client):
         ClientPlayer[] players = StageController.getStageController().getClientTeams().getTeams()
                 .stream()
                 .flatMap(clientTeam -> clientTeam.getPlayers().stream())
-                .filter(clientPlayer -> {
-                    try {
-                        return clientPlayer.getPlayerId() != StageController.getStageController().getGuiView().getPlayerId();
-                    } catch (GuiViewNotSet e) {
-                        return clientPlayer.getPlayerId() != -1;
-                    }
-                })
+                .filter(clientPlayer -> clientPlayer.getPlayerId() != StageController
+                        .getStageController().getGuiView().getPlayerId())
                 .toArray(ClientPlayer[]::new);
 
         // Add last played assistant card of each player (except the client) to the table scene
@@ -767,9 +823,6 @@ public class TableSceneController extends SceneController {
         }
     }
 
-
-    // COORDINATES GENERATOR
-
     private void getCoordinatesOfCellsForMotherNatureNoEntryAndTower(int height, int length) {
         // The first coordinate is the one of the cell in the top left corner
         this.coordinatesOfIslandTile.clear();
@@ -810,6 +863,8 @@ public class TableSceneController extends SceneController {
 
     }
 
+    // PANES GENERATORS AND LOADERS
+
     private void regenerateCoordinatesForStudentDiscsOfCloudTile() {
         this.coordinatesOfStudentsOnCloud.clear();
         // Get number of players
@@ -822,8 +877,6 @@ public class TableSceneController extends SceneController {
         else
             Collections.addAll(this.coordinatesOfStudentsOnCloud, GUIConstants.POSITIONS_OF_STUDENTS_CLOUD_WITH_FOUR_SPACES);
     }
-
-    // PANES GENERATORS AND LOADERS
 
     private void loadPanesInArrayOfIslandTilePanes() {
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND] = this.island1;
@@ -919,7 +972,7 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    private void addAssistantCards(AnchorPane root) throws GuiViewNotSet {
+    private void addAssistantCards(AnchorPane root) {
         // Get number of players that are not the client
         int playerId = StageController.getStageController().getGuiView().getPlayerId();
         int numberOfPlayers = (int) StageController.getStageController().getClientTeams().getTeams()
@@ -941,29 +994,19 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    // GETTER FOR OBJECT CLICKED BEFORE ISLAND TILE
-
-    public static void setIdOfObjectClickedBeforeIsland(String id) {
-        idOfObjectClickedBeforeIsland = id;
-    }
-
-    // METHOD TO ENABLE AND DISABLE NODES
-
-    private void enableOnlyStudentsInEntranceAndCharacterCards() {
-        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
-        for (Node node : root.getChildren()) {
-            node.setDisable(!(node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME) || node.getId().contains(GUIConstants.CHARACTER_CARD_PANE_NAME)));
-        }
-    }
-
-    // Method used in the gui class to disable all nodes when it is not the turn of the client
-    public void disableAllNodes() {
-        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
-        for (Node node : root.getChildren())
-            node.setDisable(true);
-    }
-
     // EVENTS HANDLERS
+
+    private void addBulb(AnchorPane root) {
+        ImageView bulb = new ImageView(Images.getImages().getBulb());
+        bulb.setId(GUIConstants.BULB_NAME);
+        bulb.setPreserveRatio(false);
+        bulb.setFitWidth(GUIConstants.WIDTH_OF_BULB);
+        bulb.setFitHeight(GUIConstants.HEIGHT_OF_BULB);
+        bulb.setLayoutX(GUIConstants.LAYOUT_X_OF_BULB);
+        bulb.setLayoutY(GUIConstants.LAYOUT_Y_OF_BULB);
+        bulb.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfBulb);
+        root.getChildren().add(bulb);
+    }
 
     @FXML
     private void switchToOtherSchoolBoards(ActionEvent event) {
@@ -984,112 +1027,110 @@ public class TableSceneController extends SceneController {
     }
 
     public void onSelectionOfIslandTile(MouseEvent event) {
+
+        // Remove pulses
         this.removePulses();
-        // TODO handle two cases: click for student movement and click for mother nature movement
-        if (idOfObjectClickedBeforeIsland.contains(GUIConstants.MOTHER_NATURE_NAME)) {
 
-        }
-        else if (idOfObjectClickedBeforeIsland.contains(GUIConstants.STUDENT_DISC_NAME)) {
+        // Handle event
+        if (StageController.getStageController().getGuiView().getAvailableCommands().size() == 1)
+            if (StageController.getStageController().getGuiView().getAvailableCommands().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND) ||
+                    StageController.getStageController().getGuiView().getAvailableCommands().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND_OR_DINING_ROOM))
+                handleEventWithCommand(StageController.getStageController().getGuiView().getAvailableCommands().get(0).getValidation(),
+                        event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.ISLAND_TILE_NAME, ""), false);
 
-        }
+
     }
 
     public void onSelectionOfDiningRoom(MouseEvent event) {
         this.removePulses();
-        // TODO handle single case of click for movement of student disc from entrance to dining room
+        handleEventWithCommand(CommandDataEntryValidationSet.ISLAND_OR_DINING_ROOM,
+                event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.SCHOOL_BOARD_NAME, ""), false);
     }
 
     public void onSelectionOfMotherNature(MouseEvent event) {
         this.removePulses();
-        // The mother nature pawn has been clicked. Save id in TableSceneController.objectClickedBeforeIsland
-        idOfObjectClickedBeforeIsland = event.getPickResult().getIntersectedNode().getId();
-        // Make all images that might be clicked not clickable (except the island tiles)
-        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
-        for (Node node : root.getChildren()) {
-            if (!node.getId().equals(GUIConstants.ISLAND_PANE_NAME))
-                // setDisable disables also the sub-nodes
-                node.setDisable(true);
-        }
-        // Disable mother nature pawn
-        event.getPickResult().getIntersectedNode().setDisable(true);
-
-        // At this point only the island tiles can be clicked
         // Get index of team and of player
-        try {
-            // Get client teams
-            ClientTeams clientTeams = StageController.getStageController().getClientTeams();
-            // Get player id
-            int playerId = StageController.getStageController().getGuiView().getPlayerId();
+        // Get client teams
+        ClientTeams clientTeams = StageController.getStageController().getClientTeams();
+        // Get player id
+        int playerId = StageController.getStageController().getGuiView().getPlayerId();
 
-            // Get index of team and of player within team
-            int indexOfTeam = clientTeams.getTeams().indexOf(clientTeams.getTeams().
-                    stream().
-                    filter(clientTeam -> clientTeam.getPlayers().
-                            stream().
-                            filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1).
-                    toList().get(0));
+        // Get index of team and of player within team
+        int indexOfTeam = clientTeams.getTeams().indexOf(clientTeams.getTeams().
+                stream().
+                filter(clientTeam -> clientTeam.getPlayers().
+                        stream().
+                        filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1).
+                toList().get(0));
 
-            int indexOfPlayer = clientTeams.getTeams().get(indexOfTeam).getPlayers().indexOf(clientTeams.getTeams().get(indexOfTeam).getPlayers().
-                    stream().
-                    filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).
-                    toList().get(0));
+        int indexOfPlayer = clientTeams.getTeams().get(indexOfTeam).getPlayers().indexOf(clientTeams.getTeams().get(indexOfTeam).getPlayers().
+                stream().
+                filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).
+                toList().get(0));
 
-            // Get movements of mother nature from assistant card played by the player
-            int movements = clientTeams.getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getLastPlayedAssistantCard().getMovements();
-            // Get index of group containing mother nature
-            int indexOfIslandGroupWIthMotherNature = StageController.getStageController().getClientTable().getIslandTiles().indexOf(StageController.getStageController().getClientTable().getIslandTiles()
-                    .stream()
-                    .filter(islandGroup -> islandGroup.stream()
-                            .filter(islandTile -> islandTile.getId() == StageController.getStageController().getClientTable().getMotherNature().getIsland())
-                            .count() == 1)
-                    .toList().get(0));
-            // Make islands pulse
-            int offset = 1;
-            while (offset < movements + 1) {
-                if (StageController.getStageController().getClientTable().getIslandTiles().size() == indexOfIslandGroupWIthMotherNature + offset)
-                    indexOfIslandGroupWIthMotherNature = -offset;
-                for (ClientIslandTile islandTile : StageController.getStageController().getClientTable().getIslandTiles().get(indexOfIslandGroupWIthMotherNature + offset)) {
-                    for (Node innerNode : this.islandTiles[islandTile.getId()].getChildren()) {
-                        ImageView imageView = (ImageView) innerNode;
-                        if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                            ViewUtilityFunctions.createAnimationPulses(imageView, 1.05);
-                            break;
-                        }
+        // Get movements of mother nature from assistant card played by the player
+        int movements = clientTeams.getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getLastPlayedAssistantCard().getMovements();
+        // Get index of group containing mother nature
+        int indexOfIslandGroupWIthMotherNature = StageController.getStageController().getClientTable().getIslandTiles().indexOf(StageController.getStageController().getClientTable().getIslandTiles()
+                .stream()
+                .filter(islandGroup -> islandGroup.stream()
+                        .filter(islandTile -> islandTile.getId() == StageController.getStageController().getClientTable().getMotherNature().getIsland())
+                        .count() == 1)
+                .toList().get(0));
+        // Make islands pulse
+        int offset = 1;
+        while (offset < movements + 1) {
+            if (StageController.getStageController().getClientTable().getIslandTiles().size() == indexOfIslandGroupWIthMotherNature + offset)
+                indexOfIslandGroupWIthMotherNature = -offset;
+            for (ClientIslandTile islandTile : StageController.getStageController().getClientTable().getIslandTiles().get(indexOfIslandGroupWIthMotherNature + offset)) {
+                for (Node innerNode : this.islandTiles[islandTile.getId()].getChildren()) {
+                    ImageView imageView = (ImageView) innerNode;
+                    if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
+                        ViewUtilityFunctions.createAnimationPulses(imageView, 1.05);
+                        break;
                     }
                 }
-                offset++;
             }
-        } catch (GuiViewNotSet e) {
-            // TODO do something (close connection?)
+            offset++;
         }
+
+        // Handle event
+        handleEventWithCommand(CommandDataEntryValidationSet.ISLAND, null, true);
     }
 
     public void onSelectionOfCloudTile(MouseEvent event) {
-        // TODO do something with the cloud tile
-
-        // Disable all nodes except for the students in the entrance and the character cards
-        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
-        for (Node node : root.getChildren()) {
-            if (!(node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME) || node.getId().contains(GUIConstants.CHARACTER_CARD_PANE_NAME)))
-                node.setDisable(true);
-            else
-                node.setDisable(false);
-        }
+        handleEventWithCommand(CommandDataEntryValidationSet.CLOUD_TILE,
+                event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.CLOUD_TILE_NAME, ""), false);
     }
 
     public void onSelectionOfCharacterCard(MouseEvent event) {
-        // Make all images that might be clicked not clickable (except the character card)
-        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
-        for (Node node : root.getChildren()) {
-            if (!node.getId().equals(GUIConstants.CHARACTER_CARD_PANE_NAME))
-                // setDisable disables also the sub-nodes
-                node.setDisable(true);
-        }
-
-
-
-
+        handleEventWithCommand(CommandDataEntryValidationSet.CHARACTER_CARD,
+                event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.CHARACTER_CARD_IMAGE_NAME, ""), false);
     }
+
+    public void onSelectionOfColorOfStudentInCharacterCard(MouseEvent event) {
+        handleEventWithCommand(CommandDataEntryValidationSet.COLOR, event.getPickResult().getIntersectedNode().getId(), false);
+    }
+
+    public void onSelectionOfStudentInCharacterCard(MouseEvent event) {
+        // Get color of student
+        try {
+            String color = ClientPawnColor.values()[ViewUtilityFunctions.convertStudentIdToIdOfColor(
+                    Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.STUDENT_DISC_NAME, "")))].toString();
+            handleEventWithCommand(CommandDataEntryValidationSet.STUDENT_CHARACTER_CARD, color, false);
+        } catch (IllegalStudentIdException e) {
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+        }
+    }
+
+    // ADDITIONAL METHODS
+
+    private void onSelectionOfBulb(MouseEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, StageController.getStageController().getGuiView().getAvailableActionsHint());
+        alert.show();
+    }
+
+    // STATIC METHODS
 
     private void removePulses() {
         AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
@@ -1125,9 +1166,7 @@ public class TableSceneController extends SceneController {
 class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
 
     @Override
-    public void handle(MouseEvent mouseEvent) {
-        // A student in the entrance has been clicked. Save id in TableSceneController.objectClickedBeforeIsland
-        TableSceneController.setIdOfObjectClickedBeforeIsland(mouseEvent.getPickResult().getIntersectedNode().getId());
+    public void handle(MouseEvent event) {
         // Make island tiles and school board pulse and hide other objects
         AnchorPane root = (AnchorPane) StageController.getStageController().getSceneControllers(SceneType.TABLE_SCENE)
                 .getScene(false).getRoot();
@@ -1155,6 +1194,30 @@ class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
                     }
                 }
             }
+        }
+        // Handle event
+        try {
+            // Get color of student
+            String color = ClientPawnColor.values()[ViewUtilityFunctions.convertStudentIdToIdOfColor(
+                    Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.STUDENT_DISC_NAME, "")))].toString();
+            TableSceneController.handleEventWithCommand(CommandDataEntryValidationSet.STUDENT_ENTRANCE, color, false);
+        } catch (IllegalStudentIdException e) {
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+        }
+    }
+}
+
+class StudentInDiningEventHandler implements EventHandler<MouseEvent> {
+
+    @Override
+    public void handle(MouseEvent event) {
+        try {
+            // Get color of student
+            String color = ClientPawnColor.values()[ViewUtilityFunctions.convertStudentIdToIdOfColor(
+                    Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.STUDENT_DISC_NAME, "")))].toString();
+            TableSceneController.handleEventWithCommand(CommandDataEntryValidationSet.STUDENT_DINING_ROOM, color, false);
+        } catch (IllegalStudentIdException e) {
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
         }
     }
 }

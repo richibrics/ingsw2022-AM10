@@ -3,7 +3,6 @@ package it.polimi.ingsw.view.gui.scene_controllers;
 import it.polimi.ingsw.controller.ControllerConstants;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -117,16 +116,13 @@ public class UserFormSceneController extends SceneController {
      * @param e the event happened in the window
      */
     void handleNextPageButton(Event e) {
-        try {
-            int selectedPreference =
-                    twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
-                            threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
-                                    fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
-                                            twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
-                                                    threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
-            StageController.getStageController().getGuiView().handleSendUser(textBox.getText(), selectedPreference);
-        } catch (GuiViewNotSet ex) {
-            StageController.getStageController().handleInternalException(ex);
-        }
+        int selectedPreference =
+                twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
+                        threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
+                                fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
+                                        twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
+                                                threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
+        StageController.getStageController().getGuiView().handleSendUser(textBox.getText(), selectedPreference);
+
     }
 }

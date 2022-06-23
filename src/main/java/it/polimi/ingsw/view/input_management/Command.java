@@ -303,4 +303,13 @@ public class Command {
         }
         throw new RuntimeException("Can't find this client player in the teams");
     }
+
+    /**
+     * Returns the validation of the next input.
+     * @return
+     */
+
+    public String getValidation() {
+        return this.commandData.getSchema().get(this.currentEntryIndex).getValidation();
+    }
 }

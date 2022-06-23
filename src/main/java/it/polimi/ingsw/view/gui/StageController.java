@@ -4,8 +4,6 @@ import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.game_objects.ClientRound;
 import it.polimi.ingsw.view.game_objects.ClientTable;
 import it.polimi.ingsw.view.game_objects.ClientTeams;
-import it.polimi.ingsw.view.gui.exceptions.CurrentSceneControllerNotSetException;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException;
 import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
 import it.polimi.ingsw.view.gui.scene_controllers.SceneController;
@@ -81,18 +79,6 @@ public class StageController {
     }
 
     /**
-     * Draws the current scene, re-rendering the layout.
-     *
-     * @throws CurrentSceneControllerNotSetException
-     */
-    public void updateScene() throws CurrentSceneControllerNotSetException {
-        if (this.currentSceneController == null)
-            throw new CurrentSceneControllerNotSetException("No SceneController set in the StageController");
-        stage.setScene(this.currentSceneController.getScene(true));
-        stage.show();
-    }
-
-    /**
      * Sets the Stage which is the main object of the graphical window.
      *
      * @param stage the Stage in which the Scene will be shown
@@ -131,11 +117,8 @@ public class StageController {
      * Returns the ViewInterface GUI.
      *
      * @return the ViewInterface GUI
-     * @throws GuiViewNotSet if GUI was not set
      */
-    public GUI getGuiView() throws GuiViewNotSet {
-        if (this.guiView == null)
-            throw new GuiViewNotSet();
+    public GUI getGuiView() {
         return guiView;
     }
 
@@ -233,11 +216,6 @@ public class StageController {
      */
     public void handleInternalException(Exception e) {
         e.printStackTrace();
-        try {
-            this.getGuiView().handleInternalException(e);
-        } catch (GuiViewNotSet ex) {
-            ex.printStackTrace();
-            System.exit(0);
-        }
+        this.getGuiView().handleInternalException(e);
     }
 }

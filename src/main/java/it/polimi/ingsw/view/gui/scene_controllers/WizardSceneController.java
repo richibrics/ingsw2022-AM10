@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException;
 import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
+import it.polimi.ingsw.view.input_management.CommandDataEntryValidationSet;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -81,7 +82,7 @@ public class WizardSceneController extends SceneController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            // TODO do something
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
             return null;
         }
     }
@@ -93,11 +94,13 @@ public class WizardSceneController extends SceneController {
 
     private void onSelectionOfWizard(MouseEvent event) {
         try {
-            int wizardId = Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.WIZARD_CARD_NAME, ""));
-            // TODO communicate id to server
+            // Handle event
+            TableSceneController.handleEventWithCommand(CommandDataEntryValidationSet.WIZARD,
+                    event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.WIZARD_CARD_NAME, ""), false);
+            // Change scene
             StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
         } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
-            // TODO close connection
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
         }
     }
 }

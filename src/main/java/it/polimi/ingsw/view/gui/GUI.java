@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.network.client.ClientServerConnection;
 import it.polimi.ingsw.view.AbstractView;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.game_objects.ClientTable;
@@ -27,8 +28,10 @@ public class GUI extends AbstractView {
      */
     public GUI() {
         super();
+        this.user = new User("marco", 1);
         this.firstTime = true;
         this.availableCommands = new HashMap<>();
+        StageController.getStageController().setGuiView(this);
         new Thread(() -> launch(LaunchGUI.class)).start();  // Start the GUI Thread
     }
 
@@ -178,5 +181,9 @@ public class GUI extends AbstractView {
      */
     public String getAvailableActionsHint() {
         return this.availableCommands.values().stream().map(Command::getGUIMenuMessage).collect(Collectors.joining( "\nor\n"));
+    }
+
+    public ClientServerConnection getClientServerConnection() {
+        return this.clientServerConnection;
     }
 }
