@@ -751,6 +751,7 @@ public class TableSceneController extends SceneController {
                     labelForUsername.setLayoutY(GUIConstants.LAYOUT_Y_OF_LABEL_IN_PANE_TABLE_SCENE);
                     labelForUsername.setAlignment(Pos.CENTER_LEFT);
                     labelForUsername.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_LABEL_ASSISTANT_CARDS));
+                    this.labelsForAssistantCards[indexOfPlayer] = labelForUsername;
 
                     // Add image view and label to first free pane
                     for (Pane pane : this.panesOfAssistantCards)

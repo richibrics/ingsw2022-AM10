@@ -186,12 +186,12 @@ public class Cli extends AbstractView {
             // Ask client for username. Max length of DrawersConstant.SCHOOL_BOARD_LENGTH
             this.bufferOut.write("Select a username: ");
             this.bufferOut.flush();
-            String username = this.bufferIn.readLine();
-            while (username.length() > CliConstants.MAX_LENGTH_OF_USERNAME || username.length() == 0)  {
-                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", CliConstants.MAX_LENGTH_OF_USERNAME), false);
+            String username = this.bufferIn.readLine().strip();
+            while (username.length() > ViewConstants.MAX_LENGTH_OF_USERNAME || username.length() == 0)  {
+                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", ViewConstants.MAX_LENGTH_OF_USERNAME), false);
                 this.bufferOut.write("Please select a new username: ");
                 this.bufferOut.flush();
-                username = this.bufferIn.readLine();
+                username = this.bufferIn.readLine().strip();
             }
 
             // Ask for game mode

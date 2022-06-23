@@ -296,4 +296,5 @@ public class GUIConstants {
     public static final double HEIGHT_OF_BULB = 80.;
     public static final int LAYOUT_X_OF_BULB = 1826;
     public static final int LAYOUT_Y_OF_BULB = 14;
+    public static final String NO_COMMANDS_AVAILABLE_HINT = "It's not your turn, please wait.";
 }

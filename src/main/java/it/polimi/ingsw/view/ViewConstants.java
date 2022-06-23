@@ -8,4 +8,6 @@ public class ViewConstants {
     public static final int THREE_PLAYERS_GAME = 3;
     public static final int FOUR_PLAYERS_GAME = 4;
     public static final int NO_PLAYERS_GAME = 0;
+
+    public static int MAX_LENGTH_OF_USERNAME = 18;
 }

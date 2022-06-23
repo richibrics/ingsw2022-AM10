@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
 import it.polimi.ingsw.controller.ControllerConstants;
+import it.polimi.ingsw.view.ViewConstants;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
 import javafx.event.Event;
@@ -88,6 +89,9 @@ public class UserFormSceneController extends SceneController {
         threePlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
         fourPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
 
+        // Autoselect the first radio (not have to check if one has been selected)
+        twoPlayersExpertRadioButton.setSelected(true);
+
         Button nextButton = new Button("Enter in Lobby");
         nextButton.setOnAction(this::handleNextPageButton);
         layoutBottomButtons.getChildren().add(nextButton);
@@ -116,7 +120,7 @@ public class UserFormSceneController extends SceneController {
      * @param e the event happened in the window
      */
     void handleNextPageButton(Event e) {
-        if(textBox.getText().strip().length()>0) {
+        if(textBox.getText().strip().length()>0 && textBox.getText().strip().length() <= ViewConstants.MAX_LENGTH_OF_USERNAME ) {
             int selectedPreference =
                     twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
                             threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
@@ -125,7 +129,7 @@ public class UserFormSceneController extends SceneController {
                                                     threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
             StageController.getStageController().getGuiView().handleSendUser(textBox.getText().strip(), selectedPreference);
         } else {
-            StageController.getStageController().getGuiView().showError("Username must be set", false);
+            StageController.getStageController().getGuiView().showError("Username length must be between 1 and " + String.valueOf(ViewConstants.MAX_LENGTH_OF_USERNAME) + " characters", false);
         }
     }
 }

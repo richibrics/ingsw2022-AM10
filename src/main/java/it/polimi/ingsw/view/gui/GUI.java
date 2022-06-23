@@ -203,7 +203,10 @@ public class GUI extends AbstractView {
      * @return the string with actions hint
      */
     public String getAvailableActionsHint() {
-        return this.availableCommands.values().stream().map(Command::getGUIMenuMessage).collect(Collectors.joining("\nor\n"));
+        if (this.availableCommands.size() != 0)
+            return this.availableCommands.values().stream().map(Command::getGUIMenuMessage).collect(Collectors.joining("\nor\n"));
+        else
+            return GUIConstants.NO_COMMANDS_AVAILABLE_HINT;
     }
 
     /**

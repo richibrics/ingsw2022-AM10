@@ -5,7 +5,7 @@
       "action_key": "wizard",
       "question": "Select the wizard",
       "cli_hint": " (type the number of the preferred wizard)",
-      "gui_hint": " (click on the  preferred wizard)",
+      "gui_hint": " (click on the preferred wizard)",
       "optional": false,
       "validation": "wizard"
     }
