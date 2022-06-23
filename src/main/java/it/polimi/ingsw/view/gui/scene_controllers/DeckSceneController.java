@@ -40,7 +40,7 @@ public class DeckSceneController extends SceneController {
         try {
             StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
         } catch (Exception exception) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(exception.getMessage());
         }
     }
 

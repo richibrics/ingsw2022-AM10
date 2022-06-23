@@ -82,7 +82,7 @@ public class WizardSceneController extends SceneController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class WizardSceneController extends SceneController {
             // Change scene
             StageController.getStageController().showScene(SceneType.TABLE_SCENE, false);
         } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
         }
     }
 }

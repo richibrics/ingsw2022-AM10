@@ -134,6 +134,7 @@ public class ServerClientConnection implements Runnable {
      */
 
     public synchronized void sendMessage(Message message) {
+        System.out.println(message.getType().toString());
         this.bufferOut.println(Serializer.fromMessageToString(message));
         this.bufferOut.flush();
     }
@@ -156,7 +157,7 @@ public class ServerClientConnection implements Runnable {
         if (messageReceivingStep.equals(MessageReceivingStep.STEP_IN_GAME)) {
             // Stops the gameController and the other game clients, if it isn't already stopped
             if(gameController.getGameEngine()!=null)
-                gameController.interruptGame(user.getId() + " disconnected");
+                gameController.handleDisconnection(user.getId());
         } else if (messageReceivingStep.equals(MessageReceivingStep.STEP_LOBBY)) {
             // Removes the client from the lobby, because from the step I know where he is
             LobbyHandler.getLobbyHandler().removeDisconnectedUser(user);
@@ -270,6 +271,15 @@ public class ServerClientConnection implements Runnable {
      */
     public void notifyError(String message) {
         this.sendMessage(new Message(MessageTypes.ERROR, message));
+    }
+
+    /**
+     * Sends the error message to the client for a disconnection, specifying who disconnected.
+     *
+     * @param user_that_disconnected user that disconnected
+     */
+    public void notifyDisconnection(String user_that_disconnected) {
+        this.sendMessage(new Message(MessageTypes.PLAYER_DISCONNECTION, user_that_disconnected + " disconnected. Match ended..."));
     }
 
     /**

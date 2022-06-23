@@ -44,7 +44,7 @@ public class Cli extends AbstractView {
             this.bufferOut.write(CliConstants.ESCAPE_CODE_TO_CLEAR_TERMINAL);
             this.bufferOut.flush();
         } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class Cli extends AbstractView {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -156,7 +156,7 @@ public class Cli extends AbstractView {
                 this.bufferOut.flush();
             }
         } catch (IOException | IllegalUserPreferenceException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -173,7 +173,7 @@ public class Cli extends AbstractView {
             }
             this.bufferOut.flush();
         } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -188,7 +188,7 @@ public class Cli extends AbstractView {
             this.bufferOut.flush();
             String username = this.bufferIn.readLine();
             while (username.length() > CliConstants.MAX_LENGTH_OF_USERNAME || username.length() == 0)  {
-                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", CliConstants.MAX_LENGTH_OF_USERNAME));
+                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", CliConstants.MAX_LENGTH_OF_USERNAME), false);
                 this.bufferOut.write("Please select a new username: ");
                 this.bufferOut.flush();
                 username = this.bufferIn.readLine();
@@ -232,14 +232,14 @@ public class Cli extends AbstractView {
             this.user = new User(username, ViewUtilityFunctions.getPreferenceFromGameModeAndClientPreference(gameMode, numberOfPlayers));
             this.setUserReady(true);
         } catch (IOException | IllegalGameModeException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
     @Override
-    public void showError(String message) {
+    public void showError(String message, boolean isCritical) {
         try {
-            this.bufferOut.write(message);
+            this.bufferOut.write(message + "\n");
             this.bufferOut.flush();
         } catch (IOException e) {
             this.clientServerConnection.askToCloseConnection();
@@ -294,7 +294,7 @@ public class Cli extends AbstractView {
             this.user = new User(this.user.getId(), newNumberOfPlayers);
 
         } catch (IOException | IllegalGameModeException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -306,7 +306,7 @@ public class Cli extends AbstractView {
             this.bufferOut.flush();
 
         } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -367,8 +367,7 @@ public class Cli extends AbstractView {
                     this.bufferOut.write("Invalid action number, retry" + "\n");
                 }
             } catch (IOException e) {
-                this.clientServerConnection.askToCloseConnection();
-                Logger.getAnonymousLogger().log(Level.SEVERE, "IOException: " + e.getMessage() + "\n");
+                this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
             }
         }
     }
@@ -383,5 +382,10 @@ public class Cli extends AbstractView {
             case ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID -> CliConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID_DESCRIPTION;
             default -> null;
         };
+    }
+
+    @Override
+    public boolean isCriticalErrorOpen() {
+        return false;
     }
 }

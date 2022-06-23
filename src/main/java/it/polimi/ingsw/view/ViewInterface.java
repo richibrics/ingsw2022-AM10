@@ -35,9 +35,11 @@ public interface ViewInterface {
 
     void setUserReady(boolean newValue);
 
-    void showError(String message);
+    void showError(String message, boolean isCritical);
 
     int getPlayerId();
 
     void setPlayerId(int playerId);
+
+    boolean isCriticalErrorOpen();
 }

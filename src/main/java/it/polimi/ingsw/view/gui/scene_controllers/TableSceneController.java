@@ -242,7 +242,7 @@ public class TableSceneController extends SceneController {
             // Return the newly created scene
             return new Scene(root);
         } catch (IOException e) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
             return null;
         }
     }
@@ -300,7 +300,7 @@ public class TableSceneController extends SceneController {
             this.addAssistantCardsPlayedByOtherPlayers();
 
         } catch (IllegalStudentIdException | IllegalLaneException e) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -1119,7 +1119,7 @@ public class TableSceneController extends SceneController {
                     Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.STUDENT_DISC_NAME, "")))].toString();
             handleEventWithCommand(CommandDataEntryValidationSet.STUDENT_CHARACTER_CARD, color, false);
         } catch (IllegalStudentIdException e) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -1202,7 +1202,7 @@ class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
                     Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.STUDENT_DISC_NAME, "")))].toString();
             TableSceneController.handleEventWithCommand(CommandDataEntryValidationSet.STUDENT_ENTRANCE, color, false);
         } catch (IllegalStudentIdException e) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
         }
     }
 }
@@ -1217,7 +1217,7 @@ class StudentInDiningEventHandler implements EventHandler<MouseEvent> {
                     Integer.parseInt(event.getPickResult().getIntersectedNode().getId().replace(GUIConstants.STUDENT_DISC_NAME, "")))].toString();
             TableSceneController.handleEventWithCommand(CommandDataEntryValidationSet.STUDENT_DINING_ROOM, color, false);
         } catch (IllegalStudentIdException e) {
-            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
         }
     }
 }

@@ -157,13 +157,30 @@ public class GameController {
     }
 
     /**
-     * Stops the game, warns all the players with a message and closes all the connections.
+     * Interrupts the match and warns the client about the disconnection
+     *
+     * @param disconnectedUser the user that disconnected from the game.
+     */
+    public void handleDisconnection(String disconnectedUser) {
+        for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
+            if (serverClientConnection != null) { // in the tests I have null server client connections
+                serverClientConnection.notifyDisconnection(disconnectedUser);
+            }
+        }
+        this.interruptGame(null);
+    }
+
+    /**
+     * Stops the game, warns all the players with a message and closes all the connections (if message is not null).
      * Removes also the GameController from the active game controllers in the lobby (so the players in this game can play again).
+     *
+     * @param playersMessage if != null, is used as knowledge message to the user to specify why the match ended.
      */
     public void interruptGame(String playersMessage) {
         for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
             if (serverClientConnection != null) { // in the tests I have null server client connections
-                serverClientConnection.notifyError(playersMessage);
+                if (playersMessage != null)
+                    serverClientConnection.notifyError(playersMessage);
                 serverClientConnection.askToCloseConnection();
             }
         }
@@ -175,10 +192,11 @@ public class GameController {
 
     /**
      * Gets the map of serverClientConnections.
+     *
      * @return
      */
 
-    public Map<User, ServerClientConnection> getServerClientConnections () {
+    public Map<User, ServerClientConnection> getServerClientConnections() {
         return this.serverClientConnections;
     }
 }

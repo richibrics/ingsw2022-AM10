@@ -92,7 +92,7 @@ public class StageController {
      * Sets properties to the Stage before showing the Scenes.
      */
     private void prepareStage() {
-        stage.setResizable(false);
+        stage.setResizable(true);
     }
 
     /**

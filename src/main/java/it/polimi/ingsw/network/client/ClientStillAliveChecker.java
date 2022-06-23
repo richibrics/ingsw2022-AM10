@@ -26,9 +26,9 @@ public class ClientStillAliveChecker implements Runnable {
     public void run() {
         while (this.continueRunning) {
             try {
-                if (this.clientServerConnection.getTimer() <= 0)
-                    this.clientServerConnection.askToCloseConnection();
-                else {
+                if (this.clientServerConnection.getTimer() <= 0) {
+                    this.clientServerConnection.askToCloseConnectionWithError("Server timeout.");
+                } else {
                     this.clientServerConnection.decrementTimer();
                     this.clientServerConnection.sendMessage(new Message(MessageTypes.STILL_ALIVE, ""));
                 }
@@ -42,6 +42,7 @@ public class ClientStillAliveChecker implements Runnable {
 
     /**
      * Sets the continueRunning flag to {@code bool}.
+     *
      * @param bool the new value of the flag
      */
 

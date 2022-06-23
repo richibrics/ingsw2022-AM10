@@ -11,6 +11,8 @@ import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException
 import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
 import it.polimi.ingsw.view.input_management.Command;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,13 +23,16 @@ import static javafx.application.Application.launch;
 
 public class GUI extends AbstractView {
 
+    boolean isErrorOpen;
     Map<Integer, Command> availableCommands;
     boolean firstTime;
+
     /**
      * When GUI starts, show the Splashscreen
      */
     public GUI() {
         super();
+        this.isErrorOpen = false;
         this.user = new User("marco", 1);
         this.firstTime = true;
         this.availableCommands = new HashMap<>();
@@ -88,7 +93,7 @@ public class GUI extends AbstractView {
         }
 
         this.availableCommands.clear();
-        for(Integer id: possibleActions) {
+        for (Integer id : possibleActions) {
             this.availableCommands.put(id, new Command(id, this.getPlayerId(), clientTable, clientTeams));
         }
 
@@ -97,10 +102,21 @@ public class GUI extends AbstractView {
         // TODO use methods of TableSceneController for enabling and disabling nodes at the beginning and end of the round for the current player
     }
 
-
+    /**
+     * Shows the error message in a Dialog.
+     * @param message the message of the error
+     * @param isCritical if the error leads to app close
+     */
     @Override
-    public void showError(String message) {
-
+    public void showError(String message, boolean isCritical) {
+        this.isErrorOpen = isCritical; // Set as open and as only openable only if critical
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR, message);
+            alert.showAndWait();
+            if (alert.getResult() == ButtonType.OK && isCritical) {
+                this.isErrorOpen = false;
+            }
+        });
     }
 
     /**
@@ -123,8 +139,7 @@ public class GUI extends AbstractView {
      * @param e the caught Exception
      */
     public void handleInternalException(Exception e) {
-        e.printStackTrace();
-        this.clientServerConnection.askToCloseConnection();
+        this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
     }
 
     // Methods for GUI callback
@@ -169,6 +184,7 @@ public class GUI extends AbstractView {
 
     /**
      * Returns the commands of the available actions.
+     *
      * @return the commands of the available actions
      */
     public Map<Integer, Command> getAvailableCommands() {
@@ -177,10 +193,20 @@ public class GUI extends AbstractView {
 
     /**
      * Returns a string that explains what the user can do, using the possible actions commands.
+     *
      * @return the string with actions hint
      */
     public String getAvailableActionsHint() {
-        return this.availableCommands.values().stream().map(Command::getGUIMenuMessage).collect(Collectors.joining( "\nor\n"));
+        return this.availableCommands.values().stream().map(Command::getGUIMenuMessage).collect(Collectors.joining("\nor\n"));
+    }
+
+    /**
+     * Returns true if an error is open; for example, if an error was displayed and the user hasn't still
+     * closed it, this returns true.
+     * @return true if an error is open.
+     */
+    public boolean isCriticalErrorOpen() {
+        return isErrorOpen;
     }
 
     public ClientServerConnection getClientServerConnection() {
