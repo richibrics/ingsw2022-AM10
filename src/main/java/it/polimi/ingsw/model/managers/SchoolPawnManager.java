@@ -67,6 +67,7 @@ public class SchoolPawnManager extends Manager {
      * Moves the required student disc from the Entrance to the Dining Room of the school board of the player identified by
      * {@code playerId}. Throws SchoolBoardNotSetException if the school board of the player has not been set, NoSuchElementException
      * if the student disc could not be found in the entrance of the school board.
+     * Gives the coin if the position of the student gives it.
      * @param playerId the identifier of the player who owns the school board
      * @param studentId the identifier of the student disc to move
      * @throws SchoolBoardNotSetException if the school board of the player has not been set
@@ -79,7 +80,11 @@ public class SchoolPawnManager extends Manager {
     public void moveStudentFromEntranceToDiningRoom(int playerId, int studentId) throws  SchoolBoardNotSetException, NoSuchElementException
     {
         SchoolBoard schoolBoard = CommonManager.takeSchoolBoardByPlayerId(this.getGameEngine(), playerId);
-        schoolBoard.addStudentToDiningRoom(schoolBoard.removeStudentFromEntrance(studentId));
+        StudentDisc studentToMove = schoolBoard.removeStudentFromEntrance(studentId);
+        schoolBoard.addStudentToDiningRoom(studentToMove);
+        // If the position money module 3 equals 0, give the coin
+        if (schoolBoard.getDiningRoomColor(studentToMove.getColor()).size() % 3 == 0)
+            CommonManager.takePlayerById(this.getGameEngine(), playerId).incrementCoins();
     }
 
     /**
