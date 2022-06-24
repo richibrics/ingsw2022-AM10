@@ -117,8 +117,9 @@ public class SchoolBoardsFunction {
                                                    ArrayList<ArrayList<Integer>> previousDiningRoom, boolean schoolBoardOfPlayer)
             throws IllegalLaneException, IllegalStudentIdException {
 
-        // Important: this method is based on the assumption that the only operation applied to the dining room is the addition of
-        // student discs. This is true at the moment.
+        // Important: this method is based on the assumption that the only operations applied to the dining room are the addition and
+        // the removal of student discs. This is true at the moment. The students are removed after the thief character card
+        // is applied
 
         int indexOfLaneInClientTable = 0;
         for (ArrayList<Integer> lane : StageController.getStageController().getClientTable().getSchoolBoards().get(indexOfSchoolBoard).getDiningRoom()) {
@@ -148,6 +149,21 @@ public class SchoolBoardsFunction {
                 // Update content of previous dining room
                 previousDiningRoom.get(indexOfLaneInClientTable).clear();
                 previousDiningRoom.get(indexOfLaneInClientTable).addAll(lane);
+            }
+
+            // Remove students from dining room
+            else if (lane.size() < previousDiningRoom.get(indexOfLaneInClientTable).size()) {
+                int layoutXOfStudentToRemove = firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][1];
+                int layoutYOfStudentToRemove = firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][0] - GUIConstants.LAYOUT_Y_OFFSET_CELLS_DINING_ROOM;
+                for (int i = 0; i < previousDiningRoom.get(indexOfLaneInClientTable).size() - lane.size(); i++) {
+                    int finalLayoutYOfStudentToRemove = layoutYOfStudentToRemove;
+                    Node node = schoolBoard.getChildren().stream()
+                            .filter(node1 -> node1.getLayoutX() == layoutXOfStudentToRemove && node1.getLayoutY() == finalLayoutYOfStudentToRemove)
+                            .toList().get(0);
+                    schoolBoard.getChildren().remove(node);
+                    layoutYOfStudentToRemove -= GUIConstants.LAYOUT_Y_OFFSET_CELLS_DINING_ROOM;
+                    firstAvailableCoordinatesOfDiningRoom[indexOfLaneInImage][0] -= GUIConstants.LAYOUT_Y_OFFSET_CELLS_DINING_ROOM;
+                }
             }
             // Increment lane index
             indexOfLaneInClientTable++;

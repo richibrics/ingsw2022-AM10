@@ -172,6 +172,7 @@ public class SchoolBoardsSceneController extends SceneController {
                     // Update dining room
                     SchoolBoardsFunction.updateSchoolBoardDiningRoom(i, this.panesForSchoolBoards[indexOfPaneWithSchoolBoard],
                             this.firstAvailableCoordinatesOfDiningRooms[indexOfPaneWithSchoolBoard], this.previousDiningRooms[indexOfPaneWithSchoolBoard], false);
+                    this.previousDiningRooms[indexOfPaneWithSchoolBoard] = StageController.getStageController().getClientTable().getSchoolBoards().get(i).getDiningRoom();
                     // Update professor section
                     SchoolBoardsFunction.updateSchoolBoardProfessorSection(indexOfTeam, this.panesForSchoolBoards[indexOfPaneWithSchoolBoard],
                             this.coordinatesOfProfessorPawns, this.previousProfessorSections[indexOfPaneWithSchoolBoard]);

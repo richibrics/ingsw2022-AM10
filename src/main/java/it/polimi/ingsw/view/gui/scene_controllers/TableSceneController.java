@@ -13,7 +13,6 @@ import it.polimi.ingsw.view.gui.SceneType;
 import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.input_management.Command;
 import it.polimi.ingsw.view.input_management.CommandDataEntryValidationSet;
-import javafx.animation.Animation;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -36,7 +35,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
-import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,9 +62,9 @@ public class TableSceneController extends SceneController {
     // Previous state of character cards
     private final int[] previousPricesOfCharacterCards;
     // Previous state of school board
-    private final ArrayList<ArrayList<Integer>> previousDiningRoom;
+    private ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
-    private final ArrayList<Integer> previousCompositionOfIslandGroups;
+    private final ArrayList<ArrayList<Integer>> previousCompositionOfIslandGroups;
     // Array of image views of assistant cards played by the other players
     private ImageView[] assistantCards;
     // Array of labels for assistant cards
@@ -247,6 +245,7 @@ public class TableSceneController extends SceneController {
             // Update dining room
             SchoolBoardsFunction.updateSchoolBoardDiningRoom(indexOfSchoolBoard, this.schoolBoard,
                     this.firstAvailableCoordinatesOfDiningRoom, this.previousDiningRoom, true);
+            this.previousDiningRoom = StageController.getStageController().getClientTable().getSchoolBoards().get(indexOfSchoolBoard).getDiningRoom();
             // Update professor section
             SchoolBoardsFunction.updateSchoolBoardProfessorSection(indexOfTeam, this.schoolBoard, this.coordinatesOfProfessorPawns,
                     this.previousProfessorSection);
@@ -485,13 +484,9 @@ public class TableSceneController extends SceneController {
                 // Find group that has changed
                 int index = 0;
                 for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles()) {
-                    if (islandGroup.size() > this.previousCompositionOfIslandGroups.get(index)) {
-                        // Increment index in order to skip unified groups
-                        int size = this.previousCompositionOfIslandGroups.get(index);
-                        while (size != islandGroup.size()) {
-                            index++;
-                            size += this.previousCompositionOfIslandGroups.get(index);
-                        }
+                    int finalIndex = index;
+                    if (islandGroup.size() > this.previousCompositionOfIslandGroups.get(index).size()
+                            && islandGroup.stream().anyMatch(islandTile -> previousCompositionOfIslandGroups.get(finalIndex).contains(islandTile.getId()))) {
                         // Unify islands in islandGroup
                         int indexOfCentralTile = Math.floorDiv(islandGroup.size(), 2);
                         for (int i = indexOfCentralTile; i < islandGroup.size() - 1; i++)
@@ -507,10 +502,10 @@ public class TableSceneController extends SceneController {
         }
         // Fill previous composition of groups
         this.previousCompositionOfIslandGroups.clear();
-        this.previousCompositionOfIslandGroups.addAll(StageController.getStageController().getClientTable().getIslandTiles()
-                .stream()
-                .map(ArrayList::size)
-                .collect(Collectors.toCollection(ArrayList::new)));
+        for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles())
+            this.previousCompositionOfIslandGroups.add(islandGroup.stream()
+                    .map(ClientIslandTile::getId)
+                    .collect(Collectors.toCollection(ArrayList::new)));
     }
 
     private void unifyIslandTiles(Pane fixedIsland, Pane islandToMove) {
@@ -993,10 +988,6 @@ public class TableSceneController extends SceneController {
     }
 
     public void onSelectionOfIslandTile(MouseEvent event) {
-
-        // Remove pulses
-        this.removePulses();
-
         // Handle event
         if (StageController.getStageController().getGuiView().getAvailableCommands().size() == 1)
             if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0).getValidation().equals(CommandDataEntryValidationSet.ISLAND) ||
@@ -1008,58 +999,11 @@ public class TableSceneController extends SceneController {
     }
 
     public void onSelectionOfDiningRoom(MouseEvent event) {
-        this.removePulses();
         handleEventWithCommand(CommandDataEntryValidationSet.ISLAND_OR_DINING_ROOM,
                 "d", false);
     }
 
     public void onSelectionOfMotherNature(MouseEvent event) {
-        this.removePulses();
-        // Get index of team and of player
-        // Get client teams
-        ClientTeams clientTeams = StageController.getStageController().getClientTeams();
-        // Get player id
-        int playerId = StageController.getStageController().getGuiView().getPlayerId();
-
-        // Get index of team and of player within team
-        int indexOfTeam = clientTeams.getTeams().indexOf(clientTeams.getTeams().
-                stream().
-                filter(clientTeam -> clientTeam.getPlayers().
-                        stream().
-                        filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).count() == 1).
-                toList().get(0));
-
-        int indexOfPlayer = clientTeams.getTeams().get(indexOfTeam).getPlayers().indexOf(clientTeams.getTeams().get(indexOfTeam).getPlayers().
-                stream().
-                filter(clientPlayer -> clientPlayer.getPlayerId() == playerId).
-                toList().get(0));
-
-        // Get movements of mother nature from assistant card played by the player
-        int movements = clientTeams.getTeams().get(indexOfTeam).getPlayers().get(indexOfPlayer).getLastPlayedAssistantCard().getMovements();
-        // Get index of group containing mother nature
-        int indexOfIslandGroupWIthMotherNature = StageController.getStageController().getClientTable().getIslandTiles().indexOf(StageController.getStageController().getClientTable().getIslandTiles()
-                .stream()
-                .filter(islandGroup -> islandGroup.stream()
-                        .filter(islandTile -> islandTile.getId() == StageController.getStageController().getClientTable().getMotherNature().getIsland())
-                        .count() == 1)
-                .toList().get(0));
-        // Make islands pulse
-        int offset = 1;
-        while (offset < movements + 1) {
-            if (StageController.getStageController().getClientTable().getIslandTiles().size() == indexOfIslandGroupWIthMotherNature + offset)
-                indexOfIslandGroupWIthMotherNature = -offset;
-            for (ClientIslandTile islandTile : StageController.getStageController().getClientTable().getIslandTiles().get(indexOfIslandGroupWIthMotherNature + offset)) {
-                for (Node innerNode : this.islandTiles[islandTile.getId()].getChildren()) {
-                    ImageView imageView = (ImageView) innerNode;
-                    if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                        ViewUtilityFunctions.createAnimationPulses(imageView, 1.05);
-                        break;
-                    }
-                }
-            }
-            offset++;
-        }
-
         // Handle event
         handleEventWithCommand(CommandDataEntryValidationSet.ISLAND, null, true);
     }
@@ -1132,70 +1076,12 @@ public class TableSceneController extends SceneController {
             }
         }
     }
-
-    private void removePulses() {
-        AnchorPane root = (AnchorPane) this.getScene(false).getRoot();
-
-        for (Node node : root.getChildren()) {
-            if (node.getId().contains(GUIConstants.ISLAND_PANE_NAME)) {
-                Pane pane = (Pane) node;
-                for (Node innerNode : pane.getChildren())
-                    if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                        if (innerNode.getProperties().containsKey(GUIConstants.ANIMATION_KEY)) {
-                            Animation animation = (Animation) innerNode.getProperties().get(GUIConstants.ANIMATION_KEY);
-                            animation.jumpTo(Duration.ZERO);
-                            animation.stop();
-                        }
-                        break;
-                    }
-            } else if (node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME)) {
-                Pane pane = (Pane) node;
-                for (Node innerNode : pane.getChildren())
-                    if (innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)) {
-                        if (innerNode.getProperties().containsKey(GUIConstants.ANIMATION_KEY)) {
-                            Animation animation = (Animation) innerNode.getProperties().get(GUIConstants.ANIMATION_KEY);
-                            animation.jumpTo(Duration.ZERO);
-                            animation.stop();
-                        }
-                        break;
-                    }
-            }
-        }
-    }
 }
 
 class StudentInEntranceEventHandler implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        // Make island tiles and school board pulse and hide other objects
-        AnchorPane root = (AnchorPane) StageController.getStageController().getSceneControllers(SceneType.TABLE_SCENE)
-                .getScene(false).getRoot();
-
-        for (Node node : root.getChildren()) {
-
-            if (node.getId().contains(GUIConstants.ISLAND_PANE_NAME)) {
-                Pane pane = (Pane) node;
-                for (Node innerNode : pane.getChildren()) {
-                    ImageView imageView = (ImageView) innerNode;
-
-                    if (innerNode.getId().contains(GUIConstants.ISLAND_TILE_NAME)) {
-                        ViewUtilityFunctions.createAnimationPulses(imageView, 1.05);
-                        break;
-                    }
-                }
-            } else if (node.getId().contains(GUIConstants.SCHOOL_BOARD_PANE_NAME)) {
-                Pane pane = (Pane) node;
-                for (Node innerNode : pane.getChildren()) {
-                    ImageView imageView = (ImageView) innerNode;
-
-                    if (innerNode.getId().contains(GUIConstants.SCHOOL_BOARD_NAME)) {
-                        ViewUtilityFunctions.createAnimationPulses(imageView, 1.02);
-                        break;
-                    }
-                }
-            }
-        }
         // Handle event
         try {
             // Get color of student
