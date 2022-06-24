@@ -3,7 +3,11 @@ package it.polimi.ingsw.view.cli;
 import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.view.AbstractView;
+import it.polimi.ingsw.view.ViewConstants;
+import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.cli.drawers.*;
+import it.polimi.ingsw.view.exceptions.IllegalGameModeException;
+import it.polimi.ingsw.view.exceptions.IllegalUserPreferenceException;
 import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.game_objects.ClientTable;
 import it.polimi.ingsw.view.game_objects.ClientTeams;
@@ -13,6 +17,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+// TODO remove player id passed as argument to methods. Player id can be retrieved using this.getPlayerId()
 
 public class Cli extends AbstractView {
 
@@ -24,7 +32,6 @@ public class Cli extends AbstractView {
     private String[][] islandGroupsTemplate;
     private String[][] cloudTilesTemplate;
     private String[][] assistantCardsTemplate;
-    private Command command;
 
     public Cli() {
         super();
@@ -37,7 +44,7 @@ public class Cli extends AbstractView {
             this.bufferOut.write(CliConstants.ESCAPE_CODE_TO_CLEAR_TERMINAL);
             this.bufferOut.flush();
         } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -49,14 +56,15 @@ public class Cli extends AbstractView {
             // Create templates if not already created
             if (this.schoolBoardsTemplate == null)
                 this.schoolBoardsTemplate = SchoolBoardDrawer.generateTemplate((int) clientTeams.getTeams().stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).count());
-            if (this.characterCardsTemplate == null)
+            if (this.characterCardsTemplate == null && this.getUser().getPreference() > 0)
                 this.characterCardsTemplate = CharacterCardDrawer.generateTemplate(clientTable.getActiveCharacterCards());
             if (this.cloudTilesTemplate == null)
                 this.cloudTilesTemplate = CloudTilesDrawer.generateTemplate(clientTable.getCloudTiles());
 
             // Fill templates
             SchoolBoardDrawer.fillTemplate(this.schoolBoardsTemplate, clientTable, clientTeams);
-            CharacterCardDrawer.fillTemplate(this.characterCardsTemplate, clientTable.getActiveCharacterCards());
+            if (this.getUser().getPreference() > 0)
+                CharacterCardDrawer.fillTemplate(this.characterCardsTemplate, clientTable.getActiveCharacterCards());
             this.islandGroupsTemplate = IslandGroupsDrawer.generateAndFillTemplate(clientTable.getIslandTiles(), clientTable.getMotherNature());
             CloudTilesDrawer.fillTemplate(this.cloudTilesTemplate, clientTable.getCloudTiles());
             // Determine index of team and of player with id == playerId
@@ -75,10 +83,20 @@ public class Cli extends AbstractView {
             this.assistantCardsTemplate = AssistantCardDrawer.generateAndFillTemplate(clientTeams, indexOfTeam, indexOfPlayer);
 
             // Generate template that represents the entire state of the game
-            int height = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), this.assistantCardsTemplate.length) +
-                    Math.max(this.characterCardsTemplate.length, this.cloudTilesTemplate.length) + this.SPACE_BETWEEN_ELEMENTS;
-            int length = Math.max(this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length + (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0) +
-                    2 * this.SPACE_BETWEEN_ELEMENTS, this.characterCardsTemplate[0].length + this.cloudTilesTemplate[0].length) + this.SPACE_BETWEEN_ELEMENTS;
+            int height;
+            int length;
+            if (this.getUser().getPreference() > 0) {
+                height = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), this.assistantCardsTemplate.length) +
+                        Math.max(this.characterCardsTemplate.length, this.cloudTilesTemplate.length) + this.SPACE_BETWEEN_ELEMENTS;
+                length = Math.max(this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length + (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0) +
+                        2 * this.SPACE_BETWEEN_ELEMENTS, this.characterCardsTemplate[0].length + this.cloudTilesTemplate[0].length + this.SPACE_BETWEEN_ELEMENTS);
+            }
+            else {
+                height = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), this.assistantCardsTemplate.length) +
+                        this.cloudTilesTemplate.length + this.SPACE_BETWEEN_ELEMENTS;
+                length = Math.max(this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length + (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0) +
+                        2 * this.SPACE_BETWEEN_ELEMENTS, this.cloudTilesTemplate[0].length);
+            }
 
             String[][] template = new String[height][length];
 
@@ -96,7 +114,7 @@ public class Cli extends AbstractView {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -112,9 +130,10 @@ public class Cli extends AbstractView {
         // Determine starting height of lower section (character cards and clouds)
         int startingHeightOfLowerSection = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0))
                 + this.SPACE_BETWEEN_ELEMENTS;
-        this.insertTemplateInTemplate(template, this.characterCardsTemplate, startingHeightOfLowerSection, 0);
-        this.insertTemplateInTemplate(template, this.cloudTilesTemplate, startingHeightOfLowerSection,
-                this.characterCardsTemplate[0].length + this.SPACE_BETWEEN_ELEMENTS);
+        this.insertTemplateInTemplate(template, this.cloudTilesTemplate, startingHeightOfLowerSection, 0);
+        if (this.getUser().getPreference() > 0)
+            this.insertTemplateInTemplate(template, this.characterCardsTemplate, startingHeightOfLowerSection,
+                    this.cloudTilesTemplate[0].length + this.SPACE_BETWEEN_ELEMENTS);
     }
 
     private void insertTemplateInTemplate(String[][] generalTemplate, String[][] template, int startingHeight, int startingLength) {
@@ -129,13 +148,15 @@ public class Cli extends AbstractView {
         try {
             this.bufferOut.write("This is the state of the lobby: \n");
             this.bufferOut.flush();
+            String[] gameModeAndPlayers;
             for (Map.Entry<Integer, Integer> entry : clientLobby.getLobbyStatus().entrySet()) {
-                this.bufferOut.write(String.format("%d %s waiting for %d-players game. \n", entry.getValue(),
-                        entry.getValue() == 1 ? "player" : "players", entry.getKey()));
+                gameModeAndPlayers = ViewUtilityFunctions.getGameModeAndNumberOfPlayersFromPreference(entry.getKey());
+                this.bufferOut.write(String.format("%d %s waiting for %d-players %s game. \n", entry.getValue(),
+                        entry.getValue() == 1 ? "player" : "players", Integer.parseInt(gameModeAndPlayers[0]), gameModeAndPlayers[1]));
                 this.bufferOut.flush();
             }
-        } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+        } catch (IOException | IllegalUserPreferenceException e) {
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -152,7 +173,7 @@ public class Cli extends AbstractView {
             }
             this.bufferOut.flush();
         } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -165,12 +186,23 @@ public class Cli extends AbstractView {
             // Ask client for username. Max length of DrawersConstant.SCHOOL_BOARD_LENGTH
             this.bufferOut.write("Select a username: ");
             this.bufferOut.flush();
-            String username = this.bufferIn.readLine();
-            while (username.length() > CliConstants.MAX_LENGTH_OF_USERNAME || username.length() == 0)  {
-                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", CliConstants.MAX_LENGTH_OF_USERNAME));
+            String username = this.bufferIn.readLine().strip();
+            while (username.length() > ViewConstants.MAX_LENGTH_OF_USERNAME || username.length() == 0)  {
+                this.showError(String.format("The username exceeds the limit of %d characters or is empty. ", ViewConstants.MAX_LENGTH_OF_USERNAME), false);
                 this.bufferOut.write("Please select a new username: ");
                 this.bufferOut.flush();
-                username = this.bufferIn.readLine();
+                username = this.bufferIn.readLine().strip();
+            }
+
+            // Ask for game mode
+            this.bufferOut.write("Select the game mode (b for basic, e for expert): ");
+            this.bufferOut.flush();
+            String gameMode = this.bufferIn.readLine();
+            while (!gameMode.equals(CliConstants.EXPERT_GAME) && !gameMode.equals(CliConstants.BASIC_GAME)) {
+                this.bufferOut.write("The selected game mode is incorrect. Please select a new game mode" +
+                        " (b for basic, e for expert): ");
+                this.bufferOut.flush();
+                gameMode = this.bufferIn.readLine();
             }
 
             // Ask for preference
@@ -178,12 +210,13 @@ public class Cli extends AbstractView {
                     " 3 for three-players game and 4 for four-players game: ");
             this.bufferOut.flush();
 
-            int preference = 0;
+            int numberOfPlayers = 0;
             boolean flag = true;
             do {
                 try {
-                    preference = Integer.parseInt(this.bufferIn.readLine());
-                    if (preference != 2 && preference != 3 && preference != 4) {
+                    numberOfPlayers = Integer.parseInt(this.bufferIn.readLine());
+                    if (numberOfPlayers != ViewConstants.TWO_PLAYERS_GAME && numberOfPlayers != ViewConstants.THREE_PLAYERS_GAME
+                            && numberOfPlayers != ViewConstants.FOUR_PLAYERS_GAME) {
                         this.bufferOut.write("You selected a wrong preference. Please try again.\nSelect preference: ");
                         this.bufferOut.flush();
                     }
@@ -196,17 +229,17 @@ public class Cli extends AbstractView {
             } while (flag);
 
             // Create user and allow clientServerConnection to take the newly created user
-            this.user = new User(username, preference);
+            this.user = new User(username, ViewUtilityFunctions.getPreferenceFromGameModeAndClientPreference(gameMode, numberOfPlayers));
             this.setUserReady(true);
-        } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+        } catch (IOException | IllegalGameModeException e) {
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
     @Override
-    public void showError(String message) {
+    public void showError(String message, boolean isCritical) {
         try {
-            this.bufferOut.write(message);
+            this.bufferOut.write(message + "\n");
             this.bufferOut.flush();
         } catch (IOException e) {
             this.clientServerConnection.askToCloseConnection();
@@ -217,21 +250,34 @@ public class Cli extends AbstractView {
     @Override
     public void askToChangePreference() {
         try {
-            Integer newPreference = null;
+            int newNumberOfPlayers;
+            String newGameMode;
+            boolean wrongPreferenceOrGameMode = false;
+
             // Ask for new preference
             this.bufferOut.write("\nHave you changed up your mind? We have the solution for you. Select " +
-                    "here a new preference (2 for two-players game, 3 for three-players game and 4 for four-players game: ");
+                    "here a new preference and game mode (e.g. 2e for two-players expert game, 3b for three-players basic game...): ");
             this.bufferOut.flush();
+            char[] preferenceAndGameMode;
             do {
                 boolean preferenceSet = false;
-                if (newPreference != null) {
-                    this.bufferOut.write("\nYou selected a wrong preference. Please try again.\nSelect preference: ");
+                newNumberOfPlayers = ViewConstants.NO_PLAYERS_GAME;
+                newGameMode = CliConstants.GAME_MODE_NOT_USED;
+
+                if (wrongPreferenceOrGameMode) {
+                    this.bufferOut.write("\nYou selected a wrong preference or game mode. Please try again.\nSelect preference: ");
                     this.bufferOut.flush();
                 }
 
+                wrongPreferenceOrGameMode = true;
+
                 while (!Thread.currentThread().isInterrupted() && !preferenceSet) {
                     if (this.bufferIn.ready()) {
-                        newPreference = Integer.valueOf(this.bufferIn.readLine());
+                        preferenceAndGameMode = this.bufferIn.readLine().toCharArray();
+                        if (preferenceAndGameMode.length == 2) {
+                            newNumberOfPlayers = Integer.parseInt(String.valueOf(preferenceAndGameMode[0]));
+                            newGameMode = String.valueOf(preferenceAndGameMode[1]);
+                        }
                         preferenceSet = true;
                     }
                 }
@@ -239,13 +285,16 @@ public class Cli extends AbstractView {
                 if (Thread.currentThread().isInterrupted())
                     return;
 
-            } while (newPreference != 2 && newPreference != 3 && newPreference != 4);
-            // Update preference
-            this.clientServerConnection.changePreference(newPreference);
-            this.user = new User(this.user.getId(), newPreference);
+            } while ((newNumberOfPlayers != ViewConstants.TWO_PLAYERS_GAME && newNumberOfPlayers != ViewConstants.THREE_PLAYERS_GAME
+                    && newNumberOfPlayers != ViewConstants.FOUR_PLAYERS_GAME)
+                    || (!newGameMode.equals(CliConstants.EXPERT_GAME) && !newGameMode.equals(CliConstants.BASIC_GAME)));
 
-        } catch (IOException e) {
-            this.clientServerConnection.askToCloseConnection();
+            // Update preference
+            this.clientServerConnection.changePreference(ViewUtilityFunctions.getPreferenceFromGameModeAndClientPreference(newGameMode, newNumberOfPlayers));
+            this.user = new User(this.user.getId(), newNumberOfPlayers);
+
+        } catch (IOException | IllegalGameModeException e) {
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -257,6 +306,7 @@ public class Cli extends AbstractView {
             this.bufferOut.flush();
 
         } catch (IOException e) {
+            this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
         }
     }
 
@@ -281,12 +331,12 @@ public class Cli extends AbstractView {
                         continue;
                     }
 
-                    this.command = new Command(actionId, playerId, clientTable, clientTeams);
+                    Command command = new Command(actionId, playerId, clientTable, clientTeams);
                     this.bufferOut.write("PS: If you want to cancel the selected action, write \"" + CliConstants.CANCEL_ACTION_INPUT_STRING + "\"");
                     String line;
                     this.bufferOut.write("\n");
-                    while (this.command.hasQuestion() && !actionInputCanceled) {
-                        if (this.command.canEnd()) {
+                    while (command.hasQuestion() && !actionInputCanceled) {
+                        if (command.canEnd()) {
                             this.bufferOut.write("\nWould you like to continue? Y/N: ");
                             this.bufferOut.flush();
                             line = this.bufferIn.readLine();
@@ -295,19 +345,19 @@ public class Cli extends AbstractView {
                         }
 
                         try {
-                            this.bufferOut.write(this.command.getCLIMenuMessage() + ": ");
+                            this.bufferOut.write(command.getCLIMenuMessage() + ": ");
                             this.bufferOut.flush();
                             line = this.bufferIn.readLine();
                             if (line.equals(CliConstants.CANCEL_ACTION_INPUT_STRING))
                                 actionInputCanceled = true;
                             else
-                                this.command.parseCLIString(line);
+                                command.parseCLIString(line);
                         } catch (IllegalArgumentException e) {
                             this.bufferOut.write("Wrong input. " + e.getMessage() + "\n");
                         }
                     }
                     if (!actionInputCanceled) {
-                        this.actionMessage = this.command.getActionMessage();
+                        this.actionMessage = command.getActionMessage();
                         this.clientServerConnection.setFlagActionMessageIsReady(true);
                         valueSet = true;
                     }
@@ -317,28 +367,25 @@ public class Cli extends AbstractView {
                     this.bufferOut.write("Invalid action number, retry" + "\n");
                 }
             } catch (IOException e) {
-                this.clientServerConnection.askToCloseConnection();
-                System.out.println("IOException: " + e.getMessage() + "\n");
+                this.clientServerConnection.askToCloseConnectionWithError(e.getMessage());
             }
         }
     }
 
     private String getActionDescriptionFromId(int actionId) {
-        switch (actionId) {
-            case ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID:
-                return CliConstants.ACTION_ON_SELECTION_OF_WIZARD_ID_DESCRIPTION;
-            case ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID:
-                return CliConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID_DESCRIPTION;
-            case ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID:
-                return CliConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID_DESCRIPTION;
-            case ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID:
-                return CliConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID_DESCRIPTION;
-            case ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID:
-                return CliConstants.ACTION_MOVE_MOTHER_NATURE_ID_DESCRIPTION;
-            case ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID:
-                return CliConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID_DESCRIPTION;
-            default:
-                return null;
-        }
+        return switch (actionId) {
+            case ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID -> CliConstants.ACTION_ON_SELECTION_OF_WIZARD_ID_DESCRIPTION;
+            case ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID -> CliConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID_DESCRIPTION;
+            case ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID -> CliConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID_DESCRIPTION;
+            case ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID -> CliConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID_DESCRIPTION;
+            case ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID -> CliConstants.ACTION_MOVE_MOTHER_NATURE_ID_DESCRIPTION;
+            case ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID -> CliConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID_DESCRIPTION;
+            default -> null;
+        };
+    }
+
+    @Override
+    public boolean isCriticalErrorOpen() {
+        return false;
     }
 }

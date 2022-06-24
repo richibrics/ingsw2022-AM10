@@ -202,13 +202,19 @@ class TestSerializer {
      */
     @Test
     void generateLobbyMessage() {
-        User user1 = new User("1", 2);
-        User user2 = new User("2", 3);
-        User user3 = new User("3", 4);
+        User user1 = new User("1", ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY);
+        User user2 = new User("2", ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY);
+        User user3 = new User("3", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY);
+        User user1e = new User("1e", ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT);
+        User user2e = new User("2e", ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT);
+        User user3e = new User("3e", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT);
         // Add users to lobby
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user1, null));
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user2, null));
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user3, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user1e, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user2e, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user3e, null));
 
         Message message = assertDoesNotThrow(() -> Serializer.generateLobbyMessage());
         // Check type
@@ -219,9 +225,12 @@ class TestSerializer {
         Type type = (new TypeToken<Map<Integer, Integer>>() {
         }).getType();
         Map<Integer, Integer> map = gson.fromJson(message.getPayload(), type);
-        assertEquals(1, map.get(2));
-        assertEquals(1, map.get(3));
-        assertEquals(1, map.get(4));
+        assertEquals(1, map.get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT));
+        assertEquals(1, map.get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT));
+        assertEquals(1, map.get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT));
+        assertEquals(1, map.get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY));
+        assertEquals(1, map.get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY));
+        assertEquals(1, map.get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY));
         LobbyHandler.getLobbyHandler().emptyMap();
     }
 
@@ -356,10 +365,10 @@ class TestSerializer {
         assertTrue(clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.BLACK) ||
                 clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.WHITE) ||
                 clientTeams.getTeams().get(0).getTowersColor().equals(ClientTowerColor.GREY));
-        assertEquals(6, clientTeams.getTeams().get(0).getNumberOfTowers());
+        assertEquals(ModelConstants.NUMBER_OF_TOWERS_THREE_PLAYERS, clientTeams.getTeams().get(0).getNumberOfTowers());
         assertEquals(0, clientTeams.getTeams().get(0).getProfessorPawns().size());
         assertEquals("steph", clientTeams.getTeams().get(1).getPlayers().get(0).getUsername());
-        assertEquals(3, clientTeams.getTeams().get(2).getPlayers().get(0).getCoins());
+        assertEquals(ModelConstants.INITIAL_PLAYER_COINS, clientTeams.getTeams().get(2).getPlayers().get(0).getCoins());
         assertEquals(1, clientTeams.getTeams().get(0).getPlayers().get(0).getWizard());
         assertEquals(1, clientTeams.getTeams().get(0).getPlayers().get(0).getAssistantCards().size());
         assertEquals(1, clientTeams.getTeams().get(0).getPlayers().get(0).getAssistantCards().get(0).getId());
@@ -373,25 +382,43 @@ class TestSerializer {
 
     @Test
     void fromMessageToClientLobby() {
-        User user1 = new User("1", 2);
-        User user2 = new User("2", 3);
-        User user3 = new User("3", 4);
-        User user4 = new User("4", 3);
-        User user5 = new User("5", 4);
+        User user1 = new User("1", ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT);
+        User user2 = new User("2", ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT);
+        User user3 = new User("3", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT);
+        User user4 = new User("4", ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT);
+        User user5 = new User("5", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT);
+        User user6 = new User("6", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT);
+        User user1b = new User("1b", ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY);
+        User user2b = new User("2b", ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY);
+        User user3b = new User("3b", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY);
+        User user4b = new User("4b", ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY);
+        User user5b = new User("5b", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY);
+        User user6b = new User("6b", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY);
+
         // Add users to lobby
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user1, null));
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user2, null));
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user3, null));
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user4, null));
         assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user5, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user6, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user1b, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user2b, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user3b, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user4b, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user5b, null));
+        assertDoesNotThrow(() -> LobbyHandler.getLobbyHandler().addClient(user6b, null));
 
         Message message = assertDoesNotThrow(() -> Serializer.generateLobbyMessage());
 
         // Check content of ClientLobby
         ClientLobby clientLobby = assertDoesNotThrow(() -> Serializer.fromMessageToClientLobby(message));
-        assertEquals(1, clientLobby.getLobbyStatus().get(ModelConstants.TWO_PLAYERS));
-        assertEquals(2, clientLobby.getLobbyStatus().get(ModelConstants.THREE_PLAYERS));
-        assertEquals(2, clientLobby.getLobbyStatus().get(ModelConstants.FOUR_PLAYERS));
+        assertEquals(1, clientLobby.getLobbyStatus().get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT));
+        assertEquals(2, clientLobby.getLobbyStatus().get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT));
+        assertEquals(3, clientLobby.getLobbyStatus().get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT));
+        assertEquals(1, clientLobby.getLobbyStatus().get(ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY));
+        assertEquals(2, clientLobby.getLobbyStatus().get(ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY));
+        assertEquals(3, clientLobby.getLobbyStatus().get(ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY));
 
         LobbyHandler.getLobbyHandler().emptyMap();
     }

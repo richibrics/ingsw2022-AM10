@@ -62,7 +62,7 @@ class TestGameObserver {
         }
 
         GameController gameController = new GameController(connectionMap);
-        assertDoesNotThrow(gameController::startGame);
+        assertDoesNotThrow(()->gameController.startGame(false));
 
         for (int i = 0; i < 2; i++) {
             assertTrue(tableMessageArrived[i]);

@@ -11,13 +11,14 @@ import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 import it.polimi.ingsw.network.messages.ActionMessage;
-import it.polimi.ingsw.network.server.Server;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -51,8 +52,11 @@ public class GameController {
      *
      * @throws InterruptedGameException if an error was encountered during match creation.
      */
-    public void startGame() throws InterruptedGameException {
+
+    public void startGame(boolean expertMode) throws InterruptedGameException {
         this.gameEngine = new GameEngine(this.createPlayersAndTeams());
+        // Set boolean that tells if the game is an expert game or an easy game
+        this.gameEngine.setExpertMode(expertMode);
         this.gameObserver = new GameObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
         try {
             this.gameEngine.startGame();
@@ -74,15 +78,15 @@ public class GameController {
      * @param actionMessage
      * @return the success value, useful to avoid warning the client of a success if I had an error
      */
+
     public void resumeGame(int playerId, ActionMessage actionMessage) throws InterruptedGameException, IllegalGameActionException, WrongMessageContentException {
-        // TODO Error management
         // Player with turn check
         try {
             if (playerId != gameEngine.getRound().getCurrentPlayer())
                 throw new IllegalGameActionException("The player hasn't the rights to perform the requested Action");
         } catch (NullPointerException e) {
             // Game engine unavailable, was destroyed from this.interruptGame()
-            System.out.println("Error during game resume: game engine not available anymore");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: game engine not available anymore");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
@@ -108,14 +112,14 @@ public class GameController {
             throw e;
         } catch (IllegalGameStateException e) {
             // Local error print
-            System.out.println("Error during game resume: game state error during action run");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: game state error during action run");
             e.printStackTrace();
             // Send information outside
             this.interruptGame("Internal error during action perform");
             throw new InterruptedGameException();
         } catch (Exception e) {
             // Unknown exception - debug purposes, in fact this is unreachable from tests.
-            System.out.println("Error during game resume: action error");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Error during game resume: action error");
             e.printStackTrace();
             return;
         }
@@ -153,17 +157,33 @@ public class GameController {
     }
 
     /**
-     * Stops the game, warns all the players with a message and closes all the connections.
+     * Interrupts the match and warns the client about the disconnection
+     *
+     * @param disconnectedUser the user that disconnected from the game.
+     */
+    public void handleDisconnection(String disconnectedUser) {
+        for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
+            if (serverClientConnection != null) { // in the tests I have null server client connections
+                serverClientConnection.notifyDisconnection(disconnectedUser);
+            }
+        }
+        this.interruptGame(null);
+    }
+
+    /**
+     * Stops the game, warns all the players with a message and closes all the connections (if message is not null).
      * Removes also the GameController from the active game controllers in the lobby (so the players in this game can play again).
+     *
+     * @param playersMessage if != null, is used as knowledge message to the user to specify why the match ended.
      */
     public void interruptGame(String playersMessage) {
         for (ServerClientConnection serverClientConnection : this.serverClientConnections.values()) {
             if (serverClientConnection != null) { // in the tests I have null server client connections
-                serverClientConnection.notifyError(playersMessage);
+                if (playersMessage != null)
+                    serverClientConnection.notifyError(playersMessage);
                 serverClientConnection.askToCloseConnection();
             }
         }
-        // TODO Destroy game
         this.gameObserver = null;
         this.gameEngine = null;
 
@@ -172,10 +192,11 @@ public class GameController {
 
     /**
      * Gets the map of serverClientConnections.
+     *
      * @return
      */
 
-    public Map<User, ServerClientConnection> getServerClientConnections () {
+    public Map<User, ServerClientConnection> getServerClientConnections() {
         return this.serverClientConnections;
     }
 }

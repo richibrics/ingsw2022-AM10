@@ -166,7 +166,7 @@ public class CheckEndMatchConditionAction extends Action {
 
     @Override
     public void act() throws Exception {
-        Integer[] winners = null;
+        Integer[] winners;
         winners = this.checkTowersCondition();
         if (winners != null)
             this.communicateWinner(winners);

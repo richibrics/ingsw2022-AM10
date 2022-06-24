@@ -233,13 +233,14 @@ class TestCheckEndMatchConditionAction {
 
     }
 
-    //TODO
     @Test
     void communicateWinner() {
+        // Check test of LobbyHandler.removeActiveGameAndCommunicateWinners
     }
 
-    //TODO
+
     @Test
     void act() {
+        // Check tests of EndMatchCondition and LobbyHandler.removeActiveGameAndCommunicateWinners
     }
 }

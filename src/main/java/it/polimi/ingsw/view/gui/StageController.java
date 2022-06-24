@@ -4,8 +4,6 @@ import it.polimi.ingsw.view.game_objects.ClientLobby;
 import it.polimi.ingsw.view.game_objects.ClientRound;
 import it.polimi.ingsw.view.game_objects.ClientTable;
 import it.polimi.ingsw.view.game_objects.ClientTeams;
-import it.polimi.ingsw.view.gui.exceptions.CurrentSceneControllerNotSetException;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException;
 import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
 import it.polimi.ingsw.view.gui.scene_controllers.SceneController;
@@ -71,22 +69,12 @@ public class StageController {
         if (this.stage == null)
             throw new StageNotSetException("The Stage was not set in the StageController.");
         SceneControllerInterface nextSceneController = sceneControllers.get(sceneType);
+
         if (nextSceneController == null)
             throw new SceneControllerNotRegisteredException("The requested SceneController could not be found (" + sceneType.toString() + ").");
+
         stage.setScene(nextSceneController.getScene(drawLayout));
         this.currentSceneController = nextSceneController;
-        stage.show();
-    }
-
-    /**
-     * Draws the current scene, re-rendering the layout.
-     *
-     * @throws CurrentSceneControllerNotSetException
-     */
-    public void updateScene() throws CurrentSceneControllerNotSetException {
-        if (this.currentSceneController == null)
-            throw new CurrentSceneControllerNotSetException("No SceneController set in the StageController");
-        stage.setScene(this.currentSceneController.getScene(true));
         stage.show();
     }
 
@@ -104,7 +92,7 @@ public class StageController {
      * Sets properties to the Stage before showing the Scenes.
      */
     private void prepareStage() {
-        stage.setResizable(false);
+        stage.setResizable(true);
     }
 
     /**
@@ -129,11 +117,8 @@ public class StageController {
      * Returns the ViewInterface GUI.
      *
      * @return the ViewInterface GUI
-     * @throws GuiViewNotSet if GUI was not set
      */
-    public GUI getGuiView() throws GuiViewNotSet {
-        if (this.guiView == null)
-            throw new GuiViewNotSet();
+    public GUI getGuiView() {
         return guiView;
     }
 
@@ -218,6 +203,10 @@ public class StageController {
         this.clientLobby = clientLobby;
     }
 
+    public SceneControllerInterface getSceneControllers(SceneType type) {
+        return this.sceneControllers.get(type);
+    }
+
 
     /**
      * Handles the Exception occurred in a Scene.
@@ -227,11 +216,6 @@ public class StageController {
      */
     public void handleInternalException(Exception e) {
         e.printStackTrace();
-        try {
-            this.getGuiView().handleInternalException(e);
-        } catch (GuiViewNotSet ex) {
-            ex.printStackTrace();
-            System.exit(0);
-        }
+        this.getGuiView().handleInternalException(e);
     }
 }

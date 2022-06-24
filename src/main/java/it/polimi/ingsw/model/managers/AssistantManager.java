@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.AssistantCardNotSetException;
@@ -27,8 +28,10 @@ public class AssistantManager extends Manager {
 
     private ArrayList<AssistantCard> createAssistantCards (int wizardId) {
         ArrayList<AssistantCard> assistantCards = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            assistantCards.add(new AssistantCard(wizardId == 1 ? wizardId * i : 10 * (wizardId - 1) + i, i, i % 2 == 0 ? i / 2 : i / 2 + 1));
+        for (int i = ModelConstants.MIN_VALUE_OF_ASSISTANT_CARD; i <= ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD;
+             i += ModelConstants.OFFSET_BETWEEN_ASSISTANT_CARDS) {
+            assistantCards.add(new AssistantCard(wizardId == 1 ? wizardId * i : ModelConstants.MAX_VALUE_OF_ASSISTANT_CARD
+                    * (wizardId - 1) + i, i, i % 2 == 0 ? i / 2 : i / 2 + 1));
         }
         return assistantCards;
     }
@@ -115,15 +118,6 @@ public class AssistantManager extends Manager {
     public void moveAssistantCardInHandToLastPlayed (int playerId) throws NoSuchElementException {
         CommonManager.takePlayerById(this.getGameEngine(), playerId).setLastPlayedAssistantCard(CommonManager.takePlayerById(this.getGameEngine(), playerId).popActiveAssistantCard());
     }
-
-    /*
-    TODO
-    Needs round to verify first player that chooses the assistant card (important in case two players can't play different assistant cards)
-    public ArrayList<Integer> getPlayersPlayOrder () throws AssistantCardNotSetException {
-
-    }
-    */
-
 
     /**
      * Takes the id of the assistant card and retrieves the card value (useful to check if the card is selectable)

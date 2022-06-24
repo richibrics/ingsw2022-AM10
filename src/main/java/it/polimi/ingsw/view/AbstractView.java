@@ -10,6 +10,7 @@ abstract public class AbstractView implements ViewInterface {
     protected ClientServerConnection clientServerConnection;
     protected User user;
     protected ActionMessage actionMessage;
+    private int playerId;
 
     public AbstractView() {
         this.syncObject1 = new Object();
@@ -67,5 +68,13 @@ abstract public class AbstractView implements ViewInterface {
     @Override
     public ActionMessage getActionMessage() {
         return new ActionMessage(this.actionMessage.getActionId(), this.actionMessage.getOptions());
+    }
+
+    public int getPlayerId() {
+        return this.playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 }

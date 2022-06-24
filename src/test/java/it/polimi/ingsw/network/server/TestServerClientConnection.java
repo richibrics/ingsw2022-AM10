@@ -19,6 +19,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -326,7 +328,6 @@ class TestingServerClientConnectionWithAssert extends TestingServerClientConnect
         // If I have a success or an error, check with the assigned type
         if (message.getType() == MessageTypes.ERROR || message.getType() == MessageTypes.SUCCESS) {
             assertEquals(this.typeOfMessageToCheck, message.getType());
-            System.out.println(message.getPayload());
         }
     }
 };

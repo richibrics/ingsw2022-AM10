@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.gson_serializers;
 
 import com.google.gson.*;
+import it.polimi.ingsw.controller.ControllerConstants;
 import it.polimi.ingsw.model.Round;
 import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
 
@@ -25,9 +26,8 @@ public class RoundSerializer implements JsonSerializer<Round> {
             jsonObject.addProperty("currentPlayer", round.getCurrentPlayer());
         }
 
-        // TODO Add -1 to constants
         catch (PlayerOrderNotSetException e) {
-            jsonObject.addProperty("currentPlayer", -1);
+            jsonObject.addProperty("currentPlayer", ControllerConstants.ID_WHEN_PAYER_NOT_SET);
         }
 
         return jsonObject;

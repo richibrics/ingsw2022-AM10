@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,13 +24,13 @@ class CommandTest {
     @Test
     void getCLIMenuMessage() {
         Command command = new Command(4, 1, null, null);
-        System.out.println(command.getCLIMenuMessage());
+        Logger.getAnonymousLogger().log(Level.INFO, command.getCLIMenuMessage());
     }
 
     @Test
     void getGUIMenuMessage() {
         Command command = new Command(4, 1, null, null);
-        System.out.println(command.getGUIMenuMessage());
+        Logger.getAnonymousLogger().log(Level.INFO, command.getGUIMenuMessage());
     }
 
     @Test

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
 import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 
 public abstract class SceneController implements SceneControllerInterface {
     private Scene scene;
@@ -20,6 +20,8 @@ public abstract class SceneController implements SceneControllerInterface {
      */
     protected abstract Scene layout();
 
+    protected abstract void updateScene();
+
     /**
      * Returns the Scene.
      *
@@ -29,6 +31,9 @@ public abstract class SceneController implements SceneControllerInterface {
     public Scene getScene(boolean redrawLayout) {
         if (redrawLayout)
             this.scene = this.layout();
+        else
+            this.updateScene();
+
         return this.scene;
     }
 
@@ -38,6 +43,6 @@ public abstract class SceneController implements SceneControllerInterface {
      * @return blank scene
      */
     public Scene initialBlankScene() {
-        return new Scene(new VBox());
+        return new Scene(new AnchorPane());
     }
 }

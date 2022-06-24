@@ -171,13 +171,12 @@ public class CommonManager {
      * @throws NoSuchElementException if the team could not be found
      */
 
-    // TODO test
     public static int getTeamIdByUsername(GameEngine gameEngine, String username) throws NoSuchElementException {
         int teamId = -1;
         for (Team team : gameEngine.getTeams())
             for (Player player : team.getPlayers())
                 if (player.getUsername().equals(username))
-                    teamId = -1;
+                    teamId = team.getId();
 
         if (teamId == -1)
             throw new NoSuchElementException("The team could not be found");

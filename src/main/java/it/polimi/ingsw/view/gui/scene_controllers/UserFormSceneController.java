@@ -1,9 +1,9 @@
 package it.polimi.ingsw.view.gui.scene_controllers;
 
-import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.controller.ControllerConstants;
+import it.polimi.ingsw.view.ViewConstants;
 import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
-import it.polimi.ingsw.view.gui.exceptions.GuiViewNotSet;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,9 +13,12 @@ import javafx.scene.layout.VBox;
 
 public class UserFormSceneController extends SceneController {
     TextField textBox;
-    RadioButton twoPlayersRadioButton;
-    RadioButton threePlayersRadioButton;
-    RadioButton fourPlayersRadioButton;
+    RadioButton twoPlayersEasyRadioButton;
+    RadioButton threePlayersEasyRadioButton;
+    RadioButton fourPlayersEasyRadioButton;
+    RadioButton twoPlayersExpertRadioButton;
+    RadioButton threePlayersExpertRadioButton;
+    RadioButton fourPlayersExpertRadioButton;
 
     /**
      * Draws the layout in a scene and returns it.
@@ -50,26 +53,44 @@ public class UserFormSceneController extends SceneController {
         layoutUsernameInput.getChildren().add(textBox);
 
         ToggleGroup playersSelectionGroup = new ToggleGroup(); // Prevents multi choice in the radio buttons
-        twoPlayersRadioButton = new RadioButton();
-        threePlayersRadioButton = new RadioButton();
-        fourPlayersRadioButton = new RadioButton();
-        twoPlayersRadioButton.setText("2 players");
-        threePlayersRadioButton.setText("3 players");
-        fourPlayersRadioButton.setText("4 players");
-        twoPlayersRadioButton.setToggleGroup(playersSelectionGroup);
-        threePlayersRadioButton.setToggleGroup(playersSelectionGroup);
-        fourPlayersRadioButton.setToggleGroup(playersSelectionGroup);
+        twoPlayersEasyRadioButton = new RadioButton();
+        threePlayersEasyRadioButton = new RadioButton();
+        fourPlayersEasyRadioButton = new RadioButton();
+        twoPlayersExpertRadioButton = new RadioButton();
+        threePlayersExpertRadioButton = new RadioButton();
+        fourPlayersExpertRadioButton = new RadioButton();
+        twoPlayersEasyRadioButton.setText("2 players easy");
+        threePlayersEasyRadioButton.setText("3 players easy");
+        fourPlayersEasyRadioButton.setText("4 players easy");
+        twoPlayersExpertRadioButton.setText("2 players expert");
+        threePlayersExpertRadioButton.setText("3 players expert");
+        fourPlayersExpertRadioButton.setText("4 players expert");
+        twoPlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        threePlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        fourPlayersEasyRadioButton.setToggleGroup(playersSelectionGroup);
+        twoPlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
+        threePlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
+        fourPlayersExpertRadioButton.setToggleGroup(playersSelectionGroup);
 
-        layoutRadioButtons.getChildren().add(twoPlayersRadioButton);
-        layoutRadioButtons.getChildren().add(threePlayersRadioButton);
-        layoutRadioButtons.getChildren().add(fourPlayersRadioButton);
+        layoutRadioButtons.getChildren().add(twoPlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(threePlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(fourPlayersEasyRadioButton);
+        layoutRadioButtons.getChildren().add(twoPlayersExpertRadioButton);
+        layoutRadioButtons.getChildren().add(threePlayersExpertRadioButton);
+        layoutRadioButtons.getChildren().add(fourPlayersExpertRadioButton);
 
 
         layoutUsernameInput.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_USER_INPUT_BOX_CLASS);
         layoutRadioButtons.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_NUMBER_SELECTION_BOX_CLASS);
-        twoPlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
-        threePlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
-        fourPlayersRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        twoPlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        threePlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        fourPlayersEasyRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        twoPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        threePlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+        fourPlayersExpertRadioButton.getStyleClass().add(GUIConstants.SCENE_USER_FORM_STYLE_PLAYER_RADIO_BUTTONS_CLASS);
+
+        // Autoselect the first radio (not have to check if one has been selected)
+        twoPlayersExpertRadioButton.setSelected(true);
 
         Button nextButton = new Button("Enter in Lobby");
         nextButton.setOnAction(this::handleNextPageButton);
@@ -79,6 +100,11 @@ public class UserFormSceneController extends SceneController {
         Scene scene = new Scene(layout, GUIConstants.SCENE_USER_FORM_WIDTH, GUIConstants.SCENE_USER_FORM_HEIGHT);
         scene.getStylesheets().add(UserFormSceneController.class.getResource(GUIConstants.SCENE_USER_FORM_STYLESHEET_PATH).toExternalForm());
         return scene;
+    }
+
+    @Override
+    protected void updateScene() {
+
     }
 
     /**
@@ -94,11 +120,16 @@ public class UserFormSceneController extends SceneController {
      * @param e the event happened in the window
      */
     void handleNextPageButton(Event e) {
-        try {
-            int numberOfPlayers = twoPlayersRadioButton.isSelected() ? ModelConstants.TWO_PLAYERS : threePlayersRadioButton.isSelected() ? ModelConstants.THREE_PLAYERS : ModelConstants.FOUR_PLAYERS;
-            StageController.getStageController().getGuiView().handleSendUser(textBox.getText(), numberOfPlayers);
-        } catch (GuiViewNotSet ex) {
-            StageController.getStageController().handleInternalException(ex);
+        if(textBox.getText().strip().length()>0 && textBox.getText().strip().length() <= ViewConstants.MAX_LENGTH_OF_USERNAME ) {
+            int selectedPreference =
+                    twoPlayersEasyRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EASY :
+                            threePlayersEasyRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EASY :
+                                    fourPlayersEasyRadioButton.isSelected() ? ControllerConstants.FOUR_PLAYERS_PREFERENCE_EASY :
+                                            twoPlayersExpertRadioButton.isSelected() ? ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT :
+                                                    threePlayersExpertRadioButton.isSelected() ? ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT : ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT;
+            StageController.getStageController().getGuiView().handleSendUser(textBox.getText().strip(), selectedPreference);
+        } else {
+            StageController.getStageController().getGuiView().showError("Username length must be between 1 and " + String.valueOf(ViewConstants.MAX_LENGTH_OF_USERNAME) + " characters", false);
         }
     }
 }

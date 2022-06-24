@@ -57,7 +57,9 @@ public class ModelConstants {
     public static int MAX_ID_OF_WIZARD = 4;
     public static int MIN_VALUE_OF_ASSISTANT_CARD = 1;
     public static int MAX_VALUE_OF_ASSISTANT_CARD = 10;
+    public static int OFFSET_BETWEEN_ASSISTANT_CARDS = 1;
     public static int MIN_ID_OF_ISLAND = 1;
+    public static int OFFSET_BETWEEN_ISLAND_IDS = 1;
     public static int MIN_ID_OF_PLAYER = 1;
     public static int MIN_ID_OF_TEAM = 1;
     public static int MIN_ID_OF_TOWER = 1;

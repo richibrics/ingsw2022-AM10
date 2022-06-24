@@ -9,7 +9,6 @@ import java.util.Map;
 public class ActionManager extends Manager {
 
     private Action[] actions = new Action[ModelConstants.NUMBER_OF_STANDARD_ACTIONS];
-    //TODO observers
 
     public ActionManager(GameEngine gameEngine) {
         super(gameEngine);
@@ -33,7 +32,6 @@ public class ActionManager extends Manager {
     public void generateActions() throws Exception {
         this.generateSetUp();
         this.generateArrayOfActions();
-        //notifyAllObservers();
     }
 
     /**
@@ -60,7 +58,6 @@ public class ActionManager extends Manager {
      * Generates all the standard actions.
      */
 
-
     private void generateArrayOfActions() {
         this.actions[ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID] = new OnSelectionOfWizardAction(this.getGameEngine());
         if (this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 2 || this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 4)
@@ -68,7 +65,8 @@ public class ActionManager extends Manager {
         else if (this.getGameEngine().getTeams().stream().flatMap(team -> team.getPlayers().stream()).count() == 3)
             this.actions[ModelConstants.ACTION_DRAW_FROM_BAG_TO_CLOUD_ID] = new DrawFromBagToCloudThreePlayersAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_ID] = new OnSelectionOfAssistantsCardAction(this.getGameEngine());
-        this.actions[ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID] = new OnSelectionOfCharacterCardAction(this.getGameEngine());
+        if (this.getGameEngine().getExpertMode())
+            this.actions[ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID] = new OnSelectionOfCharacterCardAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID] = new MoveStudentsFromEntranceAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID] = new MoveMotherNatureAction(this.getGameEngine());
         this.actions[ModelConstants.ACTION_FROM_CLOUD_TILE_TO_ENTRANCE_ID] = new FromCloudTileToEntranceAction(this.getGameEngine());
@@ -105,14 +103,5 @@ public class ActionManager extends Manager {
         actions[actionId].act();
         if (runModifyRoundAndActionList)
             actions[actionId].modifyRoundAndActionList();
-    }
-
-    /**
-     * Notifies all the observers attached to the ActionManager.
-     */
-
-    //TODO
-    public void notifyAllObservers() {
-
     }
 }

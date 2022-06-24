@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server implements Runnable {
 
@@ -36,16 +38,16 @@ public class Server implements Runnable {
         try {
             this.serverSocket = new ServerSocket(this.port);
         } catch (IOException e) {
-            System.out.println("Server unable to create the socket.");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Server unable to create the socket.");
             e.printStackTrace();
         }
 
         while (true) {
             Socket clientSocket;
             try {
-                System.out.println("Waiting for connection.");
+                Logger.getAnonymousLogger().log(Level.INFO, "Waiting for connection.");
                 clientSocket = this.serverSocket.accept();
-                System.out.println("Connection accepted.");
+                Logger.getAnonymousLogger().log(Level.INFO, "Connection accepted.");
 
                 synchronized (this.listOfServerClientConnections) {
                     ServerClientConnection serverClientConnection = new ServerClientConnection(clientSocket);
@@ -59,7 +61,7 @@ public class Server implements Runnable {
                 }
             }
             catch (IOException e) {
-                System.out.println("Server unable to accept the connection.");
+                Logger.getAnonymousLogger().log(Level.SEVERE, "Server unable to accept the connection.");
                 e.printStackTrace();
             }
         }

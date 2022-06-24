@@ -19,6 +19,8 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientServerConnection implements Runnable {
 
@@ -95,8 +97,9 @@ public class ClientServerConnection implements Runnable {
         // closed.
         try {
             this.closeConnection();
+            Logger.getAnonymousLogger().log(Level.INFO, "Execution ended, connection closed");
         } catch (IOException e) {
-            System.err.println("Unable to close the connection with server");
+            Logger.getAnonymousLogger().log(Level.SEVERE, "Unable to close the connection with server");
             System.exit(1);
         }
     }
@@ -123,7 +126,7 @@ public class ClientServerConnection implements Runnable {
             } catch (IOException e) {
                 this.setContinueReceiving(false);
             } catch (WrongMessageContentException e) {
-                this.askToCloseConnection();
+                this.askToCloseConnectionWithError(e.getMessage());
             }
     }
 
@@ -176,7 +179,7 @@ public class ClientServerConnection implements Runnable {
         } catch (SocketTimeoutException e) {
             return;
         } catch (IOException e) {
-            this.askToCloseConnection();
+            this.askToCloseConnectionWithError("Server unreachable");
             return;
         } catch (InterruptedException e) {
             return;
@@ -279,9 +282,10 @@ public class ClientServerConnection implements Runnable {
                 case END_GAME -> {
                     this.view.displayWinners(message.getPayload());
                     this.askToCloseConnection();
+                    Logger.getAnonymousLogger().log(Level.SEVERE, "Match ended, connection closed");
                 }
                 case ERROR -> {
-                    this.view.showError(message.getPayload());
+                    this.view.showError(message.getPayload(), false);
                     if (this.getGameNotStarted()) {
                         // User error
                         this.view.setUserReady(false);
@@ -289,6 +293,9 @@ public class ClientServerConnection implements Runnable {
                     } else {
                         this.askAndSendAction();
                     }
+                }
+                case PLAYER_DISCONNECTION -> {
+                    this.askToCloseConnectionWithError("A player disconnected, connection closed");
                 }
                 default -> {
                 }
@@ -341,8 +348,20 @@ public class ClientServerConnection implements Runnable {
     /**
      * Sets to false the flag that controls the while that checks if a new message has been received by the client.
      */
-
     public void askToCloseConnection() {
+        // The reason is shown only if another error is not open
+        this.setContinueReceiving(false);
+    }
+
+    /**
+     * Sets to false the flag that controls the while that checks if a new message has been received by the client.
+     * @param reason reason of connection close.
+     */
+    public void askToCloseConnectionWithError(String reason) {
+        // The reason is shown only if another error is not open; in that case the closeConnection is already waiting
+        if(!this.view.isCriticalErrorOpen())
+            this.showError(reason, true);
+
         this.setContinueReceiving(false);
     }
 
@@ -356,6 +375,13 @@ public class ClientServerConnection implements Runnable {
         this.bufferOut.close();
         this.bufferIn.close();
         this.socket.close();
+        while (this.view.isCriticalErrorOpen()) {
+            try {
+                Thread.sleep(NetworkConstants.TIME_TO_SLEEP_BETWEEN_LOOP_CHECK_IN_MILLISECONDS);
+            } catch (InterruptedException e) {
+                System.exit(0);
+            }
+        }
         System.exit(0);
     }
 
@@ -456,5 +482,14 @@ public class ClientServerConnection implements Runnable {
         synchronized (syncObject2) {
             this.flagActionMessageIsReady = newValue;
         }
+    }
+
+    /**
+     * Displays an error on the view.
+     * @param error the error to display.
+     * @param isCritical if the error leads to app close
+     */
+    public void showError(String error, boolean isCritical) {
+        this.view.showError(error, isCritical);
     }
 }

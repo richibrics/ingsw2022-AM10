@@ -12,5 +12,6 @@ public enum MessageTypes {
     LOBBY,
     ERROR,
     SUCCESS,
-    DEFAULT
+    DEFAULT,
+    PLAYER_DISCONNECTION
 }
