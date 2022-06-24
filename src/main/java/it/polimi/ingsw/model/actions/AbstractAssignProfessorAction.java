@@ -38,7 +38,7 @@ public abstract class AbstractAssignProfessorAction extends Action {
      * @return true if the professor  of color {@code color} has to be moved to a different team, false otherwise
      */
 
-    public abstract boolean checkMoveProfessorCondition(PawnColor color, Player player, Map<Integer, Long> studentsOfPlayer);
+    public abstract int[] checkMoveProfessorCondition(PawnColor color, Player player, Map<Integer, Long> studentsOfPlayer);
 
     /**
      * Implements the behaviour of the action.
@@ -50,11 +50,13 @@ public abstract class AbstractAssignProfessorAction extends Action {
             Map<Integer, Long> studentsOfPlayer = new HashMap<>();
             for (Team team : this.getGameEngine().getTeams())
                 for (Player player : team.getPlayers())
-                    studentsOfPlayer.put(player.getPlayerId(), player.getSchoolBoard().getDiningRoomColor(color).stream().count());
+                    studentsOfPlayer.put(player.getPlayerId(), (long) player.getSchoolBoard().getDiningRoomColor(color).size());
 
             int key = this.getKey(studentsOfPlayer);
-            Team winningTeam = CommonManager.takeTeamById(this.getGameEngine(), CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), key));
-            if (this.checkMoveProfessorCondition(color, CommonManager.takePlayerById(this.getGameEngine(), key), studentsOfPlayer)) {
+            int[] resultOfCheckMoveProfessorCondition = this.checkMoveProfessorCondition(color, CommonManager.takePlayerById(this.getGameEngine(), key), studentsOfPlayer);
+            // If resultOfCheckMoveProfessorCondition[1] the professor must be moved
+            if (resultOfCheckMoveProfessorCondition[1] == 1) {
+                Team winningTeam = CommonManager.takeTeamById(this.getGameEngine(), resultOfCheckMoveProfessorCondition[0]);
                 if (this.getGameEngine().getTable().getAvailableProfessorPawns().stream().filter(professorPawn -> professorPawn.getColor().equals(color)).count() == 1)
                     winningTeam.addProfessorPawn(this.getGameEngine().getTable().popProfessorPawn(color));
                 else

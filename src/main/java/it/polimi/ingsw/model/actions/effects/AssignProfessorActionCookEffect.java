@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect {
 
@@ -39,16 +40,28 @@ public class AssignProfessorActionCookEffect extends AssignProfessorActionEffect
      * @param winningPlayer      the player that has the highest number of students of color {@code color} in the
      *                         dining room
      * @param studentsOfPlayer the map with playerId - number of students of color {@code color} in the dining room
-     * @return true if the professor  of color {@code color} has to be moved to a different team, false otherwise
+     * @return the id of the team which should receive the professor pawn and an integer which equals 1 if the professor
+     * of color {@code color} has to be moved to a different team, 0 otherwise
      */
 
     @Override
-    public boolean checkMoveProfessorCondition(PawnColor color, Player winningPlayer, Map<Integer, Long> studentsOfPlayer) {
+    public int[] checkMoveProfessorCondition(PawnColor color, Player winningPlayer, Map<Integer, Long> studentsOfPlayer) {
 
-        return (CommonManager.takeTeamById(this.getGameEngine(), CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), winningPlayer.getPlayerId())).getProfessorTable()
-                .stream()
-                .filter(professorPawn -> professorPawn.getColor().equals(color)).count() == 0) &&
-                (winningPlayer.getPlayerId() == this.getPlayerId() ||
-                 studentsOfPlayer.values().stream().filter(value -> value == studentsOfPlayer.get(winningPlayer.getPlayerId())).count() == 1);
+        // The player has the same number of students (!= 0) of the winning player and does not have the professor pawn
+        if (studentsOfPlayer.get(winningPlayer.getPlayerId()) != 0 &&
+                Objects.equals(studentsOfPlayer.get(this.getPlayerId()), studentsOfPlayer.get(winningPlayer.getPlayerId())) &&
+                CommonManager.takeTeamById(this.getGameEngine(), CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), this.getPlayerId())).getProfessorTable()
+                        .stream().noneMatch(professorPawn -> professorPawn.getColor().equals(color)))
+            return new int[]{CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), this.getPlayerId()), 1};
+
+        // The winning player does not have the professor pawn and is the only winner
+        else if (CommonManager.takeTeamById(this.getGameEngine(), CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), winningPlayer.getPlayerId())).getProfessorTable()
+                .stream().noneMatch(professorPawn -> professorPawn.getColor().equals(color))
+                && studentsOfPlayer.values().stream().filter(value -> Objects.equals(value, studentsOfPlayer.get(winningPlayer.getPlayerId()))).count() == 1)
+            return new int[]{CommonManager.takeTeamIdByPlayerId(this.getGameEngine(), winningPlayer.getPlayerId()), 1};
+
+        // No change should take place
+        else
+            return new int[]{-1, 0};
     }
 }

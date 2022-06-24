@@ -69,13 +69,13 @@ class TestAssignProfessorsAction {
         studentsOfPlayer.put(1, (long) 5);
         studentsOfPlayer.put(2, (long) 4);
         studentsOfPlayer.put(3, (long) 3);
-        assertTrue(assignProfessorsAction.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer));
+        assertEquals(1, assignProfessorsAction.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer)[1]);
         assertDoesNotThrow(() -> winningTeam.addProfessorPawn(gameEngine.getTable().popProfessorPawn(PawnColor.RED)));
-        assertFalse(assignProfessorsAction.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer));
+        assertEquals(0, assignProfessorsAction.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer)[1]);
         gameEngine.getSchoolPawnManager().moveProfessor(3, 1, PawnColor.RED);
         studentsOfPlayer.put(2, (long) 5);
-        assertFalse(assignProfessorsAction.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer));
-        assertFalse(assignProfessorsAction.checkMoveProfessorCondition(PawnColor.GREEN, winningPlayer, studentsOfPlayer));
+        assertEquals(0, assignProfessorsAction.checkMoveProfessorCondition(PawnColor.RED, winningPlayer, studentsOfPlayer)[1]);
+        assertEquals(0, assignProfessorsAction.checkMoveProfessorCondition(PawnColor.GREEN, winningPlayer, studentsOfPlayer)[1]);
     }
 
     @Test
