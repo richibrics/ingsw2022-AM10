@@ -198,7 +198,7 @@ public class Cli extends AbstractView {
             this.bufferOut.write("Select the game mode (b for basic, e for expert): ");
             this.bufferOut.flush();
             String gameMode = this.bufferIn.readLine();
-            while (!gameMode.equals(CliConstants.EXPERT_GAME) && !gameMode.equals(CliConstants.BASIC_GAME)) {
+            while (!gameMode.equalsIgnoreCase(CliConstants.EXPERT_GAME) && !gameMode.equalsIgnoreCase(CliConstants.BASIC_GAME)) {
                 this.bufferOut.write("The selected game mode is incorrect. Please select a new game mode" +
                         " (b for basic, e for expert): ");
                 this.bufferOut.flush();
@@ -287,7 +287,7 @@ public class Cli extends AbstractView {
 
             } while ((newNumberOfPlayers != ViewConstants.TWO_PLAYERS_GAME && newNumberOfPlayers != ViewConstants.THREE_PLAYERS_GAME
                     && newNumberOfPlayers != ViewConstants.FOUR_PLAYERS_GAME)
-                    || (!newGameMode.equals(CliConstants.EXPERT_GAME) && !newGameMode.equals(CliConstants.BASIC_GAME)));
+                    || (!newGameMode.equalsIgnoreCase(CliConstants.EXPERT_GAME) && !newGameMode.equalsIgnoreCase(CliConstants.BASIC_GAME)));
 
             // Update preference
             this.clientServerConnection.changePreference(ViewUtilityFunctions.getPreferenceFromGameModeAndClientPreference(newGameMode, newNumberOfPlayers));
@@ -340,7 +340,7 @@ public class Cli extends AbstractView {
                             this.bufferOut.write("\nWould you like to continue? Y/N: ");
                             this.bufferOut.flush();
                             line = this.bufferIn.readLine();
-                            if (line.equals(CliConstants.TERMINATE_ACTION_INPUT_OPTIONAL_STRING))
+                            if (line.equalsIgnoreCase(CliConstants.TERMINATE_ACTION_INPUT_OPTIONAL_STRING))
                                 break;
                         }
 
@@ -348,7 +348,7 @@ public class Cli extends AbstractView {
                             this.bufferOut.write(command.getCLIMenuMessage() + ": ");
                             this.bufferOut.flush();
                             line = this.bufferIn.readLine();
-                            if (line.equals(CliConstants.CANCEL_ACTION_INPUT_STRING))
+                            if (line.equalsIgnoreCase(CliConstants.CANCEL_ACTION_INPUT_STRING))
                                 actionInputCanceled = true;
                             else
                                 command.parseCLIString(line);
