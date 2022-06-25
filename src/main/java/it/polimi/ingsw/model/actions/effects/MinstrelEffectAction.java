@@ -149,12 +149,22 @@ public class MinstrelEffectAction extends Action {
             schoolBoard.removeStudentFromDiningRoom(studentInDiningRoom1);
             schoolBoard.addStudentToDiningRoom(studentInEntrance1);
         }
+        // Dining tables management ended
+
+        // Entrance management
+        // Add
         ArrayList<StudentDisc> studentsToEntrance = new ArrayList<>();
         studentsToEntrance.add(studentInDiningRoom1);
         if (studentInDiningRoom2Id != null) {
             studentsToEntrance.add(studentInDiningRoom2);
         }
         schoolBoard.addStudentsToEntrance(studentsToEntrance);
+
+        // Remove
+        schoolBoard.removeStudentFromEntrance(studentInEntrance1.getId());
+        if (studentInEntrance2 != null) {
+            schoolBoard.removeStudentFromEntrance(studentInEntrance2.getId());
+        }
     }
 
 }

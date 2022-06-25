@@ -122,23 +122,23 @@ public class JesterEffectAction extends Action {
         for (StudentDisc studentDisc : characterCard.getStudentsStorage()) {
             if (studentDisc.getId() == this.studentInStorageId1)
                 studentInStorage1 = studentDisc;
-            if (studentDisc.getId() == this.studentInStorageId2)
+            if (studentInStorageId2 != null && studentDisc.getId() == this.studentInStorageId2)
                 studentInStorage2 = studentDisc;
-            if (studentDisc.getId() == this.studentInStorageId3)
+            if (studentInStorageId3 != null && studentDisc.getId() == this.studentInStorageId3)
                 studentInStorage3 = studentDisc;
         }
-        if (studentInStorage1 == null || studentInStorage2 == null || studentInStorage3 == null) {
+        if (studentInStorage1 == null || (studentInStorage2 == null && studentInStorageId2 != null) || (studentInStorage3 == null && studentInStorageId3 != null)) {
             throw new IllegalGameActionException("The student requested isn't in card storage");
         }
         for (StudentDisc studentDisc : CommonManager.takeSchoolBoardByPlayerId(getGameEngine(), getPlayerId()).getEntrance()) {
             if (studentDisc.getId() == this.studentId1)
                 studentInEntrance1 = studentDisc;
-            if (studentDisc.getId() == this.studentId2)
+            if (this.studentId2 != null && studentDisc.getId() == this.studentId2)
                 studentInEntrance2 = studentDisc;
-            if (studentDisc.getId() == this.studentId3)
+            if (this.studentId3 != null && studentDisc.getId() == this.studentId3)
                 studentInEntrance3 = studentDisc;
         }
-        if (studentInEntrance1 == null || studentInEntrance2 == null || studentInEntrance3 == null) {
+        if (studentInEntrance1 == null || (studentInEntrance2 == null && this.studentId2 != null) || (studentInEntrance3 == null && this.studentId3 != null)) {
             throw new IllegalGameActionException("The student requested isn't in the entrance");
         }
         characterCard.removeStudentFromStorage(studentInStorageId1);

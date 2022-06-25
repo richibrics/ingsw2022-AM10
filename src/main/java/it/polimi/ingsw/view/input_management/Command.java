@@ -8,12 +8,8 @@ import it.polimi.ingsw.view.ViewUtilityFunctions;
 import it.polimi.ingsw.view.cli.CliConstants;
 import it.polimi.ingsw.view.cli.drawers.CliDrawersUtilityFunctions;
 import it.polimi.ingsw.view.game_objects.*;
-import javafx.event.Event;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Command {
     private final ClientTable clientTable;
@@ -22,6 +18,11 @@ public class Command {
     private CommandData commandData;
     private int currentEntryIndex;
     private final Map<String, String> actionOptions;
+
+    // Remember which students have already been selected.
+    // Needed because for the cards, more students are selected from one position without sending the request
+    // to the server every time.
+    private final List<Integer> alreadySelectedStudents;
 
     /**
      * Creates the Command, using the {@code actionId} to read the json
@@ -37,6 +38,7 @@ public class Command {
         this.clientTeams = clientTeams;
         this.playerId = playerId;
         this.actionOptions = new HashMap<>();
+        this.alreadySelectedStudents = new ArrayList<>();
         this.commandData = CommandFilesReader.getCommandFilesReader().getCommandData(actionId);
     }
 
@@ -93,7 +95,7 @@ public class Command {
             // Get last student from the table, if there's one
             int selectedStudent = -1;
             for (Integer student : entrance) {
-                if (CliDrawersUtilityFunctions.getStudentColorById(student).equals(color)) {
+                if (CliDrawersUtilityFunctions.getStudentColorById(student).equals(color) && !alreadySelectedStudents.contains(student)) {
                     selectedStudent = student;
                     break;
                 }
@@ -102,6 +104,7 @@ public class Command {
                 throw new IllegalArgumentException("No students available with the selected color");
             }
             finalValue = String.valueOf(selectedStudent);
+            alreadySelectedStudents.add(selectedStudent);
         } else if (validation.equals(CommandDataEntryValidationSet.STUDENT_DINING_ROOM)) {
             PawnColor color;
             try {
@@ -113,12 +116,17 @@ public class Command {
             int indexOfPlayerSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(this.playerId, clientTeams);
             // Now I have the color, get the id of the student using it. Here I do it from dining room of the User
             ArrayList<Integer> table = this.clientTable.getSchoolBoards().get(indexOfPlayerSchoolBoard).getDiningRoom().get(color.getId());
-            // Get last student from the table, if there's one
-            if (table.size() > 0) {
-                finalValue = String.valueOf(table.get(table.size() - 1));
-            } else {
-                throw new IllegalArgumentException("No students available with the selected color");
+            // Get last student from the table, if there's one. If already selected, take the previous one.
+            int tablePosition = table.size() - 1;
+            while (tablePosition >= 0 && finalValue.equals("null")) {
+                if(!alreadySelectedStudents.contains(table.get(tablePosition))) { // if not already selected, take it
+                    finalValue = String.valueOf(table.get(tablePosition));
+                    alreadySelectedStudents.add(table.get(tablePosition));
+                }
+                tablePosition--;
             }
+            if (finalValue.equals("null"))
+                throw new IllegalArgumentException("No students available with the selected color");
         } else if (validation.equals(CommandDataEntryValidationSet.STUDENT_CHARACTER_CARD)) {
             PawnColor color;
             try {
@@ -142,7 +150,7 @@ public class Command {
             // Get a student with the specified color from there, if there's one
             int selectedStudent = -1;
             for (Integer student : storage) {
-                if (CliDrawersUtilityFunctions.getStudentColorById(student).equals(color)) {
+                if (CliDrawersUtilityFunctions.getStudentColorById(student).equals(color) && !alreadySelectedStudents.contains(student)) {
                     selectedStudent = student;
                     break;
                 }
@@ -151,6 +159,7 @@ public class Command {
                 throw new IllegalArgumentException("No students available with the selected color");
             }
             finalValue = String.valueOf(selectedStudent);
+            alreadySelectedStudents.add(selectedStudent);
         } else if (validation.equals(CommandDataEntryValidationSet.CHARACTER_CARD)) {
             // Check character card on the table. If so, get the Command for that card if it is available.
             try {
@@ -225,16 +234,6 @@ public class Command {
     }
 
     /**
-     * Receives the GUI event, like the clicked button id/tag.
-     * The input is validated through the validation rules of the entry and then saved in the message.
-     *
-     * @param event the GUI event, like the clicked button id/tag.
-     */
-    public void parseGUIEvent(Event event) {
-
-    }
-
-    /**
      * Returns the question for the user input - CLI version.
      *
      * @return the question for the user input
@@ -306,7 +305,8 @@ public class Command {
 
     /**
      * Returns the validation of the next input.
-     * @return
+     *
+     * @return returns the validation of the next input.
      */
 
     public String getValidation() {
