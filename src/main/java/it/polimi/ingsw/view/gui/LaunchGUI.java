@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.view.gui.scene_controllers.*;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public class LaunchGUI extends Application {
     public void start(Stage primaryStage) throws Exception {
         sceneChangeRequested = false;
         sceneUpdateRequested = false;
+
+        // Make initial splashscreen unclosable
+        primaryStage.setOnCloseRequest(Event::consume);
 
         Logger.getAnonymousLogger().log(Level.INFO, "Starting GUI...");
         List<String> parameters = getParameters().getRaw();

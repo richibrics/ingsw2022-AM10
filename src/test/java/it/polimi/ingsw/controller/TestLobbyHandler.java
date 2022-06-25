@@ -31,4 +31,24 @@ class TestLobbyHandler {
     void getClientsWaiting() {
 
     }
+
+    @Test
+    void emptyMap() {
+
+    }
+
+    @Test
+    void removeActiveGame() {
+
+    }
+
+    @Test
+    void removeActiveGameAndCommunicateWinners() {
+
+    }
+
+    @Test
+    void removeDisconnectedUser() {
+
+    }
 }

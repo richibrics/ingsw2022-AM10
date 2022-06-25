@@ -11,8 +11,10 @@ import it.polimi.ingsw.view.gui.exceptions.SceneControllerNotRegisteredException
 import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
 import it.polimi.ingsw.view.input_management.Command;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +78,13 @@ public class GUI extends AbstractView {
     public void askForUser() {
         // Wait until StageController is ready
         this.waitForGuiToStart();
+        // Close connection when the client closes the window
+        StageController.getStageController().getStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnection();
+            }
+        });
 
         // Stage is ready: can show the user window (use the GUI thread !)
         this.showScene(SceneType.USER_FORM_SCENE, true);

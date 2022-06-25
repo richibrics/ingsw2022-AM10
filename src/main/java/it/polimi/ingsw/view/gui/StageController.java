@@ -218,4 +218,8 @@ public class StageController {
         e.printStackTrace();
         this.getGuiView().handleInternalException(e);
     }
+
+    public Stage getStage() {
+        return this.stage;
+    }
 }
