@@ -209,6 +209,17 @@ public class StageController {
 
 
     /**
+     * Draws the current scene, re-rendering the layout.
+     */
+    public void updateScene() throws SceneControllerNotRegisteredException, StageNotSetException {
+        if (this.currentSceneController == null) {
+            this.showScene(SceneType.SPLASHSCREEN_SCENE, true);
+        }
+        stage.setScene(this.currentSceneController.getScene(false));
+        stage.show();
+    }
+
+    /**
      * Handles the Exception occurred in a Scene.
      * If it can't handle it closing the socket, closes directly the Application
      *

@@ -57,7 +57,16 @@ public class GUI extends AbstractView {
         });
 
         // Show table scene
-        this.showScene(SceneType.TABLE_SCENE, firstTime);
+        if(firstTime)
+            this.showScene(SceneType.TABLE_SCENE, firstTime);
+        else
+            Platform.runLater(() -> {
+                try {
+                    StageController.getStageController().updateScene();
+                } catch (SceneControllerNotRegisteredException | StageNotSetException e) {
+                    this.handleInternalException(e);
+                }
+            });
         firstTime = false;
     }
 
