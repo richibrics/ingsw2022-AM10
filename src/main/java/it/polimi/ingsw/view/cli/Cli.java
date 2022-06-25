@@ -54,12 +54,9 @@ public class Cli extends AbstractView {
             // Clear terminal
             this.clearTerminal();
             // Create templates if not already created
-            if (this.schoolBoardsTemplate == null)
-                this.schoolBoardsTemplate = SchoolBoardDrawer.generateTemplate((int) clientTeams.getTeams().stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).count());
-            if (this.characterCardsTemplate == null && this.getUser().getPreference() > 0)
-                this.characterCardsTemplate = CharacterCardDrawer.generateTemplate(clientTable.getActiveCharacterCards());
-            if (this.cloudTilesTemplate == null)
-                this.cloudTilesTemplate = CloudTilesDrawer.generateTemplate(clientTable.getCloudTiles());
+            this.schoolBoardsTemplate = SchoolBoardDrawer.generateTemplate((int) clientTeams.getTeams().stream().flatMap(clientTeam -> clientTeam.getPlayers().stream()).count());
+            this.characterCardsTemplate = CharacterCardDrawer.generateTemplate(clientTable.getActiveCharacterCards());
+            this.cloudTilesTemplate = CloudTilesDrawer.generateTemplate(clientTable.getCloudTiles());
 
             // Fill templates
             SchoolBoardDrawer.fillTemplate(this.schoolBoardsTemplate, clientTable, clientTeams);

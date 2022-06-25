@@ -10,12 +10,14 @@ import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class SchoolBoardsFunction {
 
@@ -109,6 +111,49 @@ public class SchoolBoardsFunction {
                 }
             }
         }
+
+        //Case 4: Change students that have been replaced
+        else {
+            // Get student discs that must be replaced
+            Integer[] studentsToReplace = Arrays.stream(previousEntrance)
+                    .filter(id-> Arrays.stream(previousEntrance).anyMatch(id1->id1 == id) && Arrays.stream(currentEntrance).noneMatch(id2->id2 == id))
+                    .toArray(Integer[]::new);
+
+            // Get new students to add
+            Integer[] studentsToAdd = Arrays.stream(currentEntrance)
+                    .filter(id-> Arrays.stream(previousEntrance).noneMatch(id1->id1 == id) && Arrays.stream(currentEntrance).anyMatch(id2->id2 == id))
+                    .toArray(Integer[]::new);
+
+            int indexOfStudentToAdd = 0;
+            for (int i = 0; i < coordinatesOfStudentsInEntrance.length; i++) {
+                // Get node at this.coordinatesOfStudentsInEntrance[i] if present
+                int finalI = i;
+                if (schoolBoard.getChildren()
+                        .stream()
+                        .filter(n -> n.getLayoutX() == coordinatesOfStudentsInEntrance[finalI][1]
+                                && n.getLayoutY() == coordinatesOfStudentsInEntrance[finalI][0])
+                        .count() == 1) {
+                    Node node = schoolBoard.getChildren()
+                            .stream()
+                            .filter(n -> n.getLayoutX() == coordinatesOfStudentsInEntrance[finalI][1]
+                                    && n.getLayoutY() == coordinatesOfStudentsInEntrance[finalI][0]).toList().get(0);
+                    // Check if the student must be replaced
+                    if (Arrays.stream(studentsToReplace)
+                            .filter(id -> id == ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()))
+                            .count() == 1) {
+                        // Change node to image view
+                        ImageView student = (ImageView) node;
+                        // Change id of node
+                        student.setId(GUIConstants.STUDENT_DISC_NAME + studentsToAdd[indexOfStudentToAdd]);
+                        // Change image of node
+                        student.setImage(Images.getImages().getStudentDiscs()[ViewUtilityFunctions.convertStudentIdToIdOfColor(studentsToAdd[indexOfStudentToAdd])]);
+                        // Increment index for array of students to add
+                        indexOfStudentToAdd++;
+                    }
+                }
+            }
+        }
+
         // Update previous entrance
         return currentEntrance;
     }
