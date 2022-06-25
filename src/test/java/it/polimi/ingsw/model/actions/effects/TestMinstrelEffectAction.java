@@ -180,6 +180,11 @@ class TestMinstrelEffectAction {
         assertDoesNotThrow(() -> gameEngine.getSchoolPawnManager().moveStudentFromEntranceToDiningRoom(1, studt2));
         assertDoesNotThrow(() -> gameEngine.getSchoolPawnManager().moveStudentFromEntranceToDiningRoom(1, studt1));
         int studt3 = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(0).getId());
+
+        // Add a student in the entrance to test the multi movement
+        assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromBagToCloud(4,1));
+        assertDoesNotThrow(()->gameEngine.getSchoolPawnManager().moveStudentsFromCloudTileToEntrance(1, 1));
+
         int studt4 = assertDoesNotThrow(() -> CommonManager.takePlayerById(gameEngine, 1).getSchoolBoard().getEntrance().get(1).getId());
         options.put(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM2, String.valueOf(studt2));
         options.put(ModelConstants.ACTION_MINSTREL_OPTIONS_KEY_STUDENT_IN_DINING_ROOM1, String.valueOf(studt1));
