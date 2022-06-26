@@ -41,13 +41,17 @@ public class LadyEffectAction extends Action {
      * Modifies the Round class, which contains the actions that can be performed by the current player
      * and the order of play, and the Action List in the Action Manager.
      * In this case the round doesn't change.
+     * In this case, if the movement of the students isn't finished, I don't calculate the professors.
+     * If the professors have already been moved in this turn I recall that action.
      *
      * @throws Exception if something bad happens.
      */
 
     @Override
     public void modifyRoundAndActionList() throws Exception {
-
+        // Already played the movements: recall the professors calculation
+        if(!this.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID))
+            this.getGameEngine().getActionManager().executeInternalAction(ModelConstants.ACTION_ASSIGN_PROFESSORS_ID, this.getPlayerId(), false);
     }
 
     /**

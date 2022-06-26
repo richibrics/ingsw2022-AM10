@@ -123,6 +123,9 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
                     islandGroup = islandTiles;
                     break;
                 }
+            // After the execution on the specified island, the calculate influence will run (the next time will be called)
+            // where there is mother nature.
+            this.islandId = -1;
         } else {
             targetIsland = this.getGameEngine().getTable().getMotherNature().getIslandTile();
             islandGroup = this.getGroupWithMotherNature();
