@@ -125,7 +125,6 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
                 }
             // After the execution on the specified island, the calculate influence will run (the next time will be called)
             // where there is mother nature.
-            this.islandId = -1;
         } else {
             targetIsland = this.getGameEngine().getTable().getMotherNature().getIslandTile();
             islandGroup = this.getGroupWithMotherNature();
@@ -180,6 +179,8 @@ public abstract class AbstractCalculateInfluenceAction extends Action {
         /* Remove the entry tiles from the island tiles of the group */
         if (targetIsland.hasNoEntry() && this.islandId == -1)
             this.getGameEngine().getIslandManager().setIslandGroupNoEntryByIslandId(islandGroup.get(0).getId(), false);
+
+        this.islandId = -1;
     }
 
     /**

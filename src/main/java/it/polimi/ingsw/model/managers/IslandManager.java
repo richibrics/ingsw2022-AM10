@@ -28,9 +28,12 @@ public class IslandManager extends Manager {
         Table table = this.getGameEngine().getTable();
         ArrayList<ArrayList<IslandTile>> islandTiles = table.getIslandTiles();
         if (islandTiles.size() > 1) {
-            for (int groupId = 0; groupId < islandTiles.size() - 1; groupId++) {
-                IslandTile islandLeftGroup = islandTiles.get(groupId).get(0);
-                IslandTile islandRightGroup = islandTiles.get(groupId + 1).get(0);
+            int startingGroup = islandTiles.size() > 2 ? -1 : 0;
+            for (int groupId = startingGroup; groupId < islandTiles.size() - 1; groupId++) { // From -1 to join first and last groups
+                int leftGroupId = groupId == -1 ? islandTiles.size()-1:groupId;
+                int rightGroupId = groupId + 1;
+                IslandTile islandLeftGroup = islandTiles.get(leftGroupId).get(0);
+                IslandTile islandRightGroup = islandTiles.get(rightGroupId).get(0);
                 if (islandLeftGroup.hasTower() && islandRightGroup.hasTower()) {
                     try {
                         Tower towerLeftGroup = islandLeftGroup.getTower();
@@ -38,13 +41,13 @@ public class IslandManager extends Manager {
                         if (towerLeftGroup.getColor().equals(towerRightGroup.getColor())) {
                             // Unify possible
                             // Manage noEntry before merging
-                            this.spreadNoEntryTilesInMergingIslandGroups(groupId, groupId + 1);
+                            this.spreadNoEntryTilesInMergingIslandGroups(leftGroupId , rightGroupId);
                             // Merge
-                            islandTiles.get(groupId).addAll(islandTiles.get(groupId + 1));
+                            islandTiles.get(leftGroupId).addAll(islandTiles.get(rightGroupId));
                             // Clear right group
-                            islandTiles.get(groupId + 1).clear();
+                            islandTiles.get(rightGroupId).clear();
                             // Remove the right group from the island tiles groups
-                            islandTiles.remove(islandTiles.get(groupId + 1));
+                            islandTiles.remove(islandTiles.get(rightGroupId));
                             // Now I will check the left group with the new right group so groupId hasn't to advance
                             groupId -= 1;
                         }

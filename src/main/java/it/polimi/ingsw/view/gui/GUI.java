@@ -80,7 +80,7 @@ public class GUI extends AbstractView {
 
     @Override
     public void displayActions(ArrayList<Integer> possibleActions) {
-
+        // Not displayed in gui
     }
 
     @Override
@@ -107,9 +107,12 @@ public class GUI extends AbstractView {
     @Override
     public void displayWinners(String messageForPlayer) {
         Platform.runLater(() -> {
+            this.isErrorOpen = true;
             Alert alert = new Alert(Alert.AlertType.INFORMATION, messageForPlayer);
             alert.showAndWait();
-            this.isErrorOpen = true;
+            if (alert.getResult() == ButtonType.OK) {
+                this.isErrorOpen = false;
+            }
         });
     }
 

@@ -90,33 +90,30 @@ class TestIslandManager {
          *
          */
 
-        // Now I set the island 3 to Black, nothing should happen, so I use the previous tests
+        // Now I set the island 3 to Black
         assertDoesNotThrow(()->table.getIslandTiles().get(2).get(0).setTower(new Tower(TowerColor.BLACK)));
         /*
          *
          * STATE:
-         * island(0, BLACK), island(1, BLACK)
          * island(2, free)
-         * island(3, BLACK)
+         * island(3, BLACK), island(0, BLACK), island(1, BLACK)
          *
          */
         assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
         // Check we have lost a group
-        assertEquals(3,table.getIslandTiles().size());
-        // Check group 0 now has 2 island tiles (and the other still 1)
-        assertEquals(2,table.getIslandTiles().get(0).size());
-        assertEquals(1,table.getIslandTiles().get(1).size());
-        assertEquals(1,table.getIslandTiles().get(2).size());
+        assertEquals(2,table.getIslandTiles().size());
+        // Check group 1 now has 1 island tiles (and the other 3)
+        assertEquals(1,table.getIslandTiles().get(0).size());
+        assertEquals(3,table.getIslandTiles().get(1).size());
 
 
         // I finish with setting island 2 to Black and checking I have everything unified (Test multi-union)
-        assertDoesNotThrow(()->table.getIslandTiles().get(1).get(0).setTower(new Tower(TowerColor.BLACK)));
+        assertDoesNotThrow(()->table.getIslandTiles().get(0).get(0).setTower(new Tower(TowerColor.BLACK)));
         /*
          *
          * STATE:
-         * island(0, BLACK), island(1, BLACK)
-         * island(2, BLACK)
-         * island(3, BLACK)
+         * island(3, BLACK), island(0, BLACK), island(1, BLACK), island(2, BLACK)
+         *
          *
          */
         assertDoesNotThrow(()->gameEngine.getIslandManager().unifyPossibleIslands());
