@@ -502,7 +502,7 @@ public class TableSceneController extends SceneController {
         if (children.stream().anyMatch(n -> n.getId().contains(gameObjectName))) {
             Node node = children.stream().filter(n -> n.getId().contains(gameObjectName)).toList().get(0);
             this.coordinatesOfIslandTile.remove(this.coordinatesOfIslandTile.stream()
-                    .filter(coordinate->node.getLayoutY() == coordinate[0] && node.getLayoutX() == coordinate[1]).toList().get(0));
+                    .filter(coordinate -> node.getLayoutY() == coordinate[0] && node.getLayoutX() == coordinate[1]).toList().get(0));
             if (type == 2) {
                 // The color of the tower could have changed
                 ImageView towerImageView = (ImageView) node;
@@ -541,16 +541,24 @@ public class TableSceneController extends SceneController {
                 int index = 0;
                 for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles()) {
                     int finalIndex = index;
-                    if (islandGroup.size() > this.previousCompositionOfIslandGroups.get(index).size()
-                            && islandGroup.stream().anyMatch(islandTile -> previousCompositionOfIslandGroups.get(finalIndex).contains(islandTile.getId()))) {
-                        // Unify islands in islandGroup
-                        int indexOfCentralTile = Math.floorDiv(islandGroup.size(), 2);
-                        for (int i = indexOfCentralTile; i < islandGroup.size() - 1; i++)
-                            this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
-                                    this.islandTiles[islandGroup.get(i + 1).getId()]);
-                        for (int i = indexOfCentralTile; i > 0; i--)
-                            this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
-                                    this.islandTiles[islandGroup.get(i - 1).getId()]);
+                    if (islandGroup.size() > this.previousCompositionOfIslandGroups.get(index).size()) {
+                        while (finalIndex < StageController.getStageController().getClientTable().getIslandTiles().size() + 1) {
+                            int finalIndex1 = finalIndex;
+                            if(!islandGroup.stream().anyMatch(islandTile -> previousCompositionOfIslandGroups.get(finalIndex1).contains(islandTile.getId())))
+                                finalIndex++;
+                            else
+                                break;
+                        }
+                        if(finalIndex < StageController.getStageController().getClientTable().getIslandTiles().size() + 1) {
+                            // Unify islands in islandGroup
+                            int indexOfCentralTile = Math.floorDiv(islandGroup.size(), 2);
+                            for (int i = indexOfCentralTile; i < islandGroup.size() - 1; i++)
+                                this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
+                                        this.islandTiles[islandGroup.get(i + 1).getId()]);
+                            for (int i = indexOfCentralTile; i > 0; i--)
+                                this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
+                                        this.islandTiles[islandGroup.get(i - 1).getId()]);
+                        }
                     } else
                         index++;
                 }
@@ -586,9 +594,13 @@ public class TableSceneController extends SceneController {
 
             // Calculate new layout x
             delta = Math.pow(beta, 2) - alfa * gamma;
-            double x1 = (beta + Math.sqrt(delta)) / gamma;
-            double x2 = (beta - Math.sqrt(delta)) / gamma;
-            x = Math.abs(islandToMove.getLayoutX() - x1) < Math.abs(islandToMove.getLayoutX() - x2) ? x1 : x2;
+            double x1 = Math.round((beta + Math.sqrt(delta)) / gamma);
+            double x2 =  Math.round((beta - Math.sqrt(delta)) / gamma);
+            if(fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE < islandToMove.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE)
+                x = (x1 >= fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE && x1 <= islandToMove.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE)?x1:x2;
+            else
+                x = (x1 >= islandToMove.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE && x1 <= fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE)?x1:x2;
+            // x = Math.abs(islandToMove.getLayoutX() - x1) < Math.abs(islandToMove.getLayoutX() - x2) ? x1 : x2;
             // Calculate new layout y
             y = -(-islandToMove.getLayoutY() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE + m * (x - islandToMove.getLayoutX() - GUIConstants.HALF_DIM_ISLAND_TILE_PANE));
         } else if (fixedIsland.getLayoutX() == islandToMove.getLayoutX()) {
@@ -597,8 +609,8 @@ public class TableSceneController extends SceneController {
             beta = -(GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutY());
             gamma = 1;
             delta = Math.pow(beta, 2) - alfa * gamma;
-            double y1 = -((beta + Math.sqrt(delta)) / gamma);
-            double y2 = -((beta - Math.sqrt(delta)) / gamma);
+            double y1 = -Math.round(((beta + Math.sqrt(delta)) / gamma));
+            double y2 = -Math.round(((beta - Math.sqrt(delta)) / gamma));
             y = Math.abs(islandToMove.getLayoutY() - y1) < Math.abs(islandToMove.getLayoutY() - y2) ? y1 : y2;
             x = fixedIsland.getLayoutX() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE;
         } else if (fixedIsland.getLayoutY() == islandToMove.getLayoutY()) {
@@ -607,8 +619,8 @@ public class TableSceneController extends SceneController {
             beta = (GUIConstants.HALF_DIM_ISLAND_TILE_PANE + fixedIsland.getLayoutX());
             gamma = 1;
             delta = Math.pow(beta, 2) - alfa * gamma;
-            double x1 = (beta + Math.sqrt(delta)) / gamma;
-            double x2 = (beta - Math.sqrt(delta)) / gamma;
+            double x1 = Math.round((beta + Math.sqrt(delta)) / gamma);
+            double x2 = Math.round((beta - Math.sqrt(delta)) / gamma);
             x = Math.abs(islandToMove.getLayoutX() - x1) < Math.abs(islandToMove.getLayoutX() - x2) ? x1 : x2;
             y = fixedIsland.getLayoutY() + GUIConstants.HALF_DIM_ISLAND_TILE_PANE;
         }
