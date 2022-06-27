@@ -10,14 +10,12 @@ import it.polimi.ingsw.view.gui.GUIConstants;
 import it.polimi.ingsw.view.gui.StageController;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class SchoolBoardsFunction {
 
@@ -52,11 +50,10 @@ public class SchoolBoardsFunction {
 
         // Case 2: Add the new students to the entrance
         else if (previousEntrance.length < currentEntrance.length) {
-            Integer[] finalPreviousEntrance = previousEntrance;
             Integer[] newStudents = Arrays
                     .stream(currentEntrance)
                     .filter(id1 -> Arrays
-                            .stream(finalPreviousEntrance).noneMatch(id2 -> id2 == id1))
+                            .stream(previousEntrance).noneMatch(id2 -> id2.equals(id1)))
                     .toArray(Integer[]::new);
 
             int newStudentIndex = 0;
@@ -84,7 +81,7 @@ public class SchoolBoardsFunction {
             Integer[] studentsToRemove = Arrays
                     .stream(previousEntrance)
                     .filter(id1 -> Arrays
-                            .stream(currentEntrance).noneMatch(id2 -> id2 == id1))
+                            .stream(currentEntrance).noneMatch(id2 -> id2.equals(id1)))
                     .toArray(Integer[]::new);
 
             for (int i = 0; i < coordinatesOfStudentsInEntrance.length; i++) {
@@ -116,12 +113,12 @@ public class SchoolBoardsFunction {
         else {
             // Get student discs that must be replaced
             Integer[] studentsToReplace = Arrays.stream(previousEntrance)
-                    .filter(id-> Arrays.stream(previousEntrance).anyMatch(id1->id1 == id) && Arrays.stream(currentEntrance).noneMatch(id2->id2 == id))
+                    .filter(id-> Arrays.asList(previousEntrance).contains(id) && Arrays.stream(currentEntrance).noneMatch(id2-> id2.equals(id)))
                     .toArray(Integer[]::new);
 
             // Get new students to add
             Integer[] studentsToAdd = Arrays.stream(currentEntrance)
-                    .filter(id-> Arrays.stream(previousEntrance).noneMatch(id1->id1 == id) && Arrays.stream(currentEntrance).anyMatch(id2->id2 == id))
+                    .filter(id-> Arrays.stream(previousEntrance).noneMatch(id1-> id1.equals(id)) && Arrays.asList(currentEntrance).contains(id))
                     .toArray(Integer[]::new);
 
             int indexOfStudentToAdd = 0;
@@ -177,7 +174,7 @@ public class SchoolBoardsFunction {
                 Integer[] newStudents = lane
                         .stream()
                         .filter(id1 -> previousDiningRoom.get(finalIndexOfLaneInClientTable)
-                                .stream().noneMatch(id2 -> id2 == id1))
+                                .stream().noneMatch(id2 -> id2.equals(id1)))
                         .toArray(Integer[]::new);
                 for (int studentId : newStudents) {
                     // Create image view of student

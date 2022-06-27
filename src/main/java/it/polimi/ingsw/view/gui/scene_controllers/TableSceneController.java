@@ -163,45 +163,6 @@ public class TableSceneController extends SceneController {
         this.firstFillOfCharacterCards = true;
     }
 
-    // MAIN METHODS
-
-    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
-
-        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
-                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
-            Command command;
-            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
-                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
-                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
-                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
-                StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
-            } else
-                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
-
-            if (!motherNature)
-                command.parseCLIString(id);
-
-            if (command.canEnd()) {
-                if (command.hasQuestion()) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get().equals(ButtonType.NO)) {
-                        // Send message
-                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
-                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
-                        StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                    }
-                } else {
-                    // Send message
-                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
-                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
-                    StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                }
-            }
-        }
-    }
-
     // METHODS FOR SCENE UPDATE
 
     @Override
@@ -513,6 +474,8 @@ public class TableSceneController extends SceneController {
                     imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
                 else if (color.equals(ClientTowerColor.WHITE))
                     imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
+                else if (color.equals(ClientTowerColor.GREY))
+                    imageView.setEffect(new ColorAdjust(0, 0, 0, 0));
             } else if (type == 0)
                 imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfMotherNature);
 
@@ -704,8 +667,6 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    // COORDINATES GENERATOR
-
     private void fillCharacterCards() throws IllegalStudentIdException {
 
         int indexOfCharacterCard = 0;
@@ -877,6 +838,8 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    // COORDINATES GENERATOR
+
     private void getCoordinatesOfCellsForMotherNatureNoEntryAndTower(int height, int length) {
         // The first coordinate is the one of the cell in the top left corner
         this.coordinatesOfIslandTile.clear();
@@ -900,8 +863,6 @@ public class TableSceneController extends SceneController {
         this.coordinatesOfIslandTile.clear();
         this.coordinatesOfIslandTile.addAll(newCoordinates);
     }
-
-    // PANES GENERATORS AND LOADERS
 
     private void regenerateCoordinatesForCharacterCardsStorage() {
 
@@ -931,6 +892,8 @@ public class TableSceneController extends SceneController {
         else
             Collections.addAll(this.coordinatesOfStudentsOnCloud, GUIConstants.POSITIONS_OF_STUDENTS_CLOUD_WITH_FOUR_SPACES);
     }
+
+    // PANES GENERATORS AND LOADERS
 
     private void loadPanesInArrayOfIslandTilePanes() {
         this.islandTiles[ModelConstants.MIN_ID_OF_ISLAND] = this.island1;
@@ -1026,8 +989,6 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    // EVENTS HANDLERS
-
     private void addAssistantCards(AnchorPane root) {
         // Get number of players that are not the client
         int playerId = StageController.getStageController().getGuiView().getPlayerId();
@@ -1061,6 +1022,8 @@ public class TableSceneController extends SceneController {
         bulb.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfBulb);
         root.getChildren().add(bulb);
     }
+
+    // EVENT HANDLERS
 
     @FXML
     private void switchToOtherSchoolBoards(ActionEvent event) {
@@ -1126,11 +1089,49 @@ public class TableSceneController extends SceneController {
         }
     }
 
-    // STATIC METHODS
 
     private void onSelectionOfBulb(MouseEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, StageController.getStageController().getGuiView().getAvailableActionsHint());
         alert.show();
+    }
+
+    // STATIC METHODS
+
+    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
+
+        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
+            Command command;
+            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
+                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
+                StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
+            } else
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
+
+            if (!motherNature)
+                command.parseCLIString(id);
+
+            if (command.canEnd()) {
+                if (command.hasQuestion()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get().equals(ButtonType.NO)) {
+                        // Send message
+                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                        StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                    }
+                } else {
+                    // Send message
+                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                    StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                }
+            }
+        }
     }
 }
 
