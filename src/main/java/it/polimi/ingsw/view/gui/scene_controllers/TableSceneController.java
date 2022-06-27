@@ -61,10 +61,10 @@ public class TableSceneController extends SceneController {
     private final ArrayList<Integer[]> coordinatesOfStudentsOnCloud;
     // Previous state of character cards
     private final int[] previousPricesOfCharacterCards;
-    // Previous state of school board
-    private ArrayList<ArrayList<Integer>> previousDiningRoom;
     private final ArrayList<ClientPawnColor> previousProfessorSection;
     private final ArrayList<ArrayList<Integer>> previousCompositionOfIslandGroups;
+    // Previous state of school board
+    private ArrayList<ArrayList<Integer>> previousDiningRoom;
     // Array of image views of assistant cards played by the other players
     private ImageView[] assistantCards;
     // Array of labels for assistant cards
@@ -165,6 +165,45 @@ public class TableSceneController extends SceneController {
 
     // MAIN METHODS
 
+    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
+
+        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
+            Command command;
+            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
+                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
+                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
+                StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
+            } else
+                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
+
+            if (!motherNature)
+                command.parseCLIString(id);
+
+            if (command.canEnd()) {
+                if (command.hasQuestion()) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get().equals(ButtonType.NO)) {
+                        // Send message
+                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                        StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                    }
+                } else {
+                    // Send message
+                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
+                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
+                    StageController.getStageController().getGuiView().getAvailableCommands().clear();
+                }
+            }
+        }
+    }
+
+    // METHODS FOR SCENE UPDATE
+
     @Override
     protected Scene layout() {
         // Call for scene creation, then call updateScene to update the content of the table
@@ -209,8 +248,6 @@ public class TableSceneController extends SceneController {
             return null;
         }
     }
-
-    // METHODS FOR SCENE UPDATE
 
     @Override
     protected void updateScene() {
@@ -321,31 +358,75 @@ public class TableSceneController extends SceneController {
                     if (!node.getId().contains(GUIConstants.ISLAND_TILE_NAME))
                         children.add(node);
 
-                // Check change in presence of mother nature or no entry tile or tower (no color change, only presence)
-                // occupancyHasChanged is true when there has been a change in the occupancy of the island tile
-                boolean occupancyHasChanged;
-                boolean result;
-                // Case 1: mother nature
-                occupancyHasChanged = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, motherNatureIsland == clientIslandTile.getId(),
-                        this.previousStateOfIslandTiles[clientIslandTile.getId()][0], children, GUIConstants.MOTHER_NATURE_NAME, Images.getImages().getMotherNaturePawn(),
-                        GUIConstants.WIDTH_OF_MOTHER_NATURE, GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN, 0, null);
-
-                // Case 2: no entry tile
-                result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, clientIslandTile.hasNoEntry(),
-                        this.previousStateOfIslandTiles[clientIslandTile.getId()][1], children, GUIConstants.NO_ENTRY_TILE_NAME, Images.getImages().getNoEntryTile(),
-                        GUIConstants.WIDTH_OF_NO_ENTRY, GUIConstants.HEIGHT_OF_NO_ENTRY, 1, null);
-                occupancyHasChanged = occupancyHasChanged || result;
-
-                // Case 3: tower
                 // Get tower image if possible
                 Image imageOfTower = null;
                 if (clientIslandTile.getTower() != null)
                     imageOfTower = Images.getImages().getTowers()[clientIslandTile.getTower().getId()];
-                // A null image does not create problems since the image is not accessed
-                result = this.checkMotherNatureOrNoEntryOrTowerPresence(clientIslandTile, !clientIslandTile.getTower().equals(ClientTowerColor.EMPTY),
-                        this.previousStateOfIslandTiles[clientIslandTile.getId()][2], children, GUIConstants.TOWER_NAME, imageOfTower,
-                        GUIConstants.WIDTH_OF_TOWER_ISLAND_TILE, GUIConstants.HEIGHT_OF_TOWER_ISLAND_TILE, 2, clientIslandTile.getTower());
-                occupancyHasChanged = occupancyHasChanged || result;
+
+                // Check change in presence of mother nature or no entry tile or tower (no color change, only presence)
+                // objectsHaveBeenAdded is true when there are new objects on the island of type tower, mother nature pawn
+                // or no entry tiles (compared to the previous state of the island)
+                // objectsHaveBeenRemoved is true when objects of type tower, mother nature pawn or no entry tiles have been removed
+                // (compared to the previous state of the island)
+
+                boolean objectsHaveBeenAdded = (!this.previousStateOfIslandTiles[clientIslandTile.getId()][0] && motherNatureIsland == clientIslandTile.getId()) ||
+                        (!this.previousStateOfIslandTiles[clientIslandTile.getId()][1] && clientIslandTile.hasNoEntry()) ||
+                        (!this.previousStateOfIslandTiles[clientIslandTile.getId()][2] && !clientIslandTile.getTower().equals(ClientTowerColor.EMPTY));
+                boolean objectsHaveBeenRemoved = (this.previousStateOfIslandTiles[clientIslandTile.getId()][0] && !(motherNatureIsland == clientIslandTile.getId())) ||
+                        (this.previousStateOfIslandTiles[clientIslandTile.getId()][1] && !clientIslandTile.hasNoEntry()) ||
+                        (this.previousStateOfIslandTiles[clientIslandTile.getId()][2] && clientIslandTile.getTower().equals(ClientTowerColor.EMPTY));
+                boolean changeStudentPosition = false;
+
+                // Case 1: objectsHaveBeenAdded == true. In this case resample the coordinates of all the 40x40 objects
+                // and of the student discs as well.
+                if (objectsHaveBeenAdded) {
+                    // Mother nature
+                    this.handleObjectsHaveBeenAdded(clientIslandTile, motherNatureIsland == clientIslandTile.getId(),
+                            this.previousStateOfIslandTiles[clientIslandTile.getId()][0], children, GUIConstants.MOTHER_NATURE_NAME, Images.getImages().getMotherNaturePawn(),
+                            GUIConstants.WIDTH_OF_MOTHER_NATURE, GUIConstants.HEIGHT_OF_MOTHER_NATURE_PAWN, 0, null);
+
+                    // No entry
+                    this.handleObjectsHaveBeenAdded(clientIslandTile, clientIslandTile.hasNoEntry(),
+                            this.previousStateOfIslandTiles[clientIslandTile.getId()][1], children, GUIConstants.NO_ENTRY_TILE_NAME, Images.getImages().getNoEntryTile(),
+                            GUIConstants.WIDTH_OF_NO_ENTRY, GUIConstants.HEIGHT_OF_NO_ENTRY, 1, null);
+
+                    // Tower
+                    this.handleObjectsHaveBeenAdded(clientIslandTile, !clientIslandTile.getTower().equals(ClientTowerColor.EMPTY),
+                            this.previousStateOfIslandTiles[clientIslandTile.getId()][2], children, GUIConstants.TOWER_NAME, imageOfTower,
+                            GUIConstants.WIDTH_OF_TOWER_ISLAND_TILE, GUIConstants.HEIGHT_OF_TOWER_ISLAND_TILE, 2, clientIslandTile.getTower());
+
+                    changeStudentPosition = true;
+                }
+
+                // Case 2: objectsHaveBeenRemoved and not objectHaveBeenAdded. In this case simply remove the coordinates of the 40x40 objects that
+                // are still on the island tile without moving them. Do not move the students as well.
+                else if (objectsHaveBeenRemoved) {
+                    // Mother nature
+                    if (this.previousStateOfIslandTiles[clientIslandTile.getId()][0] && !(motherNatureIsland == clientIslandTile.getId()))
+                        this.removeTheObject(GUIConstants.MOTHER_NATURE_NAME, clientIslandTile, children);
+                    else
+                        this.removeCoordinateOfObjectWithoutChangingCoordinateOfNode(GUIConstants.MOTHER_NATURE_NAME, children, null, 0);
+
+                    // No entry tile
+                    if (this.previousStateOfIslandTiles[clientIslandTile.getId()][1] && !clientIslandTile.hasNoEntry())
+                        this.removeTheObject(GUIConstants.NO_ENTRY_TILE_NAME, clientIslandTile, children);
+                    else
+                        this.removeCoordinateOfObjectWithoutChangingCoordinateOfNode(GUIConstants.NO_ENTRY_TILE_NAME, children, null, 1);
+
+                    // Tower
+                    if (this.previousStateOfIslandTiles[clientIslandTile.getId()][2] && clientIslandTile.getTower().equals(ClientTowerColor.EMPTY))
+                        this.removeTheObject(GUIConstants.TOWER_NAME, clientIslandTile, children);
+                    else
+                        this.removeCoordinateOfObjectWithoutChangingCoordinateOfNode(GUIConstants.TOWER_NAME, children, imageOfTower, 2);
+                }
+
+                // Case 3: the composition of the island has not changed when it comes to towers, mother nature pawn and no entry tiles.
+                // Leave the students where they are.
+                else {
+                    this.removeCoordinateOfObjectWithoutChangingCoordinateOfNode(GUIConstants.MOTHER_NATURE_NAME, children, null, 0);
+                    this.removeCoordinateOfObjectWithoutChangingCoordinateOfNode(GUIConstants.NO_ENTRY_TILE_NAME, children, null, 1);
+                    this.removeCoordinateOfObjectWithoutChangingCoordinateOfNode(GUIConstants.TOWER_NAME, children, imageOfTower, 2);
+                }
 
                 // Update previous state
                 this.previousStateOfIslandTiles[clientIslandTile.getId()][0] = motherNatureIsland == clientIslandTile.getId();
@@ -371,13 +452,13 @@ public class TableSceneController extends SceneController {
                         // Get corresponding node and remove it from children
                         Node student = children.stream().filter(node -> ViewUtilityFunctions.convertIdOfImageOfStudentDisc(node.getId()) == studentId).toList().get(0);
                         children.remove(student);
-                        // If occupancy has changed get new coordinates for student disc
-                        if (occupancyHasChanged) {
+                        // If changeStudentPosition is true get new coordinates for student disc
+                        if (changeStudentPosition) {
                             coordinate = this.coordinatesOfIslandTile.remove(random.nextInt(this.coordinatesOfIslandTile.size()));
                             student.setLayoutX(coordinate[1]);
                             student.setLayoutY(coordinate[0]);
                         }
-                        // If occupancy has not changed do not move student disc and remove its coordinates from the list of available
+                        // If changeStudentPosition is false do not move student disc and remove its coordinates from the list of available
                         // coordinates
                         else
                             // Remove coordinate of node from the list of coordinates
@@ -396,64 +477,76 @@ public class TableSceneController extends SceneController {
             }
     }
 
-    private boolean checkMotherNatureOrNoEntryOrTowerPresence(ClientIslandTile islandTile, boolean currentStateOfIsland, boolean prevStateOfIsland, ArrayList<Node> children,
-                                                              String gameObjectName, Image image, int width, int height, int type, ClientTowerColor color) {
+    private void handleObjectsHaveBeenAdded(ClientIslandTile islandTile, boolean currentStateOfIsland, boolean prevStateOfIsland, ArrayList<Node> children,
+                                            String gameObjectName, Image image, int width, int height, int type, ClientTowerColor color) {
 
         // IMPORTANT: type is 0 for mother nature, 1 for a no entry tile and 2 for a tower
 
-        // Case 1: Game object on the island in previous state
-        if (prevStateOfIsland) {
-            // Get node of game object
+        // Case 1: no change in the state for the current object
+        if (currentStateOfIsland && prevStateOfIsland) {
+            // Sample new coordinates for the node
             Node node = children.stream().filter(n -> n.getId().contains(gameObjectName)).toList().get(0);
-            // Case 1.1: Game object still on island. Keep it where it is and remove coordinate from array
-            if (currentStateOfIsland) {
-                // Remove coordinate of object
-                this.coordinatesOfIslandTile.remove(this.coordinatesOfIslandTile.stream()
-                        .filter(c -> c[0] == node.getLayoutY() && c[1] == node.getLayoutX()).toList().get(0));
-                if (type == 2) {
-                    // The color of the tower could have changed
-                    ImageView towerImageView = (ImageView) node;
-                    towerImageView.setImage(image);
-                }
-                // Remove node from list of children
-                children.remove(node);
-                return false;
+            Integer[] coordinate = this.coordinatesOfIslandTile.remove(new Random().nextInt(this.coordinatesOfIslandTile.size()));
+            node.setLayoutX(coordinate[1]);
+            node.setLayoutY(coordinate[0]);
+            if (type == 2) {
+                // The color of the tower could have changed
+                ImageView towerImageView = (ImageView) node;
+                towerImageView.setImage(image);
             }
-            // Case 1.2: Game object not on island. Remove it from island
-            else {
-                // Remove node
-                this.islandTiles[islandTile.getId()].getChildren().remove(node);
-                // Remove node from list of children
-                children.remove(node);
-                return true;
-            }
+            // Remove node from list of children
+            children.remove(node);
         }
-        // Case 2: Game object not on the island in previous state
-        else {
-            // Case 2.1: Game object on the island now. Create new image view of object
-            if (currentStateOfIsland) {
-                Integer[] coordinate = this.coordinatesOfIslandTile.remove(new Random().nextInt(this.coordinatesOfIslandTile.size()));
-                ImageView imageView = new ImageView(image);
-                imageView.setId(gameObjectName + islandTile.getId());
-                imageView.setPreserveRatio(false);
-                imageView.setFitWidth(width);
-                imageView.setFitHeight(height);
-                imageView.setLayoutX(coordinate[1]);
-                imageView.setLayoutY(coordinate[0]);
-                if (type == 2) {
-                    if (color.equals(ClientTowerColor.BLACK))
-                        imageView.setEffect(new ColorAdjust(0, 0, -0.6, 0));
-                    else if (color.equals(ClientTowerColor.WHITE))
-                        imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
-                } else if (type == 0)
-                    imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfMotherNature);
 
-                this.islandTiles[islandTile.getId()].getChildren().add(imageView);
-                return true;
+        // Case 2: the object has been added
+        else if (!prevStateOfIsland && currentStateOfIsland) {
+            Integer[] coordinate = this.coordinatesOfIslandTile.remove(new Random().nextInt(this.coordinatesOfIslandTile.size()));
+            ImageView imageView = new ImageView(image);
+            imageView.setId(gameObjectName + islandTile.getId());
+            imageView.setPreserveRatio(false);
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            imageView.setLayoutX(coordinate[1]);
+            imageView.setLayoutY(coordinate[0]);
+            if (type == 2) {
+                if (color.equals(ClientTowerColor.BLACK))
+                    imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
+                else if (color.equals(ClientTowerColor.WHITE))
+                    imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
+            } else if (type == 0)
+                imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfMotherNature);
+
+            this.islandTiles[islandTile.getId()].getChildren().add(imageView);
+        }
+
+        // Case 3: the object has been removed
+        else if (prevStateOfIsland) {
+            this.removeTheObject(gameObjectName, islandTile, children);
+        }
+    }
+
+    private void removeTheObject(String gameObjectName, ClientIslandTile islandTile, ArrayList<Node> children) {
+        // Remove the object
+        Node node = children.stream().filter(n -> n.getId().contains(gameObjectName)).toList().get(0);
+        this.islandTiles[islandTile.getId()].getChildren().remove(node);
+        children.remove(node);
+    }
+
+    private void removeCoordinateOfObjectWithoutChangingCoordinateOfNode(String gameObjectName, ArrayList<Node> children, Image image, int type) {
+
+        // IMPORTANT: type is 0 for mother nature, 1 for a no entry tile and 2 for a tower
+
+        if (children.stream().anyMatch(n -> n.getId().contains(gameObjectName))) {
+            Node node = children.stream().filter(n -> n.getId().contains(gameObjectName)).toList().get(0);
+            this.coordinatesOfIslandTile.remove(this.coordinatesOfIslandTile.stream()
+                    .filter(coordinate->node.getLayoutY() == coordinate[0] && node.getLayoutX() == coordinate[1]).toList().get(0));
+            if (type == 2) {
+                // The color of the tower could have changed
+                ImageView towerImageView = (ImageView) node;
+                towerImageView.setImage(image);
             }
-            // Case 2.2: Game object not on the island
-            else
-                return false;
+            // Remove node from list of children
+            children.remove(node);
         }
     }
 
@@ -611,6 +704,8 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    // COORDINATES GENERATOR
+
     private void fillCharacterCards() throws IllegalStudentIdException {
 
         int indexOfCharacterCard = 0;
@@ -697,8 +792,6 @@ public class TableSceneController extends SceneController {
         // Set false when first fill is completed
         this.firstFillOfCharacterCards = false;
     }
-
-    // COORDINATES GENERATOR
 
     private void addAssistantCardsPlayedByOtherPlayers() {
         // Get array of client players (without the client):
@@ -808,6 +901,8 @@ public class TableSceneController extends SceneController {
         this.coordinatesOfIslandTile.addAll(newCoordinates);
     }
 
+    // PANES GENERATORS AND LOADERS
+
     private void regenerateCoordinatesForCharacterCardsStorage() {
 
         this.coordinatesOfStudentsInCharacterCards.clear();
@@ -823,8 +918,6 @@ public class TableSceneController extends SceneController {
                 this.coordinatesOfStudentsInCharacterCards.add(new Integer[]{i, j});
 
     }
-
-    // PANES GENERATORS AND LOADERS
 
     private void regenerateCoordinatesForStudentDiscsOfCloudTile() {
         this.coordinatesOfStudentsOnCloud.clear();
@@ -933,6 +1026,8 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    // EVENTS HANDLERS
+
     private void addAssistantCards(AnchorPane root) {
         // Get number of players that are not the client
         int playerId = StageController.getStageController().getGuiView().getPlayerId();
@@ -954,8 +1049,6 @@ public class TableSceneController extends SceneController {
             root.getChildren().add(pane);
         }
     }
-
-    // EVENTS HANDLERS
 
     private void addBulb(AnchorPane root) {
         ImageView bulb = new ImageView(Images.getImages().getBulb());
@@ -1033,48 +1126,11 @@ public class TableSceneController extends SceneController {
         }
     }
 
+    // STATIC METHODS
+
     private void onSelectionOfBulb(MouseEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, StageController.getStageController().getGuiView().getAvailableActionsHint());
         alert.show();
-    }
-
-    // STATIC METHODS
-
-    public static void handleEventWithCommand(String commandDataEntryValidationSet, String id, boolean motherNature) {
-
-        if (StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
-                .filter(command -> command.getValidation().equals(commandDataEntryValidationSet)).count() == 1) {
-            Command command;
-            if (StageController.getStageController().getGuiView().getAvailableCommands().size() > 1) {
-                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream()
-                        .filter(cmd -> cmd.getValidation().equals(commandDataEntryValidationSet)).toList().get(0);
-                StageController.getStageController().getGuiView().getAvailableCommands().remove(command.getActionMessage().getActionId());
-                StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                StageController.getStageController().getGuiView().getAvailableCommands().put(command.getActionMessage().getActionId(), command);
-            } else
-                command = StageController.getStageController().getGuiView().getAvailableCommands().values().stream().toList().get(0);
-
-            if (!motherNature)
-                command.parseCLIString(id);
-
-            if (command.canEnd()) {
-                if (command.hasQuestion()) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Would you like to continue?", ButtonType.YES, ButtonType.NO);
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get().equals(ButtonType.NO)) {
-                        // Send message
-                        StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
-                                Serializer.fromActionMessageToMessage(command.getActionMessage()));
-                        StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                    }
-                } else {
-                    // Send message
-                    StageController.getStageController().getGuiView().getClientServerConnection().sendMessage(
-                            Serializer.fromActionMessageToMessage(command.getActionMessage()));
-                    StageController.getStageController().getGuiView().getAvailableCommands().clear();
-                }
-            }
-        }
     }
 }
 
