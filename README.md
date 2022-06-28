@@ -21,8 +21,8 @@ Functionality | State
 Basic rules | 🟢
 Complete rules | 🟢
 CLI | 🟢
-GUI | 🟡
-Socket | 🟡
+GUI | 🟢
+Socket | 🟢
 12 character cards | 🟢
 4 players match | 🟢
 Multiple matches | 🟢
