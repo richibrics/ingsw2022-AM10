@@ -963,6 +963,8 @@ public class TableSceneController extends SceneController {
             cloudTileImageView.setPreserveRatio(false);
             cloudTileImageView.setFitWidth(GUIConstants.WIDTH_OF_CLOUD_TILE);
             cloudTileImageView.setFitHeight(GUIConstants.HEIGHT_OF_CLOUD_TILE);
+            cloudTileImageView.setLayoutX(0);
+            cloudTileImageView.setLayoutY(0);
             cloudPane.getChildren().add(cloudTileImageView);
             // Add pane to root and to array of panes of character cards
             root.getChildren().add(cloudPane);
@@ -993,6 +995,8 @@ public class TableSceneController extends SceneController {
             characterCardImageView.setPreserveRatio(false);
             characterCardImageView.setFitWidth(GUIConstants.WIDTH_OF_CHARACTER_CARD);
             characterCardImageView.setFitHeight(GUIConstants.HEIGHT_OF_CHARACTER_CARD);
+            characterCardImageView.setLayoutX(0);
+            characterCardImageView.setLayoutY(0);
             characterCardPane.getChildren().add(characterCardImageView);
             // Add pane to root and to array of panes of character cards
             root.getChildren().add(characterCardPane);

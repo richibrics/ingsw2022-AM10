@@ -10,7 +10,7 @@
 
 <AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="background" stylesheets="@../CSS/table_background.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.scene_controllers.TableSceneController">
    <children>
-      <Pane fx:id="island6" layoutX="1670.0" layoutY="300.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island6" layoutX="1670.0" layoutY="270.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile6" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -44,7 +44,7 @@
             <Font name="Algerian" size="12.0" />
          </font>
       </Button>
-      <Pane fx:id="island3" layoutX="920.0" layoutY="10.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island3" layoutX="920.0" layoutY="-20.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile3" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true">
                <image>
@@ -56,7 +56,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island7" layoutX="1670.0" layoutY="550.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island7" layoutX="1670.0" layoutY="520.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile7" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -68,7 +68,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island1" layoutX="440.0" layoutY="300.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island1" layoutX="440.0" layoutY="270.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile1" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -80,7 +80,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island2" layoutX="670.0" layoutY="110.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island2" layoutX="670.0" layoutY="80.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile2" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -92,7 +92,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island4" layoutX="1170.0" layoutY="10.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island4" layoutX="1170.0" layoutY="-20.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile4" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -104,7 +104,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island12" layoutX="440.0" layoutY="550.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island12" layoutX="440.0" layoutY="520.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile12" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -116,7 +116,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island11" layoutX="690.0" layoutY="740.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island11" layoutX="690.0" layoutY="710.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile11" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -128,7 +128,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island10" layoutX="920.0" layoutY="850.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island10" layoutX="920.0" layoutY="820.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile10" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -140,7 +140,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island9" layoutX="1170.0" layoutY="850.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island9" layoutX="1170.0" layoutY="820.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile9" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -152,7 +152,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island8" layoutX="1420.0" layoutY="740.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island8" layoutX="1420.0" layoutY="710.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile8" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -164,7 +164,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="island5" layoutX="1420.0" layoutY="110.0" prefHeight="250.0" prefWidth="250.0">
+      <Pane fx:id="island5" layoutX="1420.0" layoutY="80.0" prefHeight="250.0" prefWidth="250.0">
          <children>
             <ImageView fx:id="tile5" fitHeight="250.0" fitWidth="250.0" onMouseClicked="#onSelectionOfIslandTile" pickOnBounds="true" preserveRatio="true">
                <image>

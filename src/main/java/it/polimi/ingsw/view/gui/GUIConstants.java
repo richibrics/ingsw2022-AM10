@@ -176,7 +176,7 @@ public class GUIConstants {
 
     // Values for cloud tiles
     public static final int LAYOUT_X_CENTER_OF_ISLAND_CIRCLE = 1170;
-    public static final int LAYOUT_Y_OF_CLOUD_TILES = 400;
+    public static final int LAYOUT_Y_OF_CLOUD_TILES = 340;
     public static final int WIDTH_OF_CLOUD_TILE = 100;
     public static final int HEIGHT_OF_CLOUD_TILE = 100;
     public static final int LAYOUT_X_OFFSET_BETWEEN_CLOUD_TILES = 110;
@@ -187,7 +187,7 @@ public class GUIConstants {
     public static final double WIDTH_OF_CHARACTER_CARD = 130.0;
     public static final double HEIGHT_OF_CHARACTER_CARD = 190.0;
     public static final int LAYOUT_X_OF_FIRST_CHARACTER_CARD_ON_LEFT = 925;
-    public static final int LAYOUT_Y_OF_CHARACTER_CARDS = 560;
+    public static final int LAYOUT_Y_OF_CHARACTER_CARDS = 500;
     public static final int LAYOUT_X_OFFSET_BETWEEN_CHARACTER_CARDS = 180;
     public static final int LAYOUT_X_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD = 25; // In respect to the pane containing the character card
     public static final int LAYOUT_Y_OF_FIRST_AVAILABLE_CELL_FOR_GAME_OBJECTS_IN_CHARACTER_CARD = 105;
