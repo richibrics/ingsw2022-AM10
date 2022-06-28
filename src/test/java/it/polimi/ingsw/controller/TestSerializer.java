@@ -333,6 +333,7 @@ class TestSerializer {
 
     @Test
     void fromMessageToClientTeams() {
+        LobbyHandler.getLobbyHandler().emptyMap();
         User user1 = new User("kevin", 3);
         User user2 = new User("steph", 3);
         User user3 = new User("ja", 3);
@@ -382,6 +383,7 @@ class TestSerializer {
 
     @Test
     void fromMessageToClientLobby() {
+        LobbyHandler.getLobbyHandler().emptyMap();
         User user1 = new User("1", ControllerConstants.TWO_PLAYERS_PREFERENCE_EXPERT);
         User user2 = new User("2", ControllerConstants.THREE_PLAYERS_PREFERENCE_EXPERT);
         User user3 = new User("3", ControllerConstants.FOUR_PLAYERS_PREFERENCE_EXPERT);
