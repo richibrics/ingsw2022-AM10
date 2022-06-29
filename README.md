@@ -37,3 +37,11 @@ Content: UML Class Diagram
 Group reviewed: AM40
 
 Reviewed by: AM37
+
+## Peer Review 2
+
+Content: Communication Protocol
+
+Group reviewed: AM40
+
+Reviewed by: AM37
