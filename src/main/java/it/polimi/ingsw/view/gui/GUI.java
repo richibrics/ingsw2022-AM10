@@ -147,6 +147,18 @@ public class GUI extends AbstractView {
     }
 
     /**
+     * Shows an alert with the message
+     * @param message the message of the alert
+     */
+    @Override
+    public void showInfo(String message) {
+        Platform.runLater(()->{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
+            alert.showAndWait();
+        });
+    }
+
+    /**
      * Blocks until StageController is ready. Sets also the GUI object in the stage controller.
      */
     private void waitForGuiToStart() {

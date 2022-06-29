@@ -13,5 +13,6 @@ public enum MessageTypes {
     ERROR,
     SUCCESS,
     DEFAULT,
-    PLAYER_DISCONNECTION
+    PLAYER_DISCONNECTION,
+    INFORMATION
 }

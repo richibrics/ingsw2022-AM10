@@ -94,5 +94,8 @@ public class OnSelectionOfCharacterCardAction extends Action {
         // I don't catch NotEnoughMoney here because there's no CharacterCard that makes player lose money during its
         // act, so if before player had the money, he still has them.
         this.getGameEngine().getCharacterManager().decreasePlayersMoneyEditCardCost(this.getPlayerId(), this.chosenCharacterId);
+
+        // save the played card to warn the clients with the observer
+        this.getGameEngine().setLastPlayedCharacterCard(this.getPlayerId(), chosenCharacterId);
     }
 }

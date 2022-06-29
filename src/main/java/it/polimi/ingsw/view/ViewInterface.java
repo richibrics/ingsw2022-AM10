@@ -37,6 +37,8 @@ public interface ViewInterface {
 
     void showError(String message, boolean isCritical);
 
+    void showInfo(String message);
+
     int getPlayerId();
 
     void setPlayerId(int playerId);

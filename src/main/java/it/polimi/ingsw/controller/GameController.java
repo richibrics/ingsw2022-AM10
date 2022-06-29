@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.controller.exceptions.IllegalGameStateException;
 import it.polimi.ingsw.controller.exceptions.InterruptedGameException;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
+import it.polimi.ingsw.controller.observers.CharacterCardObserver;
 import it.polimi.ingsw.controller.observers.GameObserver;
 import it.polimi.ingsw.controller.observers.Observer;
 import it.polimi.ingsw.model.ModelConstants;
@@ -10,7 +11,11 @@ import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.PlayerOrderNotSetException;
+import it.polimi.ingsw.model.game_components.Character;
+import it.polimi.ingsw.model.managers.CommonManager;
+import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
+import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ import java.util.stream.Collectors;
 public class GameController {
     private GameEngine gameEngine;
     private Observer gameObserver;
+    private Observer characterCardObserver;
     private Map<User, ServerClientConnection> serverClientConnections;
 
     public GameController(Map<User, ServerClientConnection> serverClientConnections) {
@@ -58,6 +64,7 @@ public class GameController {
         // Set boolean that tells if the game is an expert game or an easy game
         this.gameEngine.setExpertMode(expertMode);
         this.gameObserver = new GameObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
+        this.characterCardObserver = new CharacterCardObserver(new ArrayList<>(this.serverClientConnections.values()), this.gameEngine);
         try {
             this.gameEngine.startGame();
             this.gameObserver.notifyClients();
@@ -123,6 +130,10 @@ public class GameController {
             e.printStackTrace();
             return;
         }
+
+        // If everything went well and a card use was asked, warn the players about the action
+        if(actionMessage.getActionId() == ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID)
+            characterCardObserver.notifyClients();
     }
 
     /**
@@ -193,7 +204,7 @@ public class GameController {
     /**
      * Gets the map of serverClientConnections.
      *
-     * @return
+     * @return Map with Users and ServerClientConnections
      */
 
     public Map<User, ServerClientConnection> getServerClientConnections() {

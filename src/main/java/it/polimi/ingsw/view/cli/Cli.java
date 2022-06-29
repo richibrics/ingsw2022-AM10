@@ -233,6 +233,10 @@ public class Cli extends AbstractView {
         }
     }
 
+    /**
+     * Prints the information message
+     * @param message the message to print
+     */
     @Override
     public void showError(String message, boolean isCritical) {
         try {
@@ -243,6 +247,19 @@ public class Cli extends AbstractView {
         }
     }
 
+    /**
+     * Prints the information message
+     * @param message the message to print
+     */
+    @Override
+    public void showInfo(String message) {
+        try {
+            this.bufferOut.write(message + "\n");
+            this.bufferOut.flush();
+        } catch (IOException e) {
+            this.clientServerConnection.askToCloseConnection();
+        }
+    }
 
     @Override
     public void askToChangePreference() {

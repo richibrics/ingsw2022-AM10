@@ -297,6 +297,9 @@ public class ClientServerConnection implements Runnable {
                 case PLAYER_DISCONNECTION -> {
                     this.askToCloseConnectionWithError("A player disconnected, connection closed");
                 }
+                case INFORMATION -> {
+                    this.view.showInfo(message.getPayload());
+                }
                 default -> {
                 }
             }

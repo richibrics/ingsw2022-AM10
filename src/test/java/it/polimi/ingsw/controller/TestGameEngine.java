@@ -115,14 +115,15 @@ class TestGameEngine {
         assertNotNull(gameEngine.getActionManager());
     }
 
-    @Test
-    void resumeGame() {
-
-    }
 
     @Test
-    void startGame() {
-
+    void setGetLastPlayerCharacterCard() {
+        GameEngine gameEngine = new GameEngine(new ArrayList<>());
+        assertNull(gameEngine.getLastPlayedCharacterCard()[0]);
+        assertNull(gameEngine.getLastPlayedCharacterCard()[1]);
+        gameEngine.setLastPlayedCharacterCard(2,3);
+        assertEquals(2, gameEngine.getLastPlayedCharacterCard()[0]);
+        assertEquals(3, gameEngine.getLastPlayedCharacterCard()[1]);
     }
 
     @Test

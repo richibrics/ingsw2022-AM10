@@ -20,6 +20,7 @@ public class GameEngine {
     private AssistantManager assistantManager;
     private IslandManager islandManager;
     private CharacterManager characterManager;
+    private Integer[] lastPlayedCharacterCard; // 0: playerId, // 1: cardId
     private boolean expertMode;
 
     public GameEngine(ArrayList<Team> teams) {
@@ -28,6 +29,7 @@ public class GameEngine {
         this.assistantManager = new AssistantManager(this);
         this.islandManager = new IslandManager(this);
         this.characterManager = new CharacterManager(this);
+        this.lastPlayedCharacterCard = new Integer[2];
 
         this.teams = new ArrayList<>(teams);
         this.round = new Round(teams.stream().flatMap(team -> team.getPlayers().stream()).toList().size());
@@ -183,5 +185,23 @@ public class GameEngine {
 
     public boolean getExpertMode() {
         return this.expertMode;
+    }
+
+    /**
+     * Returns data about last played card.
+     * @return array with player id in first position and card id in second position
+     */
+    public Integer[] getLastPlayedCharacterCard() {
+        return lastPlayedCharacterCard;
+    }
+
+    /**
+     * Sets the new played card.
+     * @param playerId the id of the player that used the card
+     * @param cardId the id of the used card
+     */
+    public void setLastPlayedCharacterCard(int playerId, int cardId) {
+        this.lastPlayedCharacterCard[0] = playerId;
+        this.lastPlayedCharacterCard[1] = cardId;
     }
 }
