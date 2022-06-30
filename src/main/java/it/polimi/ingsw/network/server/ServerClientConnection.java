@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -134,7 +133,6 @@ public class ServerClientConnection implements Runnable {
      */
 
     public synchronized void sendMessage(Message message) {
-        System.out.println(message.getType().toString());
         this.bufferOut.println(Serializer.fromMessageToString(message));
         this.bufferOut.flush();
     }

@@ -297,4 +297,13 @@ public class GUIConstants {
     public static final int LAYOUT_X_OF_BULB = 1826;
     public static final int LAYOUT_Y_OF_BULB = 14;
     public static final String NO_COMMANDS_AVAILABLE_HINT = "It's not your turn, please wait.";
+
+    // Label for turn
+    public static final double WIDTH_OF_TURN = 180.;
+    public static final double HEIGHT_OF_TURN = 80.;
+    public static final int LAYOUT_X_OF_TURN = 1615;
+    public static final int LAYOUT_Y_OF_TURN = 14;
+    public static final int FONT_SIZE_TURN = 24;
+    public static final String CLIENT_TURN = "Your turn";
+    public static final String NOT_CLIENT_TURN = "Not your turn";
 }

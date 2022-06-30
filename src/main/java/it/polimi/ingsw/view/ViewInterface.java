@@ -44,4 +44,6 @@ public interface ViewInterface {
     void setPlayerId(int playerId);
 
     boolean isCriticalErrorOpen();
+
+    void updateWhenCurrentPlayerChanges(int currentPlayer);
 }

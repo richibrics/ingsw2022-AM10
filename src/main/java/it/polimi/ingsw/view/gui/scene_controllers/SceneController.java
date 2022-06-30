@@ -5,6 +5,7 @@ import javafx.scene.layout.AnchorPane;
 
 public abstract class SceneController implements SceneControllerInterface {
     private Scene scene;
+    private AnchorPane root;
 
     /**
      * Prepares a blank scene.
@@ -44,5 +45,23 @@ public abstract class SceneController implements SceneControllerInterface {
      */
     public Scene initialBlankScene() {
         return new Scene(new AnchorPane());
+    }
+
+    /**
+     * Gets the root of the scene.
+     *
+     * @return the root of the scene
+     */
+    public AnchorPane getRoot() {
+        return this.root;
+    }
+
+    /**
+     * Sets the root of the scene.
+     *
+     * @param root the root of the scene
+     */
+    public void setRoot (AnchorPane root) {
+        this.root = root;
     }
 }

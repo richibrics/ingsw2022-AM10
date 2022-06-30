@@ -12,8 +12,13 @@ import it.polimi.ingsw.view.gui.exceptions.StageNotSetException;
 import it.polimi.ingsw.view.input_management.Command;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
@@ -58,7 +63,7 @@ public class GUI extends AbstractView {
 
         // Show table scene
         if(firstTime)
-            this.showScene(SceneType.TABLE_SCENE, firstTime);
+            this.showScene(SceneType.TABLE_SCENE, true);
         else
             Platform.runLater(() -> {
                 try {
@@ -122,11 +127,41 @@ public class GUI extends AbstractView {
         for (Integer id : possibleActions) {
             this.availableCommands.put(id, new Command(id, this.getPlayerId(), clientTable, clientTeams));
         }
+
         // Case 1: the action is the selection of the wizard
         if (possibleActions.size() == 1 && possibleActions.get(0) == ModelConstants.ACTION_ON_SELECTION_OF_WIZARD_ID) {
             // Show wizard scene, then switch back to table scene
             this.showScene(SceneType.WIZARD_SCENE, true);
         }
+    }
+
+    @Override
+    public void updateWhenCurrentPlayerChanges(int currentPlayer) {
+        Platform.runLater(()->{
+            AnchorPane rootOfTableScene = StageController.getStageController().getSceneControllers(SceneType.TABLE_SCENE).getRoot();
+
+            if (rootOfTableScene.getChildren().stream().anyMatch(node -> node.getId().equals("turn"))) {
+                rootOfTableScene.getChildren().remove(rootOfTableScene.getChildren().stream().filter(node1 -> node1.getId().equals("turn")).toList().get(0));
+            }
+
+            Label label = new Label();
+
+            // Set properties
+            label.setId("turn");
+
+            if (currentPlayer == StageController.getStageController().getGuiView().getPlayerId())
+                label.setText(GUIConstants.CLIENT_TURN);
+            else
+                label.setText(GUIConstants.NOT_CLIENT_TURN);
+
+            label.setPrefSize(GUIConstants.WIDTH_OF_TURN, GUIConstants.HEIGHT_OF_TURN);
+            label.setLayoutX(GUIConstants.LAYOUT_X_OF_TURN);
+            label.setLayoutY(GUIConstants.LAYOUT_Y_OF_TURN);
+            label.setFont(Font.font(GUIConstants.FONT, FontPosture.REGULAR, GUIConstants.FONT_SIZE_TURN));
+            label.setAlignment(Pos.CENTER_LEFT);
+
+            rootOfTableScene.getChildren().add(label);
+        });
     }
 
     /**

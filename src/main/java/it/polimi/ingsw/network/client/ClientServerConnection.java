@@ -5,7 +5,6 @@ import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.NetworkConstants;
-import it.polimi.ingsw.network.exceptions.UserNotSet;
 import it.polimi.ingsw.network.messages.Message;
 import it.polimi.ingsw.view.ViewInterface;
 import it.polimi.ingsw.view.game_objects.*;
@@ -21,6 +20,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.ChangeListener;
 
 public class ClientServerConnection implements Runnable {
 
@@ -47,6 +51,7 @@ public class ClientServerConnection implements Runnable {
     private int playerId;
     private int timer;
     private Future future;
+    private final IntegerProperty currentPlayer;
 
     public ClientServerConnection(Socket socket, ViewInterface view) throws IOException {
         this.socket = socket;
@@ -72,6 +77,14 @@ public class ClientServerConnection implements Runnable {
         this.syncObject4 = new Object();
         this.syncObject5 = new Object();
         this.executor = Executors.newSingleThreadExecutor();
+
+        // Use observable object to update the table scene
+        this.currentPlayer = new SimpleIntegerProperty();
+        this.currentPlayer.addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o,Object oldVal, Object newVal){
+                view.updateWhenCurrentPlayerChanges(currentPlayer.getValue());
+            }
+        });
     }
 
     /**
@@ -176,13 +189,9 @@ public class ClientServerConnection implements Runnable {
             this.deserialize(line);
             // Put the thread to sleep for a while
             Thread.sleep(NetworkConstants.SLEEP_TIME_RECEIVE_MESSAGE_IN_MILLISECONDS);
-        } catch (SocketTimeoutException e) {
-            return;
+        } catch (SocketTimeoutException | InterruptedException e) {
         } catch (IOException e) {
             this.askToCloseConnectionWithError("Server unreachable");
-            return;
-        } catch (InterruptedException e) {
-            return;
         }
     }
 
@@ -234,7 +243,7 @@ public class ClientServerConnection implements Runnable {
                     this.flagTableReady = true;
 
                     // Display the state of the game if the teams message has already been received
-                    if (this.flagTableReady && this.flagTeamsReady) {
+                    if (this.flagTeamsReady) {
                         this.view.displayStateOfGame(this.clientTable, this.clientTeams, this.playerId);
                         this.flagTableReady = false;
                         this.flagTeamsReady = false;
@@ -269,6 +278,7 @@ public class ClientServerConnection implements Runnable {
                 }
                 case ROUND -> {
                     this.lastClientRound = Serializer.fromMessageToClientRound(message);
+                    this.currentPlayer.setValue(this.lastClientRound.getCurrentPlayer());
                     this.askAndSendAction();
                 }
                 case LOBBY -> {
@@ -319,7 +329,6 @@ public class ClientServerConnection implements Runnable {
      * Changes the preference of the user to {@code newPreference}.
      *
      * @param newPreference the new preference of the user
-     * @throws UserNotSet if the user has not been created yet
      */
 
     public void changePreference(int newPreference) {

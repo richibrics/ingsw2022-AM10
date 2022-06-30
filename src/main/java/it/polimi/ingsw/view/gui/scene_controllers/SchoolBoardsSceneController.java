@@ -25,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,7 +131,7 @@ public class SchoolBoardsSceneController extends SceneController {
             return new Scene(this.root);
         } catch (SceneLayoutException e) {
             e.printStackTrace();
-            // TODO do something
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
             return null;
         }
     }
@@ -188,7 +189,7 @@ public class SchoolBoardsSceneController extends SceneController {
 
         } catch (IllegalStudentIdException | IllegalLaneException e) {
             e.printStackTrace();
-            // TODO do something
+            StageController.getStageController().getGuiView().getClientServerConnection().askToCloseConnectionWithError(e.getMessage());
         }
     }
 

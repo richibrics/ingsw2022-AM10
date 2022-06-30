@@ -183,6 +183,8 @@ public class TableSceneController extends SceneController {
                 }
             });
             AnchorPane root = loader.load();
+            // Set root
+            this.setRoot(root);
             // Load panes of island tiles in array of panes
             this.loadPanesInArrayOfIslandTilePanes();
             // Load panes of assistant cards in array of panes

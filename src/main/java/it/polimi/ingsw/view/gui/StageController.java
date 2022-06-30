@@ -27,7 +27,6 @@ public class StageController {
     // Objects to draw, received from the network
     private ClientTable clientTable;
     private ClientTeams clientTeams;
-    private ClientRound clientRound;
     private ClientLobby clientLobby;
 
     public StageController() {
@@ -168,24 +167,6 @@ public class StageController {
     }
 
     /**
-     * Gets the Client Round set from the network.
-     *
-     * @return the Client Round set from the network.
-     */
-    public ClientRound getClientRound() {
-        return clientRound;
-    }
-
-    /**
-     * Sets the Client Round, received from the network.
-     *
-     * @param clientRound the Client Round, received from the network
-     */
-    public void setClientRound(ClientRound clientRound) {
-        this.clientRound = clientRound;
-    }
-
-    /**
      * Gets the Client Lobby set from the network.
      *
      * @return the Client Lobby set from the network.
@@ -217,17 +198,6 @@ public class StageController {
         }
         stage.setScene(this.currentSceneController.getScene(false));
         stage.show();
-    }
-
-    /**
-     * Handles the Exception occurred in a Scene.
-     * If it can't handle it closing the socket, closes directly the Application
-     *
-     * @param e the caught Exception
-     */
-    public void handleInternalException(Exception e) {
-        e.printStackTrace();
-        this.getGuiView().handleInternalException(e);
     }
 
     public Stage getStage() {

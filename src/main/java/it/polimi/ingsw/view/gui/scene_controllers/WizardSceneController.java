@@ -25,8 +25,6 @@ public class WizardSceneController extends SceneController {
     @Override
     protected Scene layout() {
         try {
-            // TODO consider delaying the creation of the scene because the switch from the table scene to the
-            // TODO wizard scene could be really fast
             // The scene cannot be created if clientTeams has not been set.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/wizard_scene.fxml"));
             loader.setControllerFactory(type -> {

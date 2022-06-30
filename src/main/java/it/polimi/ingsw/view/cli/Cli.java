@@ -17,10 +17,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-// TODO remove player id passed as argument to methods. Player id can be retrieved using this.getPlayerId()
 
 public class Cli extends AbstractView {
 
@@ -401,5 +397,10 @@ public class Cli extends AbstractView {
     @Override
     public boolean isCriticalErrorOpen() {
         return false;
+    }
+
+    @Override
+    public void updateWhenCurrentPlayerChanges(int currentPlayer) {
+
     }
 }
