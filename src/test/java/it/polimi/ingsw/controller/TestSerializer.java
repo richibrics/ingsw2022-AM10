@@ -337,9 +337,9 @@ class TestSerializer {
         User user1 = new User("kevin", 3);
         User user2 = new User("steph", 3);
         User user3 = new User("ja", 3);
-        Player player1 = new Player(user1, 1, 3);
-        Player player2 = new Player(user2, 2, 3);
-        Player player3 = new Player(user3, 3, 3);
+        Player player1 = new Player(user1, 1, ModelConstants.INITIAL_PLAYER_COINS);
+        Player player2 = new Player(user2, 2, ModelConstants.INITIAL_PLAYER_COINS);
+        Player player3 = new Player(user3, 3, ModelConstants.INITIAL_PLAYER_COINS);
         ArrayList<Player> players1 = new ArrayList<>();
         players1.add(player1);
         // Set wizard for player 1

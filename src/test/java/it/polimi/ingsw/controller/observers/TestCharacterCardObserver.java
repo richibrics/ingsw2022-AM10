@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.User;
 import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.CharacterCard;
+import it.polimi.ingsw.model.managers.CommonManager;
 import it.polimi.ingsw.network.MessageTypes;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.network.messages.Message;
@@ -72,6 +73,10 @@ class TestCharacterCardObserver {
             possibleActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
             gameController.getGameEngine().getRound().setPossibleActions(possibleActions);
 
+            // Give money
+            assertDoesNotThrow(()-> CommonManager.takePlayerById(gameController.getGameEngine(),gameController.getGameEngine().getRound().getCurrentPlayer()).incrementCoins());
+            assertDoesNotThrow(()-> CommonManager.takePlayerById(gameController.getGameEngine(),gameController.getGameEngine().getRound().getCurrentPlayer()).incrementCoins());
+            assertDoesNotThrow(()-> CommonManager.takePlayerById(gameController.getGameEngine(),gameController.getGameEngine().getRound().getCurrentPlayer()).incrementCoins());
             // Use a card
             Map<String, String> options = new HashMap<>();
             options.put(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER, String.valueOf(Character.KNIGHT.getId()));

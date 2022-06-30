@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.input_management;
 
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
+import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
@@ -17,6 +18,7 @@ public class Command {
     private final int playerId;
     private CommandData commandData;
     private int currentEntryIndex;
+    boolean forceCommandEnd; // used when checkAvailable detects the Command can't continue the input.
     private final Map<String, String> actionOptions;
 
     // Remember which students have already been selected.
@@ -37,9 +39,13 @@ public class Command {
         this.clientTable = clientTable;
         this.clientTeams = clientTeams;
         this.playerId = playerId;
+        this.forceCommandEnd = false;
         this.actionOptions = new HashMap<>();
         this.alreadySelectedStudents = new ArrayList<>();
         this.commandData = CommandFilesReader.getCommandFilesReader().getCommandData(actionId);
+
+        // check if first input is available
+        this.checkAvailable();
     }
 
     /**
@@ -119,7 +125,7 @@ public class Command {
             // Get last student from the table, if there's one. If already selected, take the previous one.
             int tablePosition = table.size() - 1;
             while (tablePosition >= 0 && finalValue.equals("null")) {
-                if(!alreadySelectedStudents.contains(table.get(tablePosition))) { // if not already selected, take it
+                if (!alreadySelectedStudents.contains(table.get(tablePosition))) { // if not already selected, take it
                     finalValue = String.valueOf(table.get(tablePosition));
                     alreadySelectedStudents.add(table.get(tablePosition));
                 }
@@ -231,6 +237,9 @@ public class Command {
             this.commandData = CommandFilesReader.getCommandFilesReader().getCharacterCommandData(intInput);
             this.currentEntryIndex = 0;
         }
+
+        // for the next input, check if it's available
+        this.checkAvailable();
     }
 
     /**
@@ -257,7 +266,8 @@ public class Command {
      * @return True if there's a question at the current index
      */
     public boolean hasQuestion() {
-        return this.currentEntryIndex < this.commandData.getSchema().size();
+        boolean cond = !forceCommandEnd && this.currentEntryIndex < this.commandData.getSchema().size();
+        return cond;
     }
 
     /**
@@ -311,5 +321,51 @@ public class Command {
 
     public String getValidation() {
         return this.commandData.getSchema().get(this.currentEntryIndex).getValidation();
+    }
+
+    /**
+     * If the next input is an item that is not available on the table, stop the execution, cause that input won't be added
+     * anytime.
+     * For example: pick a student from the dining room where there's not. This is the only case.
+     */
+    private void checkAvailable() {
+        // if input already ended, don't do anything
+        if (this.hasQuestion()) {
+            String validation = this.getValidation();
+            if (validation.equals(CommandDataEntryValidationSet.STUDENT_DINING_ROOM)) {
+                // look for students in dining room: if empty, end the command (data will be sent and an error will be returned by the server)
+
+                // Get the id of the player's school board through the player id
+                int indexOfPlayerSchoolBoard = ViewUtilityFunctions.getPlayerSchoolBoardIndex(this.playerId, clientTeams);
+                // Check if there are players on the table (not already selected !)
+                long studentsAvailableOnTable = this.clientTable.getSchoolBoards().get(indexOfPlayerSchoolBoard).getDiningRoom().stream().flatMap(Collection::stream).filter(studentId -> !this.alreadySelectedStudents.contains(studentId)).count();
+
+                // If anybody available in dining room, force the command to end
+                if (studentsAvailableOnTable == 0)
+                    this.forceCommandEnd = true;
+            }
+
+            // If using a card, check money
+            if(actionOptions.get(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER)!=null)
+            {
+                int characterId = Integer.parseInt(actionOptions.get(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER));
+                int characterCost = Character.values()[characterId-1].getCost();
+                if(characterCost>this.playersMoney())
+                    this.forceCommandEnd = true;
+            }
+        }
+    }
+
+    /**
+     * Returns the money of this client.
+     * @return the money of this client
+     */
+    private int playersMoney() {
+        for (ClientTeam team : this.clientTeams.getTeams())
+            for (ClientPlayer player : team.getPlayers()) {
+                if(player.getPlayerId() == this.playerId)
+                    return player.getCoins();
+            }
+        return 0;
     }
 }

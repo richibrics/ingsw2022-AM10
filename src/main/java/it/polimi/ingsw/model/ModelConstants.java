@@ -80,7 +80,7 @@ public class ModelConstants {
     public static int INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS = 9;
     public static int NUMBER_OF_CHARACTER_CARDS = 3;
     public static int INITIAL_NUMBER_OF_STUDENTS_PER_ISLAND = 2;
-    public static int INITIAL_PLAYER_COINS = 3;
+    public static int INITIAL_PLAYER_COINS = 1;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_TWO_PLAYERS_STUDENTS_NUMBER = 3;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_THREE_PLAYERS_STUDENTS_NUMBER = 4;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_FOUR_PLAYERS_STUDENTS_NUMBER = 3;

@@ -28,7 +28,7 @@ public class CharacterCardObserver implements Observer {
             int playerId = this.gameEngine.getLastPlayedCharacterCard()[0];
             int cardId = this.gameEngine.getLastPlayedCharacterCard()[1];
             String playerName = CommonManager.takePlayerById(this.gameEngine, playerId).getUsername();
-            String cardName = Character.values()[cardId].name();
+            String cardName = Character.values()[cardId-1].name();
 
             for (ServerClientConnection serverClientConnection : this.serverClientConnections) {
                 if (serverClientConnection != null)
