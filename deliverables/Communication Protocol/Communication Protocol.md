@@ -461,3 +461,10 @@ Let's assume that the CheckEndMatchConditionAction detects that one of the game 
 ## Sequence diagram 
 
 The following sequence diagrams show the communication between the server and the client:
+
+![New connection](Sequence_diagrams/1_new_connection.png)
+![Match start](Sequence_diagrams/2_match_start.png)
+![Action request](Sequence_diagrams/3_action_request.png)
+![End match](Sequence_diagrams/4_end_match.png)
+![Still alive - server to client](Sequence_diagrams/5_still_alive_sc.png)
+![Still alive - client to server](Sequence_diagrams/6_still_alive_cs.png)
