@@ -71,6 +71,7 @@ class TestCharacterCardObserver {
             // Set the possibility to use instantly the card
             ArrayList<Integer> possibleActions = new ArrayList<>();
             possibleActions.add(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_ID);
+            possibleActions.add(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID);
             gameController.getGameEngine().getRound().setPossibleActions(possibleActions);
 
             // Give money
