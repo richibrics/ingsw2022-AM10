@@ -1,0 +1,21 @@
+.dialog-pane {
+    -fx-background-color: linear-gradient(to right, azure, aquamarine);
+    -fx-text-fill:black;
+    -fx-font-size:15px;
+    -fx-font-family: Algerian;
+}
+
+.dialog-pane .button{
+    -fx-background-color: linear-gradient(aqua, deepskyblue);
+    -fx-text-fill: black;;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow( three-pass-box, blue, 10.0, 0.0, 0.0, 0.0);
+    -fx-cursor:hand;
+    -fx-font-family: Algerian;
+}
+
+.dialog-pane .button:hover{
+    -fx-effect: dropshadow(three-pass-box, blue, 10, 0.6, 0, 0);
+    -fx-text-fill:black;
+    -fx-font-weight:bold;
+}

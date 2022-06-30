@@ -306,4 +306,6 @@ public class GUIConstants {
     public static final int FONT_SIZE_TURN = 24;
     public static final String CLIENT_TURN = "Your turn";
     public static final String NOT_CLIENT_TURN = "Not your turn";
+
+    public static final String BACKGROUND_STYLING = "/CSS/table_background.css";
 }

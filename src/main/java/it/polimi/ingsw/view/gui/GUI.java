@@ -13,17 +13,18 @@ import it.polimi.ingsw.view.input_management.Command;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static javafx.application.Application.launch;
@@ -113,11 +114,20 @@ public class GUI extends AbstractView {
     public void displayWinners(String messageForPlayer) {
         Platform.runLater(() -> {
             this.isErrorOpen = true;
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, messageForPlayer);
-            alert.showAndWait();
-            if (alert.getResult() == ButtonType.OK) {
-                this.isErrorOpen = false;
-            }
+
+            Dialog dialog = new Dialog();
+            //Set the title
+            dialog.setTitle("Game result");
+            //Set the content of the dialog
+            dialog.setContentText(messageForPlayer);
+            //Add button to the dialog pane
+            dialog.getDialogPane().getButtonTypes().add(new ButtonType("OK", ButtonBar.ButtonData.LEFT));
+            dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/CSS/endGame.css")).toExternalForm());
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("/images/end.png"));
+            dialog.showAndWait();
+
+            this.isErrorOpen = false;
         });
     }
 
@@ -171,11 +181,23 @@ public class GUI extends AbstractView {
      */
     @Override
     public void showError(String message, boolean isCritical) {
-        this.isErrorOpen = isCritical; // Set as open and as only openable only if critical
+        if (!this.isErrorOpen)
+            this.isErrorOpen = isCritical; // Set as open and as only openable only if critical
+
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR, message);
-            alert.showAndWait();
-            if (alert.getResult() == ButtonType.OK && isCritical) {
+            Dialog dialog = new Dialog();
+            //Set the title
+            dialog.setTitle("Error");
+            //Set the content of the dialog
+            dialog.setContentText(message);
+            //Add button to the dialog pane
+            dialog.getDialogPane().getButtonTypes().add(new ButtonType("OK", ButtonBar.ButtonData.LEFT));
+            dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/CSS/error.css")).toExternalForm());
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("/images/redXMark.png"));
+            dialog.showAndWait();
+
+            if (isCritical) {
                 this.isErrorOpen = false;
             }
         });
@@ -188,8 +210,18 @@ public class GUI extends AbstractView {
     @Override
     public void showInfo(String message) {
         Platform.runLater(()->{
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
-            alert.showAndWait();
+            Dialog dialog = new Dialog();
+            //Set the title
+            dialog.setTitle("Match info");
+            //Set the content of the dialog
+            dialog.setContentText(message);
+            //Add button to the dialog pane
+            dialog.getDialogPane().getButtonTypes().add(new ButtonType("OK", ButtonBar.ButtonData.LEFT));
+            dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/CSS/hint.css")).toExternalForm());
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            // Add a custom icon.
+            stage.getIcons().add(new Image(GUIConstants.SCENE_TABLE_BULB_IMAGE_PATH));
+            dialog.showAndWait();
         });
     }
 

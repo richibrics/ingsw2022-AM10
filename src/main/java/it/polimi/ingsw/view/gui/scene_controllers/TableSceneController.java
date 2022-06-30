@@ -14,15 +14,14 @@ import it.polimi.ingsw.view.gui.StageController;
 import it.polimi.ingsw.view.input_management.Command;
 import it.polimi.ingsw.view.input_management.CommandDataEntryValidationSet;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
@@ -35,12 +34,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TableSceneController extends SceneController {
@@ -1109,8 +1106,20 @@ public class TableSceneController extends SceneController {
 
 
     private void onSelectionOfBulb(MouseEvent event) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, StageController.getStageController().getGuiView().getAvailableActionsHint());
-        alert.show();
+        Dialog dialog = new Dialog();
+        //Set the title
+        dialog.setTitle("Possible actions");
+        //Set the content of the dialog
+        dialog.setContentText(StageController.getStageController().getGuiView().getAvailableActionsHint());
+        //Add button to the dialog pane
+        dialog.getDialogPane().getButtonTypes().add(new ButtonType("OK", ButtonBar.ButtonData.LEFT));
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/CSS/hint.css")).toExternalForm());
+        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        // Add a custom icon.
+        stage.getIcons().add(Images.getImages().getBulb());
+        // Make dialog not closable using the x
+        stage.setOnCloseRequest(Event::consume);
+        dialog.show();
     }
 
     // STATIC METHODS
