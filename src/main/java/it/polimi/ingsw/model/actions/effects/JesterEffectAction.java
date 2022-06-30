@@ -13,6 +13,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that manages the action of JesterEffect.
+ */
 public class JesterEffectAction extends Action {
 
     private Integer studentId1;

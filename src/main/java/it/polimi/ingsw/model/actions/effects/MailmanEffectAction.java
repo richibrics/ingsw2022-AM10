@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.actions.Action;
 
 import java.util.Map;
 
+/**
+ * Class that manages the action of MailmanEffect.
+ */
 public class MailmanEffectAction extends Action {
     public MailmanEffectAction(GameEngine gameEngine) {
         super(ModelConstants.ACTION_MAILMAN_ID, gameEngine);

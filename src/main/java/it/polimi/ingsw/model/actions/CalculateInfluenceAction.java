@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class that calculates the influence that each team has on the requested islandGroup.
+ */
 public class CalculateInfluenceAction extends AbstractCalculateInfluenceAction {
 
     public CalculateInfluenceAction(GameEngine gameEngine) {

@@ -26,6 +26,7 @@ public class Round {
 
     /**
      * Returns the ids of the possible Actions the Player (that currently has the turn) can perform.
+     *
      * @return the ids of the possible Actions the Player (that currently has the turn) can perform
      */
     public ArrayList<Integer> getPossibleActions() {
@@ -33,26 +34,8 @@ public class Round {
     }
 
     /**
-     * Returns the ids of the Players ordered by their Turn order.
-     * @return the ids of the Players ordered by their Turn order
-     */
-    public ArrayList<Integer> getOrderOfPlay() {
-        return new ArrayList<>(this.orderOfPlay);
-    }
-
-    /**
-     * Returns the id of the player that has to play (which has the turn in this round).
-     * @return the id of the player that has to play (which has the turn in this round)
-     * @throws PlayerOrderNotSetException if turns order is not set for this Round
-     */
-    public int getCurrentPlayer() throws PlayerOrderNotSetException {
-        if(this.orderOfPlay.size() < 1)
-           throw new PlayerOrderNotSetException();
-        return orderOfPlay.get(0);
-    }
-
-    /**
      * Sets a list of Actions ids that the current Player can perform.
+     *
      * @param newListOfActions the list of Actions ids to set
      */
     public void setPossibleActions(ArrayList<Integer> newListOfActions) {
@@ -61,12 +44,22 @@ public class Round {
     }
 
     /**
+     * Returns the ids of the Players ordered by their Turn order.
+     *
+     * @return the ids of the Players ordered by their Turn order
+     */
+    public ArrayList<Integer> getOrderOfPlay() {
+        return new ArrayList<>(this.orderOfPlay);
+    }
+
+    /**
      * Sets the new Players turns order
+     *
      * @param newOrder the list containing the ids of the Players in the new order
      * @throws InvalidParameterException if the new order size doesn't match players number or if a player is present more than once
      */
     public void setOrderOfPlay(ArrayList<Integer> newOrder) throws InvalidParameterException {
-        if(newOrder.size() != this.playersNumber) {
+        if (newOrder.size() != this.playersNumber) {
             throw new InvalidParameterException("New order list size must be the same as number of players in the match");
         }
         if (new HashSet<Integer>(newOrder).size() < newOrder.size()) { // Check duplicates
@@ -78,9 +71,22 @@ public class Round {
     }
 
     /**
+     * Returns the id of the player that has to play (which has the turn in this round).
+     *
+     * @return the id of the player that has to play (which has the turn in this round)
+     * @throws PlayerOrderNotSetException if turns order is not set for this Round
+     */
+    public int getCurrentPlayer() throws PlayerOrderNotSetException {
+        if (this.orderOfPlay.size() < 1)
+            throw new PlayerOrderNotSetException();
+        return orderOfPlay.get(0);
+    }
+
+    /**
      * Notify the observers that Round state has changed
      */
-    public void notifyAllObservers() { } // Will be implemented after Observer implementation
+    public void notifyAllObservers() {
+    } // Will be implemented after Observer implementation
 
     /**
      * This method is called from outside when the Player has ended its turn.
@@ -89,6 +95,7 @@ public class Round {
      * Check if all the players of the round have played; if yes, return false to let outside know the round has ended
      * and a new Player order is required.
      * If after this player, the round ended, the round restarts with the same order.
+     *
      * @return false if after the current player there's nobody that has to play next
      */
     public boolean playerTurnEnded() {
@@ -110,15 +117,16 @@ public class Round {
         int lastPlayer = this.orderOfPlay.get(0);
         this.orderOfPlay.remove(Integer.valueOf(lastPlayer));
         // Insert him in the last position
-        this.orderOfPlay.add(this.orderOfPlay.size(),lastPlayer);
+        this.orderOfPlay.add(this.orderOfPlay.size(), lastPlayer);
     }
 
     /**
      * Returns true if all the players have played in this Round.
+     *
      * @return true if all the players have played in this Round
      */
     private boolean hasRoundEnded() {
-        if(this.roundTurnsStatus > this.playersNumber) {
+        if (this.roundTurnsStatus > this.playersNumber) {
             this.roundTurnsStatus = 1; // Restart the round with the same order
             return true;
         }

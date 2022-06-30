@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class that manages the action of KnightEffect.
+ */
 public class CalculateInfluenceActionKnightEffect extends CalculateInfluenceActionEffect {
 
     public CalculateInfluenceActionKnightEffect(GameEngine gameEngine, Action calculateInfluenceAction) {

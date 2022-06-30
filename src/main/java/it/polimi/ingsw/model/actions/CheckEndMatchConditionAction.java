@@ -10,6 +10,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that manages the action of CheckEndMatchCondition.
+ */
 public class CheckEndMatchConditionAction extends Action {
     public CheckEndMatchConditionAction(GameEngine gameEngine) {
         super(ModelConstants.ACTION_CHECK_END_MATCH_CONDITION_ID, gameEngine);

@@ -9,6 +9,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.Map;
 
+/**
+ * Class that manages the action of HerbalistEffect.
+ */
 public class HerbalistEffectAction extends Action {
     private Integer chosenIslandId;
 

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game_components;
 
+/**
+ * Class that describes the Tower as a game object, with methods to get information about it.
+ */
 public class Tower {
     final private TowerColor color;
 
@@ -10,8 +13,8 @@ public class Tower {
     /**
      * Returns the color (TowerColor) of the Tower
      *
-     * @return      Tower color
-     * @see         TowerColor
+     * @return Tower color
+     * @see TowerColor
      */
     public TowerColor getColor() {
         return color;

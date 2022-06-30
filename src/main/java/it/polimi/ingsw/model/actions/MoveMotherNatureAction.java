@@ -11,6 +11,9 @@ import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that manages the action of MoveMotherNature.
+ */
 public class MoveMotherNatureAction extends Action {
 
     private Integer chosenIslandId;

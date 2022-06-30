@@ -11,6 +11,9 @@ import it.polimi.ingsw.model.game_components.*;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that contains all the methods that change the status of the islandTiles.
+ */
 public class IslandManager extends Manager {
     public IslandManager(GameEngine gameEngine) {
         super(gameEngine);
@@ -30,7 +33,7 @@ public class IslandManager extends Manager {
         if (islandTiles.size() > 1) {
             int startingGroup = islandTiles.size() > 2 ? -1 : 0;
             for (int groupId = startingGroup; groupId < islandTiles.size() - 1; groupId++) { // From -1 to join first and last groups
-                int leftGroupId = groupId == -1 ? islandTiles.size()-1:groupId;
+                int leftGroupId = groupId == -1 ? islandTiles.size() - 1 : groupId;
                 int rightGroupId = groupId + 1;
                 IslandTile islandLeftGroup = islandTiles.get(leftGroupId).get(0);
                 IslandTile islandRightGroup = islandTiles.get(rightGroupId).get(0);
@@ -41,7 +44,7 @@ public class IslandManager extends Manager {
                         if (towerLeftGroup.getColor().equals(towerRightGroup.getColor())) {
                             // Unify possible
                             // Manage noEntry before merging
-                            this.spreadNoEntryTilesInMergingIslandGroups(leftGroupId , rightGroupId);
+                            this.spreadNoEntryTilesInMergingIslandGroups(leftGroupId, rightGroupId);
                             // Merge
                             islandTiles.get(leftGroupId).addAll(islandTiles.get(rightGroupId));
                             // Clear right group

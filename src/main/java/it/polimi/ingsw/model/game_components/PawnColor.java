@@ -4,6 +4,9 @@ import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 
 import java.util.Locale;
 
+/**
+ * Class that enumerates all the PawnColors of the game and contains the methods to get information about them.
+ */
 public enum PawnColor {
     YELLOW(0),
     BLUE(1),
@@ -15,27 +18,6 @@ public enum PawnColor {
 
     PawnColor(int id) {
         this.id = id;
-    }
-
-    /**
-     * Returns the id of the Color value in the enumeration
-     *
-     * @return Color id
-     */
-
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Checks if the id of the object equals the id of color.
-     *
-     * @param color instance of PawnColor. this is compared to color
-     * @return true if the ids are equal, false otherwise
-     */
-
-    public boolean equals(PawnColor color) {
-        return this.getId() == color.getId();
     }
 
     /**
@@ -51,7 +33,7 @@ public enum PawnColor {
         PawnColor returnColor = null;
 
         if (color.length() == 1) // From first letter
-            switch (color.substring(0,1).toUpperCase(Locale.ROOT)) {
+            switch (color.substring(0, 1).toUpperCase(Locale.ROOT)) {
                 case "Y":
                     returnColor = PawnColor.YELLOW;
                     break;
@@ -92,5 +74,26 @@ public enum PawnColor {
 
         else
             return returnColor;
+    }
+
+    /**
+     * Returns the id of the Color value in the enumeration
+     *
+     * @return Color id
+     */
+
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Checks if the id of the object equals the id of color.
+     *
+     * @param color instance of PawnColor. this is compared to color
+     * @return true if the ids are equal, false otherwise
+     */
+
+    public boolean equals(PawnColor color) {
+        return this.getId() == color.getId();
     }
 }

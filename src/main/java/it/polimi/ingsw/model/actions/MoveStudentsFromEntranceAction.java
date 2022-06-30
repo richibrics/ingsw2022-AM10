@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that manages the action of MoveStudentsFromEntrance.
+ */
 public class MoveStudentsFromEntranceAction extends Action {
     private Integer studentToMove;
     private Integer futureStudentPosition;
@@ -83,6 +86,7 @@ public class MoveStudentsFromEntranceAction extends Action {
      * Also, when all (3) students have been moved, run the "calculate influence" (not at every movement cause if I call
      * the first time calculate influence that has en effect active, at the second movement the effect isn't active anymore).
      * The number of movements for each player is different for the three players version where he has to move 4 students.
+     *
      * @throws Exception if something bad happens
      */
 
@@ -95,8 +99,8 @@ public class MoveStudentsFromEntranceAction extends Action {
             numberOfMovements = ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_NUMBER_OF_MOVEMENTS_TWO_FOUR_PLAYERS;
 
         this.countMovedStudents += 1;
-      
-        if(this.countMovedStudents >= numberOfMovements) {
+
+        if (this.countMovedStudents >= numberOfMovements) {
 
             this.countMovedStudents = 0; // Reset counter for the next player.
 

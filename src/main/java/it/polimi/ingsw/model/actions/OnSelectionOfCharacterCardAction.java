@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that manages the action of OnSelectionOfCharacterCard.
+ */
 public class OnSelectionOfCharacterCardAction extends Action {
 
     private Map<String, String> characterActionOptions;

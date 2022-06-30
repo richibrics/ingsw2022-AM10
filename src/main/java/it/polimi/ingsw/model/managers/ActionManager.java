@@ -6,9 +6,12 @@ import it.polimi.ingsw.model.actions.*;
 
 import java.util.Map;
 
+/**
+ * Class that contains all the methods that use the actions of the game.
+ */
 public class ActionManager extends Manager {
 
-    private Action[] actions = new Action[ModelConstants.NUMBER_OF_STANDARD_ACTIONS];
+    private final Action[] actions = new Action[ModelConstants.NUMBER_OF_STANDARD_ACTIONS];
 
     public ActionManager(GameEngine gameEngine) {
         super(gameEngine);
@@ -16,6 +19,7 @@ public class ActionManager extends Manager {
 
     /**
      * Gets the list of actions
+     *
      * @return
      */
 
@@ -48,7 +52,8 @@ public class ActionManager extends Manager {
         else if (this.getGameEngine().getNumberOfPlayers() == 3)
             setUp = new SetUpThreePlayersAction(this.getGameEngine());
 
-        if (setUp == null) throw new NullPointerException("The number of players in the game is not supported, so Setup action can't be generated.");
+        if (setUp == null)
+            throw new NullPointerException("The number of players in the game is not supported, so Setup action can't be generated.");
 
         setUp.act();
         setUp.modifyRoundAndActionList();
@@ -88,12 +93,13 @@ public class ActionManager extends Manager {
         actions[actionId].setPlayerId(playerId);
         actions[actionId].setOptions(options);
         actions[actionId].act();
-        if(runModifyRoundAndActionList)
+        if (runModifyRoundAndActionList)
             actions[actionId].modifyRoundAndActionList();
     }
 
     /**
      * Sets the playerId and executes the action, without setting any option.
+     *
      * @param actionId the identifier of the action
      * @param playerId the identifier of the player performing the action
      * @throws Exception if the action executed throws an exception

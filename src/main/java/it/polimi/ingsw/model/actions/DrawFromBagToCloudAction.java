@@ -8,6 +8,9 @@ import it.polimi.ingsw.model.exceptions.TableNotSetException;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that manages the action of DrawFromBagToCloud.
+ */
 public abstract class DrawFromBagToCloudAction extends Action {
 
     public DrawFromBagToCloudAction(GameEngine gameEngine) {

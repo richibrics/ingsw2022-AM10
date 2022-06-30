@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+/**
+ * Class that manages the constants used for the model.
+ */
 public class ModelConstants {
     public final static int ACTION_SETUP_ID = -1;
     public final static int NUMBER_OF_STANDARD_ACTIONS = 10;
@@ -21,6 +24,9 @@ public class ModelConstants {
     public final static int ACTION_LADY_ID = 15;
     public final static int ACTION_THIEF_ID = 16;
     public final static int ACTION_HERBALIST_ID = 17;
+    public static final int TWO_PLAYERS = 2;
+    public static final int THREE_PLAYERS = 3;
+    public static final int FOUR_PLAYERS = 4;
     public static String ACTION_ON_SELECTION_OF_ASSISTANTS_CARD_OPTIONS_KEY_ASSISTANT = "assistant";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_WIZARD = "wizard";
     public static String ACTION_ON_SELECTION_OF_WIZARD_OPTIONS_KEY_COLOR = "color";
@@ -51,7 +57,6 @@ public class ModelConstants {
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_NUMBER_OF_MOVEMENTS_TWO_FOUR_PLAYERS = 3;
     public static int ACTION_MOVE_STUDENTS_FROM_ENTRANCE_NUMBER_OF_MOVEMENTS_THREE_PLAYERS = 4;
     public static int ACTION_CALCULATE_INFLUENCE_OPTIONS_KEY_ISLAND_VALUE_MOTHER_NATURE_ISLAND = -1;
-
     public static int NUMBER_OF_ISLAND_TILES = 12;
     public static int MIN_ID_OF_WIZARD = 1;
     public static int MAX_ID_OF_WIZARD = 4;
@@ -75,16 +80,9 @@ public class ModelConstants {
     public static int INITIAL_NUMBER_OF_STUDENTS_IN_ENTRANCE_THREE_PLAYERS = 9;
     public static int NUMBER_OF_CHARACTER_CARDS = 3;
     public static int INITIAL_NUMBER_OF_STUDENTS_PER_ISLAND = 2;
-
     public static int INITIAL_PLAYER_COINS = 3;
-
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_TWO_PLAYERS_STUDENTS_NUMBER = 3;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_THREE_PLAYERS_STUDENTS_NUMBER = 4;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_FOUR_PLAYERS_STUDENTS_NUMBER = 3;
-
-    public static final int TWO_PLAYERS = 2;
-    public static final int THREE_PLAYERS = 3;
-    public static final int FOUR_PLAYERS = 4;
-
     public static int NO_PLAYER = -1;
 }

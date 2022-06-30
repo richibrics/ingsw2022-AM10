@@ -4,11 +4,14 @@ import it.polimi.ingsw.controller.GameEngine;
 
 import java.util.Map;
 
+/**
+ * Class that manages the action, with methods that describe it and update the status of the game.
+ */
 public abstract class Action {
 
     private final int id;
-    private int playerId;
     private final GameEngine gameEngine;
+    private int playerId;
 
     public Action(int id, GameEngine gameEngine) {
         this.id = id;

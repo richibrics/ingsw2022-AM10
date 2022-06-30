@@ -11,6 +11,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that manages the action of ThiefEffect.
+ */
 public class ThiefEffectAction extends Action {
     private PawnColor color;
 

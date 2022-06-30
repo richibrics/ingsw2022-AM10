@@ -13,6 +13,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.Map;
 
+/**
+ * Class that manages the action of LadyEffect.
+ */
 public class LadyEffectAction extends Action {
     private Integer studentToMove;
 
@@ -50,7 +53,7 @@ public class LadyEffectAction extends Action {
     @Override
     public void modifyRoundAndActionList() throws Exception {
         // Already played the movements: recall the professors calculation
-        if(!this.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID))
+        if (!this.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID))
             this.getGameEngine().getActionManager().executeInternalAction(ModelConstants.ACTION_ASSIGN_PROFESSORS_ID, this.getPlayerId(), false);
     }
 

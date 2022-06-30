@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that manages the action of OnSelectionOfWizard.
+ */
 public class OnSelectionOfWizardAction extends Action {
     private Integer chosenWizardId;
 

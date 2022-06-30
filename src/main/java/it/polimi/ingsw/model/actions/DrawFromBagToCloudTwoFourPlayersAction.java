@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
 
 
+/**
+ * Class that draws the students from bag and push them to cloud in a 2-player game or 4-player game.
+ */
 public class DrawFromBagToCloudTwoFourPlayersAction extends DrawFromBagToCloudAction {
     public DrawFromBagToCloudTwoFourPlayersAction(GameEngine gameEngine) {
         super(gameEngine);

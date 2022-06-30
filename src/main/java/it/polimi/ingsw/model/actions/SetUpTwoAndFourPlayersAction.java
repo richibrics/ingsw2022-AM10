@@ -10,6 +10,9 @@ import it.polimi.ingsw.model.game_components.Bag;
 import it.polimi.ingsw.model.game_components.Tower;
 import it.polimi.ingsw.model.game_components.TowerColor;
 
+/**
+ * Class that sets towers and schoolBoards' entrances for a 2-player game or a 4-player game.
+ */
 public class SetUpTwoAndFourPlayersAction extends SetUp {
 
     public SetUpTwoAndFourPlayersAction(GameEngine gameEngine) {

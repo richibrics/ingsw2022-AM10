@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game_components;
 
+/**
+ * Class that describes the AssistantCard as a game object, with methods to get information about it and to update its status.
+ */
 public class AssistantCard {
     final private int id;
     final private int cardValue;
@@ -14,7 +17,7 @@ public class AssistantCard {
     /**
      * Returns the id of the AssistantCard
      *
-     * @return      AssistantCard id
+     * @return AssistantCard id
      */
     public int getId() {
         return id;
@@ -23,7 +26,7 @@ public class AssistantCard {
     /**
      * Returns the card value of the AssistantCard
      *
-     * @return      AssistantCard card value
+     * @return AssistantCard card value
      */
     public int getCardValue() {
         return cardValue;
@@ -32,7 +35,7 @@ public class AssistantCard {
     /**
      * Returns the movements number of the AssistantCard
      *
-     * @return      AssistantCard movements
+     * @return AssistantCard movements
      */
     public int getMovements() {
         return movements;
@@ -40,7 +43,10 @@ public class AssistantCard {
 
     /**
      * Increments by {@code increment} the number of movements of Mother Nature allowed by the card.
+     *
      * @param increment the number of movements to add to the current number of movements
      */
-    public void incrementMovements(int increment) { this.movements += increment; }
+    public void incrementMovements(int increment) {
+        this.movements += increment;
+    }
 }

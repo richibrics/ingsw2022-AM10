@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that manages the action of AssignProfessorPawns.
+ */
 public abstract class AbstractAssignProfessorAction extends Action {
 
     public AbstractAssignProfessorAction(GameEngine gameEngine) {
@@ -32,7 +35,7 @@ public abstract class AbstractAssignProfessorAction extends Action {
      * Checks if the professor  of color {@code color} has to be moved to a different team.
      *
      * @param color            the color of the professor pawn
-     * @param player      the player that has the highest number of students of color {@code color} in the
+     * @param player           the player that has the highest number of students of color {@code color} in the
      *                         dining room
      * @param studentsOfPlayer the map with playerId - number of students of color {@code color} in the dining room
      * @return true if the professor  of color {@code color} has to be moved to a different team, false otherwise

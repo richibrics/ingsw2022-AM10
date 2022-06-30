@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game_components;
 
+/**
+ * Class that describes the ProfessorPawn as a game object, with methods to get information about it.
+ */
 public class ProfessorPawn {
     final private PawnColor color;
 
@@ -10,8 +13,8 @@ public class ProfessorPawn {
     /**
      * Returns the color (PawnColor) of the ProfessorPawn
      *
-     * @return      Professor color
-     * @see         PawnColor
+     * @return Professor color
+     * @see PawnColor
      */
     public PawnColor getColor() {
         return color;

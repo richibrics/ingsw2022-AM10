@@ -14,6 +14,9 @@ import it.polimi.ingsw.model.game_components.TowerColor;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that contains all the methods that take the game objects using the playerId requested.
+ */
 public class CommonManager {
 
     /**

@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.exceptions.EmptyBagException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Class that describes the Bag as a game object, with methods to get information about it and to update its status.
+ */
 public class Bag {
     final private ArrayList<StudentDisc> students;
 
@@ -16,10 +19,9 @@ public class Bag {
      * Add StudentDisc to the Bag and shuffle all the StudentDiscs in the bag, so I will be able to draw them randomly
      *
      * @param studentsToPush ArrayList with StudentDiscs to add to the Bag
-     * @see         StudentDisc
+     * @see StudentDisc
      */
-    public void pushStudents(ArrayList<StudentDisc> studentsToPush)
-    {
+    public void pushStudents(ArrayList<StudentDisc> studentsToPush) {
         this.students.addAll(studentsToPush);
         Collections.shuffle(this.students);
     }
@@ -27,11 +29,10 @@ public class Bag {
     /**
      * Return the number of StudentDiscs in the Bag
      *
-     * @return      Number of StudentDiscs in the Bag
+     * @return Number of StudentDiscs in the Bag
      * @throws EmptyBagException if the bag doesn't contain any StudentDisc
      */
-    public int getNumberOfStudents()
-    {
+    public int getNumberOfStudents() {
         return this.students.size();
     }
 
@@ -43,13 +44,13 @@ public class Bag {
     /**
      * Pop from the list a random Collection of Students and return them
      *
-     * @param numberToDraw  Number of StudentDiscs that need to be drawn
-     * @return      Randomly drawn StudentDiscs
+     * @param numberToDraw Number of StudentDiscs that need to be drawn
+     * @return Randomly drawn StudentDiscs
      * @throws EmptyBagException if the bag doesn't contain enough StudentDisc
-     * @see         StudentDisc
+     * @see StudentDisc
      */
     public ArrayList<StudentDisc> drawStudents(int numberToDraw) throws EmptyBagException {
-        if(this.getNumberOfStudents()<numberToDraw)
+        if (this.getNumberOfStudents() < numberToDraw)
             throw new EmptyBagException("The Bag doesn't contain enough elements");
         ArrayList<StudentDisc> drawnStudents = new ArrayList<>();
         for (int i = 0; i < numberToDraw; i++) {

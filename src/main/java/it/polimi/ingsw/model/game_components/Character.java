@@ -1,7 +1,9 @@
 package it.polimi.ingsw.model.game_components;
 
-import it.polimi.ingsw.model.actions.Action;
-
+/**
+ * Class that enumerates all the Characters of the game
+ * and contains the methods to get information about them and to update their status.
+ */
 public enum Character {
     // When the Actions will be implemented, the Action classes will be replaced here.
     FRIAR(1, 1, 4),

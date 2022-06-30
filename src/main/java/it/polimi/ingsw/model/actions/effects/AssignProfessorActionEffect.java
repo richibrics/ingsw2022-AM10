@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.AbstractAssignProfessorAction;
 import it.polimi.ingsw.model.actions.Action;
 
+/**
+ * Class that manages the action of AssignProfessorEffect.
+ */
 public abstract class AssignProfessorActionEffect extends AbstractAssignProfessorAction {
 
     private final Action assignProfessorAction;

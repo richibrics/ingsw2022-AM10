@@ -8,6 +8,9 @@ import it.polimi.ingsw.model.actions.Action;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class that manages the action of AmbassadorEffect.
+ */
 public class AmbassadorEffectAction extends Action {
 
     private String islandId;

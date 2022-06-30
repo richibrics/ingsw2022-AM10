@@ -12,6 +12,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.*;
 
+/**
+ * Class that manages the action of CalculateInfluence.
+ */
 public abstract class AbstractCalculateInfluenceAction extends Action {
 
     private int islandId = -1;

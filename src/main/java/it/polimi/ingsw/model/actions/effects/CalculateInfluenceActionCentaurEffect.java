@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class that manages the action of CentaurEffect.
+ */
 public class CalculateInfluenceActionCentaurEffect extends CalculateInfluenceActionEffect {
 
     public CalculateInfluenceActionCentaurEffect(GameEngine gameEngine, Action calculateInfluenceAction) {

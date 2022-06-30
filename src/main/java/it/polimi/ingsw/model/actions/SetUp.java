@@ -13,6 +13,9 @@ import it.polimi.ingsw.model.game_components.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class that manages the action of SetUp.
+ */
 public abstract class SetUp extends Action {
 
     public SetUp(GameEngine gameEngine) {

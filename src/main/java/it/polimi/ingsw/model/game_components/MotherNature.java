@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game_components;
 
+/**
+ * Class that describes the MotherNature as a game object, with methods to get information about it and to update its status.
+ */
 public class MotherNature {
     private IslandTile islandTile;
 
@@ -10,11 +13,10 @@ public class MotherNature {
     /**
      * Get the current position of MotherNature
      *
-     * @return      IslandTile where MotherNature is
-     * @see         IslandTile
+     * @return IslandTile where MotherNature is
+     * @see IslandTile
      */
-    public IslandTile getIslandTile()
-    {
+    public IslandTile getIslandTile() {
         return this.islandTile;
     }
 
@@ -22,10 +24,9 @@ public class MotherNature {
      * Set new MotherNature's position
      *
      * @param newIsland New IslandTile for MotherNature
-     * @see         IslandTile
+     * @see IslandTile
      */
-    public void modifyIsland(IslandTile newIsland)
-    {
+    public void modifyIsland(IslandTile newIsland) {
         this.islandTile = newIsland;
     }
 }

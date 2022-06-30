@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that manages the action of FromCloudTileToEntrance.
+ */
 public class FromCloudTileToEntranceAction extends Action {
 
     private int cloudId;

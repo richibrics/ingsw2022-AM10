@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that manages the action of OnSelectionOfAssistantsCard.
+ */
 public class OnSelectionOfAssistantsCardAction extends Action {
     private Integer chosenAssistantId;
 

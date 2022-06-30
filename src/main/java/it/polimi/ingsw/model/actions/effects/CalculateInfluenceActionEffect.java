@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.actions.AbstractCalculateInfluenceAction;
 import it.polimi.ingsw.model.actions.Action;
 
+/**
+ * Class that manages the action of CalculateInfluenceEffect.
+ */
 public abstract class CalculateInfluenceActionEffect extends AbstractCalculateInfluenceAction {
 
     private final Action calculateInfluenceAction;

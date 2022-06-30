@@ -13,6 +13,9 @@ import it.polimi.ingsw.model.managers.CommonManager;
 
 import java.util.Map;
 
+/**
+ * Class that manages the action of FriarEffect.
+ */
 public class FriarEffectAction extends Action {
     private Integer studentToMove;
     private Integer islandId;

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.game_components;
 
+/**
+ * Class that describes the StudentDisc as a game object, with methods to get information about it.
+ */
 public class StudentDisc {
     final private PawnColor color;
     final private int id;
@@ -12,8 +15,8 @@ public class StudentDisc {
     /**
      * Returns the color (PawnColor) of the StudentDisc
      *
-     * @return      StudentDisc color
-     * @see         PawnColor
+     * @return StudentDisc color
+     * @see PawnColor
      */
     public PawnColor getColor() {
         return color;
@@ -22,7 +25,7 @@ public class StudentDisc {
     /**
      * Returns the id of the StudentDisc
      *
-     * @return      StudentDisc id
+     * @return StudentDisc id
      */
     public int getId() {
         return id;

@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that describes the Table as a game object, with methods to get information about it and to update its status.
+ */
 public class Table {
     final private ArrayList<SchoolBoard> schoolBoards;
     final private Bag bag;
@@ -22,8 +25,7 @@ public class Table {
         this.motherNature = motherNature;
         // Copy the island groups received
         this.islandTiles = new ArrayList<>();
-        for(ArrayList<IslandTile> group: islandTiles)
-        {
+        for (ArrayList<IslandTile> group : islandTiles) {
             this.islandTiles.add(new ArrayList<>(group));
         }
         // End of island groups copy
@@ -36,8 +38,8 @@ public class Table {
     /**
      * Returns the ArrayList of match SchoolBoards
      *
-     * @return  ArrayList of SchoolBoards
-     * @see     SchoolBoard
+     * @return ArrayList of SchoolBoards
+     * @see SchoolBoard
      */
     public ArrayList<SchoolBoard> getSchoolBoards() {
         return new ArrayList<>(this.schoolBoards);
@@ -46,8 +48,8 @@ public class Table {
     /**
      * Returns the current state of the bag
      *
-     * @return  Bag
-     * @see     Bag
+     * @return Bag
+     * @see Bag
      */
     public Bag getBag() {
         return bag;
@@ -56,8 +58,8 @@ public class Table {
     /**
      * Return the ArrayList of match Cloudtiles
      *
-     * @return  ArrayList of CloudTiles
-     * @see     CloudTile
+     * @return ArrayList of CloudTiles
+     * @see CloudTile
      */
     public ArrayList<CloudTile> getCloudTiles() {
         return new ArrayList<>(this.cloudTiles);
@@ -66,8 +68,8 @@ public class Table {
     /**
      * Returns the MotherNature status
      *
-     * @return  MotherNature
-     * @see     MotherNature
+     * @return MotherNature
+     * @see MotherNature
      */
     public MotherNature getMotherNature() {
         return motherNature;
@@ -76,8 +78,8 @@ public class Table {
     /**
      * Returns the matrix (ArrayList of ArrayList) of IslandTile in IslandTiles
      *
-     * @return  Matrix of IslandTile in IslandTiles
-     * @see     IslandTile
+     * @return Matrix of IslandTile in IslandTiles
+     * @see IslandTile
      */
     public ArrayList<ArrayList<IslandTile>> getIslandTiles() {
         return islandTiles;
@@ -85,6 +87,7 @@ public class Table {
 
     /**
      * Gets a copy of the list of available professor pawns.
+     *
      * @return the list of available professor pawns
      */
 
@@ -94,12 +97,13 @@ public class Table {
 
     /**
      * Pops the requested professor pawn from the list of available professor pawns.
+     *
      * @param color the color of the requested professor pawn
      * @return the required professor pawn
      * @throws NoSuchElementException if the professor pawn could not be found
      */
 
-    public ProfessorPawn popProfessorPawn (PawnColor color) throws NoSuchElementException{
+    public ProfessorPawn popProfessorPawn(PawnColor color) throws NoSuchElementException {
         ProfessorPawn professorPawn = null;
         for (ProfessorPawn pawn : this.availableProfessorPawns)
             if (pawn.getColor() == color) {
@@ -117,8 +121,8 @@ public class Table {
     /**
      * Returns the Table CharacterCards
      *
-     * @return  The CharacterCards on the Table
-     * @see     CharacterCard
+     * @return The CharacterCards on the Table
+     * @see CharacterCard
      */
     public Map<Integer, CharacterCard> getCharacterCards() {
         return new HashMap<Integer, CharacterCard>(this.activeCharacterCards);
@@ -126,17 +130,24 @@ public class Table {
 
     /**
      * Returns the number of NoEntry tiles available to be set to IslandTile groups.
+     *
      * @return the number of NoEntry tiles
      */
-    public int getAvailableNoEntryTiles() { return this.availableNoEntryTiles; }
+    public int getAvailableNoEntryTiles() {
+        return this.availableNoEntryTiles;
+    }
 
     /**
      * Increases the number of available NoEntry tiles by 1.
      */
-    public void increaseAvailableNoEntryTiles() { this.availableNoEntryTiles += 1; }
+    public void increaseAvailableNoEntryTiles() {
+        this.availableNoEntryTiles += 1;
+    }
 
     /**
      * Decreases the number of available NoEntry tiles by 1.
      */
-    public void decreaseAvailableNoEntryTiles() { this.availableNoEntryTiles -= 1; }
+    public void decreaseAvailableNoEntryTiles() {
+        this.availableNoEntryTiles -= 1;
+    }
 }

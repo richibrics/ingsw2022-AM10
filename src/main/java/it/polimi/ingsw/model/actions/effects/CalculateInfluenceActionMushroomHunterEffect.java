@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class that manages the action of MushroomHunterEffect.
+ */
 public class CalculateInfluenceActionMushroomHunterEffect extends CalculateInfluenceActionEffect {
 
     private PawnColor color;

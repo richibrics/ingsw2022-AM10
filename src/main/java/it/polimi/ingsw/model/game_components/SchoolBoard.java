@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.exceptions.IllegalStudentDiscMovementException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+/**
+ * Class that describes the SchoolBoard as a game object, with methods to get information about it and to update its status.
+ */
 public class SchoolBoard {
     final private ArrayList<StudentDisc> entrance;
     final private ArrayList<ArrayList<StudentDisc>> diningRoom;
@@ -12,8 +15,7 @@ public class SchoolBoard {
     public SchoolBoard() {
         this.entrance = new ArrayList<>();
         this.diningRoom = new ArrayList<>();
-        for(PawnColor color: PawnColor.values())
-        {
+        for (PawnColor color : PawnColor.values()) {
             this.diningRoom.add(new ArrayList<>());
         }
     }
@@ -21,11 +23,10 @@ public class SchoolBoard {
     /**
      * Returns the ArrayList of StudentDiscs in the Entrance
      *
-     * @return  ArrayList of StudentDiscs in the entrance
-     * @see     StudentDisc
+     * @return ArrayList of StudentDiscs in the entrance
+     * @see StudentDisc
      */
-    public ArrayList<StudentDisc> getEntrance()
-    {
+    public ArrayList<StudentDisc> getEntrance() {
         return new ArrayList<>(this.entrance);
     }
 
@@ -33,25 +34,22 @@ public class SchoolBoard {
      * Returns the ArrayList of StudentDiscs of the specified color in the DiningRoom
      *
      * @param color Color of the requested row in the dining room
-     * @return  ArrayList of StudentDiscs of the specified color in the DiningRoom
-     * @see     StudentDisc
+     * @return ArrayList of StudentDiscs of the specified color in the DiningRoom
+     * @see StudentDisc
      */
-    public ArrayList<StudentDisc> getDiningRoomColor(PawnColor color)
-    {
+    public ArrayList<StudentDisc> getDiningRoomColor(PawnColor color) {
         return new ArrayList<>(this.diningRoom.get(color.getId()));
     }
 
     /**
      * Returns the matrix (ArrayList of ArrayList) of StudentDiscs in the DiningRoom
      *
-     * @return  Matrix of StudentDiscs in the DiningRoom
-     * @see     StudentDisc
+     * @return Matrix of StudentDiscs in the DiningRoom
+     * @see StudentDisc
      */
-    public ArrayList<ArrayList<StudentDisc>> getDiningRoom()
-    {
+    public ArrayList<ArrayList<StudentDisc>> getDiningRoom() {
         ArrayList<ArrayList<StudentDisc>> return_matrix = new ArrayList<>();
-        for(PawnColor color: PawnColor.values())
-        {
+        for (PawnColor color : PawnColor.values()) {
             return_matrix.add(color.getId(), getDiningRoomColor(color));
         }
         return return_matrix;
@@ -61,10 +59,9 @@ public class SchoolBoard {
      * Add StudentDiscs to the SchoolBoard entrance
      *
      * @param studentsToAdd ArrayList of StudentDiscs to add to the SchoolBoard entrance
-     * @see     StudentDisc
+     * @see StudentDisc
      */
-    public void addStudentsToEntrance(ArrayList<StudentDisc> studentsToAdd)
-    {
+    public void addStudentsToEntrance(ArrayList<StudentDisc> studentsToAdd) {
         this.entrance.addAll(studentsToAdd);
     }
 
@@ -74,8 +71,7 @@ public class SchoolBoard {
      * @param studentToAdd StudentDisc to add to the SchoolBoard dining room
      * @see StudentDisc
      */
-    public void addStudentToDiningRoom(StudentDisc studentToAdd)
-    {
+    public void addStudentToDiningRoom(StudentDisc studentToAdd) {
         // Get the dining room table of the student color
         ArrayList<StudentDisc> studentsTable = this.diningRoom.get(studentToAdd.getColor().getId());
         studentsTable.add(studentsTable.size(), studentToAdd);
@@ -86,10 +82,9 @@ public class SchoolBoard {
      *
      * @param studentId the identifier of the StudentDisc to remove from SchoolBoard entrance
      * @throws NoSuchElementException if the StudentDisc isn't in the SchoolBoard entrance
-     * @see     StudentDisc
+     * @see StudentDisc
      */
-    public StudentDisc removeStudentFromEntrance(int studentId) throws NoSuchElementException
-    {
+    public StudentDisc removeStudentFromEntrance(int studentId) throws NoSuchElementException {
         int index = -1;
         for (StudentDisc student : this.entrance) {
             if (student.getId() == studentId)
@@ -105,14 +100,13 @@ public class SchoolBoard {
     /**
      * Replace a StudentDisc already in the dining room (that must be in the last position of the table), with another StudentDisc
      *
-     * @param studentToRemove   StudentDisc that has to be removed from the table
-     * @param studentToAdd      StudentDisc that has to be added to the table
-     * @throws NoSuchElementException if the StudentDisc that has to be removed isn't in the dining room
+     * @param studentToRemove StudentDisc that has to be removed from the table
+     * @param studentToAdd    StudentDisc that has to be added to the table
+     * @throws NoSuchElementException              if the StudentDisc that has to be removed isn't in the dining room
      * @throws IllegalStudentDiscMovementException if the StudentDisc isn't in the last position of the table
-     * @see    StudentDisc
+     * @see StudentDisc
      */
-    public void replaceStudentInDiningRoom(StudentDisc studentToRemove, StudentDisc studentToAdd) throws IllegalStudentDiscMovementException, NoSuchElementException
-    {
+    public void replaceStudentInDiningRoom(StudentDisc studentToRemove, StudentDisc studentToAdd) throws IllegalStudentDiscMovementException, NoSuchElementException {
         this.removeStudentFromDiningRoom(studentToRemove);
         // Insert the new student in the dining room
         this.addStudentToDiningRoom(studentToAdd);
@@ -120,19 +114,20 @@ public class SchoolBoard {
 
     /**
      * Removes a student from the dining room (that must be in the last position of the table)
+     *
      * @param studentToRemove StudentDisc that has to be removed from the table
-     * @throws NoSuchElementException if the StudentDisc that has to be removed isn't in the dining room
+     * @throws NoSuchElementException              if the StudentDisc that has to be removed isn't in the dining room
      * @throws IllegalStudentDiscMovementException if the StudentDisc isn't in the last position of the table
-     * @see    StudentDisc
+     * @see StudentDisc
      */
     public void removeStudentFromDiningRoom(StudentDisc studentToRemove) throws IllegalStudentDiscMovementException, NoSuchElementException {
         // Get the dining room table of the student to remove color
         ArrayList<StudentDisc> studentsTable = this.diningRoom.get(studentToRemove.getColor().getId());
         // Check if the student is in the table
-        if(!studentsTable.contains(studentToRemove))
+        if (!studentsTable.contains(studentToRemove))
             throw new NoSuchElementException("Requested StudentDisc isn't in the player's dining room");
         // Check if the student is in the table in a position that isn't the last of the row
-        if(!studentsTable.get(studentsTable.size()-1).equals(studentToRemove))
+        if (!studentsTable.get(studentsTable.size() - 1).equals(studentToRemove))
             throw new IllegalStudentDiscMovementException();
         // Now I can remove the StudentDisc from the table
         studentsTable.remove(studentToRemove);
