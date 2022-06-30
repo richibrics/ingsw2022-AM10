@@ -138,7 +138,6 @@ public class CharacterManager extends Manager {
         if (!cards.containsKey(cardId))
             throw new NoSuchElementException("The requested CharacterCard is not present in the Table.");
         CharacterCard card = cards.get(cardId);
-        // (remember also to manage cardInUse)
 
         // Set options and player id to the action
         try {

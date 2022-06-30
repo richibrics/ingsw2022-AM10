@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.exceptions.ActionNotSetException;
 import it.polimi.ingsw.model.exceptions.IllegalGameActionException;
 import it.polimi.ingsw.model.exceptions.TableNotSetException;
+import it.polimi.ingsw.model.game_components.Character;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +87,10 @@ public class OnSelectionOfCharacterCardAction extends Action {
             throw new IllegalGameStateException(e.getMessage());
         }
 
+        // Check it's the correct moment to play the card
+        if(!this.cardCanBePlayedAtThisStage(this.chosenCharacterId))
+            throw new IllegalGameActionException("It's too late to play this card. Wait for your next turn to play it.");
+
         try {
             this.getGameEngine().getCharacterManager().selectCharacterCard(this.chosenCharacterId, this.getPlayerId(), this.characterActionOptions);
         } catch (NoSuchElementException | IllegalGameActionException e) { // For wrong card id or illegal game action
@@ -100,5 +105,33 @@ public class OnSelectionOfCharacterCardAction extends Action {
 
         // save the played card to warn the clients with the observer
         this.getGameEngine().setLastPlayedCharacterCard(this.getPlayerId(), chosenCharacterId);
+    }
+
+    /**
+     * Checks if the card that should be played, can be played at this moment.
+     * Some cards must be played only before the end of the entrance movements and other only before the
+     * mother nature movements.
+     * @param cardId id of the card that the player wants to play.
+     * @return true if the card can be played; false otherwise.
+     */
+    private boolean cardCanBePlayedAtThisStage(int cardId) {
+        ArrayList<Integer> idOfCardsToPlayBeforeEndOfEntranceMovements = new ArrayList<>();
+        ArrayList<Integer> idOfCardsToPlayBeforeMotherNatureMovement = new ArrayList<>();
+        idOfCardsToPlayBeforeEndOfEntranceMovements.add(Character.COOK.getId());
+        idOfCardsToPlayBeforeMotherNatureMovement.add(Character.MAILMAN.getId());
+        idOfCardsToPlayBeforeMotherNatureMovement.add(Character.CENTAUR.getId());
+        idOfCardsToPlayBeforeMotherNatureMovement.add(Character.KNIGHT.getId());
+        idOfCardsToPlayBeforeMotherNatureMovement.add(Character.MUSHROOM_HUNTER.getId());
+
+        // Check the state and compare it with the lists
+        if(idOfCardsToPlayBeforeEndOfEntranceMovements.contains(cardId)) {
+            // Check if the MOVE_STUDENTS_FROM_ENTRANCE is still in the Round actions
+            return this.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID);
+        } else if(idOfCardsToPlayBeforeMotherNatureMovement.contains(cardId)) {
+            // Check if the MOVE_STUDENTS_FROM_ENTRANCE or MOVE_MOTHER_NATURE are still in the Round actions
+            return this.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_STUDENTS_FROM_ENTRANCE_ID) ||
+                    this.getGameEngine().getRound().getPossibleActions().contains(ModelConstants.ACTION_MOVE_MOTHER_NATURE_ID);
+        }
+        return true;
     }
 }
