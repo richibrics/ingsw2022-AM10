@@ -52,9 +52,9 @@ All tests in model and controller has a classes' coverage at 100%.
 
 | Package | Coverage |
 |:-----------------------|:------------------------------------:|
-| Model | 96% (1476/1527)
+| Model | 96% (1477/1528)
 | Model.game_components | 100% (218/218)
-| Model.actions | 97% (768/788)
+| Model.actions | 97% (769/789)
 | Model.managers | 94% (323/341)
 | Controller | 91% (398/437)
 | Controller.gson_serializers | 92% (120/130)
