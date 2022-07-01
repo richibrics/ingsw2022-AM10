@@ -468,14 +468,7 @@ public class TableSceneController extends SceneController {
             imageView.setFitHeight(height);
             imageView.setLayoutX(coordinate[1]);
             imageView.setLayoutY(coordinate[0]);
-            if (type == 2) {
-                if (color.equals(ClientTowerColor.BLACK))
-                    imageView.setEffect(new ColorAdjust(0, 0, -0.4, 0));
-                else if (color.equals(ClientTowerColor.WHITE))
-                    imageView.setEffect(new ColorAdjust(0, 0, 0.3, 0));
-                else if (color.equals(ClientTowerColor.GREY))
-                    imageView.setEffect(new ColorAdjust(0, 0, 0, 0));
-            } else if (type == 0)
+            if (type == 0)
                 imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onSelectionOfMotherNature);
 
             this.islandTiles[islandTile.getId()].getChildren().add(imageView);

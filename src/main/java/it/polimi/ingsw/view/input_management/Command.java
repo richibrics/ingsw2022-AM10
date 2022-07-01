@@ -2,7 +2,6 @@ package it.polimi.ingsw.view.input_management;
 
 import it.polimi.ingsw.controller.exceptions.WrongMessageContentException;
 import it.polimi.ingsw.model.ModelConstants;
-import it.polimi.ingsw.model.game_components.Character;
 import it.polimi.ingsw.model.game_components.PawnColor;
 import it.polimi.ingsw.network.messages.ActionMessage;
 import it.polimi.ingsw.view.ViewUtilityFunctions;
@@ -349,7 +348,11 @@ public class Command {
             if(actionOptions.get(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER)!=null)
             {
                 int characterId = Integer.parseInt(actionOptions.get(ModelConstants.ACTION_ON_SELECTION_OF_CHARACTER_CARD_OPTIONS_KEY_CHARACTER));
-                int characterCost = Character.values()[characterId-1].getCost();
+                int characterCost = Integer.MAX_VALUE;
+                // Get card cost
+                for(ClientCharacterCard clientCharacterCard: this.clientTable.getActiveCharacterCards())
+                    if(clientCharacterCard.getId() == characterId)
+                        characterCost = clientCharacterCard.getCost();
                 if(characterCost>this.playersMoney())
                     this.forceCommandEnd = true;
             }

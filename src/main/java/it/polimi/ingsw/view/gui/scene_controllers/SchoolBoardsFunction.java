@@ -305,10 +305,6 @@ public class SchoolBoardsFunction {
                 tower.setFitHeight(GUIConstants.HEIGHT_OF_TOWER_SCHOOL_BOARD);
                 tower.setLayoutX(coordinatesOfTowers[i][1]);
                 tower.setLayoutY(coordinatesOfTowers[i][0]);
-                if (idOfColorOfTowers == ClientTowerColor.BLACK.getId())
-                    tower.setEffect(new ColorAdjust(0, 0, -0.4, 0));
-                else if (idOfColorOfTowers == ClientTowerColor.WHITE.getId())
-                    tower.setEffect(new ColorAdjust(0, 0, 0.3, 0));
                 schoolBoard.getChildren().add(tower);
             }
         }

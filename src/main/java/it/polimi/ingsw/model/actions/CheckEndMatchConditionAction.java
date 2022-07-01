@@ -171,22 +171,29 @@ public class CheckEndMatchConditionAction extends Action {
     public void act() throws Exception {
         Integer[] winners;
         winners = this.checkTowersCondition();
-        if (winners != null)
+        if (winners != null) {
             this.communicateWinner(winners);
+            return;
+        }
         winners = this.checkIslandGroupsCondition();
-        if (winners != null)
+        if (winners != null) {
             this.communicateWinner(winners);
+            return;
+        }
         winners = this.noStudentsInBagCondition();
-        if (winners != null)
+        if (winners != null) {
             this.communicateWinner(winners);
+            return;
+        }
         winners = this.noAssistantCardsCondition();
-        if (winners != null)
+        if (winners != null) {
             this.communicateWinner(winners);
+            return;
+        }
 
         // If no winners, prepare for next round
-        if (winners == null)
-            for (int i = ModelConstants.MIN_ID_OF_PLAYER; i <= getGameEngine().getNumberOfPlayers(); i++) {
-                getGameEngine().getAssistantManager().moveAssistantCardInHandToLastPlayed(i);
-            }
+        for (int i = ModelConstants.MIN_ID_OF_PLAYER; i <= getGameEngine().getNumberOfPlayers(); i++) {
+            getGameEngine().getAssistantManager().moveAssistantCardInHandToLastPlayed(i);
+        }
     }
 }
