@@ -530,38 +530,36 @@ public class TableSceneController extends SceneController {
             // has occurred
             if (StageController.getStageController().getClientTable().getIslandTiles().size() < this.previousCompositionOfIslandGroups.size()) {
                 // Find group that has changed
-                int index = 0;
                 for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles()) {
-                    int finalIndex = index;
-                    if (islandGroup.size() > this.previousCompositionOfIslandGroups.get(index).size()) {
-                        while (finalIndex < StageController.getStageController().getClientTable().getIslandTiles().size() + 1) {
-                            int finalIndex1 = finalIndex;
-                            if(!islandGroup.stream().anyMatch(islandTile -> previousCompositionOfIslandGroups.get(finalIndex1).contains(islandTile.getId())))
-                                finalIndex++;
-                            else
-                                break;
-                        }
-                        if(finalIndex < StageController.getStageController().getClientTable().getIslandTiles().size() + 1) {
+                    boolean closeForLoop = false;
+                    for (int i = 0; i < this.previousCompositionOfIslandGroups.size(); i++) {
+                        int finalI = i;
+                        if (islandGroup.stream().anyMatch(islandTile -> this.previousCompositionOfIslandGroups.get(finalI).stream().filter(islandId -> islandId == islandTile.getId()).count() == 1)
+                                && islandGroup.size() > this.previousCompositionOfIslandGroups.get(i).size()) {
                             // Unify islands in islandGroup
                             int indexOfCentralTile = Math.floorDiv(islandGroup.size(), 2);
-                            for (int i = indexOfCentralTile; i < islandGroup.size() - 1; i++)
-                                this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
-                                        this.islandTiles[islandGroup.get(i + 1).getId()]);
-                            for (int i = indexOfCentralTile; i > 0; i--)
-                                this.unifyIslandTiles(this.islandTiles[islandGroup.get(i).getId()],
-                                        this.islandTiles[islandGroup.get(i - 1).getId()]);
+                            for (int j = indexOfCentralTile; j < islandGroup.size() - 1; j++)
+                                this.unifyIslandTiles(this.islandTiles[islandGroup.get(j).getId()],
+                                        this.islandTiles[islandGroup.get(j + 1).getId()]);
+                            for (int j = indexOfCentralTile; j > 0; i--)
+                                this.unifyIslandTiles(this.islandTiles[islandGroup.get(j).getId()],
+                                        this.islandTiles[islandGroup.get(j - 1).getId()]);
+
+                            closeForLoop = true;
+                            break;
                         }
-                    } else
-                        index++;
+                    }
+                    if (closeForLoop)
+                        break;
                 }
             }
+            // Fill previous composition of groups
+            this.previousCompositionOfIslandGroups.clear();
+            for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles())
+                this.previousCompositionOfIslandGroups.add(islandGroup.stream()
+                        .map(ClientIslandTile::getId)
+                        .collect(Collectors.toCollection(ArrayList::new)));
         }
-        // Fill previous composition of groups
-        this.previousCompositionOfIslandGroups.clear();
-        for (ArrayList<ClientIslandTile> islandGroup : StageController.getStageController().getClientTable().getIslandTiles())
-            this.previousCompositionOfIslandGroups.add(islandGroup.stream()
-                    .map(ClientIslandTile::getId)
-                    .collect(Collectors.toCollection(ArrayList::new)));
     }
 
     private void unifyIslandTiles(Pane fixedIsland, Pane islandToMove) {
