@@ -125,6 +125,8 @@ public class GUI extends AbstractView {
             dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/CSS/endGame.css")).toExternalForm());
             Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("/images/end.png"));
+            stage.setMinWidth(GUIConstants.MIN_WIDTH_OF_END_GAME_DIALOG);
+            stage.setMinHeight(GUIConstants.MIN_HEIGHT_OF_END_GAME_DIALOG);
             dialog.showAndWait();
 
             this.isErrorOpen = false;

@@ -307,5 +307,8 @@ public class GUIConstants {
     public static final String CLIENT_TURN = "Your turn";
     public static final String NOT_CLIENT_TURN = "Not your turn";
 
-    public static final String BACKGROUND_STYLING = "/CSS/table_background.css";
+    // End game dialog
+    public static final double MIN_WIDTH_OF_END_GAME_DIALOG = 400.;
+    public static final double MIN_HEIGHT_OF_END_GAME_DIALOG = 233.;
+
 }
