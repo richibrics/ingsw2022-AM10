@@ -85,4 +85,5 @@ public class ModelConstants {
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_THREE_PLAYERS_STUDENTS_NUMBER = 4;
     public static int ACTION_DRAW_FROM_BAG_TO_CLOUD_FOUR_PLAYERS_STUDENTS_NUMBER = 3;
     public static int NO_PLAYER = -1;
+    public static int MAX_NUMBER_OF_STUDENTS_IN_A_TABLE = 10;
 }

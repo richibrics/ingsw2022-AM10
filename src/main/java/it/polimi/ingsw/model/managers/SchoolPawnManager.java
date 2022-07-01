@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.managers;
 
 import it.polimi.ingsw.controller.GameEngine;
+import it.polimi.ingsw.model.ModelConstants;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Team;
 import it.polimi.ingsw.model.exceptions.EmptyBagException;
@@ -73,23 +74,39 @@ public class SchoolPawnManager extends Manager {
      * {@code playerId}. Throws SchoolBoardNotSetException if the school board of the player has not been set, NoSuchElementException
      * if the student disc could not be found in the entrance of the school board.
      * Gives the coin if the position of the student gives it.
+     * <p>
+     * The student is moved only if the table is not full.
      *
      * @param playerId  the identifier of the player who owns the school board
      * @param studentId the identifier of the student disc to move
      * @throws SchoolBoardNotSetException if the school board of the player has not been set
      * @throws NoSuchElementException     if the student disc could not be found in the entrance of the school board
+     * @throws IllegalArgumentException   if the table is full
      * @see StudentDisc
      * @see SchoolBoard
      * @see Player
      */
 
-    public void moveStudentFromEntranceToDiningRoom(int playerId, int studentId) throws SchoolBoardNotSetException, NoSuchElementException {
+    public void moveStudentFromEntranceToDiningRoom(int playerId, int studentId) throws SchoolBoardNotSetException, NoSuchElementException, IllegalArgumentException {
         SchoolBoard schoolBoard = CommonManager.takeSchoolBoardByPlayerId(this.getGameEngine(), playerId);
-        StudentDisc studentToMove = schoolBoard.removeStudentFromEntrance(studentId);
-        schoolBoard.addStudentToDiningRoom(studentToMove);
-        // If the position money module 3 equals 0, give the coin
-        if (schoolBoard.getDiningRoomColor(studentToMove.getColor()).size() % 3 == 0)
-            CommonManager.takePlayerById(this.getGameEngine(), playerId).incrementCoins();
+
+        // Move only if the dining room table is not full: search the player and get his color
+        PawnColor color = null;
+        for (StudentDisc student : schoolBoard.getEntrance()) {
+            if (student.getId() == studentId)
+                color = student.getColor();
+        }
+        if (color == null)
+            throw new NoSuchElementException("Can't find the requested student in the entrance");
+
+        if (schoolBoard.getDiningRoomColor(color).size() < ModelConstants.MAX_NUMBER_OF_STUDENTS_IN_A_TABLE) { // if place available
+            StudentDisc studentToMove = schoolBoard.removeStudentFromEntrance(studentId);
+            schoolBoard.addStudentToDiningRoom(studentToMove);
+            // If the position money module 3 equals 0, give the coin
+            if (schoolBoard.getDiningRoomColor(studentToMove.getColor()).size() % 3 == 0)
+                CommonManager.takePlayerById(this.getGameEngine(), playerId).incrementCoins();
+        } else
+            throw new IllegalArgumentException("The table is full for this color");
     }
 
     /**

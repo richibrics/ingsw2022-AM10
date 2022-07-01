@@ -73,7 +73,7 @@ public class MoveStudentsFromEntranceAction extends Action {
             }
         } catch (SchoolBoardNotSetException | TableNotSetException e) {
             throw new IllegalGameStateException(e.getMessage());
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | IllegalArgumentException e) {
             throw new IllegalGameActionException(e.getMessage());
         }
     }
