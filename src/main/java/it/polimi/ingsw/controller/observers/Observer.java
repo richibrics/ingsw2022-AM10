@@ -1,5 +1,8 @@
 package it.polimi.ingsw.controller.observers;
 
+/**
+ * Interface for the Observers.
+ */
 public interface Observer {
     /**
      * Sends the update data with the current state to the clients.

@@ -6,6 +6,10 @@ import it.polimi.ingsw.network.messages.Message;
 
 import java.util.ArrayList;
 
+/**
+ * Class that runs a thread which sends STILL_ALIVE messages to all the connected clients.
+ * Clients connections are automatically closed if the client doesn't send anything for a certain amount of time.
+ */
 public class ServerStillAliveChecker implements Runnable {
 
     private final ArrayList<ServerClientConnection> listOfServerClientConnections;

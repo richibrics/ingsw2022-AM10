@@ -20,6 +20,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Class that converts Game objects to JSON and vice-versa.
+ */
 public class Serializer {
 
     private static Gson gson = null;

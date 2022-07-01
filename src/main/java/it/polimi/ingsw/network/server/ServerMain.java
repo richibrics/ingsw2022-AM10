@@ -2,6 +2,9 @@ package it.polimi.ingsw.network.server;
 
 import java.util.ArrayList;
 
+/**
+ * Main class of the Server that starts the Server thread using the console arguments.
+ */
 public class ServerMain {
 
     public static void main(String[] args) {

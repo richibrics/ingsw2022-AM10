@@ -7,6 +7,9 @@ import it.polimi.ingsw.network.server.ServerClientConnection;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Observer used to warn the players about new lobby status.
+ */
 public class LobbyObserver implements Observer {
     Map<Integer, Map<User, ServerClientConnection>> clientsWaitingList;
 

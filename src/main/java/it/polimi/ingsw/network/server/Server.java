@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that runs a thread which accepts incoming connections from the clients.
+ */
 public class Server implements Runnable {
 
     private ArrayList<ServerClientConnection> listOfServerClientConnections;

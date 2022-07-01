@@ -7,6 +7,10 @@ import it.polimi.ingsw.network.messages.Message;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that runs a thread which sends STILL_ALIVE messages to the server.
+ * The connection with the server is automatically closed if the server doesn't send anything for a certain amount of time.
+ */
 public class ClientStillAliveChecker implements Runnable {
 
     private ClientServerConnection clientServerConnection;
