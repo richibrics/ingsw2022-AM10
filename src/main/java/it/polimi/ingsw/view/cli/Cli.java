@@ -121,7 +121,7 @@ public class Cli extends AbstractView {
                     this.schoolBoardsTemplate[0].length + this.islandGroupsTemplate[0].length + 2 * this.SPACE_BETWEEN_ELEMENTS);
 
         // Determine starting height of lower section (character cards and clouds)
-        int startingHeightOfLowerSection = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate[0].length : 0))
+        int startingHeightOfLowerSection = Math.max(Math.max(this.schoolBoardsTemplate.length, this.islandGroupsTemplate.length), (this.assistantCardsTemplate.length != 0 ? this.assistantCardsTemplate.length : 0))
                 + this.SPACE_BETWEEN_ELEMENTS;
         this.insertTemplateInTemplate(template, this.cloudTilesTemplate, startingHeightOfLowerSection, 0);
         if (this.getUser().getPreference() > 0)
