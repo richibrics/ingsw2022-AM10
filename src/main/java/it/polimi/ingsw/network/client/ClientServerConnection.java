@@ -26,6 +26,10 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ChangeListener;
 
+/**
+ * Class that manages the connection between the client and the server.
+ */
+
 public class ClientServerConnection implements Runnable {
 
     private final Socket socket;

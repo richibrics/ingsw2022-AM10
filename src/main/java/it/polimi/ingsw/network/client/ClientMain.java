@@ -1,5 +1,9 @@
 package it.polimi.ingsw.network.client;
 
+/**
+ * Class that starts the client.
+ */
+
 public class ClientMain {
 
     public static void main(String[] args) {

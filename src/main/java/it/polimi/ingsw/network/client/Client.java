@@ -10,6 +10,10 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class used to connect to the server and start the client server connection and the client still alive checker.
+ */
+
 public class Client {
 
     private int port;
