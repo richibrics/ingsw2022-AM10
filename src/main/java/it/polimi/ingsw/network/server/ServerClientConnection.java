@@ -117,7 +117,6 @@ public class ServerClientConnection implements Runnable {
         }
 
         if (line != null) {
-            Logger.getAnonymousLogger().log(Level.INFO, line);
             this.deserialize(line);
             // I received a message from the client, so he's alive: reset his timer
             this.resetTimer();
