@@ -541,7 +541,7 @@ public class TableSceneController extends SceneController {
                             for (int j = indexOfCentralTile; j < islandGroup.size() - 1; j++)
                                 this.unifyIslandTiles(this.islandTiles[islandGroup.get(j).getId()],
                                         this.islandTiles[islandGroup.get(j + 1).getId()]);
-                            for (int j = indexOfCentralTile; j > 0; i--)
+                            for (int j = indexOfCentralTile; j > 0; j--)
                                 this.unifyIslandTiles(this.islandTiles[islandGroup.get(j).getId()],
                                         this.islandTiles[islandGroup.get(j - 1).getId()]);
 
