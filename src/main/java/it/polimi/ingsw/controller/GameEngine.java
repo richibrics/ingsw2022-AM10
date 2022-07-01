@@ -9,7 +9,9 @@ import it.polimi.ingsw.model.managers.*;
 import java.util.ArrayList;
 import java.util.Map;
 
-
+/**
+ * Class that manages all the game operations and elements.
+ */
 public class GameEngine {
 
     private Table table;

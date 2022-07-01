@@ -23,6 +23,9 @@ import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that manages a connection between the server and a single client.
+ */
 public class ServerClientConnection implements Runnable {
     private final Socket clientSocket;
     private User user;

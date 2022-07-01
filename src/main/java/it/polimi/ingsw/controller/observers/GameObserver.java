@@ -7,6 +7,9 @@ import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.ArrayList;
 
+/**
+ * Observer used to warn the players about game changes.
+ */
 public class GameObserver implements Observer {
 
     ArrayList<ServerClientConnection> serverClientConnections;

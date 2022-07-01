@@ -14,7 +14,9 @@ import it.polimi.ingsw.network.server.ServerClientConnection;
 
 import java.util.*;
 
-
+/**
+ * Class that manages the client in the lobby and the new match creation.
+ */
 public class LobbyHandler {
 
     private Map<Integer, Map<User, ServerClientConnection>> clientsWaiting;
