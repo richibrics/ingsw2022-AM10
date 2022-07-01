@@ -1108,8 +1108,6 @@ public class TableSceneController extends SceneController {
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         // Add a custom icon.
         stage.getIcons().add(Images.getImages().getBulb());
-        // Make dialog not closable using the x
-        stage.setOnCloseRequest(Event::consume);
         dialog.show();
     }
 

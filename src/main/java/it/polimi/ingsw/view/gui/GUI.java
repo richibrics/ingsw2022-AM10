@@ -123,10 +123,10 @@ public class GUI extends AbstractView {
             //Add button to the dialog pane
             dialog.getDialogPane().getButtonTypes().add(new ButtonType("OK", ButtonBar.ButtonData.LEFT));
             dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/CSS/endGame.css")).toExternalForm());
+            dialog.getDialogPane().setMinHeight(GUIConstants.MIN_HEIGHT_OF_END_GAME_DIALOG);
+            dialog.getDialogPane().setMinWidth(GUIConstants.MIN_WIDTH_OF_END_GAME_DIALOG);
             Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image("/images/end.png"));
-            stage.setMinWidth(GUIConstants.MIN_WIDTH_OF_END_GAME_DIALOG);
-            stage.setMinHeight(GUIConstants.MIN_HEIGHT_OF_END_GAME_DIALOG);
             dialog.showAndWait();
 
             this.isErrorOpen = false;
@@ -223,7 +223,7 @@ public class GUI extends AbstractView {
             Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
             // Add a custom icon.
             stage.getIcons().add(new Image(GUIConstants.SCENE_TABLE_BULB_IMAGE_PATH));
-            dialog.showAndWait();
+            dialog.show();
         });
     }
 
